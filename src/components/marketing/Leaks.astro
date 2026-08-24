@@ -1,0 +1,82 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+---
+
+<section class="section leaks" id="leaks">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>{dict.leaks.h2}</h2>
+      <p>{dict.leaks.sub}</p>
+    </div>
+    <div class="grid">
+      {dict.leaks.items.map((item) => (
+        <article class="card leak reveal">
+          <div class="leak-head">
+            <h3>{item.title}</h3>
+            <span class="badge badge-alert">{item.badge}</span>
+          </div>
+          <p class="before">{item.before}</p>
+          <div class="after">
+            <p>{item.after}</p>
+          </div>
+          <p class="result">{item.result}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .leak {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 26px 22px;
+  }
+  .leak-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .leak h3 {
+    font-size: 19px;
+  }
+  .before {
+    margin-block-start: 12px;
+    font-size: 15px;
+    color: var(--ink-mid);
+  }
+  .after {
+    margin-block-start: 16px;
+    padding: 13px 16px;
+    background: var(--action-wash);
+    border-radius: var(--r-control);
+  }
+  .after p {
+    font-size: 14.5px;
+    color: var(--oceanic);
+    font-weight: var(--fw-medium);
+  }
+  .result {
+    margin-block-start: 14px;
+    font-size: 14.5px;
+    font-weight: var(--fw-semibold);
+    color: var(--ink);
+  }
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,299 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+const stations = dict.trail.stations;
+---
+
+<section class="trail on-onyx" id="trail" data-trail>
+  <div class="container">
+    <div class="trail-head">
+      <h2>{dict.trail.h2}</h2>
+      <p>{dict.trail.sub}</p>
+    </div>
+
+    <!-- Accessible truth: full static flow. Hidden visually only in enhanced mode. -->
+    <ol class="trail-static" data-trail-static>
+      {stations.map((s) => (
+        <li>
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+          {s.alert && <span class="badge badge-alert">{s.alert}</span>}
+        </li>
+      ))}
+    </ol>
+
+    <!-- Enhanced pinned stage (decorative duplicate, driven by GSAP). -->
+    <div class="trail-stage" data-trail-stage aria-hidden="true" hidden>
+      <div class="track">
+        <div class="track-line"><div class="track-fill" data-trail-fill></div></div>
+        <div class="doc-chip" data-trail-doc>
+          <svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true">
+            <path d="M1 2.2C1 1.5 1.5 1 2.2 1h6.1L13 5v8.8c0 .7-.5 1.2-1.2 1.2H2.2C1.5 15 1 14.5 1 13.8V2.2Z" stroke="currentColor" stroke-width="1.4" />
+            <path d="M8.3 1v4H13" stroke="currentColor" stroke-width="1.4" />
+          </svg>
+        </div>
+        <div class="dots">
+          {stations.map((s, i) => (
+            <div class="dot-cell">
+              <span class="dot" data-trail-dot data-i={i}></span>
+              <span class="dot-label">{s.title}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="panels">
+        {stations.map((s, i) => (
+          <div class="panel" data-trail-panel data-i={i}>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+            {s.alert && <span class="badge badge-alert">{s.alert}</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <p class="close reveal">{dict.trail.close}</p>
+  </div>
+</section>
+
+<style>
+  .trail {
+    background: var(--onyx);
+    padding-block: clamp(72px, 9vw, 128px);
+  }
+  .trail-head h2 {
+    font-size: clamp(30px, 4.4vw, 46px);
+    letter-spacing: 0;
+  }
+  .trail-head p {
+    margin-block-start: 14px;
+    font-size: clamp(16px, 1.7vw, 18.5px);
+    max-inline-size: 46ch;
+  }
+
+  /* Static flow */
+  .trail-static {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-block-start: clamp(36px, 5vw, 56px);
+    display: grid;
+    gap: 0;
+  }
+  .trail-static li {
+    position: relative;
+    padding-block: 22px;
+    padding-inline-start: 30px;
+    border-block-start: 1px solid var(--line-onyx);
+  }
+  .trail-static li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 30px;
+    inline-size: 11px;
+    block-size: 11px;
+    border-radius: 50%;
+    background: var(--oceanic);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--oceanic) 40%, transparent);
+  }
+  .trail-static h3 {
+    font-size: 17px;
+    color: var(--wheat);
+  }
+  .trail-static p {
+    margin-block-start: 6px;
+    font-size: 14.5px;
+    max-inline-size: 52ch;
+  }
+  .trail-static .badge {
+    margin-block-start: 10px;
+  }
+
+  /* Enhanced stage */
+  .trail-stage {
+    margin-block-start: clamp(40px, 5vw, 64px);
+  }
+  .track {
+    position: relative;
+    padding-block-start: 10px;
+  }
+  .track-line {
+    position: absolute;
+    inset-inline: 26px;
+    inset-block-start: 15px;
+    block-size: 2px;
+    background: var(--line-onyx);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .track-fill {
+    block-size: 100%;
+    inline-size: 100%;
+    background: linear-gradient(to var(--fill-dir, left), var(--oceanic-bright), var(--wheat));
+    transform: scaleX(0);
+    transform-origin: var(--origin, right);
+  }
+  [dir='rtl'] .track-fill {
+    --origin: right;
+    --fill-dir: left;
+  }
+  [dir='ltr'] .track-fill {
+    --origin: left;
+    --fill-dir: right;
+  }
+  .doc-chip {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-start: 12px;
+    inline-size: 28px;
+    block-size: 28px;
+    display: grid;
+    place-items: center;
+    background: var(--wheat);
+    color: var(--onyx);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), 0 10px 24px rgba(0, 63, 71, 0.5);
+    z-index: 2;
+  }
+  .dots {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .dot-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    inline-size: 52px;
+  }
+  .dot {
+    inline-size: 12px;
+    block-size: 12px;
+    border-radius: 50%;
+    background: var(--line-onyx);
+    transition: background-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+  }
+  .dot.active {
+    background: var(--wheat);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--wheat) 25%, transparent);
+  }
+  .dot.alert-state {
+    background: var(--alert-bright);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--alert-bright) 28%, transparent);
+  }
+  .dot-label {
+    font-size: 12px;
+    color: var(--ink-inverse-muted);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .panels {
+    position: relative;
+    margin-block-start: 30px;
+    min-block-size: 210px;
+  }
+  .panel {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    max-inline-size: 640px;
+    padding-block-start: 8px;
+    border-block-start: 1px solid var(--line-onyx);
+  }
+  .panel h3 {
+    margin-block-start: 14px;
+    font-size: clamp(26px, 3vw, 34px);
+    color: var(--wheat);
+  }
+  .panel p {
+    margin-block-start: 12px;
+    font-size: 17px;
+    line-height: 1.65;
+    max-inline-size: 46ch;
+  }
+  .panel .badge {
+    margin-block-start: 14px;
+    font-size: 13.5px;
+  }
+  .close {
+    margin-block-start: clamp(36px, 5vw, 52px);
+    font-size: clamp(17px, 2vw, 21px);
+    font-weight: var(--fw-medium);
+    color: var(--wheat);
+    max-inline-size: 30em;
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const root = document.querySelector<HTMLElement>('[data-trail]');
+  const stage = document.querySelector<HTMLElement>('[data-trail-stage]');
+  const staticList = document.querySelector<HTMLElement>('[data-trail-static]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wide = window.matchMedia('(min-width: 1024px)').matches;
+
+  if (root && stage && staticList && !reduce && wide) {
+    gsap.registerPlugin(ScrollTrigger);
+    stage.hidden = false;
+    staticList.classList.add('visually-hidden');
+
+    const dots = Array.from(stage.querySelectorAll<HTMLElement>('[data-trail-dot]'));
+    const panels = Array.from(stage.querySelectorAll<HTMLElement>('[data-trail-panel]'));
+    const fill = stage.querySelector<HTMLElement>('[data-trail-fill]');
+    const doc = stage.querySelector<HTMLElement>('[data-trail-doc]');
+    const n = dots.length;
+    const alertIndex = 3; // invoice station carries the caught discrepancy
+
+    gsap.set(panels, { y: 14 });
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: root,
+        start: 'top top',
+        end: `+=${n * 520}`,
+        pin: true,
+        scrub: 0.6,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    const track = stage.querySelector<HTMLElement>('.track')!;
+    const docX = (i: number) => {
+      // Physical-x delta from the chip's layout position to the dot center.
+      // offsetLeft/getBoundingClientRect are physical, so this is RTL-safe.
+      const dr = dots[i].getBoundingClientRect();
+      const tr = track.getBoundingClientRect();
+      const dotCenter = dr.left + dr.width / 2 - tr.left;
+      const chipCenter = doc!.offsetLeft + doc!.offsetWidth / 2;
+      return dotCenter - chipCenter;
+    };
+
+    panels.forEach((p, i) => {
+      const seg = i;
+      tl.add(`s${i}`, seg);
+      tl.to(fill, { scaleX: (i + 0.5) / n, duration: 0.55, ease: 'none' }, seg);
+      tl.to(doc, { x: () => docX(i), duration: 0.55, ease: 'power1.inOut' }, seg);
+      tl.call(
+        () => {
+          dots.forEach((d, di) => {
+            d.classList.toggle('active', di <= i);
+            d.classList.toggle('alert-state', di === alertIndex && i >= alertIndex);
+          });
+        },
+        [],
+        seg + 0.28
+      );
+      tl.to(p, { autoAlpha: 1, y: 0, duration: 0.3 }, seg + 0.12);
+      if (i < n - 1) tl.to(p, { autoAlpha: 0, duration: 0.25 }, seg + 0.82);
+    });
+    tl.to(fill, { scaleX: 1, duration: 0.4, ease: 'none' }, n - 0.4);
+  }
+</script>

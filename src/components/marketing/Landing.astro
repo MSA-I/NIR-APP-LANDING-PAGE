@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from './Hero.astro';
+import Proof from './Proof.astro';
+import Leaks from './Leaks.astro';
+import Trail from './Trail.astro';
+import Assistant from './Assistant.astro';
+import Roles from './Roles.astro';
+import Demo from './Demo.astro';
+import RoiSection from './RoiSection.astro';
+import Pricing from './Pricing.astro';
+import Security from './Security.astro';
+import Story from './Story.astro';
+import Faq from './Faq.astro';
+import FinalCta from './FinalCta.astro';
+import type { Locale } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { locale, dict } = Astro.props;
+---
+
+<Base locale={locale} dict={dict}>
+  <main>
+    <Hero dict={dict} />
+    <Proof dict={dict} />
+    <Leaks dict={dict} />
+    <Trail dict={dict} />
+    <Assistant dict={dict} />
+    <Roles locale={locale} dict={dict} />
+    <Demo locale={locale} dict={dict} />
+    <RoiSection locale={locale} dict={dict} />
+    <Pricing locale={locale} dict={dict} />
+    <Security dict={dict} />
+    <Story dict={dict} />
+    <Faq dict={dict} />
+    <FinalCta dict={dict} />
+  </main>
+</Base>

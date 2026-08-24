@@ -1,0 +1,21 @@
+---
+import type { Locale } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+import RoiCalculator from '../roi/RoiCalculator';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { locale, dict } = Astro.props;
+---
+
+<section class="section" id="roi">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>{dict.roi.h2}</h2>
+      <p>{dict.roi.sub}</p>
+    </div>
+    <RoiCalculator dict={dict} locale={locale} client:visible />
+  </div>
+</section>

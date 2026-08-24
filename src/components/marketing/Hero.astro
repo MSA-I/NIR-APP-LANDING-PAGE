@@ -1,0 +1,193 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+const ui = dict.heroUi;
+---
+
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <h1>{dict.hero.h1}</h1>
+      <p class="sub">{dict.hero.sub}</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#demo">{dict.hero.ctaPrimary}</a>
+        <a class="btn btn-ghost" href="#trail">{dict.hero.ctaSecondary}</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-label={ui.screenTitle} role="img">
+      <div class="pui invoice-panel">
+        <div class="pui-titlebar">
+          <span>{ui.screenTitle} · <span class="num tech-id" dir="ltr">{ui.invoiceId}</span></span>
+          <span class="badge badge-alert pulse-once">{ui.statusBlocked}</span>
+        </div>
+        <div class="pui-row supplier-row">
+          <span class="supplier"><bdi>{ui.supplier}</bdi></span>
+          <span class="chips">
+            {ui.chain.map((c) => (
+              <span class={`badge ${c.state === 'done' ? 'badge-done' : 'badge-alert'}`}>{c.label}</span>
+            ))}
+          </span>
+        </div>
+        <div class="reason">
+          <span class="reason-title">{ui.reasonTitle}</span>
+          <p class="reason-body">{ui.reason}</p>
+          <div class="line">
+            <bdi class="line-name">{ui.lineName}</bdi>
+            <div class="line-nums">
+              <span class="cell"><span class="cell-label">{ui.ordered}</span><span class="num">‎39.90 ₪</span></span>
+              <span class="cell"><span class="cell-label">{ui.billed}</span><span class="num billed">‎47.65 ₪</span></span>
+              <span class="cell delta-cell"><span class="cell-label">{ui.delta}</span><span class="num delta">{ui.deltaValue}</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="pui-row footer-row">
+          <span class="as-of">{ui.asOf}</span>
+          <span class="ghost-action">{ui.action}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(1100px 620px at 82% -10%, color-mix(in srgb, var(--wheat) 72%, transparent), transparent 70%),
+      radial-gradient(900px 560px at 8% 108%, color-mix(in srgb, var(--oceanic) 7%, transparent), transparent 72%),
+      var(--canvas);
+    padding-block: clamp(48px, 7vw, 96px) clamp(56px, 8vw, 108px);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(40px, 5vw, 64px);
+    align-items: center;
+  }
+  h1 {
+    font-size: clamp(40px, 6.2vw, 68px);
+    letter-spacing: 0;
+    color: var(--onyx);
+  }
+  .sub {
+    margin-block-start: 20px;
+    font-size: clamp(17px, 1.9vw, 20px);
+    line-height: 1.6;
+    color: var(--ink-mid);
+    max-inline-size: 34em;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-block-start: 32px;
+  }
+
+  .hero-visual {
+    position: relative;
+  }
+  .invoice-panel {
+    max-inline-size: 560px;
+    margin-inline: auto;
+  }
+  .supplier {
+    font-weight: var(--fw-medium);
+    font-size: 14.5px;
+  }
+  .supplier-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .chips {
+    display: inline-flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .reason {
+    padding: 16px 18px;
+    border-block-end: 1px solid var(--line);
+    background: var(--alert-soft);
+  }
+  .reason-title {
+    font-size: 12px;
+    font-weight: var(--fw-medium);
+    color: var(--alert-fg);
+  }
+  .reason-body {
+    margin-block-start: 4px;
+    font-size: 14.5px;
+    font-weight: var(--fw-medium);
+    color: var(--ink);
+  }
+  .line {
+    margin-block-start: 14px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border-radius: var(--r-control);
+    box-shadow: var(--shadow-card);
+  }
+  .line-name {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-mid);
+  }
+  .line-nums {
+    display: flex;
+    gap: 10px;
+    margin-block-start: 10px;
+  }
+  .cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--surface-sunken);
+  }
+  .cell-label {
+    font-size: 11.5px;
+    color: var(--ink-muted);
+  }
+  .cell .num {
+    font-size: 15px;
+    font-weight: var(--fw-semibold);
+  }
+  .billed {
+    color: var(--alert-fg);
+  }
+  .delta-cell {
+    background: var(--alert-soft);
+  }
+  .delta {
+    color: var(--alert-fg);
+  }
+  .footer-row {
+    background: color-mix(in srgb, var(--surface-sunken) 55%, transparent);
+  }
+  .as-of {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .ghost-action {
+    font-size: 13px;
+    font-weight: var(--fw-medium);
+    color: var(--action);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1.05fr 1fr;
+    }
+    .invoice-panel {
+      margin-inline-end: 0;
+      rotate: -0.6deg;
+    }
+  }
+</style>

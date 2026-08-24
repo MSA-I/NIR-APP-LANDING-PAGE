@@ -1,0 +1,70 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+---
+
+<section class="proof">
+  <div class="container">
+    <h2 class="reveal">{dict.proof.h2}</h2>
+    <div class="items">
+      {dict.proof.items.map((item) => (
+        <div class="item reveal">
+          <h3>{item.title}</h3>
+          <p>{item.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .proof {
+    background: var(--wheat);
+    padding-block: clamp(52px, 7vw, 88px);
+  }
+  h2 {
+    font-size: clamp(24px, 3.2vw, 34px);
+    letter-spacing: 0;
+    color: var(--onyx);
+    max-inline-size: 22ch;
+  }
+  .items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-block-start: clamp(28px, 4vw, 44px);
+  }
+  .item {
+    padding-block: 20px;
+    border-block-start: 1px solid color-mix(in srgb, var(--oceanic) 16%, transparent);
+  }
+  .item h3 {
+    font-size: 16.5px;
+    color: var(--oceanic);
+  }
+  .item p {
+    margin-block-start: 6px;
+    font-size: 14.5px;
+    color: var(--ink-mid);
+    max-inline-size: 38ch;
+  }
+  @media (min-width: 768px) {
+    .items {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 44px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .items {
+      grid-template-columns: repeat(4, 1fr);
+      column-gap: 36px;
+    }
+    .item {
+      padding-block: 24px 8px;
+    }
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import type { Dict } from '../../content/he';
+import AssistantShowcase from '../demo/AssistantShowcase';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+---
+
+<section class="section assistant" id="assistant">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>{dict.assistant.h2}</h2>
+      <p>{dict.assistant.sub}</p>
+    </div>
+    <AssistantShowcase dict={dict} client:visible />
+    <p class="asst-note">{dict.assistant.demoNote}</p>
+  </div>
+</section>
+
+<style>
+  .assistant {
+    background: linear-gradient(to bottom, var(--canvas), color-mix(in srgb, var(--wheat) 45%, var(--canvas)));
+  }
+  .asst-note {
+    margin-block-start: 22px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+</style>

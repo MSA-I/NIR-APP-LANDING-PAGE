@@ -1,0 +1,90 @@
+/* InPlace design tokens — single source of truth for the marketing site.
+   Mirrors the product's T7 palette (DESIGN.md): Onyx shell, Oceanic action,
+   Wheat paper, neutral canvas. Status colors carry business meaning ONLY. */
+
+:root {
+  /* Structural palette */
+  --onyx: #0a171d;
+  --oceanic: #003f47;
+  --wheat: #fff6e9;
+  --canvas: #f4f5f3;
+
+  /* Ink on paper */
+  --ink: #12232b;
+  --ink-mid: #3d5560;
+  --ink-muted: #54696f; /* >=4.5:1 on surface-sunken #efeee9 (AA) */
+
+  /* Ink on onyx */
+  --ink-inverse: #f6f4ee;
+  --ink-inverse-mid: #b8c4c9;
+  --ink-inverse-muted: #8fa0a7;
+
+  /* Surfaces */
+  --surface: #fffdf9;
+  --surface-sunken: #efeee9;
+  --surface-onyx: #10222b;
+  --surface-onyx-raised: #152a34;
+
+  /* Brand action */
+  --action: var(--oceanic);
+  --action-hover: #00525c;
+  --action-press: #00343b;
+  --action-soft: #e2ecec;
+  --action-wash: #eef4f3;
+  --action-line: #9db8bb;
+  --on-action: #f4faf9;
+
+  /* Status language — four meanings + neutral (product law) */
+  --done-fg: #047857;
+  --done-soft: #ecfdf5;
+  --done-solid: #047857;
+  --await-fg: #b45309;
+  --await-soft: #fffbeb;
+  --await-solid: #b45309;
+  --alert-fg: #be123c;
+  --alert-soft: #fff1f2;
+  --alert-solid: #be123c;
+  --info-fg: #0369a1;
+  --info-soft: #f0f9ff;
+  --info-solid: #0369a1;
+  --idle-fg: #64748b;
+  --idle-soft: #f1f5f9;
+
+  /* Bright variants for dark (Onyx) sections */
+  --oceanic-bright: #2a8a94;
+  --alert-bright: #f43f5e;
+  --onyx-lift: #0d2530;
+
+  /* Lines */
+  --line: #e3e2dc;
+  --line-strong: #cfceC6;
+  --line-onyx: #223842;
+
+  /* Shadows — oceanic-tinted, soft, with offset (never black halos) */
+  --shadow-card: 0 1px 2px rgba(10, 23, 29, 0.05), 0 8px 24px rgba(0, 63, 71, 0.08);
+  --shadow-card-hover: 0 2px 4px rgba(10, 23, 29, 0.06), 0 14px 36px rgba(0, 63, 71, 0.13);
+  --shadow-panel: 0 4px 10px rgba(10, 23, 29, 0.07), 0 24px 60px rgba(0, 63, 71, 0.14);
+
+  /* Radius system: cards 16, controls 10, pills full. One rule, everywhere. */
+  --r-card: 16px;
+  --r-control: 10px;
+  --r-pill: 999px;
+
+  /* Type — Heebo body (metric twin of the product's Noto Sans Hebrew fallback),
+     Frank Ruhl Libre display (canonical Israeli premium serif). Both OFL. */
+  --font-sans: 'Heebo', 'Noto Sans Hebrew', Arial, system-ui, sans-serif;
+  --font-display: 'Frank Ruhl Libre', 'Noto Sans Hebrew', Georgia, serif;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --t-micro: 180ms;
+  --t-enter: 520ms;
+
+  /* Layout */
+  --page-max: 1200px;
+  --nav-h: 68px;
+}

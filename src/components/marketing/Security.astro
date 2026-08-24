@@ -1,0 +1,85 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+const icons = [
+  'M12 3 4 6.5v5c0 4.6 3.4 8.4 8 9.5 4.6-1.1 8-4.9 8-9.5v-5L12 3Z',
+  'M16 11a4 4 0 1 0-8 0M4 21c0-3.5 3.6-6 8-6s8 2.5 8 6',
+  'M5 4h11l3 3v13H5V4Zm3 8h8m-8 4h5',
+  'M12 8v4l2.5 2.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+  'M7 11V8a5 5 0 0 1 10 0v3m-12 0h14v9H5v-9Z',
+  'M4 7h16M4 12h16M4 17h9',
+];
+---
+
+<section class="section security" id="security">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>{dict.security.h2}</h2>
+      <p>{dict.security.sub}</p>
+    </div>
+    <div class="sec-grid">
+      {dict.security.items.map((item, i) => (
+        <div class="sec-item reveal">
+          <span class="sec-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d={icons[i % icons.length]} />
+            </svg>
+          </span>
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .security {
+    background: var(--wheat);
+  }
+  .sec-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 26px 40px;
+  }
+  .sec-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .sec-icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    inline-size: 42px;
+    block-size: 42px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--oceanic) 9%, transparent);
+    color: var(--oceanic);
+  }
+  .sec-item h3 {
+    font-size: 16.5px;
+  }
+  .sec-item p {
+    margin-block-start: 6px;
+    font-size: 14.5px;
+    color: var(--ink-mid);
+    max-inline-size: 44ch;
+  }
+  @media (min-width: 768px) {
+    .sec-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .sec-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

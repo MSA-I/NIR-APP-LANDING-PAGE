@@ -1,0 +1,28 @@
+---
+import { CONTACT_EMAIL, type Locale } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+import GuidedDemo from '../demo/GuidedDemo';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { locale, dict } = Astro.props;
+const pilotHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(dict.demo.ctaPilot + ' · InPlace')}`;
+---
+
+<section class="section demo-section" id="demo">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>{dict.demo.h2}</h2>
+      <p>{dict.demo.sub}</p>
+    </div>
+    <GuidedDemo dict={dict} locale={locale} pilotHref={pilotHref} client:visible />
+  </div>
+</section>
+
+<style>
+  .demo-section {
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--wheat) 45%, var(--canvas)), var(--canvas));
+  }
+</style>

@@ -1,0 +1,101 @@
+---
+import { APP_URL, CONTACT_EMAIL, WHATSAPP, type Locale } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { dict } = Astro.props;
+const links = [
+  { href: '#leaks', label: dict.nav.product },
+  { href: '#assistant', label: dict.nav.assistant },
+  { href: '#demo', label: dict.nav.demo },
+  { href: '#pricing', label: dict.nav.pricing },
+  { href: '#security', label: dict.nav.security },
+  { href: '#faq', label: dict.nav.faq },
+];
+---
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="about">
+      <img src="/brand/inplace-lockup-paper.svg" alt="InPlace" width="126" height="32" />
+      <p>{dict.footer.blurb}</p>
+    </div>
+    <nav aria-label={dict.footer.product}>
+      <h3>{dict.footer.product}</h3>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href={APP_URL}>{dict.footer.login}</a>
+    </nav>
+    <div class="contact">
+      <h3>{dict.footer.contact}</h3>
+      <a href={`mailto:${CONTACT_EMAIL}`} class="tech-id" dir="ltr">{CONTACT_EMAIL}</a>
+      {WHATSAPP.map((w) => (
+        <a href={`https://wa.me/${w.intl}`} rel="noopener" target="_blank">
+          {dict.finalCta.whatsapp} {w.name}
+        </a>
+      ))}
+    </div>
+  </div>
+  <div class="container legal">
+    <span>{dict.footer.rights}</span>
+    <span>{dict.footer.demoDisclaimer}</span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--onyx);
+    color: var(--ink-inverse-mid);
+    padding-block: clamp(48px, 6vw, 72px) 28px;
+  }
+  .grid {
+    display: grid;
+    gap: 36px;
+    grid-template-columns: 1fr;
+  }
+  .about p {
+    margin-block-start: 16px;
+    font-size: 14.5px;
+    max-inline-size: 44ch;
+  }
+  h3 {
+    color: var(--ink-inverse);
+    font-size: 14px;
+    margin-block-end: 12px;
+  }
+  nav,
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  nav a,
+  .contact a {
+    color: var(--ink-inverse-mid);
+    font-size: 14.5px;
+  }
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    justify-content: space-between;
+    margin-block-start: 44px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--line-onyx);
+    font-size: 13px;
+    color: var(--ink-inverse-muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    nav a:hover,
+    .contact a:hover {
+      color: var(--wheat);
+    }
+  }
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+</style>

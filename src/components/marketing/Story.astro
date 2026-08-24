@@ -1,0 +1,60 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+---
+
+<!-- PLACEHOLDER SECTION: replace quote+attribution with the real pilot
+     customer's words before launch (owner to supply). Tracked in docs/BRIEF.md §11. -->
+<section class="section story">
+  <div class="container story-inner reveal">
+    <h2 class="visually-hidden">{dict.story.h2}</h2>
+    <blockquote>
+      <p>{dict.story.quote}</p>
+      <footer>
+        <span class="attr">{dict.story.attribution}</span>
+        <span class="note">{dict.story.placeholderNote}</span>
+      </footer>
+    </blockquote>
+  </div>
+</section>
+
+<style>
+  .story {
+    background: var(--canvas);
+    padding-block: clamp(56px, 7vw, 96px);
+  }
+  .story-inner {
+    max-inline-size: 820px;
+  }
+  blockquote {
+    margin: 0;
+    padding-inline-start: 26px;
+    border-inline-start: 3px solid var(--oceanic);
+  }
+  blockquote p {
+    font-size: clamp(20px, 2.6vw, 27px);
+    line-height: 1.5;
+    font-weight: var(--fw-medium);
+    color: var(--onyx);
+    max-inline-size: 30em;
+  }
+  footer {
+    margin-block-start: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .attr {
+    font-size: 15px;
+    font-weight: var(--fw-medium);
+    color: var(--ink-mid);
+  }
+  .note {
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+</style>

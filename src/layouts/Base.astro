@@ -1,0 +1,110 @@
+---
+import '../styles/global.css';
+import { LOCALES, LOCALE_META, PRICING, type Locale } from '../lib/i18n';
+import type { Dict } from '../content/he';
+import Nav from '../components/marketing/Nav.astro';
+import Footer from '../components/marketing/Footer.astro';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { locale, dict } = Astro.props;
+const meta = LOCALE_META[locale];
+const site = 'https://inplace.digital';
+const canonical = site + meta.path;
+const currency = locale === 'he' ? 'ILS' : 'USD';
+
+const softwareLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'InPlace',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  description: dict.meta.description,
+  url: site,
+  inLanguage: ['he', 'en', 'fr'],
+  offers: PRICING.plans.map((p) => ({
+    '@type': 'Offer',
+    name: dict.pricing.plans[p.id as keyof typeof dict.pricing.plans].name,
+    price: locale === 'he' ? p.ils : p.usd,
+    priceCurrency: currency,
+  })),
+};
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: dict.faq.items.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+
+<!doctype html>
+<html lang={meta.lang} dir={meta.dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{dict.meta.title}</title>
+    <meta name="description" content={dict.meta.description} />
+    <link rel="canonical" href={canonical} />
+    {LOCALES.map((l) => <link rel="alternate" hreflang={l} href={site + LOCALE_META[l].path} />)}
+    <link rel="alternate" hreflang="x-default" href={site + '/'} />
+    <link rel="icon" type="image/svg+xml" href="/brand/inplace-symbol.svg" />
+    <link rel="preload" href="/fonts/heebo-var-hebrew.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/heebo-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+    {locale === 'he' ? (
+      <link rel="preload" href="/fonts/frl-var-hebrew.woff2" as="font" type="font/woff2" crossorigin />
+    ) : (
+      <link rel="preload" href="/fonts/frl-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="InPlace" />
+    <meta property="og:title" content={dict.meta.title} />
+    <meta property="og:description" content={dict.meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={locale === 'he' ? 'he_IL' : locale === 'en' ? 'en_US' : 'fr_FR'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  </head>
+  <body>
+    <!-- DIRECTION CONTRACT
+    THESIS: A quiet financial control room that proves "you see it before you pay";
+    it refuses the category default of feature-grid + AI-gradient hype. The real
+    product UI, shown mid-decision (a blocked invoice with its evidence), IS the hero.
+    OWN-WORLD: Onyx #0A171D shell, Oceanic #003F47 action, Wheat #FFF6E9 paper,
+    neutral canvas; borderless cards separated by tinted shadow; status colors carry
+    business meaning only; tabular numbers; RTL-first logical layout.
+    STORY: visitor recognizes a money leak they know, watches the document-to-decision
+    chain catch it, asks the business a question and gets an evidenced answer, tries
+    the guided demo, prices it with their own assumptions, opens a pilot.
+    FIRST VIEWPORT: split hero; start side carries the promise + two CTAs, end side
+    a readable blocked-invoice replica with delta and chain chips; nav pill floats above.
+    FORM: brief-pinned direction (research doc 24.08.2026, sections 9+13). No concept
+    roll: pinned brief beats the roll per skill contract.
+    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
+    review, the verdict, and DESIGN.md
+    -->
+    <Nav locale={locale} dict={dict} />
+    <slot />
+    <Footer locale={locale} dict={dict} />
+    <script>
+      // Section entrance: one shared observer; .reveal gains .in once.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('in');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
+      );
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

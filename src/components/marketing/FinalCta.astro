@@ -1,0 +1,85 @@
+---
+import { CONTACT_EMAIL, WHATSAPP } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+const mailHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(dict.finalCta.email + ' · InPlace')}`;
+---
+
+<section class="final on-onyx">
+  <div class="container final-inner reveal">
+    <h2>{dict.finalCta.h2}</h2>
+    <p>{dict.finalCta.sub}</p>
+    <div class="actions">
+      <a class="btn btn-onyx" href={mailHref}>{dict.finalCta.email}</a>
+      <span class="or">{dict.finalCta.or}</span>
+      {WHATSAPP.map((w) => (
+        <a class="wa" href={`https://wa.me/${w.intl}`} target="_blank" rel="noopener">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 1.8a8.2 8.2 0 1 1-4.2 15.3l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8Zm-3.1 4c-.2 0-.5.1-.7.4-.2.3-.9.9-.9 2.1s.9 2.4 1 2.6c.1.2 1.8 2.9 4.5 3.9 2.2.9 2.7.7 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3l-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.1-.2 0-.4.1-.5l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5L10 8.2c-.2-.4-.4-.4-.6-.4h-.5Z" />
+          </svg>
+          {dict.finalCta.whatsapp} {w.name}
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .final {
+    background: linear-gradient(165deg, var(--onyx), var(--onyx-lift) 62%, var(--oceanic));
+    padding-block: clamp(72px, 9vw, 120px);
+  }
+  .final-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h2 {
+    font-size: clamp(30px, 4.6vw, 48px);
+    letter-spacing: 0;
+    max-inline-size: 22ch;
+  }
+  p {
+    margin-block-start: 16px;
+    font-size: clamp(16px, 1.8vw, 19px);
+    max-inline-size: 44ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-block-start: 34px;
+  }
+  .or {
+    color: var(--ink-inverse-muted);
+    font-size: 14px;
+  }
+  .wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-block-size: 48px;
+    padding-inline: 20px;
+    border-radius: var(--r-pill);
+    color: var(--ink-inverse);
+    font-size: 15px;
+    font-weight: var(--fw-medium);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--wheat) 35%, transparent);
+    transition: box-shadow var(--t-micro) var(--ease-out), transform var(--t-micro) var(--ease-out);
+  }
+  .wa:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .wa:hover {
+      box-shadow: inset 0 0 0 1.5px var(--wheat);
+    }
+  }
+</style>

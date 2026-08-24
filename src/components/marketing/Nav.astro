@@ -1,0 +1,291 @@
+---
+import { LOCALES, LOCALE_META, APP_URL, type Locale } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { locale, dict } = Astro.props;
+const links = [
+  { href: '#leaks', label: dict.nav.product },
+  { href: '#assistant', label: dict.nav.assistant },
+  { href: '#demo', label: dict.nav.demo },
+  { href: '#pricing', label: dict.nav.pricing },
+  { href: '#security', label: dict.nav.security },
+  { href: '#faq', label: dict.nav.faq },
+];
+---
+
+<header class="nav-wrap">
+  <div class="container nav-inner">
+    <a class="brand" href={LOCALE_META[locale].path} aria-label="InPlace">
+      <img src="/brand/inplace-lockup.svg" alt="InPlace" width="118" height="30" />
+    </a>
+
+    <nav class="nav-links" aria-label={dict.nav.menuLabel}>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+
+    <div class="nav-actions">
+      <details class="lang" data-lang-switcher>
+        <summary aria-label={dict.nav.langLabel}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.2" />
+            <path d="M2.8 12h18.4M12 2.8c2.6 2.5 3.9 5.7 3.9 9.2s-1.3 6.7-3.9 9.2c-2.6-2.5-3.9-5.7-3.9-9.2S9.4 5.3 12 2.8Z" />
+          </svg>
+          <span>{LOCALE_META[locale].label}</span>
+        </summary>
+        <ul>
+          {LOCALES.map((l) => (
+            <li>
+              <a href={LOCALE_META[l].path} aria-current={l === locale ? 'true' : undefined} lang={LOCALE_META[l].lang}>
+                {LOCALE_META[l].label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+      <a class="login" href={APP_URL}>{dict.nav.login}</a>
+      <a class="btn btn-primary nav-cta" href="#demo">{dict.nav.cta}</a>
+      <button class="burger" aria-expanded="false" aria-controls="mobile-menu" aria-label={dict.nav.menuLabel}>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label={dict.nav.menuLabel}>
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a href={APP_URL}>{dict.nav.login}</a>
+      <div class="mobile-langs">
+        {LOCALES.map((l) => (
+          <a href={LOCALE_META[l].path} aria-current={l === locale ? 'true' : undefined} lang={LOCALE_META[l].lang}>
+            {LOCALE_META[l].label}
+          </a>
+        ))}
+      </div>
+      <a class="btn btn-primary" href="#demo">{dict.nav.cta}</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav-wrap {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--canvas) 78%, transparent);
+    backdrop-filter: blur(10px);
+    border-block-end: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    block-size: var(--nav-h);
+  }
+  .brand {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .nav-links {
+    display: none;
+    gap: 4px;
+    margin-inline-start: 8px;
+  }
+  .nav-links a {
+    padding: 8px 12px;
+    border-radius: var(--r-pill);
+    color: var(--ink-mid);
+    font-size: 14.5px;
+    font-weight: var(--fw-medium);
+    transition: background-color var(--t-micro) var(--ease-out), color var(--t-micro) var(--ease-out);
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-inline-start: auto;
+  }
+  .login {
+    display: none;
+    color: var(--ink-mid);
+    font-size: 14.5px;
+    font-weight: var(--fw-medium);
+    padding: 8px 10px;
+  }
+  .nav-cta {
+    display: none;
+    min-block-size: 42px;
+    padding-inline: 18px;
+    font-size: 14.5px;
+  }
+
+  .lang {
+    position: relative;
+  }
+  .lang summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: var(--fw-medium);
+    color: var(--ink-mid);
+  }
+  .lang summary::-webkit-details-marker {
+    display: none;
+  }
+  .lang[open] summary {
+    background: var(--action-soft);
+    color: var(--action);
+  }
+  .lang ul {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: calc(100% + 6px);
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    min-inline-size: 150px;
+    background: var(--surface);
+    border-radius: var(--r-control);
+    box-shadow: var(--shadow-panel);
+  }
+  .lang ul a {
+    display: block;
+    padding: 9px 12px;
+    border-radius: 7px;
+    color: var(--ink);
+    font-size: 14.5px;
+  }
+  .lang ul a[aria-current='true'] {
+    background: var(--action-soft);
+    color: var(--action);
+    font-weight: var(--fw-medium);
+  }
+
+  .burger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    inline-size: 44px;
+    block-size: 44px;
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: var(--r-control);
+    cursor: pointer;
+  }
+  .burger span {
+    display: block;
+    inline-size: 20px;
+    block-size: 2px;
+    border-radius: 2px;
+    background: var(--ink);
+    transition: transform var(--t-micro) var(--ease-out);
+  }
+  .burger[aria-expanded='true'] span:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+  .burger[aria-expanded='true'] span:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  .mobile-menu {
+    border-block-start: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow-panel);
+  }
+  .mobile-menu nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px clamp(20px, 4vw, 44px) 22px;
+  }
+  .mobile-menu nav > a {
+    padding: 12px 4px;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: var(--fw-medium);
+    border-block-end: 1px solid var(--line);
+  }
+  .mobile-langs {
+    display: flex;
+    gap: 8px;
+    padding-block: 14px;
+  }
+  .mobile-langs a {
+    padding: 8px 14px;
+    border-radius: var(--r-pill);
+    background: var(--surface-sunken);
+    color: var(--ink-mid);
+    font-size: 14px;
+  }
+  .mobile-langs a[aria-current='true'] {
+    background: var(--action-soft);
+    color: var(--action);
+    font-weight: var(--fw-medium);
+  }
+  .mobile-menu .btn {
+    margin-block-start: 14px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nav-links a:hover {
+      background: var(--action-soft);
+      color: var(--action);
+    }
+    .lang summary:hover,
+    .login:hover {
+      color: var(--action);
+    }
+    .lang ul a:hover {
+      background: var(--action-wash);
+    }
+  }
+  @media (min-width: 1024px) {
+    .nav-links {
+      display: flex;
+    }
+    .login,
+    .nav-cta {
+      display: inline-flex;
+    }
+    .burger {
+      display: none;
+    }
+    .mobile-menu {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const burger = document.querySelector<HTMLButtonElement>('.burger');
+  const menu = document.getElementById('mobile-menu');
+  burger?.addEventListener('click', () => {
+    const open = burger.getAttribute('aria-expanded') === 'true';
+    burger.setAttribute('aria-expanded', String(!open));
+    if (menu) menu.hidden = open;
+  });
+  menu?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) {
+      burger?.setAttribute('aria-expanded', 'false');
+      if (menu) menu.hidden = true;
+    }
+  });
+  // Language dropdown: close on outside click / Escape.
+  const lang = document.querySelector<HTMLDetailsElement>('[data-lang-switcher]');
+  document.addEventListener('click', (e) => {
+    if (lang?.open && !lang.contains(e.target as Node)) lang.open = false;
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lang?.open) lang.open = false;
+  });
+</script>

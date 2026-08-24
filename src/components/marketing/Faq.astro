@@ -1,0 +1,92 @@
+---
+import type { Dict } from '../../content/he';
+
+interface Props {
+  dict: Dict;
+}
+const { dict } = Astro.props;
+---
+
+<section class="section faq" id="faq">
+  <div class="container faq-grid">
+    <h2 class="reveal">{dict.faq.h2}</h2>
+    <div class="faq-list">
+      {dict.faq.items.map((item, i) => (
+        <details class="faq-item reveal" {...(i === 0 ? { open: true } : {})}>
+          <summary>
+            <span>{item.q}</span>
+            <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </summary>
+          <p>{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    background: var(--canvas);
+  }
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  h2 {
+    font-size: clamp(26px, 3.4vw, 36px);
+    letter-spacing: 0;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .faq-item {
+    border-block-start: 1px solid var(--line-strong);
+  }
+  .faq-item:last-child {
+    border-block-end: 1px solid var(--line-strong);
+  }
+  summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 18px;
+    cursor: pointer;
+    font-size: 16.5px;
+    font-weight: var(--fw-medium);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .chev {
+    flex-shrink: 0;
+    color: var(--ink-muted);
+    transition: rotate var(--t-micro) var(--ease-out);
+  }
+  .faq-item[open] .chev {
+    rotate: 180deg;
+  }
+  .faq-item p {
+    padding-block-end: 20px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink-mid);
+    max-inline-size: 60ch;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    summary:hover {
+      color: var(--oceanic);
+    }
+  }
+  @media (min-width: 1024px) {
+    .faq-grid {
+      grid-template-columns: 0.8fr 1.6fr;
+      gap: 60px;
+    }
+  }
+</style>

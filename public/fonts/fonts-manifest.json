@@ -1,0 +1,42 @@
+[
+ {
+  "subset": "hebrew",
+  "family": "Frank Ruhl Libre",
+  "url": "https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW7Ll4ajn.woff2"
+ },
+ {
+  "subset": "latin-ext",
+  "family": "Frank Ruhl Libre",
+  "url": "https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW77l4ajn.woff2"
+ },
+ {
+  "subset": "latin",
+  "family": "Frank Ruhl Libre",
+  "url": "https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW7Dl4Q.woff2"
+ },
+ {
+  "subset": "hebrew",
+  "family": "Heebo",
+  "url": "https://fonts.gstatic.com/s/heebo/v28/NGS6v5_NC0k9P9H0TbFzsQ.woff2"
+ },
+ {
+  "subset": "math",
+  "family": "Heebo",
+  "url": "https://fonts.gstatic.com/s/heebo/v28/NGS6v5_NC0k9P9GKTbFzsQ.woff2"
+ },
+ {
+  "subset": "symbols",
+  "family": "Heebo",
+  "url": "https://fonts.gstatic.com/s/heebo/v28/NGS6v5_NC0k9P9GYTbFzsQ.woff2"
+ },
+ {
+  "subset": "latin-ext",
+  "family": "Heebo",
+  "url": "https://fonts.gstatic.com/s/heebo/v28/NGS6v5_NC0k9P9H4TbFzsQ.woff2"
+ },
+ {
+  "subset": "latin",
+  "family": "Heebo",
+  "url": "https://fonts.gstatic.com/s/heebo/v28/NGS6v5_NC0k9P9H2TbE.woff2"
+ }
+]

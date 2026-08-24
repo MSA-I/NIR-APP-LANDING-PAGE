@@ -1,0 +1,12 @@
+# internal research material - never publish
+InPlace_Landing_Page_Research_2026-08-24.docx
+*.docx
+
+node_modules/
+dist/
+.astro/
+.unlazy/
+.unlazy-hook-state.json
+*.log
+.DS_Store
+artifacts/screenshots/*.png

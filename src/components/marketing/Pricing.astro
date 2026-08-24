@@ -1,0 +1,195 @@
+---
+import { PRICING, APP_URL, type Locale } from '../../lib/i18n';
+import type { Dict } from '../../content/he';
+
+interface Props {
+  locale: Locale;
+  dict: Dict;
+}
+const { locale, dict } = Astro.props;
+const p = dict.pricing;
+const isIls = locale === 'he';
+const fmt = (n: number) => new Intl.NumberFormat(locale === 'he' ? 'he-IL' : locale === 'fr' ? 'fr-FR' : 'en-US').format(n);
+const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
+  isIls ? (period === 'm' ? plan.ils : plan.ilsYear) : period === 'm' ? plan.usd : plan.usdYear;
+---
+
+<section class="section pricing" id="pricing">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>{p.h2}</h2>
+      <p>{p.sub}</p>
+    </div>
+
+    <div class="period-toggle" role="radiogroup" aria-label={`${p.monthly} / ${p.yearly}`} data-pricing-toggle>
+      <button role="radio" aria-checked="true" data-period-btn="m">{p.monthly}</button>
+      <button role="radio" aria-checked="false" data-period-btn="y">{p.yearly}</button>
+      <span class="period-note">{p.yearlyNote}</span>
+    </div>
+
+    <div class="plans" data-pricing-root data-period="m">
+      {PRICING.plans.map((plan) => {
+        const info = p.plans[plan.id as keyof typeof p.plans];
+        const highlighted = plan.id === 'premium';
+        return (
+          <article class={`plan card reveal ${highlighted ? 'plan-hi' : ''}`}>
+            {highlighted && 'highlight' in info && <span class="plan-flag">{(info as { highlight: string }).highlight}</span>}
+            <h3>{info.name}</h3>
+            <p class="tagline">{info.tagline}</p>
+            <div class="price num" data-price>
+              <span class="price-m"><span class="amount">{isIls ? `${fmt(price(plan, 'm'))} ₪` : `$${fmt(price(plan, 'm'))}`}</span><span class="per">{p.perMonth}</span></span>
+              <span class="price-y"><span class="amount">{isIls ? `${fmt(price(plan, 'y'))} ₪` : `$${fmt(price(plan, 'y'))}`}</span><span class="per">{p.perYear}</span></span>
+            </div>
+            <ul class="quota">
+              <li><span class="num">{fmt(plan.docs)}</span> {p.quota.docs}</li>
+              <li><span class="num">{fmt(plan.pages)}</span> {p.quota.pages}</li>
+              <li><span class="num">{fmt(plan.assistant)}</span> {p.quota.assistant}</li>
+            </ul>
+            {plan.id === 'free' && (
+              <a class="btn btn-primary plan-cta" href={APP_URL}>{p.freeCta}</a>
+            )}
+          </article>
+        );
+      })}
+    </div>
+
+    <p class="pricing-notes">{p.introNote} {p.upgradeNote} {p.vatNote}</p>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    background: var(--canvas);
+  }
+  .period-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-block-end: 28px;
+  }
+  .period-toggle button {
+    border: none;
+    background: var(--surface-sunken);
+    color: var(--ink-mid);
+    padding: 9px 20px;
+    border-radius: var(--r-pill);
+    font-size: 14.5px;
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+    transition: background-color var(--t-micro) var(--ease-out), color var(--t-micro) var(--ease-out);
+  }
+  .period-toggle button[aria-checked='true'] {
+    background: var(--onyx);
+    color: var(--wheat);
+  }
+  .period-note {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-inline-start: 8px;
+  }
+  .plans {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .plan {
+    position: relative;
+    padding: 28px 26px;
+    display: flex;
+    flex-direction: column;
+  }
+  .plan-hi {
+    background: var(--oceanic);
+    color: var(--on-action);
+  }
+  .plan-hi .tagline,
+  .plan-hi .quota,
+  .plan-hi .per {
+    color: color-mix(in srgb, var(--on-action) 75%, transparent);
+  }
+  .plan-flag {
+    position: absolute;
+    inset-block-start: 18px;
+    inset-inline-end: 20px;
+    background: var(--wheat);
+    color: var(--oceanic);
+    font-size: 12px;
+    font-weight: var(--fw-medium);
+    padding: 4px 12px;
+    border-radius: var(--r-pill);
+  }
+  .plan h3 {
+    font-size: 20px;
+  }
+  .tagline {
+    margin-block-start: 4px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+  }
+  .price {
+    margin-block-start: 20px;
+  }
+  .price .amount {
+    font-size: 34px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: -0.01em;
+  }
+  .price .per {
+    margin-inline-start: 7px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+  }
+  .price-y {
+    display: none;
+  }
+  [data-period='y'] .price-m {
+    display: none;
+  }
+  [data-period='y'] .price-y {
+    display: inline;
+  }
+  .quota {
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 14px;
+    color: var(--ink-mid);
+  }
+  .quota .num {
+    font-weight: var(--fw-semibold);
+    color: currentColor;
+  }
+  .plan-cta {
+    margin-block-start: 24px;
+  }
+  .pricing-notes {
+    margin-block-start: 24px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    max-inline-size: 70ch;
+  }
+  @media (min-width: 768px) {
+    .plans {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .plans {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-pricing-root]');
+  document.querySelectorAll<HTMLButtonElement>('[data-period-btn]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll<HTMLButtonElement>('[data-period-btn]').forEach((b) => b.setAttribute('aria-checked', String(b === btn)));
+      root?.setAttribute('data-period', btn.dataset.periodBtn || 'm');
+    });
+  });
+</script>

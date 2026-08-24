@@ -1,0 +1,337 @@
+@import './tokens.css';
+@import './islands.css';
+
+/* ---------- Fonts (self-hosted, OFL) ----------
+   Body: Heebo variable. Display: Frank Ruhl Libre variable (headings only).
+   The shekel sign U+20AA lives in the hebrew subsets, so they load on en/fr too. */
+@font-face {
+  font-family: 'Heebo';
+  src: url('/fonts/heebo-var-hebrew.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0590-05FF, U+FB1D-FB4F, U+200C-2010, U+20AA, U+25CC;
+}
+@font-face {
+  font-family: 'Heebo';
+  src: url('/fonts/heebo-var-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Frank Ruhl Libre';
+  src: url('/fonts/frl-var-hebrew.woff2') format('woff2');
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0590-05FF, U+FB1D-FB4F, U+200C-2010, U+20AA, U+25CC;
+}
+@font-face {
+  font-family: 'Frank Ruhl Libre';
+  src: url('/fonts/frl-var-latin.woff2') format('woff2');
+  font-weight: 500 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Product-parity fallback (kept from the app's free tier) */
+@font-face {
+  font-family: 'Noto Sans Hebrew';
+  src: url('/fonts/NotoSansHebrew-Hebrew.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0590-05FF, U+FB1D-FB4F, U+200C-2010, U+20AA, U+25CC;
+}
+@font-face {
+  font-family: 'Noto Sans Hebrew';
+  src: url('/fonts/NotoSansHebrew-Latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+img,
+svg,
+video {
+  display: block;
+  max-inline-size: 100%;
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+strong,
+b {
+  font-weight: var(--fw-semibold);
+}
+a {
+  color: var(--action);
+  text-decoration: none;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--fw-semibold);
+  line-height: 1.18;
+  text-wrap: balance;
+}
+/* Display voice: Frank Ruhl Libre carries the page-level headings only.
+   Weights capped at 600 (Hebrew counters fill in above that). */
+h1,
+h2 {
+  font-family: var(--font-display);
+  letter-spacing: 0;
+}
+p {
+  max-inline-size: 65ch;
+}
+
+/* Numbers: tabular, product law */
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.tech-id {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Focus ---------- */
+:focus-visible {
+  outline: 2px solid var(--action);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Layout primitives ---------- */
+.container {
+  inline-size: 100%;
+  max-inline-size: var(--page-max);
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 44px);
+}
+.section {
+  padding-block: clamp(64px, 9vw, 120px);
+}
+.section-head {
+  max-inline-size: 720px;
+  margin-block-end: clamp(32px, 5vw, 56px);
+}
+.section-head h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing: 0;
+}
+.section-head p {
+  margin-block-start: 14px;
+  font-size: clamp(16px, 1.6vw, 18px);
+  color: var(--ink-mid);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-block-size: 48px;
+  padding-inline: 24px;
+  border: none;
+  border-radius: var(--r-pill);
+  font-size: 16px;
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform var(--t-micro) var(--ease-out), background-color var(--t-micro) var(--ease-out), box-shadow var(--t-micro) var(--ease-out);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn-primary {
+  background: var(--action);
+  color: var(--on-action);
+  box-shadow: 0 1px 2px rgba(0, 63, 71, 0.25), 0 6px 18px rgba(0, 63, 71, 0.22);
+}
+.btn-primary:active {
+  background: var(--action-press);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--action);
+  box-shadow: inset 0 0 0 1.5px var(--action-line);
+}
+.btn-onyx {
+  background: var(--wheat);
+  color: var(--onyx);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: var(--action-hover);
+    box-shadow: 0 2px 4px rgba(0, 63, 71, 0.25), 0 10px 26px rgba(0, 63, 71, 0.28);
+  }
+  .btn-ghost:hover {
+    background: var(--action-wash);
+  }
+  .link-arrow:hover .arrow {
+    translate: -4px 0;
+  }
+  [dir='ltr'] .link-arrow:hover .arrow {
+    translate: 4px 0;
+  }
+}
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: var(--fw-medium);
+}
+.link-arrow .arrow {
+  transition: translate var(--t-micro) var(--ease-out);
+}
+
+/* ---------- Status badges (product language) ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  font-size: 12.5px;
+  font-weight: var(--fw-medium);
+  line-height: 1.4;
+}
+.badge-done {
+  background: var(--done-soft);
+  color: var(--done-fg);
+}
+.badge-await {
+  background: var(--await-soft);
+  color: var(--await-fg);
+}
+.badge-alert {
+  background: var(--alert-soft);
+  color: var(--alert-fg);
+}
+.badge-info {
+  background: var(--info-soft);
+  color: var(--info-fg);
+}
+.badge-idle {
+  background: var(--idle-soft);
+  color: var(--idle-fg);
+}
+
+/* ---------- Cards: borderless, shadow separation (product T7 law) ---------- */
+.card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Product-UI replica primitives ---------- */
+.pui {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-panel);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.pui-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  border-block-end: 1px solid var(--line);
+  font-weight: var(--fw-medium);
+  font-size: 13px;
+  color: var(--ink-mid);
+}
+.pui-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  border-block-end: 1px solid var(--line);
+}
+.pui-row:last-child {
+  border-block-end: none;
+}
+
+/* ---------- Entrance animation (one pattern, IntersectionObserver adds .in) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    translate: 0 14px;
+    transition: opacity var(--t-enter) var(--ease-out), translate var(--t-enter) var(--ease-out);
+  }
+  .reveal.in {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .pulse-once {
+    animation: pulse-once 900ms var(--ease-out) 1;
+  }
+  @keyframes pulse-once {
+    0% {
+      box-shadow: 0 0 0 0 rgba(190, 18, 60, 0.35);
+    }
+    100% {
+      box-shadow: 0 0 0 14px rgba(190, 18, 60, 0);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ---------- Utility ---------- */
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.on-onyx {
+  color: var(--ink-inverse);
+}
+.on-onyx h2,
+.on-onyx h3 {
+  color: var(--ink-inverse);
+}
+.on-onyx p {
+  color: var(--ink-inverse-mid);
+}
