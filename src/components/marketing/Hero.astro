@@ -10,16 +10,28 @@ interface Props {
 const { locale, dict } = Astro.props;
 const ui = dict.heroUi;
 const fx = getFixtures(locale);
+
+// Split the headline around the accent word (build-time; text stays static DOM).
+const accent = dict.hero.h1Accent;
+const accentAt = accent ? dict.hero.h1.indexOf(accent) : -1;
+const h1Before = accentAt >= 0 ? dict.hero.h1.slice(0, accentAt) : dict.hero.h1;
+const h1After = accentAt >= 0 ? dict.hero.h1.slice(accentAt + accent.length) : '';
 ---
 
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-copy">
-      <h1>{dict.hero.h1}</h1>
+      <h1>
+        {accentAt >= 0 ? (
+          <>{h1Before}<em class="accent-word">{accent}</em>{h1After}</>
+        ) : (
+          dict.hero.h1
+        )}
+      </h1>
       <p class="sub">{dict.hero.sub}</p>
       <div class="ctas">
-        <a class="btn btn-primary" href="#demo">{dict.hero.ctaPrimary}</a>
-        <a class="btn btn-ghost" href="#trail">{dict.hero.ctaSecondary}</a>
+        <a class="btn btn-primary" href="#demo" data-track="cta_demo_click" data-track-place="hero">{dict.hero.ctaPrimary}</a>
+        <a class="btn btn-ghost" href="#trail" data-track="cta_how_click" data-track-place="hero">{dict.hero.ctaSecondary}</a>
       </div>
     </div>
 

@@ -1,18 +1,15 @@
 [
  {
   "subset": "hebrew",
-  "family": "Frank Ruhl Libre",
-  "url": "https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW7Ll4ajn.woff2"
- },
- {
-  "subset": "latin-ext",
-  "family": "Frank Ruhl Libre",
-  "url": "https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW77l4ajn.woff2"
+  "family": "Suez One",
+  "file": "suez-one-hebrew.woff2",
+  "url": "https://fonts.gstatic.com/s/suezone/v15/taiJGmd_EZ6rqscQgOFMmouQ-A.woff2"
  },
  {
   "subset": "latin",
-  "family": "Frank Ruhl Libre",
-  "url": "https://fonts.gstatic.com/s/frankruhllibre/v23/j8_w6_fAw7jrcalD7oKYNX0QfAnPW7Dl4Q.woff2"
+  "family": "Suez One",
+  "file": "suez-one-latin.woff2",
+  "url": "https://fonts.gstatic.com/s/suezone/v15/taiJGmd_EZ6rqscQgOFOmos.woff2"
  },
  {
   "subset": "hebrew",

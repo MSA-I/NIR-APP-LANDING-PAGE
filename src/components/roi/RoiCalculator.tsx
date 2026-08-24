@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Dict } from '../../content/he';
 import type { Locale } from '../../lib/i18n';
+import { trackOnce } from '../../lib/analytics';
 
 const INTL: Record<Locale, { tag: string; currency: string }> = {
   he: { tag: 'he-IL', currency: 'ILS' },
@@ -64,7 +65,11 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
               min={0}
               step={f.step ?? 1}
               value={f.value}
-              onChange={(e) => f.set(Math.max(0, Number(e.target.value) || 0))}
+              onChange={(e) => {
+                f.set(Math.max(0, Number(e.target.value) || 0));
+                // §16.3: the visitor translated the product into their own numbers.
+                trackOnce('roi_completed', { field: f.id });
+              }}
             />
           </div>
         ))}

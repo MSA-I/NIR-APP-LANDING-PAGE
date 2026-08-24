@@ -24,6 +24,8 @@ export const he = {
 
   hero: {
     h1: 'רואים לפני שמשלמים.',
+    /* The one word the promise hinges on; Hero.astro renders it as .accent-word. */
+    h1Accent: 'לפני',
     sub: 'InPlace מחברת ספקים, מחירונים, הזמנות, קבלת סחורה, חשבוניות ותשלומים, כדי שתדעו בתוך שניות מה דורש טיפול לפני שהכסף יוצא.',
     ctaPrimary: 'נסו דמו חי',
     ctaSecondary: 'איך זה עובד',

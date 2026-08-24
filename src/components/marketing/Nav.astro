@@ -47,7 +47,7 @@ const links = [
         </ul>
       </details>
       <a class="login" href={APP_URL}>{dict.nav.login}</a>
-      <a class="btn btn-primary nav-cta" href="#demo">{dict.nav.cta}</a>
+      <a class="btn btn-primary nav-cta" href="#demo" data-track="cta_demo_click" data-track-place="nav">{dict.nav.cta}</a>
       <button class="burger" aria-expanded="false" aria-controls="mobile-menu" aria-label={dict.nav.menuLabel}>
         <span></span><span></span>
       </button>
@@ -65,7 +65,7 @@ const links = [
           </a>
         ))}
       </div>
-      <a class="btn btn-primary" href="#demo">{dict.nav.cta}</a>
+      <a class="btn btn-primary" href="#demo" data-track="cta_demo_click" data-track-place="nav-mobile">{dict.nav.cta}</a>
     </nav>
   </div>
 </header>

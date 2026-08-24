@@ -176,6 +176,64 @@ async function runA11y() {
   console.log('A11Y_OK');
 }
 
+async function runAnalytics() {
+  const { ctx, page: p } = await page();
+  await p.goto(BASE + '/', { waitUntil: 'networkidle' });
+  const has = (name) =>
+    p.evaluate((n) => (window.dataLayer || []).some((e) => e.event === n), name);
+  const waitFor = async (name) => {
+    for (let i = 0; i < 20; i++) {
+      if (await has(name)) return;
+      await p.waitForTimeout(250);
+    }
+    fail(`analytics event ${name} never reached dataLayer`);
+  };
+
+  // Static CTA delegation
+  await p.locator('.hero .btn-primary').click();
+  await waitFor('cta_demo_click');
+
+  // Guided demo: started + completed (two scenarios seen)
+  await p.locator('#demo').scrollIntoViewIfNeeded();
+  const root = p.locator('[data-demo-root]');
+  await root.waitFor({ state: 'visible' });
+  await root.getByRole('radio', { name: 'קבלה חלקית' }).click();
+  await waitFor('demo_started');
+  await waitFor('demo_completed');
+
+  // Assistant: example run + source opened
+  await p.locator('#assistant').scrollIntoViewIfNeeded();
+  const asst = p.locator('.asst');
+  await asst.waitFor({ state: 'visible' });
+  await asst.getByRole('radio', { name: /זיכוי/ }).click();
+  await waitFor('assistant_example_run');
+  await asst.locator('.asst-open').click();
+  await waitFor('assistant_source_opened');
+
+  // ROI: first assumption edit
+  await p.locator('#roi').scrollIntoViewIfNeeded();
+  await p.locator('.roi').waitFor({ state: 'visible' });
+  for (let i = 0; i < 8 && !(await has('roi_completed')); i++) {
+    await p.locator('#roi-docs').fill(String(200 + i));
+    await p.waitForTimeout(300);
+  }
+  await waitFor('roi_completed');
+
+  // Pilot CTA (demo summary link carries data-track)
+  await p.locator('[data-demo-root] [data-track="pilot_requested"]').click();
+  await waitFor('pilot_requested');
+
+  // Web vitals report on hide
+  await p.evaluate(() => {
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await waitFor('web_vitals');
+
+  await ctx.close();
+  console.log('ANALYTICS_OK');
+}
+
 async function runScreenshots() {
   mkdirSync('artifacts/screenshots', { recursive: true });
   for (const loc of LOCALES) {
@@ -203,6 +261,7 @@ try {
     overflow: runOverflow,
     'reduced-motion': runReduced,
     a11y: runA11y,
+    analytics: runAnalytics,
     screenshots: runScreenshots,
   };
   if (mode === 'all') {

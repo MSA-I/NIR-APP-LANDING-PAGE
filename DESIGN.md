@@ -32,11 +32,26 @@ it, never a substitute for it.
 
 ## Type
 
-Heebo variable (400/500/600) carries display and body; `--font-display` aliases
-`--font-sans` by owner decision (serif display rejected 24.08.2026). Fallback
-Noto Sans Hebrew (product parity) → Arial → system-ui. Display tracking:
-h1 −0.022em, h2 −0.014em. Numbers always `.num` (tabular; Heebo digits are
-uniform-width by construction). Money is locale-formatted from fixtures/Intl:
+Two voices (owner decision 24.08 r2, after a fintech reference pass across
+refero/awwwards/land-book — the Brex pattern: a display face used selectively
+for hero-level statements, single weight, tight leading):
+
+- **Display: Suez One 400** (`--font-display`), h1/h2 only. Hebrew-native slab,
+  flat tracking (0), leading 1.12/1.16. Self-hosted woff2 hebrew+latin subsets
+  (6.7KB + 15KB), per-locale preload. The earlier literary serif (Frank Ruhl)
+  stays rejected; Suez One is headline authority, not literature.
+- **Body/UI: Heebo variable** (400/500/600), unchanged. Fallback Noto Sans
+  Hebrew (product parity) → Arial → system-ui.
+
+Hero accent: the promise's hinge word (`hero.h1Accent` — לפני/before/avant)
+renders as `.accent-word`: Oceanic ink over a Wheat underline bar. One accent
+does the talking; `.on-onyx` swaps to `--oceanic-bright`, no bar.
+
+Editorial eyebrows: every `.section-head`/`.trail-head` carries an auto-numbered
+kicker (CSS counter, 01…08, tracked-out 13px) — no copy to translate, empty
+alt keeps it off screen readers.
+
+Numbers always `.num` (tabular). Money is locale-formatted from fixtures/Intl:
 he `1,240 ₪` (trailing ₪), en `₪1,240`, fr `1 240 ₪` with comma decimals.
 The ₪ glyph lives in the hebrew subset, which therefore loads on all locales.
 
@@ -64,6 +79,18 @@ HEAD-gated on the poster, sources on `data-src` until `window.load`, muted loop
 `playsinline`, poster-first for LCP. Assets and their generation audit live in
 `docs/ASSETS.md`; regenerate through the still-first pipeline (image anchor,
 then image-to-video with start+end anchors).
+
+## Analytics
+
+Provider-agnostic layer (`src/lib/analytics.ts`, zero deps): every event lands
+in `window.dataLayer` and forwards to `plausible()`/`gtag()` when present.
+Events (research doc §16.3): `demo_started`, `demo_completed` (>=2 scenarios
+seen), `demo_scenario_view`, `assistant_example_run`, `assistant_source_opened`,
+`roi_completed` (first assumption edit), `pilot_requested`, `cta_demo_click`,
+`cta_how_click`, `web_vitals` (hand-rolled LCP/CLS/INP observers, reported once
+on hide). Static CTAs use `data-track`/`data-track-place` attributes with one
+delegated listener in Base.astro; islands import `track`/`trackOnce`.
+Verified end-to-end by `node tests/e2e.mjs analytics`.
 
 ## Guardrails (runnable)
 

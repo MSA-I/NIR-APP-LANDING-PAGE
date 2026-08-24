@@ -29,6 +29,7 @@ export const en: Dict = {
 
   hero: {
     h1: 'See it before you pay.',
+    h1Accent: 'before',
     sub: 'InPlace connects suppliers, price lists, orders, goods receiving, invoices and payments, so you know within seconds what needs attention before the money goes out.',
     ctaPrimary: 'Try the live demo',
     ctaSecondary: 'How it works',

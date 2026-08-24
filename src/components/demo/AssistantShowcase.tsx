@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Dict } from '../../content/he';
+import { track } from '../../lib/analytics';
 
 type Role = 'owner' | 'office' | 'accountant';
 
@@ -47,7 +48,10 @@ export default function AssistantShowcase({ dict }: { dict: Dict }) {
                 role="radio"
                 aria-checked={runId === r.id}
                 className={`asst-q ${runId === r.id ? 'on' : ''}`}
-                onClick={() => setRunId(r.id)}
+                onClick={() => {
+                  setRunId(r.id);
+                  track('assistant_example_run', { run: r.id, role, permitted: (r.roles as readonly string[]).includes(role) });
+                }}
               >
                 {r.question}
               </button>
@@ -81,7 +85,7 @@ export default function AssistantShowcase({ dict }: { dict: Dict }) {
                 </svg>
                 {run.source}
               </span>
-              <a className="asst-open" href="#demo">
+              <a className="asst-open" href="#demo" onClick={() => track('assistant_source_opened', { run: run.id, role })}>
                 {a.openSource}
               </a>
             </div>

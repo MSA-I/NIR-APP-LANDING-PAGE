@@ -94,6 +94,21 @@ Shell: bash (Git Bash, Windows). CWD: repo root.
   EXPECT: main
   EVIDENCE: exit=0; shell=C:\WINDOWS\system32\cmd.exe; cwd=D:\משה פרוייקטים\פיתוח אתרים\NIR-APP-LANDING-PAGE; path=838a14bfbe73/60 entries; output=?? DESIGN.md | 6acc2af10a8002292db68ff02924a003b5fc724e	refs/heads/main
 
+## Round 2 (2026-08-24, owner request: analytics + display font + reference-driven polish)
+
+- [x] G21: Analytics events per research doc §16.3 wired and verified: demo_started, demo_completed, assistant_example_run, assistant_source_opened, roi_completed, pilot_requested, cta_demo_click, web_vitals; provider-agnostic layer (dataLayer + plausible/gtag when present); zero new dependencies
+  CHECK: node tests/e2e.mjs analytics
+  EXPECT: ANALYTICS_OK
+  EVIDENCE: exit=0; output=ANALYTICS_OK (delegated CTA click, demo start/complete, assistant run+source, roi edit, pilot click, web_vitals on hide — all observed in window.dataLayer)
+- [x] G22: Distinctive display face: Suez One (OFL) self-hosted woff2 hebrew+latin subsets, applied to h1/h2 only; Heebo remains body; licensing + manifest updated; JS budget unaffected
+  CHECK: npm run build && node scripts/check-budget.mjs
+  EXPECT: BUDGET_OK + Suez One in built CSS
+  EVIDENCE: suez-one-hebrew.woff2 6,760B + suez-one-latin.woff2 15,060B in public/fonts; @font-face + per-locale preload in build; BUDGET_OK total 110.2KB gzip; LICENSES.md + fonts-manifest.json updated; screenshots he/en hero show Suez One live
+- [x] G23: Reference-driven polish (refero/awwwards/land-book fintech patterns, browsed 24.08): hero accent word treatment + numbered editorial section eyebrows; all existing gates re-run green; fresh screenshots captured and reviewed
+  CHECK: npm run verify && node tests/e2e.mjs all
+  EXPECT: all *_OK
+  EVIDENCE: VERIFY_OK (I18N SEO TOKENS SECTIONS PRICING CLAIMS RTL BUDGET); e2e all => DEMO ASSISTANT ROI LANG OVERFLOW REDUCED A11Y ANALYTICS SCREENSHOTS all OK; r2-leaks-head.png (eyebrow 01 on paper), r2-trail-head.png (eyebrow 02 on onyx), he/en hero screenshots (accent word Oceanic+Wheat) reviewed in-session
+
 ## Evidence log (2026-08-24)
 
 - G1..G16: npm run build clean; npm run verify => I18N_OK SEO_OK TOKENS_OK SECTIONS_OK PRICING_OK CLAIMS_OK RTL_OK BUDGET_OK (JS total 109.0KB gzip); node tests/e2e.mjs all => DEMO_OK ASSISTANT_OK ROI_OK LANG_OK OVERFLOW_OK REDUCED_OK A11Y_OK SCREENSHOTS_OK. Shell: Git Bash, repo root.
@@ -101,3 +116,8 @@ Shell: bash (Git Bash, Windows). CWD: repo root.
 - G18: DONE. Owner approved generation (chat 24.08). Takes 1-2 rejected (documented in docs/ASSETS.md); approved pipeline: GPT Image 2 still (S1) -> Seedance 2.0 image-to-video with start+end anchors. Shipped: hero-loop.webm 939KB / .mp4 2.4MB / poster.webp 62.5KB / mobile.mp4 273KB, all measured with ffprobe; hero screenshot with live video captured (video state playing, currentSrc set).
 - G19: DONE. Fresh-context reviewer (opus): initial fix-then-ship with 14 material findings; all applied in one batch; verdict pass scored 14/14 RESOLVED on fresh captures; final disposition SHIP. Full log: docs/FINISH-REVIEW.md.
 - G20: pushed to https://github.com/MSA-I/NIR-APP-LANDING-PAGE.git main (new branch main -> origin/main).
+
+## Evidence log — round 2 (2026-08-24, later same day)
+
+- Reference browsing (owner-requested): fontesk.com/tag/hebrew (both pages; premium Hebrew display candidates thin — novelty-heavy), fontshare.com (confirmed: no Hebrew coverage, Latin-only ITF catalog), styles.refero.design fintech search (Brex DESIGN.md read in full — display face selective use pattern; Slash/Jeton/Mercury observed), land-book.com procurement search (Zip, Pivot), awwwards.com/websites/fintech (wCopilot serif-emphasis pattern). Font decision: Suez One (OFL, Hebrew-native slab, single weight) — distinctive without re-opening the rejected Frank Ruhl literary-serif direction.
+- G21..G23: evidence inline above. Full battery re-run green after changes; JS 110.2KB gzip (was 109.5KB; +0.7KB = analytics layer).

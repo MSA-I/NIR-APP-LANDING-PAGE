@@ -70,11 +70,13 @@
   --r-control: 10px;
   --r-pill: 999px;
 
-  /* Type — Heebo carries everything (owner decision 24.08: serif display rejected
-     as too literary). Heebo is the metric twin of the product's Noto Sans Hebrew
-     fallback, so site and app read as one brand. OFL. */
+  /* Type — Heebo carries body/UI. Display: Suez One (owner decision 24.08 r2:
+     distinctive display approved after fintech reference pass; the earlier
+     literary serif (Frank Ruhl) stays rejected). Suez One is a Hebrew-native
+     slab display, single weight 400, OFL — headline authority without AI-gradient
+     hype. Applied to h1/h2 only, Brex-style selective use. */
   --font-sans: 'Heebo', 'Noto Sans Hebrew', Arial, system-ui, sans-serif;
-  --font-display: var(--font-sans);
+  --font-display: 'Suez One', 'Heebo', 'Noto Sans Hebrew', Arial, system-ui, sans-serif;
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;

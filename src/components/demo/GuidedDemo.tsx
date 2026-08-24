@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { Dict } from '../../content/he';
 import { getFixtures, type RoleId, type ScenarioId } from '../../content/fixtures';
 import type { Locale } from '../../lib/i18n';
+import { track, trackOnce } from '../../lib/analytics';
 
 const stateToBadge: Record<string, string> = {
   done: 'badge-done',
@@ -15,6 +16,22 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
   const fixtures = useMemo(() => getFixtures(locale), [locale]);
   const [role, setRole] = useState<RoleId>('owner');
   const [scenarioId, setScenarioId] = useState<ScenarioId>('price');
+  // demo_started on first interaction; demo_completed once a second scenario was seen (§16.3).
+  const seen = useRef<Set<ScenarioId>>(new Set(['price']));
+  const markScenario = (id: ScenarioId) => {
+    trackOnce('demo_started', { via: 'scenario' });
+    seen.current.add(id);
+    if (seen.current.size >= 2) trackOnce('demo_completed', { scenarios: seen.current.size });
+    track('demo_scenario_view', { scenario: id, role });
+  };
+  const pickRole = (r: RoleId) => {
+    trackOnce('demo_started', { via: 'role' });
+    setRole(r);
+  };
+  const pickScenario = (id: ScenarioId) => {
+    markScenario(id);
+    setScenarioId(id);
+  };
   const scenario = fixtures.scenarios.find((s) => s.id === scenarioId) ?? fixtures.scenarios[0];
   const access = scenario.access[role];
   const roleLabels: Record<RoleId, string> = {
@@ -32,7 +49,7 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
           </span>
           <div className="asst-pills" role="radiogroup" aria-labelledby="gd-role">
             {(Object.keys(roleLabels) as RoleId[]).map((r) => (
-              <button key={r} role="radio" aria-checked={role === r} className={`asst-pill ${role === r ? 'on' : ''}`} onClick={() => setRole(r)}>
+              <button key={r} role="radio" aria-checked={role === r} className={`asst-pill ${role === r ? 'on' : ''}`} onClick={() => pickRole(r)}>
                 {roleLabels[r]}
               </button>
             ))}
@@ -49,7 +66,7 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
                 role="radio"
                 aria-checked={scenarioId === s.id}
                 className={`asst-pill ${scenarioId === s.id ? 'on' : ''}`}
-                onClick={() => setScenarioId(s.id as ScenarioId)}
+                onClick={() => pickScenario(s.id as ScenarioId)}
               >
                 {s.label}
               </button>
@@ -111,10 +128,16 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
           <strong>{d.summaryTitle}:</strong> {access.kind === 'full' ? scenario.summary : access.note}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-          <button className="gdemo-restart" onClick={() => setScenarioId(fixtures.scenarios[(fixtures.scenarios.findIndex((s) => s.id === scenarioId) + 1) % fixtures.scenarios.length].id)}>
+          <button
+            className="gdemo-restart"
+            onClick={() => {
+              const next = fixtures.scenarios[(fixtures.scenarios.findIndex((s) => s.id === scenarioId) + 1) % fixtures.scenarios.length].id;
+              pickScenario(next);
+            }}
+          >
             {d.restart}
           </button>
-          <a className="btn btn-onyx" href={pilotHref}>
+          <a className="btn btn-onyx" href={pilotHref} data-track="pilot_requested" data-track-place="demo">
             {d.ctaPilot}
           </a>
         </div>

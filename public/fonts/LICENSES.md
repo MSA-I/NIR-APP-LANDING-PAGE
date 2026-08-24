@@ -5,6 +5,8 @@ All webfonts in this directory are licensed under the SIL Open Font License 1.1
 
 - **Heebo** (heebo-var-*.woff2) — Copyright 2011 The Heebo Project Authors
   (https://github.com/OdedEzer/heebo). Variable, wght 400-700, hebrew + latin subsets.
+- **Suez One** (suez-one-*.woff2) — Copyright 2015 The Suez Project Authors
+  (https://github.com/LuziType/Suez). Display face, wght 400, hebrew + latin subsets.
 - **Noto Sans Hebrew** (NotoSansHebrew-*.woff2) — Copyright 2022 The Noto Project
   Authors (https://github.com/notofonts/hebrew). Kept as the product-parity fallback.
 

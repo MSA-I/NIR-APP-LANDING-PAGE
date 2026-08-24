@@ -31,6 +31,7 @@ export const fr: Dict = {
 
   hero: {
     h1: 'Voyez avant de payer.',
+    h1Accent: 'avant',
     sub: 'InPlace relie fournisseurs, tarifs, commandes, réception des marchandises, factures et paiements, pour que vous sachiez en quelques secondes ce qui exige une action avant que l’argent ne sorte.',
     ctaPrimary: 'Essayez la démo',
     ctaSecondary: 'Comment ça marche',

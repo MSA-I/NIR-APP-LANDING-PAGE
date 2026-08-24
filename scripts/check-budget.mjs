@@ -32,6 +32,7 @@ for (const u of new Set(islandUrls)) {
 console.log(rows.join('\n'));
 console.log(`total: ${(total / 1024).toFixed(1)}KB gzip`);
 if (total > 170 * 1024) fail(`JS budget exceeded: ${(total / 1024).toFixed(1)}KB > 170KB`);
-// LCP element must be static DOM: hero h1 present in HTML (not canvas/video)
-if (!he.html.includes('רואים לפני שמשלמים')) fail('hero headline not in static HTML');
+// LCP element must be static DOM: hero h1 present in HTML (not canvas/video).
+// Tags stripped: the accent word is wrapped in <em class="accent-word">.
+if (!he.html.replace(/<[^>]+>/g, '').includes('רואים לפני שמשלמים')) fail('hero headline not in static HTML');
 console.log('BUDGET_OK');
