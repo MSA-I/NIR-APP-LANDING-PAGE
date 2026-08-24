@@ -86,6 +86,29 @@ const h1After = accentAt >= 0 ? dict.hero.h1.slice(accentAt + accent.length) : '
       var(--canvas);
     padding-block: clamp(48px, 7vw, 96px) clamp(56px, 8vw, 108px);
   }
+  /* Ambient glow field behind the hero; drifts slowly when motion is allowed. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: -12% -18%;
+    pointer-events: none;
+    background:
+      radial-gradient(32% 44% at 22% 16%, color-mix(in srgb, var(--oceanic) 10%, transparent), transparent 70%),
+      radial-gradient(30% 38% at 86% 82%, color-mix(in srgb, var(--wheat) 60%, transparent), transparent 72%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero::before {
+      animation: hero-drift 26s var(--ease-in-out) infinite alternate;
+    }
+    @keyframes hero-drift {
+      to {
+        transform: translate3d(3%, -2%, 0) scale(1.08);
+      }
+    }
+  }
+  .hero > .container {
+    position: relative;
+  }
   .hero-grid {
     display: grid;
     grid-template-columns: 1fr;

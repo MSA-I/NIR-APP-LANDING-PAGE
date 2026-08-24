@@ -14,7 +14,7 @@ const markers = [
   'id="security"',
   'class="section story"',
   'id="faq"',
-  'class="final on-onyx"',
+  'class="final on-onyx',
   '<footer class="footer"',
 ];
 for (const p of loadPages()) {

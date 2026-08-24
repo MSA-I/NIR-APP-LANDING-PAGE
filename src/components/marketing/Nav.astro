@@ -78,6 +78,11 @@ const links = [
     background: color-mix(in srgb, var(--canvas) 78%, transparent);
     backdrop-filter: blur(10px);
     border-block-end: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+    transition: background-color 240ms var(--ease-out), box-shadow 240ms var(--ease-out);
+  }
+  .nav-wrap.scrolled {
+    background: color-mix(in srgb, var(--canvas) 92%, transparent);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--line) 90%, transparent), 0 10px 30px rgba(10, 23, 29, 0.07);
   }
   .nav-inner {
     display: flex;

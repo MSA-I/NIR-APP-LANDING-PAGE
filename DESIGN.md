@@ -65,12 +65,29 @@ scrolls inside its own container. Breakpoints verified overflow-free at
 
 ## Motion rules
 
-One authored scroll moment: the pinned money trail (GSAP, desktop >=1024,
-motion-allowed only), which carries information (progress, states, the caught
-discrepancy). Everything else: micro-interactions only (hover/active
-`scale(0.97)`, 180ms ease-out). No blanket entrance animations. Reduced motion
-gets the complete static page: the trail renders as a full list, the hero video
-never plays (poster only), and no content hides behind opacity.
+Owner decision 24.08 r3 ("flat, no animations" — wow pass). Three layers, all
+gone under reduced motion (full static page, trail as list, poster-only video):
+
+1. **Hero load choreography** (CSS, once per view): headline → sub → CTAs →
+   product panel blur-up rise (760-860ms), chain chips pop staggered
+   (780/900/1020ms), accent underline draws itself (680ms delay), delta badge
+   pulses once.
+2. **Auto-reveal entrances**: Base.astro tags section heads, cards, list rows
+   and island wrappers `.reveal` and staggers siblings via `--ri` (70ms steps,
+   capped 8); one IntersectionObserver adds `.in` once. Blur-up rise 640ms.
+   Root cause fixed here: the reveal system existed but was applied to exactly
+   one element site-wide.
+3. **The pinned money trail** (GSAP, desktop >=1024): unchanged, still the only
+   pinned/scrubbed moment.
+
+Ambient (also no-preference only): hero glow field drifts 26s alternate; dark
+sections (`.aurora`) get a luminous seam + drifting radial wash 22s. Nav
+condenses on scroll (`.scrolled`, JS toggle). Cards lift −4px on hover. FAQ
+opens animate via `interpolate-size` (Chromium, progressive).
+
+Depth statics: film grain overlay (SVG turbulence, opacity .05, fixed, on top,
+pointer-events none) and giant ghost chapter numerals (Suez One watermark,
+`::after` of each head, 7%/5% tint, alt-empty).
 
 ## Media
 

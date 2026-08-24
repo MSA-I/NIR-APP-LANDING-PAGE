@@ -109,6 +109,21 @@ Shell: bash (Git Bash, Windows). CWD: repo root.
   EXPECT: all *_OK
   EVIDENCE: VERIFY_OK (I18N SEO TOKENS SECTIONS PRICING CLAIMS RTL BUDGET); e2e all => DEMO ASSISTANT ROI LANG OVERFLOW REDUCED A11Y ANALYTICS SCREENSHOTS all OK; r2-leaks-head.png (eyebrow 01 on paper), r2-trail-head.png (eyebrow 02 on onyx), he/en hero screenshots (accent word Oceanic+Wheat) reviewed in-session
 
+## Round 3 (2026-08-24, owner: "flat, no animations, not wow" — motion + depth pass)
+
+- [x] G24: Root cause fixed: .reveal existed but was applied to ONE element site-wide. Auto-reveal system: every section head, card, list row and island wrapper enters with staggered blur-up rise; hero gets a load choreography (headline -> sub -> CTAs -> panel -> chain chips -> accent underline draw + delta pulse); reduced-motion contract intact (full static page, e2e reduced-motion green)
+  CHECK: node tests/e2e.mjs all
+  EXPECT: all *_OK including REDUCED_OK
+  EVIDENCE: exit=0; DEMO ASSISTANT ROI LANG OVERFLOW REDUCED A11Y ANALYTICS SCREENSHOTS all OK; r3-hero-inflight.png shows mid-choreography frame (panel blurred+rising while copy landed) proving live animation
+- [x] G25: Depth pass: film grain overlay, hero aurora drift, giant ghost section numerals (Suez One watermark), card hover lift, dark-section seam + aurora, nav condenses on scroll, FAQ open animation; zero raw hex (tokens only), no horizontal overflow, axe still clean
+  CHECK: npm run verify && node tests/e2e.mjs all
+  EXPECT: VERIFY_OK + OVERFLOW_OK + A11Y_OK
+  EVIDENCE: VERIFY_OK (TOKENS/RTL/CLAIMS/SECTIONS/SEO/I18N/PRICING/BUDGET, JS 110.6KB gzip); OVERFLOW_OK + A11Y_OK in full battery
+- [x] G26: Visual wow verification: motion-enabled captures (not reduced) of hero load state and mid-scroll trail; fresh full screenshots all locales; reviewed in-session
+  CHECK: node tests/e2e.mjs screenshots + motion capture script
+  EXPECT: SCREENSHOTS_OK + reviewed
+  EVIDENCE: SCREENSHOTS_OK; r3-hero-motion.png (settled hero, underline drawn), r3-hero-inflight.png (choreography mid-flight), r3-leaks-motion.png (giant 01 watermark + revealed cards), r3-trail-midpin.png (02 watermark + aurora + doc chip traveling), r3-final-motion.png (aurora seam CTA) — all reviewed in-session
+
 ## Evidence log (2026-08-24)
 
 - G1..G16: npm run build clean; npm run verify => I18N_OK SEO_OK TOKENS_OK SECTIONS_OK PRICING_OK CLAIMS_OK RTL_OK BUDGET_OK (JS total 109.0KB gzip); node tests/e2e.mjs all => DEMO_OK ASSISTANT_OK ROI_OK LANG_OK OVERFLOW_OK REDUCED_OK A11Y_OK SCREENSHOTS_OK. Shell: Git Bash, repo root.

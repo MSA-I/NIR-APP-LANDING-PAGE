@@ -131,19 +131,63 @@ const faqLd = {
         /* older browsers: no vitals, page unaffected */
       }
 
-      // Section entrance: one shared observer; .reveal gains .in once.
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) {
-              e.target.classList.add('in');
-              io.unobserve(e.target);
-            }
+      // Section entrance: auto-tag heads, cards and rows as .reveal, stagger
+      // siblings via --ri, one shared observer adds .in once. Reduced motion:
+      // the .reveal styles don't exist, so tagging is inert.
+      if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        const AUTO = [
+          '.section-head',
+          '.trail-head',
+          '.proof h2',
+          '.proof .item',
+          '.leaks .card',
+          '.trail-static li',
+          '.asst-side',
+          '.asst-card',
+          '.roles-widget',
+          '.gdemo',
+          '.roi-inputs',
+          '.roi-results',
+          '.period-toggle',
+          '.plan',
+          '.sec-item',
+          '.story .container > *',
+          '.faq-item',
+          '.final-inner > *',
+        ];
+        document.querySelectorAll<HTMLElement>(AUTO.join(',')).forEach((el) => {
+          if (el.closest('.hero')) return; // hero has its own choreography
+          el.classList.add('reveal');
+        });
+        // Stagger: index each .reveal among .reveal siblings of the same parent.
+        document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
+          let i = 0;
+          let sib = el.previousElementSibling;
+          while (sib) {
+            if (sib.classList.contains('reveal')) i++;
+            sib = sib.previousElementSibling;
           }
-        },
-        { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
-      );
-      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+          el.style.setProperty('--ri', String(Math.min(i, 7)));
+        });
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add('in');
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -36px 0px' }
+        );
+        document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      }
+
+      // Nav condenses once the page scrolls.
+      const navWrap = document.querySelector('.nav-wrap');
+      const onScroll = () => navWrap?.classList.toggle('scrolled', window.scrollY > 6);
+      onScroll();
+      addEventListener('scroll', onScroll, { passive: true });
     </script>
   </body>
 </html>
