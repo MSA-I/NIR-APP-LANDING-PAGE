@@ -275,7 +275,7 @@ export const fr: Dict = {
 
   pricing: {
     h2: 'Toutes les fonctionnalités, sur toutes les formules.',
-    sub: 'Les formules ne diffèrent que par le volume : documents, pages numérisées et questions à l’assistant. Sans surprise.',
+    sub: 'Les formules ne diffèrent que par le volume : documents et questions à l’assistant. Sans surprise.',
     monthly: 'Mensuel',
     yearly: 'Annuel',
     yearlyNote: 'En paiement annuel : le prix de 10 mois',
@@ -290,7 +290,6 @@ export const fr: Dict = {
     },
     quota: {
       docs: 'Documents par mois',
-      pages: 'Pages numérisées par mois',
       assistant: 'Questions à l’assistant par mois',
     },
     introNote: 'Sur toutes les formules : 50 questions à l’assistant pendant les 30 premiers jours, en plus du quota mensuel.',
@@ -348,7 +347,7 @@ export const fr: Dict = {
       },
       {
         q: 'Combien cela coûte-t-il ?',
-        a: 'Vous commencez gratuitement, avec 25 documents par mois. Les formules payantes ne diffèrent que par le volume, et toutes les fonctionnalités sont ouvertes sur chacune. Les prix figurent ci-dessus, hors taxes.',
+        a: 'Vous commencez gratuitement, avec 20 documents par mois. Les formules payantes ne diffèrent que par le volume, et toutes les fonctionnalités sont ouvertes sur chacune. Les prix figurent ci-dessus, hors taxes.',
       },
       {
         q: 'Que se passe-t-il en cas de dépassement du quota ?',

@@ -20,10 +20,10 @@ export const WHATSAPP: { name: Record<Locale, string>; intl: string }[] = [
    ILS on Hebrew pages (before VAT), USD on en/fr. Annual = 10 monthly payments. */
 export const PRICING = {
   plans: [
-    { id: 'free', ils: 0, usd: 0, ilsYear: 0, usdYear: 0, docs: 25, pages: 250, assistant: 20 },
-    { id: 'basic', ils: 69, usd: 20, ilsYear: 690, usdYear: 200, docs: 50, pages: 500, assistant: 40 },
-    { id: 'pro', ils: 249, usd: 79, ilsYear: 2490, usdYear: 790, docs: 200, pages: 2000, assistant: 100 },
-    { id: 'premium', ils: 449, usd: 149, ilsYear: 4490, usdYear: 1490, docs: 500, pages: 5000, assistant: 250 },
+    { id: 'free', ils: 0, usd: 0, ilsYear: 0, usdYear: 0, docs: 20, assistant: 20 },
+    { id: 'basic', ils: 69, usd: 20, ilsYear: 690, usdYear: 200, docs: 40, assistant: 40 },
+    { id: 'pro', ils: 249, usd: 79, ilsYear: 2490, usdYear: 790, docs: 150, assistant: 100 },
+    { id: 'premium', ils: 449, usd: 149, ilsYear: 4490, usdYear: 1490, docs: 375, assistant: 250 },
   ],
   introAssistantRuns: 50,
   introDays: 30,

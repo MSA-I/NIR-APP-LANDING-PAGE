@@ -273,7 +273,7 @@ export const en: Dict = {
 
   pricing: {
     h2: 'Every capability, on every plan.',
-    sub: 'Plans differ by volume only: documents, scanned pages and assistant questions. No surprises.',
+    sub: 'Plans differ by volume only: documents and assistant questions. No surprises.',
     monthly: 'Monthly',
     yearly: 'Yearly',
     yearlyNote: 'Paid yearly: you pay for 10 months',
@@ -288,7 +288,7 @@ export const en: Dict = {
     },
     quota: {
       docs: 'Documents per month',
-      pages: 'Scanned pages per month',
+
       assistant: 'Assistant questions per month',
     },
     introNote: 'On every plan: 50 assistant questions in the first 30 days, on top of the monthly quota.',
@@ -346,7 +346,7 @@ export const en: Dict = {
       },
       {
         q: 'How much does it cost?',
-        a: 'You start free, with 25 documents per month. Paid plans differ by volume only, and every capability is open on all of them. Prices are shown above, before tax.',
+        a: 'You start free, with 20 documents per month. Paid plans differ by volume only, and every capability is open on all of them. Prices are shown above, before tax.',
       },
       {
         q: 'What happens when we go over the quota?',

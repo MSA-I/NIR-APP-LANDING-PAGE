@@ -42,7 +42,6 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
             </div>
             <ul class="quota">
               <li><span class="num">{fmt(plan.docs)}</span> {p.quota.docs}</li>
-              <li><span class="num">{fmt(plan.pages)}</span> {p.quota.pages}</li>
               <li><span class="num">{fmt(plan.assistant)}</span> {p.quota.assistant}</li>
             </ul>
             <div class="plan-action">

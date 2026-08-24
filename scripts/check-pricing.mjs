@@ -28,8 +28,13 @@ for (const p of [he, en, fr]) {
   if (planNames.length !== 4) fail(`${p.file}: expected 4 plan h3s, got ${planNames.length}`);
   if (planNames.some((n) => /business|ביזנס/i.test(n))) fail(`${p.file}: Business plan card leaked: ${planNames.join(',')}`);
 }
-// quotas from #197/#198
-for (const q of ['25', '250', '50', '500', '200', '2,000', '5,000', '100']) {
+// Document quotas + assistant quotas. Page quotas are deliberately absent: the page ceiling is
+// still enforced in the product (migration 0170, 10x the document quota) but it is an abuse
+// guard, not a second thing to buy, and publishing it made one decision read as two.
+for (const q of ['20', '40', '150', '375', '100', '250']) {
   if (!he.html.includes(q)) fail(`he pricing missing quota ${q}`);
+}
+if (/עמודי סריקה|scanned pages|pages numéris/i.test(he.html + en.html + fr.html)) {
+  fail('a page quota reappeared on the pricing page -- one usage metric only');
 }
 console.log('PRICING_OK');
