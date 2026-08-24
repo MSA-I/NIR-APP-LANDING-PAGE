@@ -143,6 +143,21 @@ Shell: bash (Git Bash, Windows). CWD: repo root.
   EXPECT: A11Y_OK + visible tint shift
   EVIDENCE: A11Y_OK all locales; r4-chapter-cool.png (assistant, oceanic wash) vs r4-chapter-warm.png (roi, wheat wash) show distinct grounds; JS guarded to motion-allowed wide viewports; JS 111.0KB gzip
 
+## Round 5 (2026-08-24, impeccable critique 29/40 + emil review — owner: fix everything incl. P3)
+
+- [x] G31: P1 fixes: mobile persistent CTA in nav bar; accent underline visible (new decorative token, not a status color); trail close folded into timeline final beat + scroll cue at pin start
+  CHECK: build + e2e all + motion captures
+  EXPECT: green + visible underline + cue in capture
+  EVIDENCE: he-mobile-hero.png shows the compact "דמו חי" pill in the sticky bar at 390w; r3-hero-motion.png shows the --wheat-deep #f5d9a0 bar under "לפני" (was wheat-on-canvas, invisible); r3-trail-midpin.png confirms the closing line no longer leaks mid-pin (GSAP autoAlpha 0 until beat n-0.35); scroll cue added with one-shot fade at 0.55. Regression caught by the battery en route: mobile CTA caused 39px overflow at en/390 -> per-locale ctaShort + globe-only lang label below 560px, OVERFLOW_OK restored.
+- [x] G32: P2 fixes: roving tabindex + RTL-aware arrow keys on demo pills, assistant pills, pricing toggle; og:image 1200x630 shipped + meta; hero media layout reserved statically (no post-HEAD jump); dead action-colored span muted
+  CHECK: node tests/e2e.mjs a11y (new radiogroup assertions) + og meta in built HTML
+  EXPECT: green
+  EVIDENCE: A11Y_OK with new per-group assertions (exactly 1 tab stop + ArrowRight moves selection, across demo/assistant/pricing groups, RTL-aware via src/lib/radiogroup.ts); og-cover.jpg 78KB 1200x630 + og:image/twitter:image/alt meta in all three pages; hero padding now static on >=1024 so .has-media cannot shift layout; ghost-action recolored to --ink-muted.
+- [x] G33: P3 + emil + minors: grain removed; ghost numerals only on leaks/trail/demo; FAQ close 200ms (asymmetric); chip-pop overshoot removed; spine moved off the scrollbar edge in RTL; pricing-notes split; empty class attrs removed
+  CHECK: npm run verify + e2e all + fresh screenshots reviewed
+  EXPECT: all green
+  EVIDENCE: VERIFY_OK + full battery green TWICE (flake-free); JS 111.4KB gzip. Numbering now runs 01/02/03 across the three sections that are a real sequence (problem/mechanism/invitation) instead of 01-08 on every head; kicker removed entirely. Trail panels promoted to display type and the pinned section centers in the viewport (r3-trail-midpin.png). Two e2e robustness fixes (demo clickUntil, radiogroup retry) for client:visible hydration races.
+
 ## Evidence log (2026-08-24)
 
 - G1..G16: npm run build clean; npm run verify => I18N_OK SEO_OK TOKENS_OK SECTIONS_OK PRICING_OK CLAIMS_OK RTL_OK BUDGET_OK (JS total 109.0KB gzip); node tests/e2e.mjs all => DEMO_OK ASSISTANT_OK ROI_OK LANG_OK OVERFLOW_OK REDUCED_OK A11Y_OK SCREENSHOTS_OK. Shell: Git Bash, repo root.

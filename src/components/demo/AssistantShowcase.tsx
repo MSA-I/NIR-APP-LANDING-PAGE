@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Dict } from '../../content/he';
 import { track } from '../../lib/analytics';
+import { handleRadioKey } from '../../lib/radiogroup';
 
 type Role = 'owner' | 'office' | 'accountant';
 
@@ -24,13 +25,15 @@ export default function AssistantShowcase({ dict }: { dict: Dict }) {
             {a.roleLabel}
           </span>
           <div className="asst-pills" role="radiogroup" aria-labelledby="asst-role-label">
-            {(Object.keys(roleLabels) as Role[]).map((r) => (
+            {(Object.keys(roleLabels) as Role[]).map((r, i, all) => (
               <button
                 key={r}
                 role="radio"
                 aria-checked={role === r}
+                tabIndex={role === r ? 0 : -1}
                 className={`asst-pill ${role === r ? 'on' : ''}`}
                 onClick={() => setRole(r)}
+                onKeyDown={(e) => handleRadioKey(e, all.length, all.indexOf(role), (n) => setRole(all[n] as Role))}
               >
                 {roleLabels[r]}
               </button>
@@ -42,16 +45,23 @@ export default function AssistantShowcase({ dict }: { dict: Dict }) {
             {a.tryLabel}
           </span>
           <div className="asst-questions" role="radiogroup" aria-labelledby="asst-q-label">
-            {a.runs.map((r) => (
+            {a.runs.map((r, i, all) => (
               <button
                 key={r.id}
                 role="radio"
                 aria-checked={runId === r.id}
+                tabIndex={runId === r.id ? 0 : -1}
                 className={`asst-q ${runId === r.id ? 'on' : ''}`}
                 onClick={() => {
                   setRunId(r.id);
                   track('assistant_example_run', { run: r.id, role, permitted: (r.roles as readonly string[]).includes(role) });
                 }}
+                onKeyDown={(e) =>
+                  handleRadioKey(e, all.length, all.findIndex((x) => x.id === runId), (n) => {
+                    setRunId(all[n].id);
+                    track('assistant_example_run', { run: all[n].id, role, permitted: (all[n].roles as readonly string[]).includes(role) });
+                  })
+                }
               >
                 {r.question}
               </button>

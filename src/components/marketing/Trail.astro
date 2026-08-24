@@ -28,6 +28,11 @@ const stations = dict.trail.stations;
 
     <!-- Enhanced pinned stage (decorative duplicate, driven by GSAP). -->
     <div class="trail-stage" data-trail-stage aria-hidden="true" hidden>
+      <div class="scroll-cue" data-trail-cue>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 4v14m0 0 6-6m-6 6-6-6" />
+        </svg>
+      </div>
       <div class="track">
         <div class="track-line"><div class="track-fill" data-trail-fill></div></div>
         <div class="doc-chip" data-trail-doc>
@@ -56,7 +61,7 @@ const stations = dict.trail.stations;
       </div>
     </div>
 
-    <p class="close reveal">{dict.trail.close}</p>
+    <p class="close">{dict.trail.close}</p>
   </div>
 </section>
 
@@ -113,9 +118,19 @@ const stations = dict.trail.stations;
     margin-block-start: 10px;
   }
 
-  /* Enhanced stage */
+  /* Enhanced stage. When the pin is live the section owns the viewport, so its
+     content centers vertically instead of leaving a dead lower half. */
   .trail-stage {
     margin-block-start: clamp(40px, 5vw, 64px);
+  }
+  .trail:has([data-trail-stage]:not([hidden])) {
+    display: flex;
+    align-items: center;
+    min-block-size: 100vh;
+    padding-block: clamp(48px, 6vh, 88px);
+  }
+  .trail:has([data-trail-stage]:not([hidden])) > .container {
+    inline-size: 100%;
   }
   .track {
     position: relative;
@@ -194,8 +209,8 @@ const stations = dict.trail.stations;
   }
   .panels {
     position: relative;
-    margin-block-start: 30px;
-    min-block-size: 210px;
+    margin-block-start: clamp(30px, 5vh, 56px);
+    min-block-size: clamp(210px, 30vh, 300px);
   }
   .panel {
     position: absolute;
@@ -206,16 +221,21 @@ const stations = dict.trail.stations;
     padding-block-start: 8px;
     border-block-start: 1px solid var(--line-onyx);
   }
+  /* The panel is the stage's subject, so it carries display weight rather than
+     sitting as a caption under the track. */
   .panel h3 {
-    margin-block-start: 14px;
-    font-size: clamp(26px, 3vw, 34px);
+    margin-block-start: 18px;
+    font-family: var(--font-display);
+    font-weight: var(--fw-regular);
+    font-size: clamp(32px, 4.4vw, 52px);
+    line-height: 1.14;
     color: var(--wheat);
   }
   .panel p {
-    margin-block-start: 12px;
-    font-size: 17px;
-    line-height: 1.65;
-    max-inline-size: 46ch;
+    margin-block-start: 16px;
+    font-size: clamp(17px, 1.9vw, 21px);
+    line-height: 1.6;
+    max-inline-size: 42ch;
   }
   .panel .badge {
     margin-block-start: 14px;
@@ -227,6 +247,32 @@ const stations = dict.trail.stations;
     font-weight: var(--fw-medium);
     color: var(--wheat);
     max-inline-size: 30em;
+  }
+  /* Scroll cue at pin start: tells first-timers the story advances by scroll.
+     GSAP fades it out after the first station. */
+  .scroll-cue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 34px;
+    block-size: 34px;
+    margin-block-end: 18px;
+    border-radius: 50%;
+    color: var(--wheat);
+    box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--wheat) 35%, transparent);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-cue svg {
+      animation: cue-nudge 1600ms var(--ease-in-out) infinite alternate;
+    }
+    @keyframes cue-nudge {
+      from {
+        transform: translateY(-2px);
+      }
+      to {
+        transform: translateY(3px);
+      }
+    }
   }
 </style>
 
@@ -249,10 +295,14 @@ const stations = dict.trail.stations;
     const panels = Array.from(stage.querySelectorAll<HTMLElement>('[data-trail-panel]'));
     const fill = stage.querySelector<HTMLElement>('[data-trail-fill]');
     const doc = stage.querySelector<HTMLElement>('[data-trail-doc]');
+    const cue = stage.querySelector<HTMLElement>('[data-trail-cue]');
+    const close = root.querySelector<HTMLElement>('.close');
     const n = dots.length;
     const alertIndex = 3; // invoice station carries the caught discrepancy
 
     gsap.set(panels, { y: 14 });
+    // The punchline is the timeline's final beat, not a spoiler under station 1.
+    if (close) gsap.set(close, { autoAlpha: 0, y: 12 });
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: root,
@@ -294,5 +344,9 @@ const stations = dict.trail.stations;
       if (i < n - 1) tl.to(p, { autoAlpha: 0, duration: 0.25 }, seg + 0.82);
     });
     tl.to(fill, { scaleX: 1, duration: 0.4, ease: 'none' }, n - 0.4);
+    // Cue fades once the reader has proven they know how to advance.
+    if (cue) tl.to(cue, { autoAlpha: 0, duration: 0.2 }, 0.55);
+    // Closing line lands as the final beat.
+    if (close) tl.to(close, { autoAlpha: 1, y: 0, duration: 0.35 }, n - 0.35);
   }
 </script>

@@ -3,6 +3,7 @@ import type { Dict } from '../../content/he';
 import { getFixtures, type RoleId, type ScenarioId } from '../../content/fixtures';
 import type { Locale } from '../../lib/i18n';
 import { track, trackOnce } from '../../lib/analytics';
+import { handleRadioKey } from '../../lib/radiogroup';
 
 const stateToBadge: Record<string, string> = {
   done: 'badge-done',
@@ -48,8 +49,16 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
             {d.stepRole}
           </span>
           <div className="asst-pills" role="radiogroup" aria-labelledby="gd-role">
-            {(Object.keys(roleLabels) as RoleId[]).map((r) => (
-              <button key={r} role="radio" aria-checked={role === r} className={`asst-pill ${role === r ? 'on' : ''}`} onClick={() => pickRole(r)}>
+            {(Object.keys(roleLabels) as RoleId[]).map((r, i, all) => (
+              <button
+                key={r}
+                role="radio"
+                aria-checked={role === r}
+                tabIndex={role === r ? 0 : -1}
+                className={`asst-pill ${role === r ? 'on' : ''}`}
+                onClick={() => pickRole(r)}
+                onKeyDown={(e) => handleRadioKey(e, all.length, all.indexOf(role), (n) => pickRole(all[n] as RoleId))}
+              >
                 {roleLabels[r]}
               </button>
             ))}
@@ -60,13 +69,17 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
             {d.stepScenario}
           </span>
           <div className="asst-pills" role="radiogroup" aria-labelledby="gd-scenario">
-            {d.scenarios.map((s) => (
+            {d.scenarios.map((s, i, all) => (
               <button
                 key={s.id}
                 role="radio"
                 aria-checked={scenarioId === s.id}
+                tabIndex={scenarioId === s.id ? 0 : -1}
                 className={`asst-pill ${scenarioId === s.id ? 'on' : ''}`}
                 onClick={() => pickScenario(s.id as ScenarioId)}
+                onKeyDown={(e) =>
+                  handleRadioKey(e, all.length, all.findIndex((x) => x.id === scenarioId), (n) => pickScenario(all[n].id as ScenarioId))
+                }
               >
                 {s.label}
               </button>

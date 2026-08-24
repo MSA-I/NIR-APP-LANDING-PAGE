@@ -55,6 +55,10 @@
   --alert-bright: #f43f5e;
   --onyx-lift: #0d2530;
 
+  /* Deep wheat: decorative brand highlight (accent-word bar). Warm like Wheat
+     but visible on canvas; NOT a status color. */
+  --wheat-deep: #f5d9a0;
+
   /* Lines */
   --line: #e3e2dc;
   --line-strong: #cfceC6;

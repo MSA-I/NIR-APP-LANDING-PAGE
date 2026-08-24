@@ -9,7 +9,7 @@ const { dict } = Astro.props;
 
 <section class="section faq" id="faq">
   <div class="container faq-grid">
-    <h2 class="">{dict.faq.h2}</h2>
+    <h2>{dict.faq.h2}</h2>
     <div class="faq-list">
       {dict.faq.items.map((item, i) => (
         <details class="faq-item" {...(i === 0 ? { open: true } : {})}>

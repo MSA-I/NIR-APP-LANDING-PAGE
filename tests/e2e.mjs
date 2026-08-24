@@ -40,16 +40,22 @@ async function runDemo() {
   await root.waitFor({ state: 'visible', timeout: 15000 });
   // price scenario default: expect the finding text
   await root.getByText('1,240').first().waitFor({ timeout: 10000 });
-  // switch scenario to receipt
-  await root.getByRole('radio', { name: 'קבלה חלקית' }).click();
-  await root.getByText('20 / 14 / 20').first().waitFor({ timeout: 5000 });
-  // switch role to accountant: restricted note appears
-  await root.getByRole('radio', { name: 'רואה חשבון' }).click();
-  await root.getByText('חשבוניות מאושרות בלבד').first().waitFor({ timeout: 5000 });
-  // back to owner + credit scenario
+  // The island hydrates lazily (client:visible): a click that lands before
+  // hydration is a no-op, so each step retries until its result renders.
+  const clickUntil = async (radio, expected) => {
+    for (let i = 0; i < 10; i++) {
+      await root.getByRole('radio', { name: radio }).click();
+      try {
+        await root.getByText(expected).first().waitFor({ timeout: 1500 });
+        return;
+      } catch {}
+    }
+    fail(`demo: "${radio}" never produced "${expected}"`);
+  };
+  await clickUntil('קבלה חלקית', '20 / 14 / 20');
+  await clickUntil('רואה חשבון', 'חשבוניות מאושרות בלבד');
   await root.getByRole('radio', { name: 'בעלים' }).click();
-  await root.getByRole('radio', { name: 'זיכוי פתוח' }).click();
-  await root.getByText('780').first().waitFor({ timeout: 5000 });
+  await clickUntil('זיכוי פתוח', '780');
   await ctx.close();
   console.log('DEMO_OK');
 }
@@ -172,6 +178,35 @@ async function runA11y() {
   await p.keyboard.press('ArrowLeft');
   const selected = await p.evaluate(() => document.activeElement?.textContent?.trim());
   if (!selected) fail('roles tab keyboard navigation dead');
+
+  // Every radiogroup on the page must answer arrow keys (APG) and expose
+  // exactly one tab stop (roving tabindex).
+  const groups = [
+    { sel: '[data-demo-root] [role="radiogroup"]', name: 'demo' },
+    { sel: '.asst [role="radiogroup"]', name: 'assistant' },
+    { sel: '[data-pricing-toggle]', name: 'pricing' },
+  ];
+  for (const g of groups) {
+    const all = p.locator(g.sel);
+    const count = await all.count();
+    if (!count) fail(`${g.name}: no radiogroup found`);
+    for (let i = 0; i < count; i++) {
+      const group = all.nth(i);
+      await group.scrollIntoViewIfNeeded();
+      const stops = await group.locator('[role="radio"][tabindex="0"]').count();
+      if (stops !== 1) fail(`${g.name}[${i}]: ${stops} tab stops, expected 1 (roving tabindex)`);
+      const before = await group.locator('[role="radio"][aria-checked="true"]').textContent();
+      // Islands hydrate lazily (client:visible); retry until the handler is live.
+      let moved = false;
+      for (let attempt = 0; attempt < 8 && !moved; attempt++) {
+        await group.locator('[role="radio"][tabindex="0"]').focus();
+        await p.keyboard.press('ArrowRight');
+        await p.waitForTimeout(300);
+        moved = (await group.locator('[role="radio"][aria-checked="true"]').textContent()) !== before;
+      }
+      if (!moved) fail(`${g.name}[${i}]: ArrowRight did not move selection`);
+    }
+  }
   await ctx.close();
   console.log('A11Y_OK');
 }

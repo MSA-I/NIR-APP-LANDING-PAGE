@@ -55,7 +55,11 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
       })}
     </div>
 
-    <p class="pricing-notes">{p.introNote} {p.upgradeNote} {p.vatNote}</p>
+    <ul class="pricing-notes">
+      <li>{p.introNote}</li>
+      <li>{p.upgradeNote}</li>
+      <li>{p.vatNote}</li>
+    </ul>
   </div>
 </section>
 
@@ -182,6 +186,10 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
   }
   .pricing-notes {
     margin-block-start: 24px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
     font-size: 13.5px;
     color: var(--ink-muted);
     max-inline-size: 70ch;
@@ -203,11 +211,23 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
 </style>
 
 <script>
+  import { handleRadioKey } from '../../lib/radiogroup';
+
   const root = document.querySelector<HTMLElement>('[data-pricing-root]');
-  document.querySelectorAll<HTMLButtonElement>('[data-period-btn]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll<HTMLButtonElement>('[data-period-btn]').forEach((b) => b.setAttribute('aria-checked', String(b === btn)));
-      root?.setAttribute('data-period', btn.dataset.periodBtn || 'm');
+  const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-period-btn]'));
+  const pick = (btn: HTMLButtonElement) => {
+    btns.forEach((b) => {
+      b.setAttribute('aria-checked', String(b === btn));
+      b.tabIndex = b === btn ? 0 : -1;
+    });
+    root?.setAttribute('data-period', btn.dataset.periodBtn || 'm');
+  };
+  btns.forEach((btn, i) => {
+    btn.tabIndex = btn.getAttribute('aria-checked') === 'true' ? 0 : -1;
+    btn.addEventListener('click', () => pick(btn));
+    btn.addEventListener('keydown', (e) => {
+      const current = btns.findIndex((b) => b.getAttribute('aria-checked') === 'true');
+      handleRadioKey(e as KeyboardEvent & { currentTarget: HTMLElement }, btns.length, current, (n) => pick(btns[n]));
     });
   });
 </script>

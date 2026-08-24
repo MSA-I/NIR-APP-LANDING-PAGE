@@ -124,9 +124,9 @@ h2 {
 .accent-word {
   font-style: normal;
   color: var(--oceanic);
-  background-image: linear-gradient(var(--wheat), var(--wheat));
+  background-image: linear-gradient(var(--wheat-deep), var(--wheat-deep));
   background-repeat: no-repeat;
-  background-size: 100% 0.26em;
+  background-size: 100% 0.3em;
   background-position: 0 100%;
 }
 [dir='rtl'] .accent-word {
@@ -137,28 +137,19 @@ h2 {
   background-image: none;
 }
 
-/* Editorial section eyebrows: auto-numbered kicker above every section head.
-   Pure CSS counter — no copy to translate; empty alt keeps it off screen readers. */
+/* Chapter numbering, narrowed after the 24.08 critique. A numeral on every
+   section head was AI grammar; the counter now runs only across the three
+   sections that ARE a sequence: the problem (money leaks), the mechanism (the
+   trail), the invitation (try it). Three chapters, numbered 01-03, earned.
+   Pure CSS counter — no copy to translate; the empty alt (content / '')
+   keeps it out of the accessibility tree. */
 body {
   counter-reset: sec;
 }
-.section-head::before,
-.trail-head::before {
+.leaks .section-head,
+.trail-head,
+#demo .section-head {
   counter-increment: sec;
-  content: counter(sec, decimal-leading-zero);
-  content: counter(sec, decimal-leading-zero) / '';
-  display: block;
-  margin-block-end: 18px;
-  font-family: var(--font-sans);
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.14em;
-  color: var(--ink-muted);
-}
-.on-onyx .section-head::before,
-.on-onyx .trail-head::before {
-  color: var(--ink-inverse-muted);
 }
 p {
   max-inline-size: 65ch;
@@ -383,25 +374,24 @@ p {
       filter: blur(0);
     }
   }
+  /* Direct settle, no overshoot: bounce reads playful, and this is a page about
+     money controls. Starts at 0.86, never at 0 (nothing appears from nothing). */
   @keyframes chip-pop {
-    0% {
+    from {
       opacity: 0;
-      scale: 0.7;
+      scale: 0.86;
     }
-    70% {
-      scale: 1.06;
-    }
-    100% {
+    to {
       opacity: 1;
       scale: 1;
     }
   }
   @keyframes underline-draw {
     from {
-      background-size: 0% 0.26em;
+      background-size: 0% 0.3em;
     }
     to {
-      background-size: 100% 0.26em;
+      background-size: 100% 0.3em;
     }
   }
   /* h1 enters word by word (Hero.astro spans, 110ms steps); the rest follows. */
@@ -450,13 +440,15 @@ p {
   .faq-item {
     interpolate-size: allow-keywords;
   }
+  /* Asymmetric: closing is the system responding, so it beats the opening. */
   .faq-item::details-content {
     block-size: 0;
     overflow: hidden;
-    transition: block-size 320ms var(--ease-out), content-visibility 320ms allow-discrete;
+    transition: block-size 200ms var(--ease-out), content-visibility 200ms allow-discrete;
   }
   .faq-item[open]::details-content {
     block-size: auto;
+    transition: block-size 320ms var(--ease-out), content-visibility 320ms allow-discrete;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -465,27 +457,20 @@ p {
   }
 }
 
-/* ---------- Depth: grain, ghost numerals, hover life ---------- */
-/* Film grain: one SVG turbulence tile over everything. Decorative, near-invisible,
-   kills the flat-render feel. pointer-events none, excluded from a11y tree. */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
+/* ---------- Depth: ghost numerals, hover life ---------- */
+/* Film grain removed after the 24.08 critique: it existed to mask flatness
+   rather than to say anything, and the motion layer now carries that job. */
 
-/* Giant ghost numeral: the chapter number as a Suez One watermark behind the head. */
+/* Giant ghost numeral: the chapter number as a Suez One watermark. Reserved for
+   the three chapter-defining sections (money leaks, the trail, the demo);
+   uniform application across every head read as wallpaper, not voice. */
 .section-head,
 .trail-head {
   position: relative;
 }
-.section-head::after,
-.trail-head::after {
+.leaks .section-head::after,
+.trail-head::after,
+#demo .section-head::after {
   content: counter(sec, decimal-leading-zero);
   content: counter(sec, decimal-leading-zero) / '';
   position: absolute;
@@ -567,7 +552,9 @@ body[data-chapter='cool'] {
 .spine {
   position: fixed;
   inset-block-start: 12vh;
-  inset-inline-start: clamp(10px, 1.6vw, 26px);
+  /* Reading-start edge in both directions, which is also the side away from the
+     scrollbar in RTL (where the chip previously read as a stray dot). */
+  inset-inline-end: clamp(10px, 1.6vw, 26px);
   block-size: 76vh;
   inline-size: 2px;
   z-index: 30;

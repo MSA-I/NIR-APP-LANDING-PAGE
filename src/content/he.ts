@@ -18,6 +18,7 @@ export const he = {
     faq: 'שאלות',
     login: 'כניסה ל-InPlace',
     cta: 'נסו דמו חי',
+    ctaShort: 'דמו חי', // compact nav pill on narrow viewports
     langLabel: 'שפה',
     menuLabel: 'תפריט',
   },

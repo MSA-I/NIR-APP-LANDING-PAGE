@@ -23,6 +23,7 @@ export const en: Dict = {
     faq: 'FAQ',
     login: 'Log in to InPlace',
     cta: 'Try the live demo',
+    ctaShort: 'Live demo',
     langLabel: 'Language',
     menuLabel: 'Menu',
   },

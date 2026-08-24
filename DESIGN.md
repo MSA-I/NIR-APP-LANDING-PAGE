@@ -47,9 +47,12 @@ Hero accent: the promise's hinge word (`hero.h1Accent` — לפני/before/avant
 renders as `.accent-word`: Oceanic ink over a Wheat underline bar. One accent
 does the talking; `.on-onyx` swaps to `--oceanic-bright`, no bar.
 
-Editorial eyebrows: every `.section-head`/`.trail-head` carries an auto-numbered
-kicker (CSS counter, 01…08, tracked-out 13px) — no copy to translate, empty
-alt keeps it off screen readers.
+Chapter numbering (narrowed 24.08 after the impeccable critique): the numeral
+kicker on every head was AI grammar, so it is gone. A CSS counter now runs
+across exactly the three sections that ARE a sequence — money leaks (the
+problem), the money trail (the mechanism), the guided demo (the invitation) —
+rendered only as the giant Suez One ghost watermark, 01/02/03. No copy to
+translate; `content: counter() / ''` keeps it out of the accessibility tree.
 
 Numbers always `.num` (tabular). Money is locale-formatted from fixtures/Intl:
 he `1,240 ₪` (trailing ₪), en `₪1,240`, fr `1 240 ₪` with comma decimals.
@@ -85,9 +88,10 @@ sections (`.aurora`) get a luminous seam + drifting radial wash 22s. Nav
 condenses on scroll (`.scrolled`, JS toggle). Cards lift −4px on hover. FAQ
 opens animate via `interpolate-size` (Chromium, progressive).
 
-Depth statics: film grain overlay (SVG turbulence, opacity .05, fixed, on top,
-pointer-events none) and giant ghost chapter numerals (Suez One watermark,
-`::after` of each head, 7%/5% tint, alt-empty).
+Depth statics: giant ghost chapter numerals (Suez One watermark, 7%/5% tint,
+alt-empty) on the three chapter sections. The film-grain overlay was removed
+in the 24.08 critique round: it existed to mask flatness rather than to say
+anything, which is the tell trying to hide the tell.
 
 Tier 2 (owner decision 24.08 r4), all motion-allowed only:
 
@@ -105,6 +109,25 @@ Tier 2 (owner decision 24.08 r4), all motion-allowed only:
   background-color (wheat 44% / oceanic 5% washes, 800ms). Roles/Pricing/Story/
   Faq backgrounds are transparent so they ride the tint; Proof/Security (wheat)
   and the dark blocks keep their own ground.
+
+## Critique round (24.08, impeccable 29/40 + emil motion review)
+
+Fixed: mobile lost its primary CTA (compact `ctaShort` pill now lives in the
+sticky bar at every width); the accent underline was wheat-on-canvas and
+therefore invisible (`--wheat-deep #f5d9a0`, a decorative token, never a status
+color); the pinned trail leaked its punchline from station 1 (the closing line
+is now the timeline's final beat) and offered no cue that scrolling advances it;
+three look-alike pill groups behaved three different ways (`src/lib/radiogroup.ts`
+gives all of them APG roving tabindex plus RTL-aware arrows, asserted in the
+a11y gate); `og:image` was missing while `twitter:card` promised a large image;
+the hero panel jumped when `.has-media` resolved (space is reserved statically
+now); an action-colored label in the replica invited a dead click.
+
+Motion, per the emil pass: FAQ close is faster than open (200/320ms, the system
+responds faster than it deliberates), `chip-pop` lost its 1.06 overshoot (bounce
+reads playful; this page is about money controls) and starts at 0.86 rather than
+0, and the spine moved to the reading-start edge so it no longer sits under the
+RTL scrollbar.
 
 ## Media
 

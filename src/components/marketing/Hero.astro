@@ -71,6 +71,9 @@ const words = dict.hero.h1.split(' ');
           <span class="as-of">{ui.asOf}</span>
           <span class="ghost-action">{ui.action}</span>
         </div>
+        <!-- The replica is a still of the product, so its controls are inert;
+             the whole panel is a labelled image. The action label stays muted
+             (not action-colored) so nothing invites a dead click. -->
       </div>
     </div>
   </div>
@@ -257,14 +260,16 @@ const words = dict.hero.h1.split(' ');
   .ghost-action {
     font-size: 13px;
     font-weight: var(--fw-medium);
-    color: var(--action);
+    color: var(--ink-muted);
   }
 
   @media (min-width: 1024px) {
     .hero-grid {
       grid-template-columns: 1.05fr 1fr;
     }
-    .hero-visual.has-media {
+    /* Space is reserved up front on wide viewports, so the panel never jumps
+       when the poster HEAD check resolves and .has-media lands. */
+    .hero-visual {
       padding-block-start: 26%;
       padding-block-end: 22px;
       padding-inline: 22px;
@@ -272,16 +277,15 @@ const words = dict.hero.h1.split(' ');
     .hero-visual.has-media .media-frame {
       display: block;
     }
-    .hero-visual.has-media .invoice-panel {
+    .invoice-panel {
       max-inline-size: 480px;
       margin-inline: auto;
       position: relative;
       z-index: 1;
-      rotate: none;
-    }
-    .invoice-panel {
-      margin-inline-end: 0;
       rotate: -0.6deg;
+    }
+    .hero-visual.has-media .invoice-panel {
+      rotate: none;
     }
   }
 </style>

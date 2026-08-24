@@ -25,6 +25,7 @@ export const fr: Dict = {
     faq: 'FAQ',
     login: 'Connexion à InPlace',
     cta: 'Essayez la démo',
+    ctaShort: 'Démo',
     langLabel: 'Langue',
     menuLabel: 'Menu',
   },

@@ -47,7 +47,10 @@ const links = [
         </ul>
       </details>
       <a class="login" href={APP_URL}>{dict.nav.login}</a>
-      <a class="btn btn-primary nav-cta" href="#demo" data-track="cta_demo_click" data-track-place="nav">{dict.nav.cta}</a>
+      <a class="btn btn-primary nav-cta" href="#demo" data-track="cta_demo_click" data-track-place="nav">
+        <span class="cta-full">{dict.nav.cta}</span>
+        <span class="cta-short">{dict.nav.ctaShort}</span>
+      </a>
       <button class="burger" aria-expanded="false" aria-controls="mobile-menu" aria-label={dict.nav.menuLabel}>
         <span></span><span></span>
       </button>
@@ -120,11 +123,39 @@ const links = [
     font-weight: var(--fw-medium);
     padding: 8px 10px;
   }
+  /* The one action this page exists for stays reachable at every width:
+     compact pill next to the burger on mobile, full size on desktop. */
   .nav-cta {
+    display: inline-flex;
+    min-block-size: 38px;
+    padding-inline: 14px;
+    font-size: 13.5px;
+  }
+  .cta-full {
     display: none;
-    min-block-size: 42px;
-    padding-inline: 18px;
-    font-size: 14.5px;
+  }
+  /* Narrow bars drop the language label to the globe alone; the CTA keeps
+     its own compact wording rather than being truncated. */
+  .lang summary span {
+    display: none;
+  }
+  @media (min-width: 560px) {
+    .lang summary span {
+      display: inline;
+    }
+  }
+  @media (min-width: 1024px) {
+    .nav-cta {
+      min-block-size: 42px;
+      padding-inline: 18px;
+      font-size: 14.5px;
+    }
+    .cta-full {
+      display: inline;
+    }
+    .cta-short {
+      display: none;
+    }
   }
 
   .lang {
