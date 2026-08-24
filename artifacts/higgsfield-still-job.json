@@ -1,0 +1,22 @@
+[
+  {
+    "id": "2c5df1a8-2d0e-4dbf-9452-a8483c9f9034",
+    "status": "completed",
+    "display_name": "GPT Image 2",
+    "job_set_type": "gpt_image_2",
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_30TUtbRSO2A86OemtYYt4CwWDKc/hf_20260824_131031_2c5df1a8-2d0e-4dbf-9452-a8483c9f9034.png",
+    "created_at": 1787577031.979651,
+    "params": {
+      "width": 2688,
+      "height": 1520,
+      "prompt": "Cinematic macro still: three blank cream paper sheets floating in a dark charcoal-blue studio void, photorealistic paper fiber texture, soft directional key light. A thin matte ribbon of deep desaturated ocean-teal light weaves between the sheets and gently underlines the front sheet; one small warm wheat-colored glint rests at its corner. Blank unmarked empty paper surfaces. Muted palette: near-black charcoal #0A171D, cream paper, deep teal #0F4A52, faint wheat #FFF6E9. Shallow depth of field, premium restrained financial mood, wide 16:9 composition, clean dark negative space on the left third.",
+      "medias": [],
+      "aspect_ratio": "16:9",
+      "quality": "high",
+      "resolution": "2k",
+      "model": "videotape-alpha",
+      "remove_bg": false,
+      "reference_elements": []
+    }
+  }
+]

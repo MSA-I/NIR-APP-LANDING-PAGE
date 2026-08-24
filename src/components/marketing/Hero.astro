@@ -20,6 +20,12 @@ const ui = dict.heroUi;
     </div>
 
     <div class="hero-visual" aria-label={ui.screenTitle} role="img">
+      <div class="media-frame" data-hero-media aria-hidden="true">
+        <video muted loop playsinline preload="none" poster="/media/hero-poster.webp" tabindex="-1">
+          <source data-src="/media/hero-loop.webm" type="video/webm" />
+          <source data-src="/media/hero-loop.mp4" type="video/mp4" />
+        </video>
+      </div>
       <div class="pui invoice-panel">
         <div class="pui-titlebar">
           <span>{ui.screenTitle} · <span class="num tech-id" dir="ltr">{ui.invoiceId}</span></span>
@@ -72,7 +78,6 @@ const ui = dict.heroUi;
   }
   h1 {
     font-size: clamp(40px, 6.2vw, 68px);
-    letter-spacing: 0;
     color: var(--onyx);
   }
   .sub {
@@ -91,6 +96,30 @@ const ui = dict.heroUi;
 
   .hero-visual {
     position: relative;
+  }
+  /* Cinematic backdrop panel; the real product UI composites on top of it. */
+  .media-frame {
+    display: none;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--onyx);
+    box-shadow: var(--shadow-panel);
+  }
+  .media-frame video {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  .media-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(200deg, transparent 42%, color-mix(in srgb, var(--onyx) 42%, transparent));
+    pointer-events: none;
   }
   .invoice-panel {
     max-inline-size: 560px;
@@ -185,9 +214,53 @@ const ui = dict.heroUi;
     .hero-grid {
       grid-template-columns: 1.05fr 1fr;
     }
+    .hero-visual.has-media {
+      padding-block-start: 27%;
+      padding-block-end: 10px;
+    }
+    .hero-visual.has-media .media-frame {
+      display: block;
+    }
+    .hero-visual.has-media .invoice-panel {
+      max-inline-size: 490px;
+      margin-inline: auto;
+      position: relative;
+      z-index: 1;
+      rotate: none;
+    }
     .invoice-panel {
       margin-inline-end: 0;
       rotate: -0.6deg;
     }
   }
 </style>
+
+<script>
+  // Ambient hero media: activates only when the generated assets exist,
+  // on wide viewports, outside reduced-motion/save-data, after full load.
+  const frame = document.querySelector<HTMLElement>('[data-hero-media]');
+  const visual = frame?.closest<HTMLElement>('.hero-visual');
+  const video = frame?.querySelector<HTMLVideoElement>('video');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wide = window.matchMedia('(min-width: 1024px)').matches;
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+
+  if (frame && visual && video && wide && !conn?.saveData) {
+    fetch(video.poster, { method: 'HEAD' })
+      .then((r) => {
+        if (!r.ok) return;
+        visual.classList.add('has-media');
+        if (reduce) return; // poster only
+        const start = () => {
+          video.querySelectorAll('source').forEach((s) => {
+            s.src = (s as HTMLSourceElement).dataset.src || '';
+          });
+          video.load();
+          video.play().catch(() => {});
+        };
+        if (document.readyState === 'complete') start();
+        else window.addEventListener('load', start, { once: true });
+      })
+      .catch(() => {});
+  }
+</script>

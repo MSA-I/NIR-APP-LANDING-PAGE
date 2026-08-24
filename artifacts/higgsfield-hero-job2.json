@@ -1,0 +1,30 @@
+[
+  {
+    "id": "ff37fc7c-c4a0-4398-b286-7cd367e67c61",
+    "status": "completed",
+    "display_name": "Seedance 2.0",
+    "job_set_type": "seedance_2_0",
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_30TUtbRSO2A86OemtYYt4CwWDKc/hf_20260824_130736_ff37fc7c-c4a0-4398-b286-7cd367e67c61.mp4",
+    "created_at": 1787576856.006837,
+    "params": {
+      "width": 1920,
+      "height": 1080,
+      "prompt": "Macro cinematography, photorealistic: warm off-white paper documents with visible fiber texture drift slowly through a dark charcoal-blue studio void, soft directional studio light, shallow depth of field. A thin MATTE deep-teal ribbon of light, dark desaturated teal like ocean depth, traces slowly between the floating sheets, gently connects them, and calmly underlines one sheet that tilts toward camera; a soft warm amber glint appears at one corner of that sheet, then settles. Strictly forbidden: letters, words, numbers, typography, icons, symbols, user interface, screens, charts, diagrams, logos, people, hands. Strictly forbidden: neon, cyan, bright glow, bloom, lens flares. Muted palette only: charcoal near-black, warm paper white, deep desaturated teal, faint warm wheat. Slow controlled dolly drift, premium restrained financial atmosphere, seamless loop, silent.",
+      "genre": "auto",
+      "medias": [],
+      "duration": 8,
+      "resolution": "1080p",
+      "aspect_ratio": "16:9",
+      "generate_audio": false,
+      "multi_shots": false,
+      "multi_shot_mode": "custom",
+      "multi_prompt": [],
+      "speedramp": "auto",
+      "reference_elements": [],
+      "prompt_language": "en",
+      "mode": "std",
+      "model": "seedance_2_0",
+      "bitrate_mode": "standard"
+    }
+  }
+]

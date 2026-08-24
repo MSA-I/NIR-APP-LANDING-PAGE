@@ -1,0 +1,47 @@
+[
+  {
+    "id": "5945c439-d049-4158-9f03-ce4d29851f8f",
+    "status": "completed",
+    "display_name": "Seedance 2.0",
+    "job_set_type": "seedance_2_0",
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_30TUtbRSO2A86OemtYYt4CwWDKc/hf_20260824_131306_5945c439-d049-4158-9f03-ce4d29851f8f.mp4",
+    "created_at": 1787577186.826063,
+    "params": {
+      "width": 1920,
+      "height": 1080,
+      "prompt": "The paper sheets drift very gently, the teal ribbon flows in a slow silky wave between them, soft light breathes across the paper fibers, the warm corner glint shimmers subtly. One slow gentle camera drift. Preserve composition and colors. Calm seamless loop, silent.",
+      "genre": "auto",
+      "medias": [
+        {
+          "data": {
+            "id": "db75890f-b4e2-4462-976b-e7d9cbe87db4",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_30TUtbRSO2A86OemtYYt4CwWDKc/db75890f-b4e2-4462-976b-e7d9cbe87db4_resize.jpg",
+            "type": "media_input"
+          },
+          "role": "start_image"
+        },
+        {
+          "data": {
+            "id": "db75890f-b4e2-4462-976b-e7d9cbe87db4",
+            "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_30TUtbRSO2A86OemtYYt4CwWDKc/db75890f-b4e2-4462-976b-e7d9cbe87db4_resize.jpg",
+            "type": "media_input"
+          },
+          "role": "end_image"
+        }
+      ],
+      "duration": 8,
+      "resolution": "1080p",
+      "aspect_ratio": "16:9",
+      "generate_audio": false,
+      "multi_shots": false,
+      "multi_shot_mode": "custom",
+      "multi_prompt": [],
+      "speedramp": "auto",
+      "reference_elements": [],
+      "prompt_language": "en",
+      "mode": "std",
+      "model": "seedance_2_0",
+      "bitrate_mode": "standard"
+    }
+  }
+]

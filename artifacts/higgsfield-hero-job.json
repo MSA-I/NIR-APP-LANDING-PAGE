@@ -1,0 +1,30 @@
+[
+  {
+    "id": "e87f332d-4fa4-449d-918f-a03cc3fd64af",
+    "status": "completed",
+    "display_name": "Seedance 2.0",
+    "job_set_type": "seedance_2_0",
+    "result_url": "https://d8j0ntlcm91z4.cloudfront.net/user_30TUtbRSO2A86OemtYYt4CwWDKc/hf_20260824_130112_e87f332d-4fa4-449d-918f-a03cc3fd64af.mp4",
+    "created_at": 1787576472.690528,
+    "params": {
+      "width": 1920,
+      "height": 1080,
+      "prompt": "Create a premium B2B procurement-to-payment hero loop, 16:9, 8 seconds, silent and seamless. A warm off-white paper invoice enters a restrained deep Onyx environment and transforms into precise structured data rows. A single deep teal Oceanic data line connects purchase order, goods receipt, invoice review, approval and payment. One financial discrepancy is detected and calmly highlighted before payment proceeds. Subtle warm Wheat accents, controlled slow camera movement, realistic paper and material detail, sophisticated financial-software tone. No readable text, no logos, no people, no neon, no glassmorphism, no floating dashboards, no fake user interface. Leave a clean central composition area.",
+      "genre": "auto",
+      "medias": [],
+      "duration": 8,
+      "resolution": "1080p",
+      "aspect_ratio": "16:9",
+      "generate_audio": false,
+      "multi_shots": false,
+      "multi_shot_mode": "custom",
+      "multi_prompt": [],
+      "speedramp": "auto",
+      "reference_elements": [],
+      "prompt_language": "en",
+      "mode": "std",
+      "model": "seedance_2_0",
+      "bitrate_mode": "standard"
+    }
+  }
+]

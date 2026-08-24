@@ -70,10 +70,11 @@
   --r-control: 10px;
   --r-pill: 999px;
 
-  /* Type — Heebo body (metric twin of the product's Noto Sans Hebrew fallback),
-     Frank Ruhl Libre display (canonical Israeli premium serif). Both OFL. */
+  /* Type — Heebo carries everything (owner decision 24.08: serif display rejected
+     as too literary). Heebo is the metric twin of the product's Noto Sans Hebrew
+     fallback, so site and app read as one brand. OFL. */
   --font-sans: 'Heebo', 'Noto Sans Hebrew', Arial, system-ui, sans-serif;
-  --font-display: 'Frank Ruhl Libre', 'Noto Sans Hebrew', Georgia, serif;
+  --font-display: var(--font-sans);
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
