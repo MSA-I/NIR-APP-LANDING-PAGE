@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { LOCALES, LOCALE_META, PRICING, type Locale } from '../lib/i18n';
+import { LOCALES, LOCALE_META, type Locale } from '../lib/i18n';
 import type { Dict } from '../content/he';
 import Nav from '../components/marketing/Nav.astro';
 import Footer from '../components/marketing/Footer.astro';
@@ -13,8 +13,9 @@ const { locale, dict } = Astro.props;
 const meta = LOCALE_META[locale];
 const site = 'https://inplace.digital';
 const canonical = site + meta.path;
-const currency = locale === 'he' ? 'ILS' : 'USD';
 
+/* No offers array: the page states no price, and structured data that stated one anyway would
+   put a figure into a search result that the page itself does not stand behind. */
 const softwareLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
@@ -24,12 +25,6 @@ const softwareLd = {
   description: dict.meta.description,
   url: site,
   inLanguage: ['he', 'en', 'fr'],
-  offers: PRICING.plans.map((p) => ({
-    '@type': 'Offer',
-    name: dict.pricing.plans[p.id as keyof typeof dict.pricing.plans].name,
-    price: locale === 'he' ? p.ils : p.usd,
-    priceCurrency: currency,
-  })),
 };
 const faqLd = {
   '@context': 'https://schema.org',

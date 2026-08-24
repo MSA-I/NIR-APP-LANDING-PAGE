@@ -15,15 +15,19 @@ export const WHATSAPP: { name: Record<Locale, string>; intl: string }[] = [
   { name: { he: 'ניר', en: 'Nir', fr: 'Nir' }, intl: '972542547074' },
 ];
 
-/* Pricing — owner decisions #194/#195/#197/#198 (21.08.2026).
-   Landing page shows the first four plans only; Business is never shown here.
-   ILS on Hebrew pages (before VAT), USD on en/fr. Annual = 10 monthly payments. */
+/* Plan ladder — owner decisions #194/#197/#198, and the ruling of 25.08.2026 that NO PRICE
+   reaches a public surface before launch.
+   The amounts of #195 are decided and seeded in the product's own catalogue; they are given to a
+   customer inside their account, at the moment of upgrade, in the currency of their VERIFIED
+   billing address. A public visitor has no verified billing address, so this site cannot even
+   say which of the two catalogues would apply to them. It therefore publishes volume only.
+   Business is never shown here. */
 export const PRICING = {
   plans: [
-    { id: 'free', ils: 0, usd: 0, ilsYear: 0, usdYear: 0, docs: 20, assistant: 20 },
-    { id: 'basic', ils: 69, usd: 20, ilsYear: 690, usdYear: 200, docs: 40, assistant: 40 },
-    { id: 'pro', ils: 249, usd: 79, ilsYear: 2490, usdYear: 790, docs: 150, assistant: 100 },
-    { id: 'premium', ils: 449, usd: 149, ilsYear: 4490, usdYear: 1490, docs: 375, assistant: 250 },
+    { id: 'free', docs: 20, assistant: 20 },
+    { id: 'basic', docs: 40, assistant: 40 },
+    { id: 'pro', docs: 150, assistant: 100 },
+    { id: 'premium', docs: 375, assistant: 250 },
   ],
   introAssistantRuns: 50,
   introDays: 30,

@@ -25,7 +25,7 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
   const [spend, setSpend] = useState(locale === 'he' ? 85000 : 25000);
   const [variance, setVariance] = useState(2);
   const [recoverable, setRecoverable] = useState(40);
-  const [cost, setCost] = useState(locale === 'he' ? 249 : 79);
+  const [cost, setCost] = useState(0);
   const [edited, setEdited] = useState(false);
 
   const money = (v: number) =>
@@ -119,7 +119,9 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
             <tr>
               <td>{r.results.roi}</td>
               {rows.map((row) => (
-                <td key={row.key} className="num">×{num(Math.max(0, row.roi + 1))}</td>
+                <td key={row.key} className="num">
+                  {cost > 0 ? `×${num(Math.max(0, row.roi + 1))}` : '—'}
+                </td>
               ))}
             </tr>
           </tbody>

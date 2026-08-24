@@ -2,16 +2,25 @@
 import { PRICING, APP_URL, type Locale } from '../../lib/i18n';
 import type { Dict } from '../../content/he';
 
+/**
+ * The plan ladder, published as VOLUME rather than price.
+ *
+ * Owner ruling, 25.08.2026: no amount reaches a public surface before launch. The catalogue of
+ * #195 is decided and seeded in the product, and a customer is given their figure inside their
+ * account at the moment of upgrade — in the currency of their VERIFIED billing address. A visitor
+ * to this page has no verified billing address, so the site cannot even say which of the two
+ * catalogues applies to them; naming one would be presenting a guess as a fact.
+ *
+ * What went with the prices: the monthly/yearly toggle, which existed only to switch which figure
+ * was shown and would otherwise be a control that changes nothing on the page.
+ */
 interface Props {
   locale: Locale;
   dict: Dict;
 }
 const { locale, dict } = Astro.props;
 const p = dict.pricing;
-const isIls = locale === 'he';
 const fmt = (n: number) => new Intl.NumberFormat(locale === 'he' ? 'he-IL' : locale === 'fr' ? 'fr-FR' : 'en-US').format(n);
-const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
-  isIls ? (period === 'm' ? plan.ils : plan.ilsYear) : period === 'm' ? plan.usd : plan.usdYear;
 ---
 
 <section class="section pricing" id="pricing">
@@ -21,13 +30,7 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
       <p>{p.sub}</p>
     </div>
 
-    <div class="period-toggle" role="radiogroup" aria-label={`${p.monthly} / ${p.yearly}`} data-pricing-toggle>
-      <button role="radio" aria-checked="true" data-period-btn="m">{p.monthly}</button>
-      <button role="radio" aria-checked="false" data-period-btn="y">{p.yearly}</button>
-      <span class="period-note">{p.yearlyNote}</span>
-    </div>
-
-    <div class="plans" data-pricing-root data-period="m">
+    <div class="plans">
       {PRICING.plans.map((plan) => {
         const info = p.plans[plan.id as keyof typeof p.plans];
         const highlighted = plan.id === 'premium';
@@ -36,10 +39,6 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
             {highlighted && 'highlight' in info && <span class="plan-flag">{(info as { highlight: string }).highlight}</span>}
             <h3>{info.name}</h3>
             <p class="tagline">{info.tagline}</p>
-            <div class="price num" data-price>
-              <span class="price-m"><span class="amount">{isIls ? `${fmt(price(plan, 'm'))} ₪` : `$${fmt(price(plan, 'm'))}`}</span><span class="per">{p.perMonth}</span></span>
-              <span class="price-y"><span class="amount">{isIls ? `${fmt(price(plan, 'y'))} ₪` : `$${fmt(price(plan, 'y'))}`}</span><span class="per">{p.perYear}</span></span>
-            </div>
             <ul class="quota">
               <li><span class="num">{fmt(plan.docs)}</span> {p.quota.docs}</li>
               <li><span class="num">{fmt(plan.assistant)}</span> {p.quota.assistant}</li>
@@ -63,7 +62,7 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
     <ul class="pricing-notes">
       <li>{p.introNote}</li>
       <li>{p.upgradeNote}</li>
-      <li>{p.vatNote}</li>
+      <li>{p.priceNote}</li>
     </ul>
   </div>
 </section>
@@ -71,35 +70,6 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
 <style>
   .pricing {
     background: transparent; /* body carries the chapter tint */
-  }
-  .period-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-block-end: 28px;
-  }
-  .period-toggle button {
-    border: none;
-    background: var(--surface-sunken);
-    color: var(--ink-mid);
-    padding: 9px 20px;
-    border-radius: var(--r-pill);
-    font-size: 14.5px;
-    font-weight: var(--fw-medium);
-    cursor: pointer;
-    transition: background-color var(--t-micro) var(--ease-out), color var(--t-micro) var(--ease-out);
-  }
-  /* One selected-state color for every pill group on the page (Oceanic).
-     Onyx here meant the same control read as two different things. */
-  .period-toggle button[aria-checked='true'] {
-    background: var(--action);
-    color: var(--on-action);
-  }
-  .period-note {
-    font-size: 13px;
-    color: var(--ink-muted);
-    margin-inline-start: 8px;
   }
   .plans {
     display: grid;
@@ -117,8 +87,7 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
     color: var(--on-action);
   }
   .plan-hi .tagline,
-  .plan-hi .quota,
-  .plan-hi .price .per {
+  .plan-hi .quota {
     color: color-mix(in srgb, var(--on-action) 82%, transparent);
   }
   .plan-flag {
@@ -139,43 +108,26 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
     margin-block-start: 4px;
     font-size: 13.5px;
     color: var(--ink-muted);
-    min-block-size: 2.6em; /* two lines: keeps the four prices on one baseline (fr wraps) */
+    min-block-size: 2.6em; /* two lines: keeps the four quota blocks on one baseline (fr wraps) */
   }
-  .price {
-    margin-block-start: 20px;
-  }
-  .price .amount {
-    font-size: 34px;
-    font-weight: var(--fw-semibold);
-    letter-spacing: -0.01em;
-  }
-  .price .per {
-    margin-inline-start: 7px;
-    font-size: 13.5px;
-    color: var(--ink-muted);
-  }
-  .price-y {
-    display: none;
-  }
-  [data-period='y'] .price-m {
-    display: none;
-  }
-  [data-period='y'] .price-y {
-    display: inline;
-  }
+  /* The volume figures now carry the card the way the price used to, so they take the weight the
+     price line had. */
   .quota {
     list-style: none;
     margin: 22px 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 9px;
-    font-size: 14px;
+    gap: 11px;
+    font-size: 15px;
     color: var(--ink-mid);
   }
   .quota .num {
+    font-size: 26px;
     font-weight: var(--fw-semibold);
+    letter-spacing: -0.01em;
     color: currentColor;
+    margin-inline-end: 3px;
   }
   .plan-cta {
     margin-block-start: 24px;
@@ -231,25 +183,3 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
     }
   }
 </style>
-
-<script>
-  import { handleRadioKey } from '../../lib/radiogroup';
-
-  const root = document.querySelector<HTMLElement>('[data-pricing-root]');
-  const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-period-btn]'));
-  const pick = (btn: HTMLButtonElement) => {
-    btns.forEach((b) => {
-      b.setAttribute('aria-checked', String(b === btn));
-      b.tabIndex = b === btn ? 0 : -1;
-    });
-    root?.setAttribute('data-period', btn.dataset.periodBtn || 'm');
-  };
-  btns.forEach((btn, i) => {
-    btn.tabIndex = btn.getAttribute('aria-checked') === 'true' ? 0 : -1;
-    btn.addEventListener('click', () => pick(btn));
-    btn.addEventListener('keydown', (e) => {
-      const current = btns.findIndex((b) => b.getAttribute('aria-checked') === 'true');
-      handleRadioKey(e as KeyboardEvent & { currentTarget: HTMLElement }, btns.length, current, (n) => pick(btns[n]));
-    });
-  });
-</script>

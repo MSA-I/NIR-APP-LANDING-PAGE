@@ -274,12 +274,7 @@ export const en: Dict = {
   pricing: {
     h2: 'Every capability, on every plan.',
     sub: 'Plans differ by volume only: documents and assistant questions. No surprises.',
-    monthly: 'Monthly',
-    yearly: 'Yearly',
-    yearlyNote: 'Paid yearly: you pay for 10 months',
-    perMonth: 'per month',
-    perYear: 'per year',
-    vatNote: 'Prices before tax.',
+    priceNote: 'The price is not published on this site. You are given it inside your account, at the point of moving to a paid plan, in the currency set by the billing address verified with the payment provider.',
     plans: {
       free: { name: 'Free', tagline: 'Start seeing' },
       basic: { name: 'Basic', tagline: 'For a small, steady business' },
@@ -346,7 +341,7 @@ export const en: Dict = {
       },
       {
         q: 'How much does it cost?',
-        a: 'You start free, with 20 documents per month. Paid plans differ by volume only, and every capability is open on all of them. Prices are shown above, before tax.',
+        a: 'You start free, with 20 documents per month. Paid plans differ by volume only, and every capability is open on all of them. The price is not published on this site. You are given it inside your account, at the point of moving to a paid plan.',
       },
       {
         q: 'What happens when we go over the quota?',
