@@ -59,6 +59,11 @@
      but visible on canvas; NOT a status color. */
   --wheat-deep: #f5d9a0;
 
+  /* Chapter grounds. Measured against --canvas so the shift is actually visible
+     (the earlier color-mix values landed ~2-3% apart, below perception). */
+  --ground-warm: #f6efe2;
+  --ground-cool: #eaf0f0;
+
   /* Lines */
   --line: #e3e2dc;
   --line-strong: #cfceC6;
@@ -80,6 +85,9 @@
      slab display, single weight 400, OFL — headline authority without AI-gradient
      hype. Applied to h1/h2 only, Brex-style selective use. */
   --font-sans: 'Heebo', 'Noto Sans Hebrew', Arial, system-ui, sans-serif;
+  /* Suez One is the HEBREW display voice. Its Latin cut reads quirky-Victorian,
+     which fights the quiet-control-room positioning, so en/fr get Heebo 600
+     with tightened tracking instead (see the [lang] rules in global.css). */
   --font-display: 'Suez One', 'Heebo', 'Noto Sans Hebrew', Arial, system-ui, sans-serif;
   --fw-regular: 400;
   --fw-medium: 500;

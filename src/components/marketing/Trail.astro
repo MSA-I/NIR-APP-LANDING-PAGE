@@ -69,6 +69,10 @@ const stations = dict.trail.stations;
   .trail {
     background: var(--onyx);
     padding-block: clamp(72px, 9vw, 128px);
+    /* Own stacking context so the z-index:-1 chapter numeral paints inside this
+       section instead of behind its Onyx ground. */
+    position: relative;
+    z-index: 0;
   }
   .trail-head h2 {
     font-size: clamp(30px, 4.4vw, 46px);
@@ -184,7 +188,7 @@ const stations = dict.trail.stations;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    inline-size: 52px;
+    inline-size: 84px; /* was 52px: labels wrapped to three lines */
   }
   .dot {
     inline-size: 12px;
@@ -202,7 +206,7 @@ const stations = dict.trail.stations;
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--alert-bright) 28%, transparent);
   }
   .dot-label {
-    font-size: 12px;
+    font-size: 13.5px;
     color: var(--ink-inverse-muted);
     text-align: center;
     line-height: 1.3;
@@ -283,11 +287,15 @@ const stations = dict.trail.stations;
   const root = document.querySelector<HTMLElement>('[data-trail]');
   const stage = document.querySelector<HTMLElement>('[data-trail-stage]');
   const staticList = document.querySelector<HTMLElement>('[data-trail-static]');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const wide = window.matchMedia('(min-width: 1024px)').matches;
-
-  if (root && stage && staticList && !reduce && wide) {
+  if (root && stage && staticList) {
     gsap.registerPlugin(ScrollTrigger);
+
+    // gsap.matchMedia owns the breakpoint: it builds the pin when the query
+    // matches and reverts everything (including the DOM state below) when it
+    // stops matching, so resizing or rotating across 1024px lands in the right
+    // mode instead of leaving the session stuck in the one it loaded in.
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
     stage.hidden = false;
     staticList.classList.add('visually-hidden');
 
@@ -307,7 +315,9 @@ const stations = dict.trail.stations;
       scrollTrigger: {
         trigger: root,
         start: 'top top',
-        end: `+=${n * 520}`,
+        // 300px per station, not 520: six one-sentence beats did not earn 3,120px
+        // of forced scroll with no skip affordance.
+        end: `+=${n * 300}`,
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
@@ -348,5 +358,14 @@ const stations = dict.trail.stations;
     if (cue) tl.to(cue, { autoAlpha: 0, duration: 0.2 }, 0.55);
     // Closing line lands as the final beat.
     if (close) tl.to(close, { autoAlpha: 1, y: 0, duration: 0.35 }, n - 0.35);
+
+      // Cleanup when the query stops matching: hand the page back its static
+      // truth so a narrow or reduced-motion visitor gets the full list.
+      return () => {
+        stage.hidden = true;
+        staticList.classList.remove('visually-hidden');
+        if (close) gsap.set(close, { clearProps: 'all' });
+      };
+    });
   }
 </script>

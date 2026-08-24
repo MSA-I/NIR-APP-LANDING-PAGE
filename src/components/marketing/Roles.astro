@@ -57,14 +57,14 @@ const fx = getFixtures(locale);
               </div>
               {t.id === 'owner' && (
                 <>
-                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi></span><span class="num">{fx.rolesAmount}</span></div>
-                  <div class="pui-row"><span>{dict.heroUi.reason}</span><span class="num" style="color: var(--alert-fg); font-weight: 600;">{dict.heroUi.deltaValue}</span></div>
-                  <div class="pui-row"><span class="badge badge-await">{tabs[0].label}</span><span style="color: var(--action); font-weight: 500;">{dict.heroUi.action}</span></div>
+                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi> · {dict.roles.invoiceTotal}</span><span class="num">{fx.rolesAmount}</span></div>
+                  <div class="pui-row"><span>{dict.heroUi.reason}</span><span class="num role-delta">{dict.heroUi.deltaValue}</span></div>
+                  <div class="pui-row"><span class="badge badge-await">{tabs[0].label}</span><span class="role-action">{dict.heroUi.action}</span></div>
                 </>
               )}
               {t.id === 'office' && (
                 <>
-                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi></span><span class="num">{fx.rolesAmount}</span></div>
+                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi> · {dict.roles.invoiceTotal}</span><span class="num">{fx.rolesAmount}</span></div>
                   <div class="pui-row">
                     <span>{dict.heroUi.chain[0].label} · {dict.heroUi.chain[1].label}</span>
                     <span class="badge badge-done">
@@ -99,38 +99,42 @@ const fx = getFixtures(locale);
   .roles {
     background: transparent; /* body carries the chapter tint */
   }
+  .role-delta {
+    color: var(--alert-fg);
+    font-weight: var(--fw-semibold);
+  }
+  .role-action {
+    color: var(--ink-muted); /* inert replica: never invites a dead click */
+    font-weight: var(--fw-medium);
+  }
   .role-visual .pui {
     font-size: 14px;
   }
 </style>
 
 <script>
+  import { arrowTarget } from '../../lib/radiogroup';
+
   document.querySelectorAll<HTMLElement>('[data-roles]').forEach((root) => {
     const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
     const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
-    const select = (i: number) => {
+    // moveFocus false on click: a mouse press should not force a focus ring.
+    const select = (i: number, moveFocus: boolean) => {
       tabs.forEach((t, ti) => {
         const on = ti === i;
         t.setAttribute('aria-selected', String(on));
         t.tabIndex = on ? 0 : -1;
       });
       panels.forEach((p, pi) => (p.hidden = pi !== i));
-      tabs[i].focus();
+      if (moveFocus) tabs[i].focus();
     };
     tabs.forEach((t, i) => {
-      t.addEventListener('click', () => select(i));
+      t.addEventListener('click', () => select(i, false));
       t.addEventListener('keydown', (e) => {
-        const rtl = document.documentElement.dir === 'rtl';
-        let target: number;
-        if (e.key === 'ArrowRight') target = rtl ? i - 1 : i + 1;
-        else if (e.key === 'ArrowLeft') target = rtl ? i + 1 : i - 1;
-        else if (e.key === 'ArrowDown') target = i + 1;
-        else if (e.key === 'ArrowUp') target = i - 1;
-        else if (e.key === 'Home') target = 0;
-        else if (e.key === 'End') target = tabs.length - 1;
-        else return;
+        const target = arrowTarget(e.key, tabs.length, i);
+        if (target === null) return;
         e.preventDefault();
-        select((target + tabs.length) % tabs.length);
+        select(target, true);
       });
     });
   });

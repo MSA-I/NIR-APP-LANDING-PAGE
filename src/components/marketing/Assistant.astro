@@ -1,11 +1,14 @@
 ---
 import type { Dict } from '../../content/he';
 import AssistantShowcase from '../demo/AssistantShowcase';
+import { buildAsOf, type Locale } from '../../lib/i18n';
 
 interface Props {
   dict: Dict;
+  locale: Locale;
 }
-const { dict } = Astro.props;
+const { dict, locale } = Astro.props;
+const asOf = buildAsOf(locale);
 ---
 
 <section class="section assistant" id="assistant">
@@ -14,7 +17,7 @@ const { dict } = Astro.props;
       <h2>{dict.assistant.h2}</h2>
       <p>{dict.assistant.sub}</p>
     </div>
-    <AssistantShowcase dict={dict} client:visible />
+    <AssistantShowcase dict={dict} asOf={asOf} client:visible />
     <p class="asst-note">{dict.assistant.demoNote}</p>
   </div>
 </section>

@@ -1,5 +1,5 @@
 ---
-import { CONTACT_EMAIL, type Locale } from '../../lib/i18n';
+import { CONTACT_EMAIL, buildAsOf, type Locale } from '../../lib/i18n';
 import type { Dict } from '../../content/he';
 import GuidedDemo from '../demo/GuidedDemo';
 
@@ -17,12 +17,17 @@ const pilotHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(dict.dem
       <h2>{dict.demo.h2}</h2>
       <p>{dict.demo.sub}</p>
     </div>
-    <GuidedDemo dict={dict} locale={locale} pilotHref={pilotHref} client:visible />
+    <GuidedDemo dict={dict} locale={locale} pilotHref={pilotHref} asOf={buildAsOf(locale)} client:visible />
   </div>
 </section>
 
 <style>
+  /* The ghost chapter numeral is z-index:-1, so this section needs its own
+     stacking context: without it the numeral painted behind this gradient and
+     chapter 03 silently never rendered. */
   .demo-section {
+    position: relative;
+    z-index: 0;
     background: linear-gradient(to bottom, color-mix(in srgb, var(--wheat) 45%, var(--canvas)), var(--canvas));
   }
 </style>

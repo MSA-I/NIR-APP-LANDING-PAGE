@@ -45,11 +45,17 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
               <li><span class="num">{fmt(plan.pages)}</span> {p.quota.pages}</li>
               <li><span class="num">{fmt(plan.assistant)}</span> {p.quota.assistant}</li>
             </ul>
-            {plan.id === 'free' ? (
-              <a class="btn btn-primary plan-cta" href={APP_URL}>{p.freeCta}</a>
-            ) : (
-              <a class={`btn plan-cta ${plan.id === 'premium' ? 'btn-onyx' : 'btn-ghost'}`} href={APP_URL}>{p.freeCta}</a>
-            )}
+            <div class="plan-action">
+              <a
+                class={`btn plan-cta ${plan.id === 'free' ? 'btn-primary' : plan.id === 'premium' ? 'btn-onyx' : 'btn-ghost'}`}
+                href={`${APP_URL}?plan=${plan.id}`}
+                data-track="pricing_plan_click"
+                data-track-place={plan.id}
+              >
+                {p.planCta[plan.id as keyof typeof p.planCta]}
+              </a>
+              {plan.id !== 'free' && <span class="plan-cta-note">{p.planCtaNote}</span>}
+            </div>
           </article>
         );
       })}
@@ -85,9 +91,11 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
     cursor: pointer;
     transition: background-color var(--t-micro) var(--ease-out), color var(--t-micro) var(--ease-out);
   }
+  /* One selected-state color for every pill group on the page (Oceanic).
+     Onyx here meant the same control read as two different things. */
   .period-toggle button[aria-checked='true'] {
-    background: var(--onyx);
-    color: var(--wheat);
+    background: var(--action);
+    color: var(--on-action);
   }
   .period-note {
     font-size: 13px;
@@ -177,9 +185,24 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
   .plan {
     justify-content: flex-start;
   }
-  .plan .plan-cta {
+  .plan .plan-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
     margin-block-start: auto;
-    padding-block-start: 0;
+    padding-block-start: 24px;
+  }
+  .plan .plan-cta {
+    margin-block: 0;
+    inline-size: 100%;
+  }
+  /* The free-first path belongs on the card the reader is deciding about,
+     not in a footnote under the whole grid. */
+  .plan-cta-note {
+    font-size: 12px;
+    color: var(--ink-muted);
+    text-align: center;
   }
   .plan .quota {
     margin-block-end: 24px;

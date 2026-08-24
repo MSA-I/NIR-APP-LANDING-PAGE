@@ -7,7 +7,8 @@
     "dev": "astro dev --port 5210",
     "build": "astro build",
     "preview": "astro preview --port 5211",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "measure": "node scripts/measure-render.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.0",

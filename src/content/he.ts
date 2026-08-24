@@ -214,6 +214,7 @@ export const he = {
       },
     ],
     invoiceCaption: 'חשבונית INV-2311 בתצוגת',
+    invoiceTotal: 'סך החשבונית', // labels the 12,412 total (12 lines, not the single line)
   },
 
   demo: {
@@ -233,6 +234,10 @@ export const he = {
     ctaPilot: 'פתחו סביבת פיילוט',
     restart: 'תרחיש נוסף',
     demoBadge: 'נתוני דמו',
+    /* Progress wording: the demo is a tour, so it says where you are in it. */
+    stepOf: 'תרחיש {n} מתוך {total}',
+    nextScenario: 'לתרחיש הבא',
+    tourDone: 'ראיתם את כל ארבעת התרחישים',
   },
 
   roi: {
@@ -260,7 +265,11 @@ export const he = {
       formulaTitle: 'איך חישבנו',
       formula:
         'חיסכון תפעולי = מסמכים × דקות × עלות שעה ÷ 60. פערים שנתפסים = היקף רכש × שיעור פערים × שיעור עצירה. שווי שנתי = (חיסכון + פערים) × 12, מול עלות המנוי.',
-      disclaimer: 'הערכה בלבד, על בסיס ההנחות שהזנתם. אין כאן נתון ענפי ואין הבטחת חיסכון.',
+      disclaimer: 'הערכה בלבד. אין כאן נתון ענפי ואין הבטחת חיסכון.',
+      /* The default state must not present the vendor's own numbers as the
+         visitor's findings; the wording switches the moment a field is edited. */
+      disclaimerDefault: 'המספרים כרגע הם הנחות פתיחה שלנו, לא נתונים שלכם. שנו כל שדה והחישוב יתעדכן.',
+      disclaimerEdited: 'החישוב מבוסס על ההנחות שהזנתם.',
     },
   },
 
@@ -284,8 +293,17 @@ export const he = {
       pages: 'עמודי סריקה בחודש',
       assistant: 'שאלות לעוזר בחודש',
     },
-    introNote: 'בכל מסלול: 50 שאלות לעוזר ב-30 הימים הראשונים.',
+    introNote: 'בכל מסלול: 50 שאלות לעוזר ב-30 הימים הראשונים, מעבר למכסה החודשית.',
     freeCta: 'פתיחת חשבון חינם',
+    /* Per-plan CTA: a single "open a free account" on all four cards left the
+       section unable to express "I want Pro" at the highest-intent moment. */
+    planCta: {
+      free: 'פתיחת חשבון חינם',
+      basic: 'התחלה במסלול בסיס',
+      pro: 'התחלה במסלול פרו',
+      premium: 'התחלה במסלול פרימיום',
+    },
+    planCtaNote: 'מתחילים חינם, משדרגים כשמוכנים',
     upgradeNote: 'כל מסלול מתחיל בחשבון חינם, בלי כרטיס אשראי. משדרגים מתוך המערכת כשמוכנים.',
   },
 

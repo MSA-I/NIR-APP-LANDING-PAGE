@@ -215,6 +215,7 @@ export const en: Dict = {
       },
     ],
     invoiceCaption: 'Invoice INV-2311 as seen by',
+    invoiceTotal: 'invoice total',
   },
 
   demo: {
@@ -234,6 +235,9 @@ export const en: Dict = {
     ctaPilot: 'Open a pilot workspace',
     restart: 'Another scenario',
     demoBadge: 'Demo data',
+    stepOf: 'Scenario {n} of {total}',
+    nextScenario: 'Next scenario',
+    tourDone: 'You have seen all four scenarios',
   },
 
   roi: {
@@ -261,7 +265,9 @@ export const en: Dict = {
       formulaTitle: 'How we calculated this',
       formula:
         'Operational saving = documents × minutes × hourly cost ÷ 60. Gaps caught = purchasing spend × gap rate × stop rate. Annual value = (saving + gaps) × 12, set against the cost of the subscription.',
-      disclaimer: 'An estimate only, based on the assumptions you entered. There is no industry benchmark here and no promise of savings.',
+      disclaimer: 'An estimate only. There is no industry benchmark here and no promise of savings.',
+      disclaimerDefault: 'These are our starting assumptions, not your numbers. Change any field and the calculation follows.',
+      disclaimerEdited: 'This calculation uses the assumptions you entered.',
     },
   },
 
@@ -285,8 +291,15 @@ export const en: Dict = {
       pages: 'Scanned pages per month',
       assistant: 'Assistant questions per month',
     },
-    introNote: 'On every plan: 50 assistant questions in the first 30 days.',
+    introNote: 'On every plan: 50 assistant questions in the first 30 days, on top of the monthly quota.',
     freeCta: 'Open a free account',
+    planCta: {
+      free: 'Open a free account',
+      basic: 'Start on Basic',
+      pro: 'Start on Pro',
+      premium: 'Start on Premium',
+    },
+    planCtaNote: 'Start free, upgrade when ready',
     upgradeNote: 'Every plan starts as a free account, with no credit card. You upgrade from inside the system when you are ready.',
   },
 

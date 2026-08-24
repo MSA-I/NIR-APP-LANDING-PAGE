@@ -26,6 +26,7 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
   const [variance, setVariance] = useState(2);
   const [recoverable, setRecoverable] = useState(40);
   const [cost, setCost] = useState(locale === 'he' ? 249 : 79);
+  const [edited, setEdited] = useState(false);
 
   const money = (v: number) =>
     new Intl.NumberFormat(tag, { style: 'currency', currency, maximumFractionDigits: 0 }).format(Math.round(v));
@@ -67,6 +68,7 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
               value={f.value}
               onChange={(e) => {
                 f.set(Math.max(0, Number(e.target.value) || 0));
+                setEdited(true);
                 // §16.3: the visitor translated the product into their own numbers.
                 trackOnce('roi_completed', { field: f.id });
               }}
@@ -127,7 +129,9 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
           <strong>{r.results.formulaTitle}</strong>
           {r.results.formula}
         </div>
-        <p className="roi-disclaimer">{r.results.disclaimer}</p>
+        <p className="roi-disclaimer">
+          {edited ? r.results.disclaimerEdited : r.results.disclaimerDefault} {r.results.disclaimer}
+        </p>
       </div>
     </div>
   );

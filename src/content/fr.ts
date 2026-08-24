@@ -217,6 +217,7 @@ export const fr: Dict = {
       },
     ],
     invoiceCaption: 'Facture INV-2311 vue par',
+    invoiceTotal: 'total de la facture',
   },
 
   demo: {
@@ -236,6 +237,9 @@ export const fr: Dict = {
     ctaPilot: 'Ouvrez un espace pilote',
     restart: 'Un autre scénario',
     demoBadge: 'Données de démo',
+    stepOf: 'Scénario {n} sur {total}',
+    nextScenario: 'Scénario suivant',
+    tourDone: 'Vous avez vu les quatre scénarios',
   },
 
   roi: {
@@ -263,7 +267,9 @@ export const fr: Dict = {
       formulaTitle: 'Comment nous avons calculé',
       formula:
         'Gain opérationnel = documents × minutes × coût horaire ÷ 60. Écarts détectés = volume d’achats × taux d’écarts × taux de blocage. Valeur annuelle = (gain + écarts) × 12, face au coût de l’abonnement.',
-      disclaimer: 'Simple estimation, fondée sur les hypothèses que vous avez saisies. Aucune référence sectorielle ici, aucune promesse d’économies.',
+      disclaimer: 'Simple estimation. Aucune référence sectorielle ici, aucune promesse d’économies.',
+      disclaimerDefault: 'Ces chiffres sont nos hypothèses de départ, pas les vôtres. Modifiez un champ et le calcul suit.',
+      disclaimerEdited: 'Ce calcul utilise les hypothèses que vous avez saisies.',
     },
   },
 
@@ -287,8 +293,15 @@ export const fr: Dict = {
       pages: 'Pages numérisées par mois',
       assistant: 'Questions à l’assistant par mois',
     },
-    introNote: 'Sur toutes les formules : 50 questions à l’assistant pendant les 30 premiers jours.',
+    introNote: 'Sur toutes les formules : 50 questions à l’assistant pendant les 30 premiers jours, en plus du quota mensuel.',
     freeCta: 'Ouvrir un compte gratuit',
+    planCta: {
+      free: 'Ouvrir un compte gratuit',
+      basic: 'Commencer avec Base',
+      pro: 'Commencer avec Pro',
+      premium: 'Commencer avec Premium',
+    },
+    planCtaNote: 'Départ gratuit, changement quand vous voulez',
     upgradeNote: 'Chaque formule commence par un compte gratuit, sans carte bancaire. Vous changez de formule depuis le système, quand vous êtes prêt.',
   },
 

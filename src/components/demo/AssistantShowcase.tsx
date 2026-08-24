@@ -5,7 +5,7 @@ import { handleRadioKey } from '../../lib/radiogroup';
 
 type Role = 'owner' | 'office' | 'accountant';
 
-export default function AssistantShowcase({ dict }: { dict: Dict }) {
+export default function AssistantShowcase({ dict, asOf }: { dict: Dict; asOf: string }) {
   const a = dict.assistant;
   const roleLabels: Record<Role, string> = {
     owner: dict.roles.tabs[0].label,
@@ -86,7 +86,7 @@ export default function AssistantShowcase({ dict }: { dict: Dict }) {
             <div className="asst-meta">
               <span className="badge badge-done">{a.stateLabels.complete}</span>
               <span className="asst-window">{a.windowLabel}</span>
-              <span className="asst-window">{a.asOfLabel}</span>
+              <span className="asst-window">{asOf}</span>
             </div>
             <div className="asst-foot">
               <span className="asst-source">
@@ -105,7 +105,7 @@ export default function AssistantShowcase({ dict }: { dict: Dict }) {
             <p className="asst-answer muted">{'notPermittedAnswer' in run ? run.notPermittedAnswer : a.stateLabels.not_permitted}</p>
             <div className="asst-meta">
               <span className="badge badge-idle">{a.stateLabels.not_permitted}</span>
-              <span className="asst-window">{a.asOfLabel}</span>
+              <span className="asst-window">{asOf}</span>
             </div>
           </>
         )}

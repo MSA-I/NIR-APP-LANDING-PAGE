@@ -12,7 +12,7 @@ const stateToBadge: Record<string, string> = {
   idle: 'badge-idle',
 };
 
-export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; locale: Locale; pilotHref: string }) {
+export default function GuidedDemo({ dict, locale, pilotHref, asOf }: { dict: Dict; locale: Locale; pilotHref: string; asOf: string }) {
   const d = dict.demo;
   const fixtures = useMemo(() => getFixtures(locale), [locale]);
   const [role, setRole] = useState<RoleId>('owner');
@@ -33,7 +33,8 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
     markScenario(id);
     setScenarioId(id);
   };
-  const scenario = fixtures.scenarios.find((s) => s.id === scenarioId) ?? fixtures.scenarios[0];
+  const scenarioIndex = Math.max(0, fixtures.scenarios.findIndex((s) => s.id === scenarioId));
+  const scenario = fixtures.scenarios[scenarioIndex] ?? fixtures.scenarios[0];
   const access = scenario.access[role];
   const roleLabels: Record<RoleId, string> = {
     owner: dict.roles.tabs[0].label,
@@ -89,7 +90,19 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
         <span className="badge gdemo-badge">{d.demoBadge}</span>
       </div>
 
-      <div className="gdemo-body" aria-live="polite">
+      <div className="gdemo-progress">
+        <span className="gdemo-step">
+          {d.stepOf.replace('{n}', String(scenarioIndex + 1)).replace('{total}', String(fixtures.scenarios.length))}
+        </span>
+        <ol className="gdemo-ticks" aria-hidden="true">
+          {fixtures.scenarios.map((s, i) => (
+            <li key={s.id} className={i <= scenarioIndex ? 'on' : ''} />
+          ))}
+        </ol>
+        {seen.current.size >= fixtures.scenarios.length && <span className="gdemo-done">{d.tourDone}</span>}
+      </div>
+
+      <div className="gdemo-body">
         <div className="gdemo-evidence">
           <h4>{d.evidenceTitle}</h4>
           {access.kind === 'full' ? (
@@ -104,8 +117,8 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
               ))}
             </ul>
           ) : (
-            <div className="gdemo-finding-card" style={{ background: 'var(--surface-sunken)' }}>
-              <p style={{ color: 'var(--ink-mid)' }}>{access.note}</p>
+            <div className="gdemo-finding-card is-restricted">
+              <p>{access.note}</p>
               <div className="gdemo-finding-meta">
                 <span className="badge badge-idle">{dict.assistant.stateLabels.not_permitted}</span>
               </div>
@@ -125,32 +138,36 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
                 ))}
               </div>
               <div className="gdemo-finding-meta">
-                <span>{dict.assistant.asOfLabel}</span>
+                <span>{asOf}</span>
               </div>
             </div>
           ) : (
-            <div className="gdemo-finding-card" style={{ background: 'var(--surface-sunken)' }}>
-              <p style={{ color: 'var(--ink-mid)' }}>{dict.assistant.stateLabels.not_permitted}</p>
+            <div className="gdemo-finding-card is-restricted">
+              <p>{dict.assistant.stateLabels.not_permitted}</p>
             </div>
           )}
         </div>
       </div>
 
-      <div className="gdemo-summary">
+      {/* One narrow live region: the summary sentence is the outcome of a pill
+          change. Announcing the whole two-column body re-read everything. */}
+      <div className="gdemo-summary" aria-live="polite">
         <p>
           <strong>{d.summaryTitle}:</strong> {access.kind === 'full' ? scenario.summary : access.note}
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <div className="gdemo-actions">
+          {/* The tour advances by a primary control, not a text link: this is
+              the page's stated primary action. */}
           <button
-            className="gdemo-restart"
-            onClick={() => {
-              const next = fixtures.scenarios[(fixtures.scenarios.findIndex((s) => s.id === scenarioId) + 1) % fixtures.scenarios.length].id;
-              pickScenario(next);
-            }}
+            className="btn btn-onyx gdemo-next"
+            onClick={() => pickScenario(fixtures.scenarios[(scenarioIndex + 1) % fixtures.scenarios.length].id)}
           >
-            {d.restart}
+            {d.nextScenario}
+            <span className="num gdemo-next-count">
+              {((scenarioIndex + 1) % fixtures.scenarios.length) + 1}/{fixtures.scenarios.length}
+            </span>
           </button>
-          <a className="btn btn-onyx" href={pilotHref} data-track="pilot_requested" data-track-place="demo">
+          <a className="gdemo-pilot" href={pilotHref} data-track="pilot_requested" data-track-place="demo">
             {d.ctaPilot}
           </a>
         </div>

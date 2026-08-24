@@ -55,7 +55,7 @@ const faqLd = {
     <link rel="icon" type="image/svg+xml" href="/brand/inplace-symbol.svg" />
     <link rel="preload" href="/fonts/heebo-var-hebrew.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/heebo-var-latin.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={locale === 'he' ? '/fonts/suez-one-hebrew.woff2' : '/fonts/suez-one-latin.woff2'} as="font" type="font/woff2" crossorigin />
+    {locale === 'he' && <link rel="preload" href="/fonts/suez-one-hebrew.woff2" as="font" type="font/woff2" crossorigin />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="InPlace" />
     <meta property="og:title" content={dict.meta.title} />
@@ -72,23 +72,6 @@ const faqLd = {
     <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
   </head>
   <body>
-    <!-- DIRECTION CONTRACT
-    THESIS: A quiet financial control room that proves "you see it before you pay";
-    it refuses the category default of feature-grid + AI-gradient hype. The real
-    product UI, shown mid-decision (a blocked invoice with its evidence), IS the hero.
-    OWN-WORLD: Onyx #0A171D shell, Oceanic #003F47 action, Wheat #FFF6E9 paper,
-    neutral canvas; borderless cards separated by tinted shadow; status colors carry
-    business meaning only; tabular numbers; RTL-first logical layout.
-    STORY: visitor recognizes a money leak they know, watches the document-to-decision
-    chain catch it, asks the business a question and gets an evidenced answer, tries
-    the guided demo, prices it with their own assumptions, opens a pilot.
-    FIRST VIEWPORT: split hero; start side carries the promise + two CTAs, end side
-    a readable blocked-invoice replica with delta and chain chips; nav pill floats above.
-    FORM: brief-pinned direction (research doc 24.08.2026, sections 9+13). No concept
-    roll: pinned brief beats the roll per skill contract.
-    FINISH: unreviewed and undocumented is unfinished; this build ends with the finish
-    review, the verdict, and DESIGN.md
-    -->
     <Nav locale={locale} dict={dict} />
     <slot />
     <Footer locale={locale} dict={dict} />
@@ -203,10 +186,15 @@ const faqLd = {
       onScroll();
       addEventListener('scroll', onScroll, { passive: true });
 
-      if (
-        window.matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-        window.matchMedia('(min-width: 1024px)').matches
-      ) {
+      // Breakpoint-dependent motion is re-evaluated on change, not read once at
+      // load: resizing or rotating across 1024px used to leave the spine and the
+      // chapter tint in the wrong mode for the rest of the session.
+      const wide = window.matchMedia('(min-width: 1024px)');
+      const motionOk = window.matchMedia('(prefers-reduced-motion: no-preference)');
+      let enhanced = false;
+      const setupEnhanced = () => {
+        if (enhanced || !wide.matches || !motionOk.matches) return;
+        enhanced = true;
         // Scroll spine: the money trail follows the reader down the page.
         const spine = document.createElement('div');
         spine.className = 'spine';
@@ -254,7 +242,10 @@ const faqLd = {
             chapterIo.observe(el);
           }
         }
-      }
+      };
+      setupEnhanced();
+      wide.addEventListener('change', setupEnhanced);
+      motionOk.addEventListener('change', setupEnhanced);
     </script>
   </body>
 </html>

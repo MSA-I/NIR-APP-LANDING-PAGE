@@ -151,6 +151,24 @@ body {
 #demo .section-head {
   counter-increment: sec;
 }
+/* Latin locales: Heebo 600, tracked in. Suez One's Latin cut is a different,
+   quirkier voice than its Hebrew and does not carry the same authority. */
+html[lang='en'] h1,
+html[lang='en'] h2,
+html[lang='fr'] h1,
+html[lang='fr'] h2 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-semibold);
+}
+html[lang='en'] h1,
+html[lang='fr'] h1 {
+  letter-spacing: -0.022em;
+}
+html[lang='en'] h2,
+html[lang='fr'] h2 {
+  letter-spacing: -0.014em;
+}
+
 p {
   max-inline-size: 65ch;
 }
@@ -394,33 +412,36 @@ p {
       background-size: 100% 0.3em;
     }
   }
-  /* h1 enters word by word (Hero.astro spans, 110ms steps); the rest follows. */
+  /* Hero choreography is capped: the proof panel is the point, so it starts
+     almost immediately and everything lands inside ~900ms. The earlier version
+     left the first viewport empty for 1.5s, which a visitor who scrolls at once
+     never recovers from. */
   .hero .sub,
   .hero .ctas,
   .hero .hero-visual {
-    animation: rise-in 760ms var(--ease-out) both;
+    animation: rise-in 520ms var(--ease-out) both;
   }
   .hero .sub {
-    animation-delay: 420ms;
+    animation-delay: 200ms;
   }
   .hero .ctas {
-    animation-delay: 560ms;
+    animation-delay: 300ms;
   }
   .hero .hero-visual {
-    animation-delay: 660ms;
-    animation-duration: 860ms;
+    animation-delay: 120ms;
+    animation-duration: 620ms;
   }
   .hero .chips .badge {
-    animation: chip-pop 480ms var(--ease-out) both;
+    animation: chip-pop 380ms var(--ease-out) both;
   }
   .hero .chips .badge:nth-child(1) {
-    animation-delay: 1000ms;
+    animation-delay: 440ms;
   }
   .hero .chips .badge:nth-child(2) {
-    animation-delay: 1120ms;
+    animation-delay: 500ms;
   }
   .hero .chips .badge:nth-child(3) {
-    animation-delay: 1240ms;
+    animation-delay: 560ms;
   }
 
   /* Ambient aurora drift (hero + dark assertions). Slow, decorative, quiet. */
@@ -468,14 +489,21 @@ p {
 .trail-head {
   position: relative;
 }
-.leaks .section-head::after,
-.trail-head::after,
-#demo .section-head::after {
+/* Anchored to the CONTAINER's end edge, not to the 720px head box: anchored to
+   the head it floated mid-canvas, aligned to nothing. */
+.leaks > .container,
+.trail > .container,
+#demo > .container {
+  position: relative;
+}
+.leaks > .container::after,
+.trail > .container::after,
+#demo > .container::after {
   content: counter(sec, decimal-leading-zero);
   content: counter(sec, decimal-leading-zero) / '';
   position: absolute;
-  inset-block-start: -0.28em;
-  inset-inline-end: 0;
+  inset-block-start: -0.16em;
+  inset-inline-end: clamp(20px, 4vw, 44px);
   z-index: -1;
   font-family: var(--font-display);
   font-size: clamp(110px, 15vw, 190px);
@@ -485,9 +513,8 @@ p {
   pointer-events: none;
   user-select: none;
 }
-.on-onyx .section-head::after,
-.on-onyx .trail-head::after {
-  color: color-mix(in srgb, var(--ink-inverse) 5%, transparent);
+.on-onyx > .container::after {
+  color: color-mix(in srgb, var(--ink-inverse) 6%, transparent);
 }
 
 /* Cards breathe on hover */
@@ -538,11 +565,14 @@ p {
 body {
   transition: background-color 800ms var(--ease-in-out);
 }
+/* Deltas measured, not assumed: the previous 44% wheat / 5% oceanic mixes came
+   out about 2-3% luminance apart, below the just-noticeable difference. These
+   are pushed until the two grounds read as different rooms. */
 body[data-chapter='warm'] {
-  background-color: color-mix(in srgb, var(--wheat) 44%, var(--canvas));
+  background-color: var(--ground-warm);
 }
 body[data-chapter='cool'] {
-  background-color: color-mix(in srgb, var(--oceanic) 5%, var(--canvas));
+  background-color: var(--ground-cool);
 }
 
 /* ---------- Scroll spine ----------
@@ -552,9 +582,9 @@ body[data-chapter='cool'] {
 .spine {
   position: fixed;
   inset-block-start: 12vh;
-  /* Reading-start edge in both directions, which is also the side away from the
-     scrollbar in RTL (where the chip previously read as a stray dot). */
-  inset-inline-end: clamp(10px, 1.6vw, 26px);
+  /* Reading-start edge: right in RTL, left in LTR. inline-END put it under the
+     scrollbar in LTR, which is the same mistake the RTL note was written about. */
+  inset-inline-start: clamp(10px, 1.6vw, 26px);
   block-size: 76vh;
   inline-size: 2px;
   z-index: 30;
@@ -590,7 +620,7 @@ body[data-chapter='cool'] {
 /* ---------- Scroll-driven product scenes (CSS view-timeline) ----------
    Where the browser supports view(), the big product replicas are driven by
    scroll: deep rise, slight tilt settling to zero. Elsewhere Base.astro keeps
-   them in the auto-reveal system. Scrубbed by entry progress; no pinning. */
+   them in the auto-reveal system. Scrubbed by entry progress; no pinning. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     @keyframes scene-rise {

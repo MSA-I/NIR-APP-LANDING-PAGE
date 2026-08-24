@@ -155,7 +155,39 @@ on hide). Static CTAs use `data-track`/`data-track-place` attributes with one
 delegated listener in Base.astro; islands import `track`/`trackOnce`.
 Verified end-to-end by `node tests/e2e.mjs analytics`.
 
+## Critique round 2 (24.08, scored 27/40) and what it changed
+
+The second review scored lower than the first (29 -> 27) because it looked
+harder, not because the page regressed: it found two P0s the first pass missed.
+Both are fixed. Pricing now speaks per plan (four distinct CTAs, `?plan=` on
+every href, the free-first sentence inside the card it qualifies) instead of
+saying "open a free account" on a 449-shekel tier. The hero replica lost its
+`role="img"` wrapper, which had flattened the page's entire opening proof to a
+single label for screen readers while axe passed it as valid.
+
+The guided demo became guided (step counter, progress rail, a primary next
+control, the two pill groups boxed apart). The placeholder testimonial no longer
+ships: a quote with a footnote calling it illustrative costs more credibility
+than an absent section, so it is gated behind `HAS_REAL_CUSTOMER_QUOTE`.
+
+The lesson worth keeping is process, not CSS. Three systems this document
+defended at length were, in the reviewer's words, "imperceptible, broken, and
+positioned against its own stated rationale": the chapter tint was ~2-3% apart
+(below perception), chapter 03 never painted (a `z-index:-1` numeral behind its
+own section background), and the spine sat on the scrollbar edge. All three
+passed source review. `npm run measure` now asserts eight render truths in a
+real browser, and it caught two more live defects the moment it was written.
+A gate about something visible is met by a measurement, not by code that looks
+right.
+
 ## Guardrails (runnable)
+
+`npm run measure` = eight render truths sampled in a real browser: chapter tint
+channel delta, every chapter numeral actually painting (and its section opening
+a stacking context), the spine not sharing an edge with the scrollbar in either
+direction, hero choreography settling under 1s, Suez One confined to Hebrew, one
+selected-state color across all four pill groups, a live as_of date, and the
+hero replica's facts reaching the accessibility tree.
 
 `npm run verify` = tokens single-source (no raw hex outside tokens.css),
 claims policy (no savings %, no SLA, no published user/storage quotas, no

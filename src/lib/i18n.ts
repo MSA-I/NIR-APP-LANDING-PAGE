@@ -28,3 +28,21 @@ export const PRICING = {
   introAssistantRuns: 50,
   introDays: 30,
 } as const;
+
+/* Evidence freshness is the product's core claim, so the demo's as_of stamp
+   cannot ship frozen: a hardcoded date is visibly stale within weeks on the one
+   number that must not be. Generated at build time, per locale. */
+export function buildAsOf(locale: Locale): string {
+  const now = new Date();
+  const time = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+  if (locale === 'he') {
+    const d = new Intl.DateTimeFormat('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(now);
+    return `נכון ל-${d}, ${time}`;
+  }
+  if (locale === 'fr') {
+    const d = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(now);
+    return `Au ${d}, ${time}`;
+  }
+  const d = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(now);
+  return `As of ${d}, ${time}`;
+}

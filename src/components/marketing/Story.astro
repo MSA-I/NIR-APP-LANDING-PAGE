@@ -5,10 +5,16 @@ interface Props {
   dict: Dict;
 }
 const { dict } = Astro.props;
+
+/* A quote in quotation marks with a footnote calling it illustrative reads
+   worse than no quote at all: at the trust moment it tells the visitor no
+   customer will be named. The section stays out of the build until a real
+   pilot quote lands. Flip to true in the same commit that replaces the copy
+   (docs/BRIEF.md §11 blocks publishing the placeholder). */
+const HAS_REAL_CUSTOMER_QUOTE = false;
 ---
 
-<!-- PLACEHOLDER SECTION: replace quote+attribution with the real pilot
-     customer's words before launch (owner to supply). Tracked in docs/BRIEF.md §11. -->
+{HAS_REAL_CUSTOMER_QUOTE && (
 <section class="section story">
   <div class="container story-inner">
     <h2 class="visually-hidden">{dict.story.h2}</h2>
@@ -21,6 +27,7 @@ const { dict } = Astro.props;
     </blockquote>
   </div>
 </section>
+)}
 
 <style>
   .story {
