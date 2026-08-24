@@ -123,6 +123,12 @@ a11y gate); `og:image` was missing while `twitter:card` promised a large image;
 the hero panel jumped when `.has-media` resolved (space is reserved statically
 now); an action-colored label in the replica invited a dead click.
 
+Also surfaced: INV-2311 and its 1,240 gap run through the hero, the money trail,
+the assistant, the roles switch and the guided demo, but the page never said so.
+The roles sub now names the thread ("this is the same invoice you met at the
+top, INV-2311"), which is where it pays off: the reader realizes the page has
+been following one real case, not showing five samples.
+
 Motion, per the emil pass: FAQ close is faster than open (200/320ms, the system
 responds faster than it deliberates), `chip-pop` lost its 1.06 overshoot (bounce
 reads playful; this page is about money controls) and starts at 0.86 rather than

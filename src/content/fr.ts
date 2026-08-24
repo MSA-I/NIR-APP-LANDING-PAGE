@@ -192,7 +192,7 @@ export const fr: Dict = {
 
   roles: {
     h2: 'Une seule vérité. Trois vues.',
-    sub: 'La même facture, trois personnes différentes. Chacune voit exactement ce qui lui est permis, et pas un gramme de plus.',
+    sub: 'C’est la facture que vous avez vue en haut de page, INV-2311, en trois vues. Chacune voit exactement ce qui lui est permis, et pas un gramme de plus.',
     tabs: [
       {
         id: 'owner',

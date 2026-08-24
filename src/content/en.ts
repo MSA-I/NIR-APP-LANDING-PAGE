@@ -190,7 +190,7 @@ export const en: Dict = {
 
   roles: {
     h2: 'One truth. Three views.',
-    sub: 'The same invoice, three different people. Each one sees exactly what they are allowed to see, and not an ounce more.',
+    sub: 'This is the same invoice you met at the top, INV-2311, in three views. Each person sees exactly what they are allowed to see, and not an ounce more.',
     tabs: [
       {
         id: 'owner',

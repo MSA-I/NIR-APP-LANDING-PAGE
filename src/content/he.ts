@@ -186,7 +186,10 @@ export const he = {
 
   roles: {
     h2: 'אמת אחת. שלוש תצוגות.',
-    sub: 'אותה חשבונית, שלושה אנשים שונים. כל אחד רואה בדיוק את מה שמותר לו, ולא גרם מעבר.',
+    /* Names the thread: INV-2311 runs through the hero, the money trail, the
+       assistant, this section and the demo. Saying so out loud is the moment a
+       careful reader realizes the page showed one real case, not five samples. */
+    sub: 'זו אותה חשבונית שראיתם למעלה, INV-2311, בשלוש תצוגות. כל אחד רואה בדיוק את מה שמותר לו, ולא גרם מעבר.',
     tabs: [
       {
         id: 'owner',
