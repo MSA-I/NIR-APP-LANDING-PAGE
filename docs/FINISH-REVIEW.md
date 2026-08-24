@@ -13,8 +13,12 @@ general-purpose agent ran the same packet (disclosed per protocol).
 - CLAIMS: clean. No invented savings, no SLA/uptime, no logos; ROI arithmetic
   verified correct in all 15 cells; the single percentage (19%) is derived.
 - Initial disposition: **fix-then-ship** (14 material findings).
-- After fixes: reviewer upgraded to **ship-after-visual-confirmation**; the four
-  requested confirmation crops were captured and passed to the reviewer.
+- After fixes: verdict pass scored ALL 14 findings **RESOLVED** (8 confirmed rendered
+  or independently recomputed, 6 source-only single-value changes).
+- Final disposition: **ship**.
+- Reviewer correction on the record: its original craft-floor pass cleared .plan-hi .per
+  from declared tokens (6.9:1) while the cascade actually resolved to 2.01:1; axe caught
+  it. Lesson kept: token math checks intent, axe checks what renders; axe stays in the battery.
 
 ## Findings → fixes (all 14 applied)
 
