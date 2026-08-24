@@ -124,6 +124,25 @@ Shell: bash (Git Bash, Windows). CWD: repo root.
   EXPECT: SCREENSHOTS_OK + reviewed
   EVIDENCE: SCREENSHOTS_OK; r3-hero-motion.png (settled hero, underline drawn), r3-hero-inflight.png (choreography mid-flight), r3-leaks-motion.png (giant 01 watermark + revealed cards), r3-trail-midpin.png (02 watermark + aurora + doc chip traveling), r3-final-motion.png (aurora seam CTA) — all reviewed in-session
 
+## Round 4 (2026-08-24, owner: build the next tier)
+
+- [x] G27: Word-by-word hero headline: h1 renders as staggered word spans (110ms steps, accent word integrated), static text intact in HTML, downstream choreography retimed; reduced motion = static
+  CHECK: node scripts/check-budget.mjs (tag-stripped headline) + motion capture
+  EXPECT: BUDGET_OK + capture shows partial words mid-flight
+  EVIDENCE: BUDGET_OK; r4-words-inflight.png: first word landed, accent word landing, last word still blurred mid-rise
+- [x] G28: Scroll spine: fixed money-trail line at the page edge that fills with scroll progress, glowing chip at the tip; desktop + motion-allowed only, aria-hidden, JS rAF-throttled
+  CHECK: motion capture + measured --sp value
+  EXPECT: visible progressive fill
+  EVIDENCE: --sp measured 0.707 at #roi scroll position; chip+fill visible in r4-chapter-cool/warm captures at different heights
+- [x] G29: Scroll-driven product scenes: leak cards + assistant card + roles widget + demo panel + roi results enter via CSS view-timeline (scrubbed by scroll, alternating tilt settle) where supported; auto-reveal fallback elsewhere; reduced motion static
+  CHECK: node tests/e2e.mjs all (Chromium supports view())
+  EXPECT: all *_OK
+  EVIDENCE: full battery green (DEMO/ASSISTANT/ROI/LANG/OVERFLOW/REDUCED/A11Y/ANALYTICS/SCREENSHOTS); r4-scene-midentry.png shows cards blurred+tilted mid-entry driven by scroll position
+- [x] G30: Chapter color transitions: body background morphs (canvas/warm/cool) as sections cross the viewport, 800ms ease; sections with explicit canvas backgrounds made transparent; axe contrast still clean
+  CHECK: node tests/e2e.mjs a11y + motion captures in different chapters
+  EXPECT: A11Y_OK + visible tint shift
+  EVIDENCE: A11Y_OK all locales; r4-chapter-cool.png (assistant, oceanic wash) vs r4-chapter-warm.png (roi, wheat wash) show distinct grounds; JS guarded to motion-allowed wide viewports; JS 111.0KB gzip
+
 ## Evidence log (2026-08-24)
 
 - G1..G16: npm run build clean; npm run verify => I18N_OK SEO_OK TOKENS_OK SECTIONS_OK PRICING_OK CLAIMS_OK RTL_OK BUDGET_OK (JS total 109.0KB gzip); node tests/e2e.mjs all => DEMO_OK ASSISTANT_OK ROI_OK LANG_OK OVERFLOW_OK REDUCED_OK A11Y_OK SCREENSHOTS_OK. Shell: Git Bash, repo root.

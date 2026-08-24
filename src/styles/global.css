@@ -404,36 +404,33 @@ p {
       background-size: 100% 0.26em;
     }
   }
-  .hero h1,
+  /* h1 enters word by word (Hero.astro spans, 110ms steps); the rest follows. */
   .hero .sub,
   .hero .ctas,
   .hero .hero-visual {
     animation: rise-in 760ms var(--ease-out) both;
   }
   .hero .sub {
-    animation-delay: 130ms;
+    animation-delay: 420ms;
   }
   .hero .ctas {
-    animation-delay: 260ms;
+    animation-delay: 560ms;
   }
   .hero .hero-visual {
-    animation-delay: 380ms;
+    animation-delay: 660ms;
     animation-duration: 860ms;
   }
   .hero .chips .badge {
     animation: chip-pop 480ms var(--ease-out) both;
   }
   .hero .chips .badge:nth-child(1) {
-    animation-delay: 780ms;
+    animation-delay: 1000ms;
   }
   .hero .chips .badge:nth-child(2) {
-    animation-delay: 900ms;
+    animation-delay: 1120ms;
   }
   .hero .chips .badge:nth-child(3) {
-    animation-delay: 1020ms;
-  }
-  .accent-word {
-    animation: underline-draw 620ms var(--ease-out) 680ms both;
+    animation-delay: 1240ms;
   }
 
   /* Ambient aurora drift (hero + dark assertions). Slow, decorative, quiet. */
@@ -546,6 +543,90 @@ body::after {
 .aurora > * {
   position: relative;
   z-index: 2;
+}
+
+/* ---------- Chapter color travel ----------
+   Base.astro tracks the section in view and sets body[data-chapter]; the page
+   ground morphs between neutral, warm and cool washes. Sections that should
+   ride the tint are transparent; Proof/Security (wheat) and the dark blocks
+   keep their own ground. */
+body {
+  transition: background-color 800ms var(--ease-in-out);
+}
+body[data-chapter='warm'] {
+  background-color: color-mix(in srgb, var(--wheat) 44%, var(--canvas));
+}
+body[data-chapter='cool'] {
+  background-color: color-mix(in srgb, var(--oceanic) 5%, var(--canvas));
+}
+
+/* ---------- Scroll spine ----------
+   The money trail follows the reader: a hairline at the page edge fills with
+   scroll progress; a document chip rides the tip. Injected by Base.astro only
+   on wide viewports with motion allowed. */
+.spine {
+  position: fixed;
+  inset-block-start: 12vh;
+  inset-inline-start: clamp(10px, 1.6vw, 26px);
+  block-size: 76vh;
+  inline-size: 2px;
+  z-index: 30;
+  pointer-events: none;
+}
+.spine-track {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--oceanic) 16%, transparent);
+  border-radius: 2px;
+}
+.spine-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--oceanic-bright), var(--oceanic));
+  border-radius: 2px;
+  transform: scaleY(var(--sp, 0));
+  transform-origin: top;
+}
+.spine-chip {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 50%;
+  inline-size: 10px;
+  block-size: 10px;
+  border-radius: 50%;
+  background: var(--oceanic-bright);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--oceanic-bright) 25%, transparent), 0 0 14px color-mix(in srgb, var(--oceanic-bright) 65%, transparent);
+  translate: -50% -50%;
+  transform: translateY(calc(var(--sp, 0) * 76vh));
+}
+
+/* ---------- Scroll-driven product scenes (CSS view-timeline) ----------
+   Where the browser supports view(), the big product replicas are driven by
+   scroll: deep rise, slight tilt settling to zero. Elsewhere Base.astro keeps
+   them in the auto-reveal system. Scrубbed by entry progress; no pinning. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    @keyframes scene-rise {
+      from {
+        opacity: 0;
+        transform: translateY(72px) rotate(var(--tilt, -1.4deg)) scale(0.955);
+        filter: blur(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+    .scene {
+      animation: scene-rise both linear;
+      animation-timeline: view();
+      animation-range: entry 4% entry 78%;
+    }
+    .scene:nth-of-type(even) {
+      --tilt: 1.4deg;
+    }
+  }
 }
 
 /* ---------- Utility ---------- */

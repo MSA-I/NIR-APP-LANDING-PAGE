@@ -89,6 +89,23 @@ Depth statics: film grain overlay (SVG turbulence, opacity .05, fixed, on top,
 pointer-events none) and giant ghost chapter numerals (Suez One watermark,
 `::after` of each head, 7%/5% tint, alt-empty).
 
+Tier 2 (owner decision 24.08 r4), all motion-allowed only:
+
+- **Word-by-word headline**: hero h1 renders as word spans (build-time split,
+  110ms steps); the accent word additionally draws its underline at 880ms.
+- **Scroll spine** (desktop): fixed hairline at the page edge fills with scroll
+  progress, glowing chip at the tip — the money trail follows the reader.
+  rAF-throttled JS sets `--sp`; aria-hidden.
+- **Scroll-driven scenes**: `.leaks .card`, `.asst-card`, `.roles-widget`,
+  `.gdemo`, `.roi-results` are scrubbed by CSS `view()` (deep rise, alternating
+  ±1.4deg tilt settling to 0, `entry 4%→78%`) where supported; Base.astro keeps
+  them in auto-reveal elsewhere. Still no pinning beyond the money trail.
+- **Chapter color travel**: sections carry `data-chapter` (warm/cool/base); an
+  IntersectionObserver on the viewport's middle band morphs `body`
+  background-color (wheat 44% / oceanic 5% washes, 800ms). Roles/Pricing/Story/
+  Faq backgrounds are transparent so they ride the tint; Proof/Security (wheat)
+  and the dark blocks keep their own ground.
+
 ## Media
 
 Ambient hero loop behind the invoice replica: desktop-only, saveData-aware,

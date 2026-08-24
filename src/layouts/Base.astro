@@ -135,6 +135,14 @@ const faqLd = {
       // siblings via --ri, one shared observer adds .in once. Reduced motion:
       // the .reveal styles don't exist, so tagging is inert.
       if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        // Scroll-driven product scenes: CSS view() owns these where supported;
+        // otherwise they stay in the auto-reveal system below.
+        const SCENES = ['.leaks .card', '.asst-card', '.roles-widget', '.gdemo', '.roi-results'];
+        const viewSupported = CSS.supports('animation-timeline: view()');
+        if (viewSupported) {
+          document.querySelectorAll<HTMLElement>(SCENES.join(',')).forEach((el) => el.classList.add('scene'));
+        }
+
         const AUTO = [
           '.section-head',
           '.trail-head',
@@ -157,6 +165,7 @@ const faqLd = {
         ];
         document.querySelectorAll<HTMLElement>(AUTO.join(',')).forEach((el) => {
           if (el.closest('.hero')) return; // hero has its own choreography
+          if (el.classList.contains('scene')) return; // scroll-driven instead
           el.classList.add('reveal');
         });
         // Stagger: index each .reveal among .reveal siblings of the same parent.
@@ -188,6 +197,59 @@ const faqLd = {
       const onScroll = () => navWrap?.classList.toggle('scrolled', window.scrollY > 6);
       onScroll();
       addEventListener('scroll', onScroll, { passive: true });
+
+      if (
+        window.matchMedia('(prefers-reduced-motion: no-preference)').matches &&
+        window.matchMedia('(min-width: 1024px)').matches
+      ) {
+        // Scroll spine: the money trail follows the reader down the page.
+        const spine = document.createElement('div');
+        spine.className = 'spine';
+        spine.setAttribute('aria-hidden', 'true');
+        spine.innerHTML = '<div class="spine-track"></div><div class="spine-fill"></div><div class="spine-chip"></div>';
+        document.body.appendChild(spine);
+        let raf = 0;
+        const updateSpine = () => {
+          raf = 0;
+          const max = document.documentElement.scrollHeight - innerHeight;
+          spine.style.setProperty('--sp', String(max > 0 ? Math.min(1, scrollY / max) : 0));
+        };
+        updateSpine();
+        addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(updateSpine); }, { passive: true });
+        addEventListener('resize', () => { if (!raf) raf = requestAnimationFrame(updateSpine); }, { passive: true });
+
+        // Chapter color travel: the section crossing the viewport middle tints
+        // the page ground (warm/cool/base).
+        const CHAPTERS: [string, string][] = [
+          ['.hero', 'base'],
+          ['#leaks', 'warm'],
+          ['#assistant', 'cool'],
+          ['#roles', 'base'],
+          ['#demo', 'cool'],
+          ['#roi', 'warm'],
+          ['#pricing', 'base'],
+          ['.story', 'warm'],
+          ['#faq', 'warm'],
+        ];
+        const chapterIo = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (!e.isIntersecting) continue;
+              const tint = (e.target as HTMLElement).dataset.chapter || 'base';
+              if (tint === 'base') delete document.body.dataset.chapter;
+              else document.body.dataset.chapter = tint;
+            }
+          },
+          { rootMargin: '-45% 0px -45% 0px' }
+        );
+        for (const [sel, tint] of CHAPTERS) {
+          const el = document.querySelector<HTMLElement>(sel);
+          if (el) {
+            el.dataset.chapter = tint;
+            chapterIo.observe(el);
+          }
+        }
+      }
     </script>
   </body>
 </html>

@@ -11,22 +11,22 @@ const { locale, dict } = Astro.props;
 const ui = dict.heroUi;
 const fx = getFixtures(locale);
 
-// Split the headline around the accent word (build-time; text stays static DOM).
+// Word-level headline: each word is a span staggered on load; the accent word
+// (a whole word in all three locales) carries the underline treatment.
 const accent = dict.hero.h1Accent;
-const accentAt = accent ? dict.hero.h1.indexOf(accent) : -1;
-const h1Before = accentAt >= 0 ? dict.hero.h1.slice(0, accentAt) : dict.hero.h1;
-const h1After = accentAt >= 0 ? dict.hero.h1.slice(accentAt + accent.length) : '';
+const words = dict.hero.h1.split(' ');
 ---
 
 <section class="hero" id="top">
   <div class="container hero-grid">
     <div class="hero-copy">
       <h1>
-        {accentAt >= 0 ? (
-          <>{h1Before}<em class="accent-word">{accent}</em>{h1After}</>
-        ) : (
-          dict.hero.h1
-        )}
+        {words.map((w, i) => (
+          <>
+            <span class={`w ${w === accent ? 'accent-word' : ''}`} style={`--wi:${i}`}>{w}</span>
+            {i < words.length - 1 && ' '}
+          </>
+        ))}
       </h1>
       <p class="sub">{dict.hero.sub}</p>
       <div class="ctas">
@@ -118,6 +118,19 @@ const h1After = accentAt >= 0 ? dict.hero.h1.slice(accentAt + accent.length) : '
   h1 {
     font-size: clamp(40px, 6.2vw, 68px);
     color: var(--onyx);
+  }
+  h1 .w {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    h1 .w {
+      animation: rise-in 620ms var(--ease-out) both;
+      animation-delay: calc(var(--wi, 0) * 110ms);
+    }
+    h1 .w.accent-word {
+      animation: rise-in 620ms var(--ease-out) both, underline-draw 560ms var(--ease-out) both;
+      animation-delay: calc(var(--wi, 0) * 110ms), 880ms;
+    }
   }
   .sub {
     margin-block-start: 20px;
