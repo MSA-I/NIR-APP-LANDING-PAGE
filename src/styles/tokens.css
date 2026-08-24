@@ -47,7 +47,7 @@
   --info-fg: #0369a1;
   --info-soft: #f0f9ff;
   --info-solid: #0369a1;
-  --idle-fg: #64748b;
+  --idle-fg: #55637a; /* >=4.5:1 on idle-soft at badge size (was #64748b, 4.34:1) */
   --idle-soft: #f1f5f9;
 
   /* Bright variants for dark (Onyx) sections */

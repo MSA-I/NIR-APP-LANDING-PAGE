@@ -1,11 +1,15 @@
 ---
 import type { Dict } from '../../content/he';
+import { getFixtures } from '../../content/fixtures';
+import type { Locale } from '../../lib/i18n';
 
 interface Props {
+  locale: Locale;
   dict: Dict;
 }
-const { dict } = Astro.props;
+const { locale, dict } = Astro.props;
 const ui = dict.heroUi;
+const fx = getFixtures(locale);
 ---
 
 <section class="hero" id="top">
@@ -43,10 +47,10 @@ const ui = dict.heroUi;
           <span class="reason-title">{ui.reasonTitle}</span>
           <p class="reason-body">{ui.reason}</p>
           <div class="line">
-            <bdi class="line-name">{ui.lineName}</bdi>
+            <bdi class="line-name">{ui.lineName} · <span class="num">{fx.heroLine.qty}</span></bdi>
             <div class="line-nums">
-              <span class="cell"><span class="cell-label">{ui.ordered}</span><span class="num">‎39.90 ₪</span></span>
-              <span class="cell"><span class="cell-label">{ui.billed}</span><span class="num billed">‎47.65 ₪</span></span>
+              <span class="cell"><span class="cell-label">{ui.ordered}</span><span class="num">{fx.heroLine.ordered}</span></span>
+              <span class="cell"><span class="cell-label">{ui.billed}</span><span class="num billed">{fx.heroLine.billed}</span></span>
               <span class="cell delta-cell"><span class="cell-label">{ui.delta}</span><span class="num delta">{ui.deltaValue}</span></span>
             </div>
           </div>
@@ -101,9 +105,7 @@ const ui = dict.heroUi;
   .media-frame {
     display: none;
     position: absolute;
-    inset-block-start: 0;
-    inset-inline: 0;
-    aspect-ratio: 16 / 9;
+    inset: 0;
     border-radius: 20px;
     overflow: hidden;
     background: var(--onyx);
@@ -215,14 +217,15 @@ const ui = dict.heroUi;
       grid-template-columns: 1.05fr 1fr;
     }
     .hero-visual.has-media {
-      padding-block-start: 27%;
-      padding-block-end: 10px;
+      padding-block-start: 26%;
+      padding-block-end: 22px;
+      padding-inline: 22px;
     }
     .hero-visual.has-media .media-frame {
       display: block;
     }
     .hero-visual.has-media .invoice-panel {
-      max-inline-size: 490px;
+      max-inline-size: 480px;
       margin-inline: auto;
       position: relative;
       z-index: 1;

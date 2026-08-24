@@ -252,7 +252,7 @@ export const en: Dict = {
       base: 'Base',
       optimistic: 'Optimistic',
       timeSaved: 'Checking hours saved per month',
-      leakage: 'Gaps caught per month',
+      leakage: 'Value of gaps caught per month',
       monthly: 'Estimated monthly value',
       yearly: 'Estimated annual value',
       roi: 'Estimated annual return ratio',

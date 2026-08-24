@@ -9,13 +9,13 @@ const { dict } = Astro.props;
 
 <section class="section leaks" id="leaks">
   <div class="container">
-    <div class="section-head reveal">
+    <div class="section-head">
       <h2>{dict.leaks.h2}</h2>
       <p>{dict.leaks.sub}</p>
     </div>
     <div class="grid">
       {dict.leaks.items.map((item) => (
-        <article class="card leak reveal">
+        <article class="card leak">
           <div class="leak-head">
             <h3>{item.title}</h3>
             <span class="badge badge-alert">{item.badge}</span>

@@ -10,7 +10,7 @@ const { dict } = Astro.props;
 <!-- PLACEHOLDER SECTION: replace quote+attribution with the real pilot
      customer's words before launch (owner to supply). Tracked in docs/BRIEF.md §11. -->
 <section class="section story">
-  <div class="container story-inner reveal">
+  <div class="container story-inner">
     <h2 class="visually-hidden">{dict.story.h2}</h2>
     <blockquote>
       <p>{dict.story.quote}</p>
@@ -33,7 +33,7 @@ const { dict } = Astro.props;
   blockquote {
     margin: 0;
     padding-inline-start: 26px;
-    border-inline-start: 3px solid var(--oceanic);
+    border-inline-start: 1px solid var(--oceanic);
   }
   blockquote p {
     font-size: clamp(20px, 2.6vw, 27px);

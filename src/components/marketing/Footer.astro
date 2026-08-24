@@ -6,7 +6,7 @@ interface Props {
   locale: Locale;
   dict: Dict;
 }
-const { dict } = Astro.props;
+const { locale, dict } = Astro.props;
 const links = [
   { href: '#leaks', label: dict.nav.product },
   { href: '#assistant', label: dict.nav.assistant },
@@ -33,7 +33,7 @@ const links = [
       <a href={`mailto:${CONTACT_EMAIL}`} class="tech-id" dir="ltr">{CONTACT_EMAIL}</a>
       {WHATSAPP.map((w) => (
         <a href={`https://wa.me/${w.intl}`} rel="noopener" target="_blank">
-          {dict.finalCta.whatsapp} {w.name}
+          {dict.finalCta.whatsapp} {w.name[locale]}
         </a>
       ))}
     </div>

@@ -14,7 +14,7 @@ const fx = getFixtures(locale);
 
 <section class="section roles" id="roles">
   <div class="container">
-    <div class="section-head reveal">
+    <div class="section-head">
       <h2>{dict.roles.h2}</h2>
       <p>{dict.roles.sub}</p>
     </div>
@@ -46,27 +46,45 @@ const fx = getFixtures(locale);
             <div class="pui">
               <div class="pui-titlebar">
                 <span>{dict.roles.invoiceCaption} {t.label}</span>
-                {t.id === 'accountant' ? <span class="badge badge-idle">{dict.heroUi.invoiceId} ×</span> : <span class="badge badge-alert">{dict.heroUi.statusBlocked}</span>}
+                {t.id === 'accountant' ? (
+                  <span class="badge badge-idle">
+                    <span class="num tech-id" dir="ltr">{dict.heroUi.invoiceId}</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" role="img" aria-label={fx.noAccessLabel}><path d="M6 6l12 12M18 6L6 18" /></svg>
+                  </span>
+                ) : (
+                  <span class="badge badge-alert">{dict.heroUi.statusBlocked}</span>
+                )}
               </div>
               {t.id === 'owner' && (
                 <>
-                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi></span><span class="num">‎12,412 ₪</span></div>
+                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi></span><span class="num">{fx.rolesAmount}</span></div>
                   <div class="pui-row"><span>{dict.heroUi.reason}</span><span class="num" style="color: var(--alert-fg); font-weight: 600;">{dict.heroUi.deltaValue}</span></div>
-                  <div class="pui-row"><span class="badge badge-await">{tabs[0].label} ←</span><span style="color: var(--action); font-weight: 500;">{dict.heroUi.action}</span></div>
+                  <div class="pui-row"><span class="badge badge-await">{tabs[0].label}</span><span style="color: var(--action); font-weight: 500;">{dict.heroUi.action}</span></div>
                 </>
               )}
               {t.id === 'office' && (
                 <>
-                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi></span><span class="num">‎12,412 ₪</span></div>
-                  <div class="pui-row"><span>{dict.heroUi.chain[0].label} · {dict.heroUi.chain[1].label}</span><span class="badge badge-done">✓</span></div>
-                  <div class="pui-row"><span>{tabs[1].blocked}</span><span class="badge badge-idle">—</span></div>
+                  <div class="pui-row"><span><bdi>{dict.heroUi.supplier}</bdi></span><span class="num">{fx.rolesAmount}</span></div>
+                  <div class="pui-row">
+                    <span>{dict.heroUi.chain[0].label} · {dict.heroUi.chain[1].label}</span>
+                    <span class="badge badge-done">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" role="img" aria-label={fx.okLabel}><path d="M4.5 12.5l5 5 10-11" /></svg>
+                    </span>
+                  </div>
+                  <div class="pui-row"><span>{tabs[1].blocked}</span><span class="badge badge-idle" aria-label={fx.noAccessLabel}>—</span></div>
                 </>
               )}
               {t.id === 'accountant' && (
                 <>
                   <div class="pui-row"><span><bdi>{fx.suppliers.bakery}</bdi> · <span class="num tech-id" dir="ltr">INV-2298</span></span><span class="badge badge-done">{fx.approvedLabel}</span></div>
                   <div class="pui-row"><span><bdi>{fx.suppliers.farm}</bdi> · <span class="num tech-id" dir="ltr">INV-2301</span></span><span class="badge badge-done">{fx.approvedLabel}</span></div>
-                  <div class="pui-row"><span>{tabs[2].sees[0]}</span><span class="badge badge-idle">{dict.heroUi.invoiceId} ✗</span></div>
+                  <div class="pui-row">
+                    <span>{tabs[2].sees[0]}</span>
+                    <span class="badge badge-idle">
+                      <span class="num tech-id" dir="ltr">{dict.heroUi.invoiceId}</span>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" role="img" aria-label={fx.noAccessLabel}><path d="M6 6l12 12M18 6L6 18" /></svg>
+                    </span>
+                  </div>
                 </>
               )}
             </div>

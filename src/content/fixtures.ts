@@ -27,12 +27,21 @@ export interface Scenario {
 interface FixtureSet {
   approvedLabel: string;
   suppliers: { bakery: string; farm: string; packaging: string };
+  /* Hero replica line numbers, locale-formatted (finding: FR decimal comma). */
+  heroLine: { ordered: string; billed: string; qty: string };
+  rolesAmount: string;
+  okLabel: string;
+  noAccessLabel: string;
   scenarios: Scenario[];
 }
 
 const he: FixtureSet = {
   approvedLabel: 'מאושרת',
   suppliers: { bakery: 'מאפיית גל', farm: 'משק דגן', packaging: 'אריזות הצפון' },
+  heroLine: { ordered: '‎39.90 ₪', billed: '‎47.65 ₪', qty: '160 ארגזים בהזמנה' },
+  rolesAmount: '‎12,412 ₪',
+  okLabel: 'הושלם',
+  noAccessLabel: 'אין גישה',
   scenarios: [
     {
       id: 'price',
@@ -120,6 +129,10 @@ const he: FixtureSet = {
 const en: FixtureSet = {
   approvedLabel: 'Approved',
   suppliers: { bakery: 'Gal Bakery', farm: 'Dagan Farm', packaging: 'North Packaging' },
+  heroLine: { ordered: '₪39.90', billed: '₪47.65', qty: '160 crates ordered' },
+  rolesAmount: '₪12,412',
+  okLabel: 'Done',
+  noAccessLabel: 'No access',
   scenarios: [
     {
       id: 'price',
@@ -207,6 +220,10 @@ const en: FixtureSet = {
 const fr: FixtureSet = {
   approvedLabel: 'Approuvée',
   suppliers: { bakery: 'Boulangerie Gal', farm: 'Ferme Dagan', packaging: 'Emballages du Nord' },
+  heroLine: { ordered: '39,90 ₪', billed: '47,65 ₪', qty: '160 cageots commandés' },
+  rolesAmount: '12 412 ₪',
+  okLabel: 'Fait',
+  noAccessLabel: 'Pas d’accès',
   scenarios: [
     {
       id: 'price',

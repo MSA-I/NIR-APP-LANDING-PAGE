@@ -9,10 +9,10 @@ const { dict } = Astro.props;
 
 <section class="proof">
   <div class="container">
-    <h2 class="reveal">{dict.proof.h2}</h2>
+    <h2 class="">{dict.proof.h2}</h2>
     <div class="items">
       {dict.proof.items.map((item) => (
-        <div class="item reveal">
+        <div class="item">
           <h3>{item.title}</h3>
           <p>{item.body}</p>
         </div>

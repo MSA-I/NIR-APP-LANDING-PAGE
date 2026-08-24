@@ -56,7 +56,7 @@ export default function GuidedDemo({ dict, locale, pilotHref }: { dict: Dict; lo
             ))}
           </div>
         </div>
-        <span className="badge badge-info gdemo-badge">{d.demoBadge}</span>
+        <span className="badge gdemo-badge">{d.demoBadge}</span>
       </div>
 
       <div className="gdemo-body" aria-live="polite">

@@ -237,7 +237,7 @@ export const fr: Dict = {
   },
 
   roi: {
-    h2: 'Combien cela vaut-il pour votre entreprise ?',
+    h2: 'Combien cela vaut‑il pour votre entreprise ?',
     sub: 'Un calculateur transparent : vous fixez les hypothèses, nous faisons seulement le calcul. C’est une estimation, pas une promesse.',
     inputs: {
       docs: 'Documents par mois (factures et commandes)',
@@ -254,7 +254,7 @@ export const fr: Dict = {
       base: 'Base',
       optimistic: 'Optimiste',
       timeSaved: 'Heures de contrôle économisées par mois',
-      leakage: 'Écarts détectés par mois',
+      leakage: 'Valeur des écarts interceptés par mois',
       monthly: 'Valeur mensuelle estimée',
       yearly: 'Valeur annuelle estimée',
       roi: 'Ratio de retour annuel estimé',

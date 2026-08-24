@@ -236,6 +236,14 @@
   border-block-end: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface-sunken) 45%, transparent);
 }
+/* Neutral note chip: demo-data is a disclosure, not a business status. */
+.gdemo-badge {
+  align-self: center;
+  flex: none;
+  margin-inline-start: auto;
+  background: var(--surface-sunken);
+  color: var(--ink-mid);
+}
 .gdemo-group {
   display: flex;
   flex-direction: column;

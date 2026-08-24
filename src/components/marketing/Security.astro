@@ -17,13 +17,13 @@ const icons = [
 
 <section class="section security" id="security">
   <div class="container">
-    <div class="section-head reveal">
+    <div class="section-head">
       <h2>{dict.security.h2}</h2>
       <p>{dict.security.sub}</p>
     </div>
     <div class="sec-grid">
       {dict.security.items.map((item, i) => (
-        <div class="sec-item reveal">
+        <div class="sec-item">
           <span class="sec-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d={icons[i % icons.length]} />

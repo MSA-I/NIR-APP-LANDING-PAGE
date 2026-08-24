@@ -16,7 +16,7 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
 
 <section class="section pricing" id="pricing">
   <div class="container">
-    <div class="section-head reveal">
+    <div class="section-head">
       <h2>{p.h2}</h2>
       <p>{p.sub}</p>
     </div>
@@ -32,7 +32,7 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
         const info = p.plans[plan.id as keyof typeof p.plans];
         const highlighted = plan.id === 'premium';
         return (
-          <article class={`plan card reveal ${highlighted ? 'plan-hi' : ''}`}>
+          <article class={`plan card ${highlighted ? 'plan-hi' : ''}`}>
             {highlighted && 'highlight' in info && <span class="plan-flag">{(info as { highlight: string }).highlight}</span>}
             <h3>{info.name}</h3>
             <p class="tagline">{info.tagline}</p>
@@ -45,8 +45,10 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
               <li><span class="num">{fmt(plan.pages)}</span> {p.quota.pages}</li>
               <li><span class="num">{fmt(plan.assistant)}</span> {p.quota.assistant}</li>
             </ul>
-            {plan.id === 'free' && (
+            {plan.id === 'free' ? (
               <a class="btn btn-primary plan-cta" href={APP_URL}>{p.freeCta}</a>
+            ) : (
+              <a class={`btn plan-cta ${plan.id === 'premium' ? 'btn-onyx' : 'btn-ghost'}`} href={APP_URL}>{p.freeCta}</a>
             )}
           </article>
         );
@@ -105,8 +107,8 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
   }
   .plan-hi .tagline,
   .plan-hi .quota,
-  .plan-hi .per {
-    color: color-mix(in srgb, var(--on-action) 75%, transparent);
+  .plan-hi .price .per {
+    color: color-mix(in srgb, var(--on-action) 82%, transparent);
   }
   .plan-flag {
     position: absolute;
@@ -126,6 +128,7 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
     margin-block-start: 4px;
     font-size: 13.5px;
     color: var(--ink-muted);
+    min-block-size: 2.6em; /* two lines: keeps the four prices on one baseline (fr wraps) */
   }
   .price {
     margin-block-start: 20px;
@@ -165,6 +168,17 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
   }
   .plan-cta {
     margin-block-start: 24px;
+    margin-block-end: 0;
+  }
+  .plan {
+    justify-content: flex-start;
+  }
+  .plan .plan-cta {
+    margin-block-start: auto;
+    padding-block-start: 0;
+  }
+  .plan .quota {
+    margin-block-end: 24px;
   }
   .pricing-notes {
     margin-block-start: 24px;
@@ -177,9 +191,13 @@ const price = (plan: (typeof PRICING.plans)[number], period: 'm' | 'y') =>
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 1200px) {
     .plans {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .plan-cta {
+      padding-inline: 14px;
+      font-size: 14.5px;
     }
   }
 </style>

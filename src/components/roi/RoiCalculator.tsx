@@ -79,7 +79,7 @@ export default function RoiCalculator({ dict, locale }: { dict: Dict; locale: Lo
               <th scope="col"></th>
               {rows.map((row) => (
                 <th key={row.key} scope="col">
-                  {r.results[row.key]} <span className="num">(×{row.factor})</span>
+                  {r.results[row.key]} <span className="num">(×{num(row.factor)})</span>
                 </th>
               ))}
             </tr>

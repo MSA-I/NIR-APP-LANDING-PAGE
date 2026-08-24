@@ -10,9 +10,9 @@ export const LOCALE_META: Record<Locale, { label: string; dir: 'rtl' | 'ltr'; la
 
 export const APP_URL = 'https://app.inplace.digital';
 export const CONTACT_EMAIL = 'hello@inplace.digital';
-export const WHATSAPP = [
-  { name: 'משה', intl: '972524167881' },
-  { name: 'ניר', intl: '972542547074' },
+export const WHATSAPP: { name: Record<Locale, string>; intl: string }[] = [
+  { name: { he: 'משה', en: 'Moshe', fr: 'Moshe' }, intl: '972524167881' },
+  { name: { he: 'ניר', en: 'Nir', fr: 'Nir' }, intl: '972542547074' },
 ];
 
 /* Pricing — owner decisions #194/#195/#197/#198 (21.08.2026).

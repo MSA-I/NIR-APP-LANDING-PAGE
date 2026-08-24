@@ -25,7 +25,7 @@ const { locale, dict } = Astro.props;
 
 <Base locale={locale} dict={dict}>
   <main>
-    <Hero dict={dict} />
+    <Hero locale={locale} dict={dict} />
     <Proof dict={dict} />
     <Leaks dict={dict} />
     <Trail dict={dict} />
@@ -37,6 +37,6 @@ const { locale, dict } = Astro.props;
     <Security dict={dict} />
     <Story dict={dict} />
     <Faq dict={dict} />
-    <FinalCta dict={dict} />
+    <FinalCta locale={locale} dict={dict} />
   </main>
 </Base>

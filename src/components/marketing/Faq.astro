@@ -9,10 +9,10 @@ const { dict } = Astro.props;
 
 <section class="section faq" id="faq">
   <div class="container faq-grid">
-    <h2 class="reveal">{dict.faq.h2}</h2>
+    <h2 class="">{dict.faq.h2}</h2>
     <div class="faq-list">
       {dict.faq.items.map((item, i) => (
-        <details class="faq-item reveal" {...(i === 0 ? { open: true } : {})}>
+        <details class="faq-item" {...(i === 0 ? { open: true } : {})}>
           <summary>
             <span>{item.q}</span>
             <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
