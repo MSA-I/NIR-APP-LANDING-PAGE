@@ -50,6 +50,53 @@ const APPROVED = [
     was: 'המחירים לחודש, לפני מע״מ. בתשלום שנתי: <b>690, 2,490 ו‑4,490 ₪ לשנה</b>.',
     now: 'כל המחירים לפני מע״מ.',
   },
+
+  // The selling pass of 27.08.2026. The owner asked for the page's copy to be
+  // read as marketing copy rather than as documentation, so six leaves moved.
+  // Every fact on this page is unchanged: no figure, no capability and no
+  // claim is added below, only the order in which the reader meets them.
+  {
+    at: 'title_page.eyebrow',
+    why: 'the label above the headline is the only place a stranger learns the category, and it did not carry the category noun (27.08.2026)',
+    was: 'רכש, חשבוניות ותשלומים. בעברית מלאה.',
+    now: 'מערכת רכש, חשבוניות ותשלומים. בעברית מלאה.',
+  },
+  {
+    at: 'title_page.h1',
+    why: 'the headline described the product instead of promising anything. The new one names the moment the product exists for, which is the moment two documents disagree (27.08.2026)',
+    was: 'כל מה שקורה בין ההזמנה&nbsp;לכסף, במקום אחד.',
+    now: 'כשההזמנה והחשבונית לא&nbsp;מסכימות, זה נעצר כאן.',
+  },
+  {
+    at: 'title_page.lede[0]',
+    why: 'the two paragraphs are swapped. The check is what the reader buys and the chain is the proof under it, so the chain no longer goes first (27.08.2026)',
+    was: 'InPlace מחברת את שרשרת הרכש של העסק לשרשרת אחת: ספק, מחירון, הזמנה, קבלת סחורה, חשבונית, אישור ותשלום. כל מסמך שנכנס מקבל שורה, סטטוס, וקשר להזמנה שממנה הגיע.',
+    now: 'InPlace משווה בעצמה בין מה שהזמנת, מה שקיבלת ומה שביקשו ממך לשלם. מה שלא מתאים נעצר ומחכה להחלטה, במקום להתגלות בסוף החודש.',
+  },
+  {
+    at: 'title_page.lede[1]',
+    why: 'the other half of the same swap. Build 3 wrote "מחברת את שרשרת הרכש ... לשרשרת אחת", which uses the word twice to say one thing',
+    was: 'המערכת משווה בעצמה בין מה שהזמנת, מה שקיבלת ומה שביקשו ממך לשלם. מה שלא מתאים נעצר ומחכה להחלטה, במקום להתגלות בסוף החודש.',
+    now: 'מתחת לזה יושבת שרשרת אחת: ספק, מחירון, הזמנה, קבלת סחורה, חשבונית, אישור ותשלום. כל מסמך שנכנס מקבל שורה, סטטוס, וקשר להזמנה שממנה הגיע.',
+  },
+  {
+    at: 'midAsk.line',
+    why: '"זה כל מה שהמערכת עושה" reads as an apology for the product. The ask now points at what the reader has just been looking at, which is real screens (27.08.2026)',
+    was: 'זה כל מה שהמערכת עושה. אפשר לפתוח חשבון ולהתחיל מספק אחד.',
+    now: 'זה מה שהמערכת עושה, על המסכים עצמם. אפשר לפתוח חשבון ולהתחיל מספק אחד.',
+  },
+  {
+    at: 'what.steps[1].t',
+    why: 'the one step headline written in the passive, among five written as somebody doing something. Its own body already says "מסמן מה הגיע בפועל" (27.08.2026)',
+    was: 'הסחורה נרשמת מול ההזמנה',
+    now: 'מסמנים מה הגיע, מול מה שהוזמן',
+  },
+  {
+    at: 'why.lede',
+    why: 'the sentence ended on a group of three whose third term, "בעלות ברורה על כל שלב", is the only abstraction in it. The other two are concrete, so the third was carrying the rhythm rather than a meaning (27.08.2026)',
+    was: 'היום העבודה מפוצלת בין גיליון אקסל, קבוצת וואטסאפ, רואה החשבון ומערכת ההזמנות של הספק. InPlace היא החלופה לפיצול הזה: מסע אחד, מקור אמת אחד, ובעלות ברורה על כל שלב.',
+    now: 'היום העבודה מפוצלת בין גיליון אקסל, קבוצת וואטסאפ, רואה החשבון ומערכת ההזמנות של הספק. InPlace היא החלופה לפיצול הזה: מסע אחד, מקור אמת אחד, ולכל שלב יש מי שאחראי עליו.',
+  },
 ]
 
 import { readFile } from 'node:fs/promises'

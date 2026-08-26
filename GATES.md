@@ -559,3 +559,72 @@ shipped.
 
 Everything was re-rendered from the merged scene: four legs in both cuts, act
 two in both cuts, and the film rebuilt.
+
+---
+
+## Round twelve — the selling pass, 27.08.2026
+
+Branch `copy/selling-voice`. The owner asked for three skills over the finished
+page: `copywriting` to write the selling copy, `humanizer` to take the machine
+out of it without inventing anything, and `market-copy` to review the result.
+
+### What moved
+
+Seven leaves in `src/content/he.ts`, every one of them recorded in G2's
+allowlist with its `was`, its `now` and its reason. No figure changed, no
+capability was added, and nothing on the page claims anything it did not claim
+yesterday. The full before/after table is in COPY-SUGGESTIONS.md.
+
+The one change worth restating here is the headline. Build 3's was
+`כל מה שקורה בין ההזמנה לכסף, במקום אחד.`, which describes an arrangement
+rather than promising an outcome, and which repeats the page's own closing line
+almost word for word, so the page opened and closed on the same claim. It is now
+`כשההזמנה והחשבונית לא מסכימות, זה נעצר כאן.` — the moment the product exists
+for, and the moment chapter 01's film actually shows.
+
+The two hero paragraphs are swapped rather than rewritten: the three-way check
+is what a reader buys and the chain is the evidence under it, so the chain no
+longer goes first.
+
+### What was deliberately left alone
+
+- **Chapter 03's two columns.** Every line is lifted from
+  `../NIR-APP/brand/positioning.md`. Rewriting them on the landing page would
+  cut the page loose from the brand document, which costs more than any
+  sharpening gains.
+- **The seven questions.** Already written in the customer's own words, and each
+  answer describes behaviour that exists.
+- **Every figure, every caption, every source note.** Untouched.
+- **`SplitHeading`'s `&nbsp;` handling.** It is documented as keeping joined
+  words together and does not (it decodes the entity to a space, then splits on
+  spaces). Nothing on the page breaks because of it today, and a copy pass is
+  not the place to change how headlines wrap. Logged in COPY-SUGGESTIONS.md.
+
+### Evidence
+
+| | measured |
+|---|---|
+| G2 | PASS with seven new allowlist entries; each asserts build 3's old string AND build 4's new one, so neither side can drift silently |
+| Full suite | 13 met, 0 unmet |
+| `tsc --noEmit && vite build` | clean, `index-LYXJGQTK.js` |
+| Rendered DOM | `h1` reads `כשההזמנה והחשבונית לא מסכימות, זה נעצר כאן.` off the built page, not off the source |
+| Frames | `lab/copy-pass/p0000.png`, `p0450.png` |
+
+### A capture that lied, and why it is written down
+
+The first two frames of this round came back showing the OLD headline over the
+ROUND TEN ground, on a build that had already shipped the new copy. Nothing was
+wrong with the build. Two `vite preview` processes from the previous day were
+still alive, one holding `0.0.0.0:4500` and one holding `[::1]:4500`; on Windows
+`localhost` resolves to `::1` first, so `scripts/peek.mjs` was photographing a
+server started at 19:12 the day before, serving a bundle
+(`index-COhVQ8Q6.js`) that no longer exists on disk.
+
+The gates did not catch it because `scripts/gates/lib.mjs` starts its own server
+on an ephemeral port against `dist/`, so every gate was measuring the real
+build the whole time. Only the human-facing screenshot was stale, which is the
+worse way round: a green ledger next to a picture of yesterday.
+
+What it costs to know: one `curl` of the served `index.html` and a comparison of
+the bundle hash against `dist/`. That is the check that caught it, and it is
+cheaper than looking at the frame twice.
