@@ -26,12 +26,18 @@ await withPage(async (page, { errors }) => {
     faq: document.querySelectorAll('.faq__item').length,
     faqOpenNoJs: document.querySelectorAll('.faq__item[open]').length,
     footLinks: [...document.querySelectorAll('.sitefoot__col a')].map((a) => a.getAttribute('href')),
+    planRows: document.querySelectorAll('.plans tbody tr').length,
+    // Owner decision #267: no sum on a public surface. Asserted mechanically,
+    // the same way the marketing repo's own check does it, so nobody restores
+    // a price here by accident.
+    moneyInPlans: (document.querySelector('.ch--plans')?.innerText || '')
+      .match(/[₪$€]|\d{2,3}(\.\d{2})?\s*(ש"ח|שח|ILS)/g) || [],
     vhUnits: +(document.documentElement.scrollHeight / innerHeight).toFixed(2),
   }))
 
   c.note(`${shape.chapters.length} chapters, ${shape.vhUnits}vh of scroll, ${shape.acts} act`)
 
-  c.ok(shape.chapters.length === 6, `expected a title page and five chapters, found ${shape.chapters.length}`)
+  c.ok(shape.chapters.length === 7, `expected a title page and six chapters, found ${shape.chapters.length}`)
   c.ok(shape.h1 === 1, `expected exactly one <h1>, found ${shape.h1}`)
 
   // The grammar allows scrub in ONE chapter. More than one act, or a scrub
@@ -42,6 +48,11 @@ await withPage(async (page, { errors }) => {
   // Tabs
   c.ok(shape.tabs === 5 && shape.panels === 5, `expected 5 tabs and 5 panels, found ${shape.tabs}/${shape.panels}`)
   c.ok(shape.shown === 1, `exactly one panel may be visible at rest, found ${shape.shown}`)
+
+  // Plans
+  c.ok(shape.planRows === 5, `expected five plan rows, found ${shape.planRows}`)
+  c.ok(shape.moneyInPlans.length === 0,
+    `decision #267 forbids a sum on a public surface; found ${shape.moneyInPlans.join(', ')} in the plans section`)
 
   // FAQ and footer
   c.ok(shape.faq >= 5, `expected at least five FAQ entries, found ${shape.faq}`)
@@ -103,7 +114,7 @@ await withPage(async (page, { errors }) => {
   const first = await folioAt(0)
   const last = await folioAt(1)
   c.ok(first !== last, `the folio never changed: "${first}" at the top and the bottom`)
-  c.ok(/05/.test(last), `the folio should name the last chapter at the foot of the page, said "${last}"`)
+  c.ok(/06/.test(last), `the folio should name the last chapter at the foot of the page, said "${last}"`)
   c.note(`folio: "${first}" -> "${last}"`)
 
   // ----------------------------------------------------------------- keyboard

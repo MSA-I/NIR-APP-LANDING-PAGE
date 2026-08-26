@@ -589,6 +589,78 @@ a { color: inherit; }
 }
 
 /* --------------------------------------------------------------- chapter 04 -- */
+/* A table, because a plan comparison is a table. It is also the only table on
+   the page, which keeps this section from repeating any rhythm above it.
+
+   No amount appears here by decision, not by omission. See the note above
+   `plans` in i18n/he.js before adding one. */
+
+.ch--plans {
+  padding-block: clamp(56px, 10vh, 118px);
+  border-block-start: 1px solid var(--onyx-line);
+}
+.sr-only {
+  position: absolute;
+  inline-size: 1px; block-size: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.plans__frame {
+  margin-block-start: clamp(30px, 5vh, 54px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.plans {
+  inline-size: 100%;
+  min-inline-size: 620px;
+  border-collapse: collapse;
+  text-align: start;
+}
+.plans th, .plans td {
+  padding: 18px 20px 18px 0;
+  text-align: start;
+  vertical-align: baseline;
+  border-block-end: 1px solid var(--onyx-line);
+}
+.plans thead th {
+  padding-block-end: 12px;
+  font-size: 12.5px; font-weight: 650; letter-spacing: 0.05em;
+  color: var(--on-dark-soft);
+  border-block-end-color: var(--on-dark-soft);
+}
+.plans tbody tr:last-child :is(th, td) { border-block-end: 0; }
+
+.plans__name {
+  font-size: clamp(17px, 1.6vw, 21px); font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--on-dark);
+  inline-size: 1%; white-space: nowrap;
+}
+.plans__who {
+  font-size: clamp(14.5px, 1.15vw, 16px); line-height: 1.55;
+  color: var(--on-dark-soft);
+}
+.plans__docs {
+  font-size: clamp(18px, 1.8vw, 24px); font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--accent-dark);
+  inline-size: 1%; white-space: nowrap;
+}
+.plans__price {
+  font-size: 14.5px;
+  color: var(--on-dark-soft);
+  inline-size: 1%; white-space: nowrap;
+}
+.plans__note {
+  margin: clamp(18px, 3vh, 26px) 0 0;
+  font-size: 14px; line-height: 1.6;
+  color: var(--on-dark-soft);
+  max-inline-size: 62ch;
+}
+
+/* --------------------------------------------------------------- chapter 05 -- */
 /* <details>, so it answers questions with no JavaScript at all. */
 
 .ch--faq { padding-block: clamp(14px, 2.4vh, 26px) 0; }

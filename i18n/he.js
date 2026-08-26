@@ -50,8 +50,9 @@ export default {
       { n: '01', t: 'הערימה',          d: 'מהערימה עד מרכז הבקרה' },
       { n: '02', t: 'מה המערכת עושה',  d: 'חמישה שלבים, חמישה מסכים אמיתיים' },
       { n: '03', t: 'למה דווקא זה',    d: 'ומה InPlace לא מנסה להיות' },
-      { n: '04', t: 'שאלות',           d: 'מי עובד, איך נכנסים מסמכים, מי מעביר כסף' },
-      { n: '05', t: 'להתחיל',          d: 'ומאיפה כל מספר בעמוד הזה' },
+      { n: '04', t: 'מסלולים',         d: 'חמישה מסלולים, מדד אחד מפורסם' },
+      { n: '05', t: 'שאלות',           d: 'מי עובד, איך נכנסים מסמכים, מי מעביר כסף' },
+      { n: '06', t: 'להתחיל',          d: 'ומאיפה כל מספר בעמוד הזה' },
     ],
   },
 
@@ -171,8 +172,42 @@ export default {
   },
 
   // ------------------------------------------------------------------ chapter 4
+  // CONSTRAINED BY TWO OWNER DECISIONS IN ../NIR-APP/docs/OPEN-DECISIONS.md.
+  // Do not "improve" this section by adding amounts.
+  //
+  //   #267 (25.08.2026) — no sum reaches a public surface before launch. The
+  //   decision names this marketing site by name and records that a check was
+  //   added there which FAILS on any currency symbol inside the pricing block.
+  //   Public surfaces publish volume only; the amount is shown inside the
+  //   account at the moment of upgrade, where the billing country is known.
+  //
+  //   #266 (24.08.2026) — exactly ONE usage metric is published: documents per
+  //   month. The page ceiling is derived and deliberately unpublished, and the
+  //   assistant quota stays hidden from every customer surface until a signed
+  //   DPA (#271).
+  //
+  // The quotas below (20/40/150/375) are #266's values. Production still stands
+  // on migration 0170, so that deploy has to land before this page goes live.
+  // #201 keeps ביזנס without a published figure.
+  plans: {
+    folio: 'פרק 04: מסלולים',
+    h2: 'מסלולים',
+    lede: 'מדד אחד מפורסם: כמה מסמכים המערכת קולטת בחודש. המחיר עצמו מוצג בתוך החשבון, ברגע המעבר למסלול בתשלום, כשכתובת החיוב ידועה והסכום הוא עובדה ולא הערכה.',
+    tableLabel: 'השוואת מסלולים',
+    headers: { plan: 'מסלול', who: 'למי זה מתאים', docs: 'מסמכים בחודש', price: 'מחיר' },
+    rows: [
+      { name: 'חינם',     who: 'להתחיל ולראות את המערכת רצה על העסק שלך', docs: '20',   price: 'ללא עלות' },
+      { name: 'בסיס',     who: 'עסק שעובד מול כמה ספקים קבועים',          docs: '40',   price: 'בתוך החשבון' },
+      { name: 'פרו',      who: 'עסק שרואה החשבון שלו עובד בתוך המערכת',   docs: '150',  price: 'בתוך החשבון' },
+      { name: 'פרימיום',  who: 'עסק עם יותר מסניף אחד',                    docs: '375',  price: 'בתוך החשבון' },
+      { name: 'ביזנס',    who: 'ארגון שצריך מכסות והסדר משלו',            docs: 'חוזי', price: 'בשיחה' },
+    ],
+    note: 'אפשר לעבור בין מסלולים בכל שלב. נתונים שנצברו נשארים במלואם גם אם מורידים מסלול.',
+  },
+
+  // ------------------------------------------------------------------ chapter 5
   faq: {
-    folio: 'פרק 04: שאלות',
+    folio: 'פרק 05: שאלות',
     h2: 'שאלות שנשאלות&nbsp;לפני שמתחילים',
     lede: 'התשובות כאן מתארות את המערכת כפי שהיא עובדת היום.',
     items: [
@@ -207,9 +242,9 @@ export default {
     ],
   },
 
-  // ------------------------------------------------------------------ chapter 5
+  // ------------------------------------------------------------------ chapter 6
   close: {
-    folio: 'פרק 05: להתחיל',
+    folio: 'פרק 06: להתחיל',
     h2: 'הכול במקום.',
     sub: 'והצעד הבא ברור.',
     p: 'אפשר לפתוח חשבון חינם ולהתחיל מספק אחד, או לתאם דמו של עשרים דקות ולראות את זה על הנתונים של העסק שלך.',
@@ -251,7 +286,7 @@ export default {
           { t: 'מה המערכת עושה', href: '#what' },
           { t: 'למה דווקא זה',   href: '#why' },
           { t: 'שאלות נפוצות',   href: '#faq' },
-          { t: 'מחירים',         href: 'https://inplace.digital/pricing' },
+          { t: 'מסלולים',        href: '#plans' },
         ],
       },
       {

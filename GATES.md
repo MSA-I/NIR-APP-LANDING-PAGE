@@ -111,3 +111,42 @@ published.
 questions a visitor asks that the page still does not answer, because the facts
 do not exist in any document I can read. They were left out rather than
 answered plausibly.
+
+---
+
+## Round 4: the plans chapter
+
+Added on the owner's instruction ("צריך גם להוסיף אזור מנויים, המחירים נמצאים
+באפליקציה של ניר"). Two owner decisions in `../NIR-APP/docs/OPEN-DECISIONS.md`
+govern what may appear:
+
+- **#267** (25.08.2026): no sum reaches a public surface before launch. The
+  decision names the marketing site explicitly and records that a check was
+  added there which fails on any currency symbol inside the pricing block.
+  Public surfaces publish volume only; the amount appears inside the account at
+  upgrade, where the billing country is known.
+- **#266** (24.08.2026): exactly one usage metric is published, documents per
+  month. The page ceiling is derived and unpublished; the assistant quota stays
+  hidden from every customer surface until a signed DPA (#271).
+- **#201**: ביזנס carries no published figure.
+
+| # | Gate | State | Evidence |
+|---|---|---|---|
+| P1 | Five plans, published as a real table | **MET** | `G14 PASS`: 5 rows. A `<table>` with `<th scope>` on both axes, so each figure carries its column for a screen reader |
+| P2 | No sum anywhere in the plans section | **MET, and the check is proven to fire** | `G14 PASS` clean. Injecting `69 ₪ לחודש` into one price cell made it fail with `found ₪ in the plans section`, then the file was restored. A negative assertion that has never failed is not evidence |
+| P3 | Only the one published metric appears | **MET** | Documents per month only: 20 / 40 / 150 / 375 / חוזי. No page ceiling, no assistant quota, no user or branch count |
+| P4 | No unimplemented capability is advertised | **MET** | The per-plan capability locks of #274 and the 30-day window of #276 are both `DECIDED / NOT_IMPLEMENTED`, so neither is on the page. The "who it is for" column carries fit, not a feature promise |
+| P5 | Contrast and layout hold with the new section | **MET** | `G7 PASS` 131 runs, worst 5.85:1; `G6 PASS` at 390/768/1024/1440; `G4 PASS`; detector `[]`; zero em-dashes |
+| P6 | The footer's pricing link resolves | **MET** | It pointed at `inplace.digital/pricing`, one of the three destinations round 3 could not confirm. It now points at `#plans` on this page, so one of the three open questions is closed |
+
+**ABANDON: publishing the actual amounts.** 69 / 249 / 449 ₪ per month exist and
+are verified in `supabase/migrations/0184_launch_plan_and_price_catalogue.sql`
+lines 235-237. They are not on the page because #267 forbids it, and #267 is an
+owner decision recorded the day before this session. Reversing it is the owner's
+call, not mine; the copy and the gate are both one edit away.
+
+**ABANDON: the quota deploy dependency.** The published quotas 20/40/150/375 are
+#266's values. #266's status is `IMPLEMENTED / MERGED / NOT_DEPLOYED` and
+production still stands on migration `0170`, which carries the earlier
+25/50/200/500. **This page must not go live before that migration deploys**, or
+it will publish a quota the running system does not enforce.

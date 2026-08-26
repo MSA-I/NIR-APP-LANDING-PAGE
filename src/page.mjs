@@ -89,6 +89,16 @@ export function render(t) {
                 <span class="why__p">${esc(r.p)}</span>
               </li>`).join('')
 
+  // A real <table>: a plan comparison IS tabular, and the header cells give a
+  // screen reader the column each figure belongs to for free.
+  const planRows = t.plans.rows.map((r) => `
+                <tr>
+                  <th scope="row" class="plans__name">${esc(r.name)}</th>
+                  <td class="plans__who">${esc(r.who)}</td>
+                  <td class="plans__docs ip-num">${esc(r.docs)}</td>
+                  <td class="plans__price">${esc(r.price)}</td>
+                </tr>`).join('')
+
   // <details> rather than a scripted accordion: it opens without JavaScript,
   // it is keyboard-operable and screen-reader-announced by the browser, and it
   // is the one component on this page that needed no code at all.
@@ -262,6 +272,32 @@ export function render(t) {
     </section>
 
     <!-- ============================================================= chapter 04 -->
+    <section class="ch ch--plans" id="plans" data-folio="${esc(t.plans.folio)}">
+      <div class="wrap">
+        <header class="say">
+          <h2 class="h-big">${raw(t.plans.h2)}</h2>
+          <p class="lede">${esc(t.plans.lede)}</p>
+        </header>
+        <div class="plans__frame">
+          <table class="plans">
+            <caption class="sr-only">${esc(t.plans.tableLabel)}</caption>
+            <thead>
+              <tr>
+                <th scope="col">${esc(t.plans.headers.plan)}</th>
+                <th scope="col">${esc(t.plans.headers.who)}</th>
+                <th scope="col">${esc(t.plans.headers.docs)}</th>
+                <th scope="col">${esc(t.plans.headers.price)}</th>
+              </tr>
+            </thead>
+            <tbody>${planRows}
+            </tbody>
+          </table>
+        </div>
+        <p class="plans__note">${esc(t.plans.note)}</p>
+      </div>
+    </section>
+
+    <!-- ============================================================= chapter 05 -->
     <section class="ch ch--faq" id="faq" data-folio="${esc(t.faq.folio)}">
       <div class="plate">
         <div class="wrap">
@@ -275,7 +311,7 @@ export function render(t) {
       </div>
     </section>
 
-    <!-- ============================================================= chapter 05 -->
+    <!-- ============================================================= chapter 06 -->
     <section class="ch ch--close" data-folio="${esc(t.close.folio)}">
       <div class="wrap">
         <div class="colophon">

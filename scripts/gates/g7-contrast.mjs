@@ -23,6 +23,7 @@ const TARGETS = [
   '.apparatus__id', '.apparatus__t', '.apparatus__s',
   '.why__label', '.why__t', '.why__p',
   '.faq__q', '.faq__a p',
+  '.plans__name', '.plans__who', '.plans__docs', '.plans__price', '.plans__note',
   '.sitefoot__tagline', '.sitefoot__h', '.sitefoot__col a', '.sitefoot__rule p',
   '.btn',
 ]
