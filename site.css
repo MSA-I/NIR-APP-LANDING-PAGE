@@ -545,6 +545,141 @@ a { color: inherit; }
 .asks--mid + .fineprint { display: none; }
 
 /* --------------------------------------------------------------- chapter 03 -- */
+/* Two columns held against each other for the length of the section: what the
+   product does, and what it refuses to be. Both sides carry real content, and
+   the second column is the brand's own refusal list rather than a claim about
+   anybody else's product. */
+
+.ch--why {
+  padding-block: clamp(56px, 10vh, 118px);
+  border-block-start: 1px solid var(--onyx-line);
+}
+.why__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+  margin-block-start: clamp(34px, 6vh, 64px);
+}
+.why__col--no { opacity: 0.86; }
+.why__label {
+  margin: 0 0 4px;
+  padding-block-end: 14px;
+  border-block-end: 1px solid var(--onyx-line);
+  font-size: 13px; font-weight: 650; letter-spacing: 0.03em;
+  color: var(--accent-dark);
+}
+.why__col--no .why__label { color: var(--on-dark-soft); }
+
+.why__list { list-style: none; margin: 0; padding: 0; }
+.why__row {
+  padding-block: 18px;
+  border-block-end: 1px solid var(--onyx-line);
+}
+.why__t {
+  display: block;
+  font-size: clamp(16px, 1.5vw, 19px); font-weight: 650;
+  letter-spacing: -0.015em;
+  margin-block-end: 6px;
+}
+.why__col--no .why__t { color: var(--on-dark-soft); }
+.why__p {
+  display: block;
+  font-size: clamp(14.5px, 1.15vw, 16px); line-height: 1.62;
+  color: var(--on-dark-soft);
+}
+
+/* --------------------------------------------------------------- chapter 04 -- */
+/* <details>, so it answers questions with no JavaScript at all. */
+
+.ch--faq { padding-block: clamp(14px, 2.4vh, 26px) 0; }
+
+.faq { margin-block-start: clamp(30px, 5vh, 54px); border-block-start: 1px solid var(--wheat-line); }
+.faq__item { border-block-end: 1px solid var(--wheat-line); }
+.faq__q {
+  display: flex; align-items: baseline; gap: 12px;
+  padding-block: 18px;
+  font-size: clamp(16px, 1.5vw, 19.5px); font-weight: 650;
+  letter-spacing: -0.015em; line-height: 1.35;
+  color: var(--on-light);
+  cursor: pointer;
+  list-style: none;
+}
+.faq__q::-webkit-details-marker { display: none; }
+.faq__q::after {
+  content: "+";
+  margin-inline-start: auto;
+  font-size: 20px; font-weight: 400; line-height: 1;
+  color: var(--accent-light);
+  flex: none;
+}
+/* One glyph, rotated, rather than swapping a plus for an escaped minus: a CSS
+   unicode escape next to a closing quote is a parsing hazard, and it shipped
+   here as a broken box the first time. */
+.faq__q::after {
+  content: "+";
+  margin-inline-start: auto;
+  font-size: 20px; font-weight: 400; line-height: 1;
+  color: var(--accent-light);
+  flex: none;
+  transition: transform 160ms ease;
+}
+.faq__item[open] .faq__q::after { transform: rotate(45deg); }
+.faq__q:hover { color: var(--accent-light); }
+.faq__a { padding-block-end: 20px; max-inline-size: 78ch; }
+.faq__a p {
+  margin: 0;
+  font-size: clamp(15px, 1.2vw, 17px); line-height: 1.72;
+  color: var(--on-light-soft);
+}
+.faq__a b { color: var(--on-light); font-weight: 650; }
+
+/* ------------------------------------------------------------------ footer -- */
+
+.sitefoot {
+  border-block-start: 1px solid var(--onyx-line);
+  padding-block: clamp(40px, 7vh, 76px) clamp(20px, 3vh, 32px);
+}
+.sitefoot__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+}
+.sitefoot__tagline {
+  margin: 14px 0 0;
+  font-size: 14.5px; line-height: 1.6;
+  color: var(--on-dark-soft);
+  max-inline-size: 34ch;
+}
+.sitefoot__cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 40px);
+}
+.sitefoot__h {
+  margin: 0 0 12px;
+  font-size: 12.5px; font-weight: 650; letter-spacing: 0.05em;
+  color: var(--on-dark);
+}
+.sitefoot__col ul { list-style: none; margin: 0; padding: 0; }
+.sitefoot__col li + li { margin-block-start: 9px; }
+.sitefoot__col a {
+  font-size: 14.5px;
+  color: var(--on-dark-soft);
+  text-decoration: none;
+}
+.sitefoot__col a:hover { color: var(--accent-dark); text-decoration: underline; }
+
+.sitefoot__rule {
+  margin-block-start: clamp(34px, 6vh, 64px);
+  padding-block-start: 18px;
+  border-block-start: 1px solid var(--onyx-line);
+  font-size: 13px;
+  color: var(--on-dark-soft);
+}
+.sitefoot__rule p { margin: 0; }
+
+/* --------------------------------------------------------------- chapter 05 -- */
 
 .ch--close {
   padding-block: clamp(56px, 10vh, 116px) clamp(28px, 4vh, 48px);
@@ -595,16 +730,7 @@ a { color: inherit; }
 .note__s { color: var(--on-dark-soft); }
 .note.is-lit { background: #10222a; }
 
-.footrule {
-  display: flex; flex-wrap: wrap; gap: 8px 26px;
-  justify-content: space-between;
-  margin-block-start: clamp(38px, 6vh, 72px);
-  padding-block-start: 18px;
-  border-block-start: 1px solid var(--onyx-line);
-  font-size: 13px;
-  color: var(--on-dark-soft);
-}
-.footrule p { margin: 0; }
+
 
 /* ------------------------------------------------- the apparatus, live strip -- */
 /* Fixed at the foot of the page, the way a footnote sits at the foot of a
@@ -657,6 +783,8 @@ a { color: inherit; }
 @media (max-width: 940px) {
   .title__body { grid-template-columns: 1fr; align-items: start; }
   .colophon { grid-template-columns: 1fr; }
+  .why__cols { grid-template-columns: 1fr; gap: 34px; }
+  .sitefoot__top { grid-template-columns: 1fr; }
   .panel { grid-template-columns: 1fr; }
   .panel__say { grid-template-columns: 1fr; }
   .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -696,6 +824,7 @@ a { color: inherit; }
 @media (max-width: 520px) {
   body { font-size: 16px; }
   .apparatus { inset-inline: 12px; max-inline-size: none; }
+  .sitefoot__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 18px; }
 }
 
 /* ---------------------------------------------------------- reduced motion -- */
@@ -703,5 +832,5 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .apparatus { transition: none; }
   .btn { transition: none; }
-  .chain__step { transition: none; }
+  .chain__step, .faq__q::after { transition: none; }
 }

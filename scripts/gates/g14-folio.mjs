@@ -23,12 +23,15 @@ await withPage(async (page, { errors }) => {
     figures: [...document.querySelectorAll('.fig[data-note]')].map((f) => f.dataset.note),
     notes: [...document.querySelectorAll('.note')].map((n) => n.id.replace('note-', '')),
     h1: document.querySelectorAll('h1').length,
+    faq: document.querySelectorAll('.faq__item').length,
+    faqOpenNoJs: document.querySelectorAll('.faq__item[open]').length,
+    footLinks: [...document.querySelectorAll('.sitefoot__col a')].map((a) => a.getAttribute('href')),
     vhUnits: +(document.documentElement.scrollHeight / innerHeight).toFixed(2),
   }))
 
   c.note(`${shape.chapters.length} chapters, ${shape.vhUnits}vh of scroll, ${shape.acts} act`)
 
-  c.ok(shape.chapters.length === 4, `expected a title page and three chapters, found ${shape.chapters.length}`)
+  c.ok(shape.chapters.length === 6, `expected a title page and five chapters, found ${shape.chapters.length}`)
   c.ok(shape.h1 === 1, `expected exactly one <h1>, found ${shape.h1}`)
 
   // The grammar allows scrub in ONE chapter. More than one act, or a scrub
@@ -39,6 +42,13 @@ await withPage(async (page, { errors }) => {
   // Tabs
   c.ok(shape.tabs === 5 && shape.panels === 5, `expected 5 tabs and 5 panels, found ${shape.tabs}/${shape.panels}`)
   c.ok(shape.shown === 1, `exactly one panel may be visible at rest, found ${shape.shown}`)
+
+  // FAQ and footer
+  c.ok(shape.faq >= 5, `expected at least five FAQ entries, found ${shape.faq}`)
+  c.ok(shape.faqOpenNoJs === 1, `exactly one FAQ entry should be open at rest, found ${shape.faqOpenNoJs}`)
+  const badHrefs = shape.footLinks.filter((h) => !h || h === '#' || /example\.com|TODO/i.test(h))
+  c.ok(badHrefs.length === 0, `footer links with no destination: ${badHrefs.join(', ')}`)
+  c.note(`${shape.faq} FAQ entries, ${shape.footLinks.length} footer links`)
 
   // The apparatus is only honest if it is complete in both directions: every
   // figure has a source, and no source is listed that nothing on the page cites.
@@ -93,7 +103,7 @@ await withPage(async (page, { errors }) => {
   const first = await folioAt(0)
   const last = await folioAt(1)
   c.ok(first !== last, `the folio never changed: "${first}" at the top and the bottom`)
-  c.ok(/03/.test(last), `the folio should name the last chapter at the foot of the page, said "${last}"`)
+  c.ok(/05/.test(last), `the folio should name the last chapter at the foot of the page, said "${last}"`)
   c.note(`folio: "${first}" -> "${last}"`)
 
   // ----------------------------------------------------------------- keyboard

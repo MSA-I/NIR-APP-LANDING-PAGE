@@ -80,3 +80,34 @@ Scored per the page-cro rubric, on the structured chapters.
 not have and I will not invent: real customers, real security posture, real
 setup time, real pricing. Raised with the owner rather than filled with
 plausible copy.
+
+---
+
+## Round 3: differentiation, FAQ and footer
+
+Added on the owner's instruction. The constraint that governed the whole round:
+**every claim had to come from a document in the product repo, or not ship.**
+
+| # | Gate | State | Evidence |
+|---|---|---|---|
+| E1 | The differentiation section makes no claim I cannot source | **MET** | Both columns are lifted from `../NIR-APP/brand/positioning.md` ("מה InPlace מסרבת להיות", "נקודות הוכחה") and `../NIR-APP/PRODUCT.md`. The right column is InPlace's own refusal list, not an assertion about anyone else's product |
+| E2 | Every FAQ answer is sourced | **MET** | Roles and the capability contract from `PRODUCT.md`; the document intake from the `office-documents-inbox` capture, read this session; exceptions from the `owner-exceptions` capture; the payment path (approved request, step-up, reason, audit) from `PRODUCT.md` and `CLAUDE.md`; per-organization isolation from the `org_id` + RLS rule in `CLAUDE.md`; Hebrew-first from `PRODUCT.md` |
+| E3 | The FAQ works with no JavaScript | **MET** | Native `<details>`/`<summary>`. `G14 PASS`: 7 entries, exactly one open at rest |
+| E4 | No footer link points at nothing | **MET** | `G14 PASS`: 9 links, none empty, none a `#` stub, none a placeholder domain. **Three of them still need the owner's confirmation** (see below) |
+| E5 | Contrast holds on both new sections | **MET** | `G7 PASS`, 132 text runs across 10 scroll positions (was 88), worst **5.26:1** on `.btn`, control fires at 1.01:1 |
+| E6 | Still zero em-dashes, detector still clean | **MET** | `grep -o "—" dist/index.html \| wc -l` = 0; `detect.mjs` returns `[]` |
+| E7 | Layout families stay distinct | **MET** | Six blocks, six families: title page, sticky film spread, chain plus wide screen, two-column refusal list, `<details>` accordion, colophon. No family repeats |
+| E8 | Gates still green at the new length | **MET** | `G4 PASS`, `G6 PASS` (390/768/1024/1440), `G7 PASS`, `G14 PASS`. Page is now **13.06vh** |
+
+**ABANDON: three footer destinations.** `inplace.digital/pricing`, `/terms` and
+`/privacy` come from the product's own route list in
+`artifacts/domain-cutover/PRE-CUTOVER-SNAPSHOT`, which is a snapshot of the
+pre-cutover domain. Whether they resolve on `inplace.digital` today is not
+something this repo can prove. They are all in `i18n/he.js` under
+`footer.cols`, and the owner has to confirm or correct them before the page is
+published.
+
+**ABANDON: pricing, setup time and accounting-software integration.** Three
+questions a visitor asks that the page still does not answer, because the facts
+do not exist in any document I can read. They were left out rather than
+answered plausibly.

@@ -83,6 +83,29 @@ export function render(t) {
               <p class="figrow__l">${esc(s.l)}</p>
             </div>`).join('')
 
+  const whyList = (rows) => rows.map((r) => `
+              <li class="why__row">
+                <b class="why__t">${esc(r.t)}</b>
+                <span class="why__p">${esc(r.p)}</span>
+              </li>`).join('')
+
+  // <details> rather than a scripted accordion: it opens without JavaScript,
+  // it is keyboard-operable and screen-reader-announced by the browser, and it
+  // is the one component on this page that needed no code at all.
+  const faq = t.faq.items.map((f, i) => `
+            <details class="faq__item"${i === 0 ? ' open' : ''}>
+              <summary class="faq__q">${esc(f.q)}</summary>
+              <div class="faq__a"><p>${raw(f.a)}</p></div>
+            </details>`).join('')
+
+  const footCols = t.footer.cols.map((c) => `
+            <div class="sitefoot__col">
+              <p class="sitefoot__h">${esc(c.h)}</p>
+              <ul>${c.links.map((l) => `
+                <li><a href="${esc(l.href)}">${esc(l.t)}</a></li>`).join('')}
+              </ul>
+            </div>`).join('')
+
   const notes = t.notes.map((n) => `
             <li class="note" id="note-${esc(n.id)}">
               <span class="note__id">${esc(n.id)}</span>
@@ -217,6 +240,42 @@ export function render(t) {
     </section>
 
     <!-- ============================================================= chapter 03 -->
+    <section class="ch ch--why" id="why" data-folio="${esc(t.why.folio)}">
+      <div class="wrap">
+        <header class="say">
+          <h2 class="h-big">${raw(t.why.h2)}</h2>
+          <p class="lede">${esc(t.why.lede)}</p>
+        </header>
+        <div class="why__cols">
+          <div class="why__col">
+            <p class="why__label">${esc(t.why.yesLabel)}</p>
+            <ul class="why__list">${whyList(t.why.yes)}
+            </ul>
+          </div>
+          <div class="why__col why__col--no">
+            <p class="why__label">${esc(t.why.noLabel)}</p>
+            <ul class="why__list">${whyList(t.why.no)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= chapter 04 -->
+    <section class="ch ch--faq" id="faq" data-folio="${esc(t.faq.folio)}">
+      <div class="plate">
+        <div class="wrap">
+          <header class="say">
+            <h2 class="h-big">${raw(t.faq.h2)}</h2>
+            <p class="lede">${esc(t.faq.lede)}</p>
+          </header>
+          <div class="faq">${faq}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= chapter 05 -->
     <section class="ch ch--close" data-folio="${esc(t.close.folio)}">
       <div class="wrap">
         <div class="colophon">
@@ -234,14 +293,31 @@ export function render(t) {
           </div>
         </div>
 
-        <footer class="footrule">
-          <p dir="ltr">${esc(t.footer.rights)}</p>
-          <p>${esc(t.footer.tagline)}</p>
-        </footer>
       </div>
     </section>
 
   </main>
+
+  <footer class="sitefoot">
+    <div class="wrap">
+      <div class="sitefoot__top">
+        <div class="sitefoot__brand">
+          <a class="folio__brand" href="/">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+              <path d="M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z" opacity=".92"/>
+            </svg>
+            ${esc(t.brand)}
+          </a>
+          <p class="sitefoot__tagline">${esc(t.footer.tagline)}</p>
+        </div>
+        <nav class="sitefoot__cols" aria-label="${esc(t.footer.cols[0].h)}">${footCols}
+        </nav>
+      </div>
+      <div class="sitefoot__rule">
+        <p dir="ltr">${esc(t.footer.rights)}</p>
+      </div>
+    </div>
+  </footer>
 
   <!-- The signature move. A live footnote strip: every real figure in the
        running copy is a numbered source, and the strip names the source of the

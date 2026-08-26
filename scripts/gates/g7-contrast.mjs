@@ -21,7 +21,9 @@ const TARGETS = [
   '.figrow__v', '.figrow__l', '.midask__line',
   '.apparatus-list__label', '.apparatus-list__lede', '.note__id', '.note__t', '.note__s',
   '.apparatus__id', '.apparatus__t', '.apparatus__s',
-  '.footrule p',
+  '.why__label', '.why__t', '.why__p',
+  '.faq__q', '.faq__a p',
+  '.sitefoot__tagline', '.sitefoot__h', '.sitefoot__col a', '.sitefoot__rule p',
   '.btn',
 ]
 
