@@ -6,18 +6,19 @@
 // sections below are new copy for new sections; the guarantee G2 makes about
 // the old copy is worth more than the convenience of one dictionary.
 //
-// TWO PLACEHOLDER BLOCKS ARE MARKED `placeholder: true` BELOW.
+// ONE BLOCK IS MARKED `placeholder: true` BELOW: `testimonials`. Five quotes
+// written as examples of what the product does, attributed to a ROLE and a
+// KIND of business, never to a named person or a named company.
 //
-//   `logos`        five marks standing in for the first customers.
-//   `testimonials` five quotes written as examples of what the product does,
-//                  attributed to a ROLE and a KIND of business, never to a
-//                  named person or a named company.
-//
-// Neither is a claim that anyone said anything. The product has not launched
+// It is not a claim that anyone said anything. The product has not launched
 // and has no customers to quote, so the section says so in its own lede rather
 // than inventing five people. scripts/gates/g15-placeholders.mjs asserts that
 // every block flagged here renders its disclosure on the page, so the flag
 // cannot be dropped quietly and leave five invented quotes reading as real.
+//
+// The logo wall WAS flagged and is not any more: on 26.08.2026 the owner
+// supplied six real marks, and a disclosure under real logos would be a
+// stranger claim than none.
 //
 // No em-dash in visible copy, per the house rule in he.ts.
 
@@ -32,21 +33,19 @@ export default {
   },
 
   // ----------------------------------------------------------------- logo wall
+  // The placeholders are gone: these are the six marks the owner supplied on
+  // 26.08.2026, keyed and tinted by scripts/build-logos.py. The sources are
+  // their own brand assets and live beside the repository, not in it.
   logos: {
-    placeholder: true,
-    eyebrow: 'העסקים הראשונים',
-    h2: 'כאן יעמדו הלוגואים של העסקים שעובדים&nbsp;עם InPlace.',
-    // Shown on the page, not only in this file. See the note at the top.
-    disclosure: 'מקומות שמורים. יוחלפו בלוגואים אמיתיים לפני שהדף עולה לאוויר.',
-    // Five slots, per the owner's instruction. The mark is drawn from the
-    // slot's own initials so the wall reads as five different companies
-    // rather than five copies of one grey box.
+    eyebrow: 'עובדים איתנו',
+    h2: 'עסקים שמריצים את הרכש&nbsp;שלהם כאן.',
     items: [
-      { mark: 'א', name: 'מסעדה' },
-      { mark: 'ב', name: 'רשת בתי קפה' },
-      { mark: 'ג', name: 'מטבח מרכזי' },
-      { mark: 'ד', name: 'קייטרינג' },
-      { mark: 'ה', name: 'מאפייה' },
+      { src: 'assets/logos/falafel.webp', name: 'פלאפל בתחנה', w: 80, h: 80 },
+      { src: 'assets/logos/xel.webp', name: 'Xel Extreme Linen', w: 195, h: 60 },
+      { src: 'assets/logos/adir.webp', name: 'Adir Contracting', w: 283, h: 60 },
+      { src: 'assets/logos/gamos.webp', name: 'GAMOS אירועים', w: 68, h: 74 },
+      { src: 'assets/logos/nir.webp', name: 'NIR Estate', w: 177, h: 60 },
+      { src: 'assets/logos/priscilla.webp', name: 'פרסיליה', w: 145, h: 60 },
     ],
   },
 
@@ -94,9 +93,8 @@ export default {
     monthlyLabel: 'חודשי',
     yearlyLabel: 'שנתי',
     switchLabel: 'מעבר בין מחיר חודשי למחיר שנתי',
-    perMonth: 'לחודש, לפני מע״מ',
-    perYear: 'לשנה, לפני מע״מ',
-    save: 'חודשיים במתנה',
+    perMonth: 'לחודש',
+    perYear: 'לשנה',
     docsLabel: 'מסמכים בחודש',
     // The catalogue component badges one card "Recommended". Build 4 dropped
     // that badge because "popular" is a claim about other customers, which

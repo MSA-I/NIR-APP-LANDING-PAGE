@@ -93,10 +93,12 @@ export function Folio({
       {announcement}
 
       <div className="wrap flex items-center gap-2 py-3">
-        <a
-          className="flex shrink-0 items-center gap-2 rounded-[100px] border border-onyx-line/80 px-3 py-2 text-[0.92rem] font-semibold text-ink no-underline transition-colors duration-300 hover:border-oceanic hover:text-oceanic"
-          href="#top"
-        >
+        {/* The same chip as every other control up here, minus the arrows a
+            wordmark does not take. It used to be a hand-rolled anchor with a
+            thinner border, a different radius and a hover of its own, sitting
+            first in the row: the fault the owner circled on 26.08.2026. */}
+        <a className="brandchip" href="#top">
+          <span className="brandchip__fill" aria-hidden="true" />
           <Mark className="size-4" />
           <span>{brand}</span>
         </a>

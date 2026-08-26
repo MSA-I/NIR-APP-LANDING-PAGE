@@ -28,8 +28,9 @@
 // showing: the gate asserts the published catalogue, not the current state of
 // a toggle.
 
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Building, Building2, Check, Landmark, Sprout, Store } from 'lucide-react'
+import { useReducedMotion } from 'motion/react'
 import { Cta } from './Cta'
 import { Html, Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
 
@@ -41,9 +42,60 @@ type Billing = {
   switchLabel: string
   perMonth: string
   perYear: string
-  save: string
   docsLabel: string
   yearly: string[]
+}
+
+/**
+ * The amount on a card, counting between the two catalogues.
+ *
+ * The owner's note of 26.08.2026: pressing the yearly switch should animate
+ * the numbers. It counts rather than crossfades because these two figures are
+ * the SAME price at two terms, and a number that travels says that while a
+ * number that dissolves into another one does not.
+ *
+ * Only the digits move. "ללא עלות" and "בשיחה" carry no figure, so they swap
+ * outright, and the shekel sign and the thousands separators are re-rendered
+ * from the target's own shape at every step so the width does not jitter.
+ */
+function Amount({ value, className }: { value: string; className?: string }) {
+  const calm = useReducedMotion()
+  const [shown, setShown] = useState(value)
+  const from = useRef(value)
+
+  useEffect(() => {
+    const parse = (v: string) => {
+      const m = /^([\d,]+)(.*)$/.exec(v.trim())
+      if (!m) return null
+      const n = Number(m[1].replace(/,/g, ''))
+      return Number.isFinite(n) ? { n, tail: m[2] } : null
+    }
+    const a = parse(from.current)
+    const b = parse(value)
+    from.current = value
+
+    if (calm || !a || !b || a.n === b.n) {
+      setShown(value)
+      return
+    }
+
+    const start = performance.now()
+    const span = 520
+    let raf = 0
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / span, 1)
+      // The same ease the figures in chapter 02 count on.
+      const eased = 1 - Math.pow(1 - t, 3)
+      const at = Math.round(a.n + (b.n - a.n) * eased)
+      setShown(at.toLocaleString('en-US') + b.tail)
+      if (t < 1) raf = requestAnimationFrame(tick)
+      else setShown(value)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [calm, value])
+
+  return <span className={className}>{shown}</span>
 }
 
 /** The plan the vendor points at. Third of five, the fullest workflow. */
@@ -122,7 +174,6 @@ export function PlansChapter({
             >
               {billing.yearlyLabel}
             </span>
-            <span className="plans-switch__save">{billing.save}</span>
           </div>
         </Reveal>
 
@@ -178,7 +229,7 @@ export function PlansChapter({
                       : 'text-[clamp(1.2rem,1.9vw,1.55rem)]',
                   ].join(' ')}
                 >
-                  {shown}
+                  <Amount value={shown} />
                 </p>
                 <p
                   className={[

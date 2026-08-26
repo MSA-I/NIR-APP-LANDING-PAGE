@@ -32,9 +32,12 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const A = (f) => path.join(ROOT, 'public', 'assets', f)
 const ff = (...args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args], { stdio: 'inherit' })
 
-// Leg 04 runs 8.375s. At 5.5s the control centre is at its largest and most
-// legible; after that the camera drifts past it.
-const LEG4_CUT = 5.5
+// Leg 04 runs 8.375s. It used to be cut at 5.5s, which was where the control
+// centre read largest — and the control centre is not in it any more (see the
+// note on the `dash` panel in lab/world/world.html). What leg 04 carries now
+// is the paper in drift formation on a dark hall, and three and a half seconds
+// of that is a beat; five and a half is a wait.
+const LEG4_CUT = 3.4
 
 const X264 = (crf, gop) => [
   '-an', '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow',
@@ -61,16 +64,20 @@ function build({ suffix, w, h, crf, gop }) {
   // lands on exactly the pixels the browser will decode next.
   ff('-i', A(`R${suffix}.mp4`), '-frames:v', '1', t('first.png'))
 
-  // The bridge. 0.4s of the hall, then a 0.6s dissolve into the dark act two
-  // opens on. Both stills are already at the clip's own size, so the scale
-  // here is a no-op guard rather than a resample.
+  // The bridge. The owner's note of 26.08.2026: the fade into the next scene
+  // "is a touch too fast, because the text does not come up with it". The copy
+  // beside the film is driven by the reader's own scroll and cannot be sped up
+  // to meet a cut, so the cut slows down to meet the copy: 2.0 seconds
+  // end to end instead of 1.1, of which 1.2 is the dissolve itself.
+  // Both stills are already at the clip's own size, so the scale here is a
+  // no-op guard rather than a resample.
   ff(
-    '-loop', '1', '-t', '0.6', '-i', t('last.png'),
-    '-loop', '1', '-t', '0.8', '-i', t('first.png'),
+    '-loop', '1', '-t', '1.0', '-i', t('last.png'),
+    '-loop', '1', '-t', '1.4', '-i', t('first.png'),
     '-filter_complex',
     `[0:v]scale=${w}:${h},setsar=1,fps=24[a];` +
     `[1:v]scale=${w}:${h},setsar=1,fps=24[b];` +
-    `[a][b]xfade=transition=fade:duration=0.5:offset=0.15[o]`,
+    `[a][b]xfade=transition=fade:duration=1.2:offset=0.3[o]`,
     '-map', '[o]', ...X264(crf, gop), t('bridge.mp4')
   )
 

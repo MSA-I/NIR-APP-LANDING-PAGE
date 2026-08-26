@@ -403,3 +403,43 @@ that also switched acts, the hall would be hidden for the whole film.
 
 That file is still in the main checkout's ignored `lab/`, which is still a real
 risk and is still written down rather than fixed here.
+
+---
+
+## Round nine — the owner's third list, 26.08.2026
+
+| # | Asked | Done |
+|---|---|---|
+| 1 | Update the two copy lines the new ending broke, and the price note | Done, and **G2 is now an allowlist rather than a freeze**. Four dated entries, each carrying the exact string that was there and the exact string that is there now. It still fails on any leaf that drifts without an entry, on an entry whose "was" is not what build 3 says, on an entry whose "now" is not what build 4 says, and on an entry for a leaf that no longer differs |
+| 2 | Use the logos in `../לוגואים`; some need their background removed | Six real marks, keyed rather than "removed", and tinted to one ink. `scripts/build-logos.py`. Three sit on a light card, two on a black one, one is a banner with a black bar; the sixth already carried alpha. Per-logo: the key direction, an optical scale (the two round seals get a third more height than the wordmarks, because the eye measures a seal by its diameter and a wordmark by its letters), and a key floor |
+| 3 | Replace the shader with @moazamtrade/paper-design-shader-background, without the sentence, colours adapted | `@paper-design/shaders-react`'s `GrainGradient`, the catalogue's own recipe: softness 0.76, intensity 0.45, noise 0, shape "corners". **460 lines of hand-written WebGL deleted.** The palette is the product's ramp and G3 still fails on a colour the application does not define. `GrainGradient` has no pointer input at all, so the ground that does not answer the mouse now cannot |
+| 4 | The announcement strip should be light | Cream, with its type, its dot, its link and its close control inverted with it |
+| 5 | A bug on the first button in the header | The folio's first control was a hand-rolled anchor while every other control up there is the page's own button: a thinner border, a different radius, a different hover, sitting first in the row. It is the same chip now, minus the arrows a wordmark does not take |
+| 6 | The top buttons should go light on hover; the signup button should go blue | The two fills were the wrong way round. The hairline button opened a DARK teal and the action button opened the CREAM; swapped. On the cream plate the ghost button keeps its dark fill, because a button cannot open the colour it is already sitting on |
+| 7 | The dashboard is visible in the film and should not be | It lit at t=0.235 and was the subject of leg 04. It lights at 0.90 now, inside the closing legs the film does not use, so the world keeps its wall of displays and the clip does not. Leg 04 is cut at 3.4s instead of 5.5s: what it carries now is paper drifting on a dark hall, and three and a half seconds of that is a beat where five and a half is a wait |
+| 8 | The fade into the next scene is a touch too fast, the text does not come up with it | The bridge is 2.0s instead of 1.1, of which 1.2s is the dissolve itself. The copy is driven by the reader's own scroll and cannot be sped up to meet a cut, so the cut slows to meet the copy |
+| 9 | The quotes look far too much like the section above; use @vaib215/stagger-testimonials, in the light colour | A rail, not a grid: notched cards fanned from the centre, the middle one lifted and filled, the rest tilted alternately and clickable. On the page's cream plate, with the centre card in the product's action colour |
+| 10 | The company name should stand out wherever it appears in the text | Once, in the render path, rather than eleven times by hand: `Html` marks it in authored markup, `SplitHeading` marks it when it is its own word, and `Say` marks it in plain strings. A tint and a hairline, not a highlighter |
+| 11 | The price note duplicates the switch; animate the numbers; drop "two months free" | The note is two words now ("all prices before VAT") and G14 presses the switch and reads the cards instead of reading a sentence. The amounts COUNT between the two catalogues rather than swapping, because these are the same price at two terms |
+| 12 | Selecting dark text should highlight light, and light text dark | The page has two grounds and now has two answers. It had one, and on the cream plate it painted the accent under dark type at 2.3:1 |
+
+### What round nine cost, and what caught it
+
+- **The strip's own type at 1.00:1.** `background: linear-gradient(...)` leaves
+  `background-color` transparent, and everything that asks an element what it
+  is sitting on reads the COLOUR. Graded that way, dark type that is actually
+  17:1 on cream was measured against the onyx four ancestors up. The strip
+  declares a colour under its gradient now. G7.
+- **The rail half a card off centre.** The catalogue centres each card with
+  `translate(-50%, -50%)` over `left: 50%`. That is a physical pair, and
+  `inset-inline-start: 50%` on a right-to-left page anchors the card's RIGHT
+  edge, so the same translate walks it a whole half-card off: measured at 380px
+  in a 1440 viewport where the centre is 720. Centred on logical negative
+  margins now, which work in either direction.
+- **The catalogue's own position formula, at five cards.** `i - (length+1)/2`
+  gives -3..1 for five, so the lifted card is a card and a half off the middle.
+  For twenty cards it is a rounding nobody notices.
+- **G14 reading the cards before they had finished counting.** Its 700ms wait
+  was written against a swap; the amounts animate over 520ms and settle by 1.5s
+  with the film decoding alongside. Measured, then the wait was set from the
+  measurement rather than from a guess.

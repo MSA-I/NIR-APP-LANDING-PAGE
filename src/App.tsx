@@ -60,12 +60,7 @@ export default function App() {
           fineprint={t.fineprint}
         />
 
-        <LogoCloud
-          eyebrow={x.logos.eyebrow}
-          h2={x.logos.h2}
-          disclosure={x.logos.disclosure}
-          items={x.logos.items}
-        />
+        <LogoCloud eyebrow={x.logos.eyebrow} h2={x.logos.h2} items={x.logos.items} />
 
         <FilmChapter folio={t.film.folio} caption={t.film.caption} blocks={t.film.blocks} />
 

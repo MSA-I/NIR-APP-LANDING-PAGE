@@ -14,6 +14,46 @@ import type { ReactNode } from 'react'
 
 export const EASE = [0.22, 1, 0.36, 1] as const
 
+/**
+ * The application's name, wherever it appears in running copy.
+ *
+ * The owner's note of 26.08.2026: "everywhere the company name is written in
+ * the text it should stand out". It appears eleven times across the page, and
+ * in nine of them it is one Latin word inside a Hebrew sentence, which is the
+ * one place a reader's eye already slows down and the one place the page was
+ * doing nothing with it.
+ *
+ * Done here rather than by hand in eleven places, so a line of copy written
+ * next month gets it without anybody having to remember.
+ */
+export const BRAND = 'InPlace'
+const BRAND_RE = /InPlace/g
+
+/** For copy that goes in as markup. Skips anything already inside a tag. */
+export const emphasiseBrand = (html: string) =>
+  html
+    .split(/(<[^>]*>)/g)
+    .map((part) =>
+      part.startsWith('<') ? part : part.replace(BRAND_RE, `<b class="brand">${BRAND}</b>`)
+    )
+    .join('')
+
+/** For copy that goes in as text. Returns the line with the name marked. */
+export function Say({ text, className }: { text: string; className?: string }) {
+  if (!text.includes(BRAND)) return <span className={className}>{text}</span>
+  const parts = text.split(BRAND_RE)
+  return (
+    <span className={className}>
+      {parts.map((part, i) => (
+        <span key={i}>
+          {part}
+          {i < parts.length - 1 ? <b className="brand">{BRAND}</b> : null}
+        </span>
+      ))}
+    </span>
+  )
+}
+
 export const riseIn: Variants = {
   hidden: { opacity: 0, y: 26, filter: 'blur(6px)' },
   shown: {
@@ -145,7 +185,7 @@ export function Html({
   className?: string
   as?: 'p' | 'span' | 'div'
 }) {
-  const inner = { __html: html }
+  const inner = { __html: emphasiseBrand(html) }
   if (as === 'span') return <span className={className} dangerouslySetInnerHTML={inner} />
   if (as === 'div') return <div className={className} dangerouslySetInnerHTML={inner} />
   return <p className={className} dangerouslySetInnerHTML={inner} />
@@ -186,11 +226,19 @@ export function SplitHeading({
       style={{ display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom' }}
     >
       {calm ? (
-        <span className={i >= tintFrom ? 'text-tint' : undefined}>{w}</span>
+        <span
+          className={[i >= tintFrom ? 'text-tint' : '', w === BRAND ? 'brand' : '']
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {w}
+        </span>
       ) : (
         <motion.span
           style={{ display: 'inline-block' }}
-          className={i >= tintFrom ? 'text-tint' : undefined}
+          className={[i >= tintFrom ? 'text-tint' : '', w === BRAND ? 'brand' : '']
+            .filter(Boolean)
+            .join(' ')}
           variants={{
             hidden: { y: '110%', opacity: 0 },
             shown: { y: '0%', opacity: 1, transition: { duration: 0.8, ease: EASE } },

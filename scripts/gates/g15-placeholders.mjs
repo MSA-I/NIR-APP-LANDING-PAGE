@@ -1,10 +1,10 @@
 // G15: nothing on this page pretends to be proof it is not.
 //
-// Two sections shipped on 26.08.2026 carry content that stands in for content
-// that does not exist yet: five marks where the first customers' logos will go,
-// and five quotes written in-house as examples of what the product does. The
-// owner asked for both, and asked for placeholders in the first case in as
-// many words.
+// One section carries content that stands in for content that does not exist
+// yet: five quotes written in-house as examples of what the product does. A
+// logo wall was flagged alongside it for a few hours on 26.08.2026, until the
+// owner supplied six real marks; the gate is written against the FLAG rather
+// than against a count, so that transition needed no change here.
 //
 // The risk is not that they are placeholders. The risk is that the sentence
 // SAYING they are placeholders gets tidied away in a later design pass, and
@@ -33,7 +33,14 @@ const extra = (
 ).default
 
 const flagged = Object.entries(extra).filter(([, v]) => v && v.placeholder === true)
-c.ok(flagged.length >= 2, `expected the logo wall and the quotes to be flagged, found ${flagged.length}`)
+// The logo wall was flagged until 26.08.2026 and is not any more: the owner
+// supplied six real marks. The quotes still are, and this asserts that by name
+// rather than by count, so dropping the flag from THEM cannot be mistaken for
+// the same kind of change.
+c.ok(
+  flagged.some(([name]) => name === 'testimonials'),
+  `the quotes are no longer flagged as placeholders; flagged: ${flagged.map(([n]) => n).join(', ') || 'nothing'}`
+)
 for (const [name] of flagged) c.note(`flagged as placeholder: ${name}`)
 
 for (const [name, block] of flagged) {
@@ -72,7 +79,7 @@ await withPage(async (page) => {
   // A quote attributed to nobody in particular is an example. A quote
   // attributed to a person or a company is a testimonial, and this product has
   // none to show.
-  const attributions = await page.$$eval('#voices .voice__by', (els) =>
+  const attributions = await page.$$eval('#voices .voice-card__by', (els) =>
     els.map((e) => e.innerText.replace(/\s+/g, ' ').trim())
   )
   c.ok(attributions.length === 5, `expected five quotes, found ${attributions.length}`)

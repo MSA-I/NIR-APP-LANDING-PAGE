@@ -14,7 +14,7 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { ShaderBackground } from './ShaderBackground'
 import { Cta } from './Cta'
-import { Html, Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
+import { Html, Reveal, RevealGroup, RevealItem, Say, SplitHeading } from '@/lib/motion'
 
 type Index = { n: string; t: string; d: string }
 
@@ -116,7 +116,9 @@ export function TitlePage({
                 <span className="font-display text-[1.06rem] font-bold tracking-[-0.02em] text-ink">
                   {c.t}
                 </span>
-                <span className="col-span-2 text-[0.92rem] text-ink-dim sm:col-span-1">{c.d}</span>
+                <span className="col-span-2 text-[0.92rem] text-ink-dim sm:col-span-1">
+                  <Say text={c.d} />
+                </span>
               </motion.div>
             </RevealItem>
           ))}

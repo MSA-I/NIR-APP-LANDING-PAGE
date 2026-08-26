@@ -1460,3 +1460,310 @@
      currentTime 31.0s of 36.17 to the last frame. */
   .film-lay:not(.film-lay--calm) .film-copy { padding-block-end: 58svh; }
 }
+
+/* =========================================================================
+   ROUND 9 — the owner's third list, 26.08.2026.
+   ========================================================================= */
+
+/* ------------------------------------------------------------- the selection */
+/* "When I highlight dark text it should highlight in the light colour, and if
+   it is light then in the dark colour."
+   The page has two grounds and therefore two answers. The rule the base
+   stylesheet shipped had one, and on the cream plate it painted the accent
+   under dark type at 2.3:1. Each ground now inverts against its own type. */
+::selection {
+  /* Light type, on the onyx ground: a dark block. */
+  background: var(--color-action-solid);
+  color: var(--color-ink);
+}
+.on-light ::selection,
+.on-light::selection {
+  /* Dark type, on the cream plate: a light block. */
+  background: color-mix(in srgb, var(--color-oceanic) 42%, var(--color-wheat));
+  color: var(--color-ink-on-light);
+}
+
+/* ----------------------------------------------------------- the brand, marked */
+/* "Everywhere the company name is written in the text it should stand out."
+   A tint and a hairline under it, not a highlighter: the name appears eleven
+   times and a filled swatch eleven times down a page is a page with a stutter.
+   The rule is drawn in the accent and sits a little below the baseline, so it
+   reads at a glance and does not collide with the Hebrew that surrounds it. */
+.brand {
+  font-weight: 700;
+  color: var(--color-oceanic);
+  padding-inline: 0.04em;
+  background-image: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-oceanic) 42%, transparent) 0.08em,
+    transparent 0.08em
+  );
+}
+.on-light .brand {
+  color: var(--color-oceanic-deep);
+  background-image: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-oceanic-deep) 34%, transparent) 0.08em,
+    transparent 0.08em
+  );
+}
+/* Inside a display headline the tint alone carries it: at 3.5rem a hairline
+   under one word reads as an underline somebody forgot to remove. */
+.h-big .brand,
+.h-mid .brand,
+.logos__h .brand {
+  background-image: none;
+  padding-inline: 0;
+}
+
+/* --------------------------------------------------------- the announcement */
+/* "Change the strip at the top to light." The dark teal bar it shipped with
+   read as a second header; the cream one reads as a notice on top of one.
+   Its own type inverts with it, and so does the close control. */
+.announce {
+  /* The colour and the gradient are declared separately on purpose. A
+     `background: linear-gradient(...)` shorthand leaves `background-color`
+     transparent, and everything that asks an element what it is sitting on —
+     the contrast gate included — reads the COLOUR. Graded that way the strip's
+     dark type was measured against the onyx four ancestors up and came back at
+     1.00:1, for type that is actually 17:1 on cream. */
+  background-color: var(--color-wheat);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-wheat) 0%,
+    color-mix(in srgb, var(--color-oceanic) 16%, var(--color-wheat)) 100%
+  );
+  border-block-end: 1px solid var(--color-wheat-line);
+}
+.announce__link { color: var(--color-ink-on-light); }
+.announce__text { color: var(--color-ink-on-light); }
+.announce__dot { background: var(--color-oceanic-deep); }
+@keyframes announce-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-oceanic-deep) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 0.5rem color-mix(in srgb, var(--color-oceanic-deep) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-oceanic-deep) 0%, transparent); }
+}
+.announce__cta {
+  color: var(--color-oceanic-deep);
+  border-block-end-color: color-mix(in srgb, var(--color-oceanic-deep) 45%, transparent);
+}
+.announce__link:hover .announce__cta { border-color: var(--color-oceanic-deep); }
+.announce__close { color: color-mix(in srgb, var(--color-ink-on-light) 62%, transparent); }
+.announce__close:hover {
+  background: color-mix(in srgb, var(--color-ink-on-light) 10%, transparent);
+  color: var(--color-ink-on-light);
+}
+
+/* --------------------------------------------------------------- the buttons */
+/* Two notes, one change.
+   "All the top buttons, on hover, become light" and "the open-an-account
+   button should be the blue on hover." The two fills were simply the wrong way
+   round: the hairline button opened a DARK teal and the action button opened
+   the CREAM. Swapped, which also puts them the right way round everywhere
+   else on the page — a ghost button that lights up and an action button that
+   deepens is one vocabulary, and it was two. */
+.flow--ghost .flow__fill { background: var(--color-ink); }
+.flow--ghost:hover { color: var(--color-onyx); }
+
+.flow--primary .flow__fill { background: var(--color-focus-ring); }
+.flow--primary:hover { color: var(--color-ink); }
+
+/* On the cream plate a ghost button cannot open cream. It keeps the dark fill
+   it always had, which on that ground is the same move: the button departs
+   from its own background rather than toward it. */
+.on-light .flow--ghost .flow__fill { background: var(--color-oceanic-deep); }
+.on-light .flow--ghost:hover { color: var(--color-ink); }
+
+/* ------------------------------------------------------------ the brand chip */
+/* The folio's first control was a hand-rolled anchor while every other control
+   up there is the page's own button: a different border weight, a different
+   radius, a different hover, sitting first in the row. That is the fault the
+   owner circled. It is the same chip as the rest now, minus the arrows, which
+   a wordmark does not take. */
+.brandchip {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1.5px solid var(--color-onyx-line);
+  border-radius: 100px;
+  padding-block: 0.58rem;
+  padding-inline: 1.1rem;
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1;
+  color: var(--color-ink);
+  text-decoration: none;
+  transition:
+    color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    border-radius 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.brandchip__fill {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: 50% -50%;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: -1;
+  background: var(--color-ink);
+  transition:
+    inline-size 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+    block-size 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.brandchip:hover {
+  border-color: transparent;
+  border-radius: 12px;
+  color: var(--color-onyx);
+}
+.brandchip:hover .brandchip__fill {
+  inline-size: 12rem;
+  block-size: 12rem;
+  opacity: 1;
+}
+.brandchip:active { scale: 0.96; }
+
+/* --------------------------------------------------------- the marks, on a rail */
+/* No grayscale filter: scripts/build-logos.py already renders every mark in one
+   ink, and a filter over an already-flat mark only costs a compositing layer.
+   The marks sit at four fifths, which is what keeps a wall of customers from
+   competing with the chapter under it. */
+.logos__mark {
+  display: block;
+  max-inline-size: none;
+  opacity: 0.8;
+  transition: opacity 0.4s var(--ease-out-quint);
+}
+.logos__viewport:hover .logos__mark { opacity: 1; }
+
+/* --------------------------------------------------------------- the voices */
+/* 21st.dev's stagger-testimonials, on the page's cream plate. */
+.voices__note {
+  max-inline-size: 62ch;
+  border-inline-start: 2px solid color-mix(in srgb, var(--color-oceanic-deep) 35%, transparent);
+  padding-inline-start: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.62;
+  text-align: start;
+  color: color-mix(in srgb, var(--color-ink-on-light) 78%, transparent);
+}
+
+.voices-rail {
+  position: relative;
+  inline-size: 100%;
+  margin-block-start: clamp(1rem, 3vh, 2rem);
+  overflow: hidden;
+}
+
+.voice-card {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  /* Centred on logical margins, not on a transform: a negative
+     margin-inline-start pulls the card back by half its own width in EITHER
+     direction, which `translate(-50%)` does in only one. The transform is left
+     free for the fan. */
+  inline-size: var(--voice-size);
+  block-size: var(--voice-size);
+  margin-inline-start: calc(var(--voice-size) / -2);
+  margin-block-start: calc(var(--voice-size) / -2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  cursor: pointer;
+  border: 2px solid var(--color-wheat-line);
+  background: var(--color-wheat);
+  color: var(--color-ink-on-light);
+  padding: 2rem;
+  text-align: start;
+  transition: all 0.5s ease-in-out;
+}
+.voice-card:hover { border-color: color-mix(in srgb, var(--color-oceanic-deep) 45%, transparent); }
+.voice-card--centre {
+  z-index: 10;
+  background: var(--color-oceanic-deep);
+  border-color: var(--color-oceanic-deep);
+  color: var(--color-ink);
+  box-shadow: 0 8px 0 4px var(--color-wheat-line);
+  cursor: default;
+}
+.voice-card__rule {
+  position: absolute;
+  display: block;
+  block-size: 2px;
+  transform-origin: 100% 0;
+  rotate: 45deg;
+  background: var(--color-wheat-line);
+}
+.voice-card--centre .voice-card__rule {
+  background: color-mix(in srgb, var(--color-ink) 26%, transparent);
+}
+.voice-card__mark {
+  display: grid;
+  place-content: center;
+  inline-size: 3rem;
+  block-size: 3.4rem;
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-oceanic-deep);
+  background: color-mix(in srgb, var(--color-oceanic-deep) 10%, transparent);
+  box-shadow: 3px 3px 0 var(--color-wheat-sink);
+}
+.voice-card--centre .voice-card__mark {
+  color: var(--color-ink);
+  background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-onyx) 45%, transparent);
+}
+.voice-card__q {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: -0.01em;
+}
+.voice-card__by {
+  margin-block-start: auto;
+  font-size: 0.84rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--color-ink-on-light) 65%, transparent);
+}
+.voice-card__by b { font-style: normal; font-weight: 700; }
+.voice-card--centre .voice-card__by {
+  color: color-mix(in srgb, var(--color-ink) 78%, transparent);
+}
+.voice-card--centre .voice-card__by b { color: var(--color-ink); }
+
+.voices-rail__controls {
+  position: absolute;
+  inset-block-end: 0.5rem;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 20;
+}
+.voices-rail__controls button {
+  display: grid;
+  place-content: center;
+  inline-size: 3.4rem;
+  block-size: 3.4rem;
+  border: 2px solid var(--color-wheat-line);
+  background: var(--color-wheat);
+  color: var(--color-ink-on-light);
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease-out-quint), color 0.3s var(--ease-out-quint);
+}
+.voices-rail__controls button:hover {
+  background: var(--color-oceanic-deep);
+  border-color: var(--color-oceanic-deep);
+  color: var(--color-ink);
+}

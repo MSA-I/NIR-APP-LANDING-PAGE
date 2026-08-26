@@ -25,7 +25,7 @@
 import { Minus, Plus } from 'lucide-react'
 import { useReducedMotion } from 'motion/react'
 import type { MouseEvent } from 'react'
-import { Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
+import { Reveal, RevealGroup, RevealItem, Say, SplitHeading } from '@/lib/motion'
 
 type Row = { t: string; p: string }
 
@@ -45,7 +45,9 @@ function Column({
   const Icon = tone === 'yes' ? Plus : Minus
   return (
     <div className={tone === 'no' ? 'lg:mt-14' : ''}>
-      <p className={`eyebrow mb-5 ${tone === 'no' ? 'text-ink-dim' : ''}`}>{label}</p>
+      <p className={`eyebrow mb-5 ${tone === 'no' ? 'text-ink-dim' : ''}`}>
+        <Say text={label} />
+      </p>
       <RevealGroup as="ul" className="m-0 grid list-none gap-3 p-0">
         {rows.map((r, i) => (
           <RevealItem
@@ -126,7 +128,9 @@ export function WhyChapter({
         <header className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] lg:items-end">
           <SplitHeading className="h-big" text={h2} tint={1} />
           <Reveal delay={0.08}>
-            <p className="lede">{lede}</p>
+            <p className="lede">
+              <Say text={lede} />
+            </p>
           </Reveal>
         </header>
 

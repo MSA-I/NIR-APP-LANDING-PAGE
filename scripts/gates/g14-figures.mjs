@@ -56,11 +56,42 @@ await withPage(async (page) => {
   const business = plans.find((p) => p.name === 'ביזנס')
   c.ok(business && !/\d/.test(business.price), `the Business plan should carry no figure, it says "${business?.price}"`)
 
-  // The yearly note, and nothing but the yearly note.
-  const note = await page.$eval('#plans .plans__prices', (el) => el.textContent.trim())
+  // The yearly catalogue. It used to be a sentence under the tray, which
+  // repeated what the cards said and was the duplication the owner asked about
+  // on 26.08.2026. It is the switch's job now, so the gate presses the switch
+  // and reads the cards, which is what a reader does.
+  await page.click('#plans [role="switch"]')
+  // The amounts COUNT between the two catalogues rather than swapping, so the
+  // card does not carry its new figure for about half a second. Measured on
+  // this page with the film decoding in the background it settles by 1.5s and
+  // not by 0.8s, which is why this wait is what it is.
+  await page.waitForTimeout(2000)
+  const checked = await page.$eval('#plans [role="switch"]', (el) => el.getAttribute('aria-checked'))
+  c.ok(checked === 'true', `the billing switch did not flip; aria-checked is "${checked}"`)
+
+  const yearly = await page.$$eval('#plans [data-plan-name]', (els) =>
+    els.map((el) => el.textContent.replace(/\s+/g, ' ').trim())
+  )
   for (const y of WANT_YEARLY) {
-    c.ok(note.includes(y), `the yearly figure ${y} is missing from the price note`)
+    c.ok(
+      yearly.some((v) => v.includes(y)),
+      `the yearly figure ${y} is not on a card once the switch is thrown: ${yearly.join(', ')}`
+    )
   }
+  c.note(`yearly, off the cards: ${yearly.join('  ')}`)
+
+  // `data-plan-price` is the contract and it does NOT follow the switch: the
+  // gate asserts the published catalogue, not the state of a toggle.
+  const stillMonthly = await page.$$eval('#plans [data-plan-name]', (els) =>
+    els.map((el) => el.getAttribute('data-plan-price')).filter((p) => /\d/.test(p))
+  )
+  c.ok(
+    JSON.stringify(stillMonthly) === JSON.stringify(WANT_MONTHLY),
+    `data-plan-price moved with the switch; it must stay the monthly catalogue: ${stillMonthly.join(', ')}`
+  )
+
+  await page.click('#plans [role="switch"]')
+  await page.waitForTimeout(700)
 
   // No other amount anywhere on the page. Everything with a shekel sign is
   // either a plan price, the yearly note, or one of the product figures the
