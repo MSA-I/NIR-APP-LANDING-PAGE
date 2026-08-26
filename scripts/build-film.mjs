@@ -27,7 +27,10 @@ const ff = (...args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args], {
 // Leg 04 runs 8.375s. At 5.5s the control centre is at its largest and most
 // legible; after that the camera drifts past it.
 const LEG4_CUT = 5.5
-const DASH = path.join(ROOT, 'lab', 'app-reference', 'owner-dashboard.png')
+// The same capture the board section shows, so the greeting on the screen is
+// the same in both places. Two captures taken hours apart said 'good morning'
+// in one and 'good evening' in the other, a few scrolls from each other.
+const DASH = path.join(ROOT, 'lab', 'app-reference', 'owner-dashboard-full.png')
 
 const X264 = (crf, gop) => [
   '-an', '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow',

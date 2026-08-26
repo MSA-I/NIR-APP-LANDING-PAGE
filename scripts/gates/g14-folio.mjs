@@ -7,6 +7,7 @@
 // page that actually exists, and every assertion here is measured on the
 // running page rather than read off the source.
 
+import { readFile } from 'node:fs/promises'
 import { withPage, checker, scrollTo } from './lib.mjs'
 
 const c = checker('G14')
@@ -26,6 +27,33 @@ await withPage(async (page, { errors }) => {
     marks: document.querySelectorAll('.folio .mark, .sitefoot .mark').length,
     dashShots: [...document.querySelectorAll('img')]
       .filter((i) => /owner-dashboard/.test(i.getAttribute('src') || '')).length,
+    // Every hotspot, as a fraction of its own image box. Compared against the
+    // measurements in data/demo-nav.json: a mirrored or drifted hotspot looks
+    // fine and silently opens the wrong screen, which no screenshot catches.
+    //
+    // A hidden panel has no box at all, so each one is briefly shown, measured,
+    // and put back exactly as it was.
+    hots: [...document.querySelectorAll('.panel')].map((p) => {
+      const was = p.hidden
+      p.hidden = false
+      const img = p.querySelector('.shot img')
+      const ir = img.getBoundingClientRect()
+      const out = {
+        img: (img.getAttribute('src') || '').replace(/^assets\/screen-|\.webp$/g, ''),
+        boxRatio: ir.height ? +(ir.width / ir.height).toFixed(4) : 0,
+        spots: [...p.querySelectorAll('.hot')].map((h) => {
+          const r = h.getBoundingClientRect()
+          return {
+            label: h.title,
+            goto: h.dataset.goto,
+            x: +((r.left - ir.left) / ir.width).toFixed(4),
+            y: +((r.top - ir.top) / ir.height).toFixed(4),
+          }
+        }),
+      }
+      p.hidden = was
+      return out
+    }),
     h1: document.querySelectorAll('h1').length,
     faq: document.querySelectorAll('.faq__item').length,
     faqOpenNoJs: document.querySelectorAll('.faq__item[open]').length,
@@ -84,8 +112,29 @@ await withPage(async (page, { errors }) => {
 
   // The film already ends on the control centre. A second copy of that screen
   // further down was the duplication the owner called out.
-  c.ok(shape.dashShots === 0, `the control centre appears ${shape.dashShots} more time(s) as a screenshot`)
+  c.ok(shape.dashShots === 1, `expected the control centre once more, in full, found ${shape.dashShots}`)
   c.note(`one CTA: ${shape.ctaHrefs[0]}`)
+
+  // The demo surface. Hotspots are placed from measurements taken off the
+  // running app; this compares where they LANDED with what was measured.
+  const NAV = JSON.parse(await readFile(new URL('../../data/demo-nav.json', import.meta.url), 'utf8'))
+  let checked = 0
+  for (const panel of shape.hots) {
+    const measured = NAV[panel.img] || []
+    // The screens are 2000x1334; a cropped box would make every y wrong.
+    c.ok(Math.abs(panel.boxRatio - 2000 / 1334) < 0.02,
+      `${panel.img} is shown at ${panel.boxRatio}:1, not its own 1.499:1, so the hotspots cannot line up`)
+    for (const spot of panel.spots) {
+      const m = measured.find((n) => n.label === spot.label)
+      c.ok(!!m, `${panel.img}: hotspot "${spot.label}" has no measurement behind it`)
+      if (!m) continue
+      c.ok(Math.abs(spot.x - m.x) < 0.005 && Math.abs(spot.y - m.y) < 0.005,
+        `${panel.img}: "${spot.label}" sits at ${(spot.x * 100).toFixed(1)}%, ${(spot.y * 100).toFixed(1)}% but was measured at ${(m.x * 100).toFixed(1)}%, ${(m.y * 100).toFixed(1)}%`)
+      checked++
+    }
+  }
+  c.ok(checked >= 20, `expected hotspots on every step, checked only ${checked}`)
+  c.note(`${checked} demo hotspots, each within 0.5% of where it was measured`)
 
   // ------------------------------------------------------------ tab switching
   const swap = await page.evaluate(async () => {

@@ -205,3 +205,18 @@ correction, not a rescue.
 second thing to learn. The markers were built to make the numbers trustworthy
 and instead made the page look annotated. The sources did not need to be on the
 page to be true.
+
+---
+
+## Round 7: the control centre back in full, and a demo you can click
+
+| # | Gate | State | Evidence |
+|---|---|---|---|
+| D1 | The control centre is shown in full, trends and charts included | **MET** | The old capture was viewport-only at 1440x960 and cut the trends off. `scripts/capture-demo.mjs` re-captures it `fullPage` at 2880x3308, then it is cropped to 2880x2210: header, money row, decision panels, and the whole trends row with the monthly bar chart. What the crop drops is two cards the fixtures leave empty, which read as broken rather than honest on a marketing page. `G14 PASS` asserts the screen appears exactly once more |
+| D2 | The film and the board show the SAME capture | **MET** | They did not. Two captures taken hours apart said "בוקר טוב" in one and "ערב טוב" in the other, three scrolls from each other. `build-film.mjs` now dissolves into `owner-dashboard-full.png`, the same file the board shows, and the copy that said "בבוקר" no longer claims a time of day |
+| D3 | The product's own navigation is clickable inside the screenshot | **MET** | 25 hotspots across the five steps. `G14 PASS` |
+| D4 | The hotspots are measured, not eyeballed | **MET** | `scripts/capture-demo.mjs` reads each nav item's box off the running app and writes `data/demo-nav.json`. The owner's nav sits about 2% further along than the buyer's, so one hand-placed set would have drifted on two of the five screens |
+| D5 | Every hotspot lands where it was measured | **MET, and the check is proven to fire** | `G14 PASS`: 25 hotspots, each within 0.5% of its measurement on both axes. Mirroring one (`--x:24.989%` to `--x:70.100%`, which is exactly what copying the measurement straight across would do) made it fail with `"הזמנות" sits at 25.0% but was measured at 70.1%`. The page is RTL, so the hotspots are placed from the inline-start edge and the measurement is converted, `100 - (x + w)`, not copied |
+| D6 | The screens are shown whole, at their own ratio | **MET** | They were cropped to 16:9 with `object-fit: cover`. A cropped image and hotspots measured against the original cannot both be right, and a demo shows the whole screen anyway. `G14` asserts the rendered box is within 0.02 of 2000/1334 |
+| D7 | The demo is discoverable, and keyboard users are not stranded | **MET** | A line under the chain says the menu inside the screen is clickable. The hotspots are `aria-hidden` and not focusable on purpose: the chain above is the same control with a real accessible name, and two tab stops for one action is worse than one |
+| D8 | Nothing else broke | **MET** | `4 met, 0 unmet`. Detector `[]`. Zero em-dashes. Page 14.94vh. Figures re-read off the fresh captures and unchanged: 17 orders, 5 receiving, 14 invoices, 8 exceptions, request 58#, and 13 / 17,825 / 6 |

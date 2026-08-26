@@ -22,13 +22,13 @@ carries motion.
 |---|---|---|---|
 | — | שער | Onyx | What this is, the ask, and an index of the six chapters |
 | 01 | מהערימה למרכז הבקרה | Onyx | A 27.6s scrubbed film, the one place the scroll engine is used. Four copy blocks travel beside it |
-| 02 | מה המערכת עושה | Wheat, then Onyx | Five stations, five real product screens, then the control centre |
+| 02 | מה המערכת עושה | Wheat, then Onyx | Five stations, five real product screens you can click through from the product's own navigation, then the control centre in full |
 | 03 | למה דווקא זה | Onyx | What InPlace does, against what it refuses to be |
 | 04 | מסלולים | Onyx | Five plans, one published usage metric, the launch prices |
 | 05 | שאלות | Wheat | Seven answers, as native `<details>` |
 | 06 | להתחיל | Onyx | The one ask |
 
-About 13.7 viewport-heights. The design intent, the interview it came from and
+About 15 viewport-heights. The design intent, the interview it came from and
 the feeling curve are in [BRIEF.md](BRIEF.md); the acceptance ledger with its
 evidence is [GATES.md](GATES.md); the build's registry row is
 [FINGERPRINTS.md](FINGERPRINTS.md).
@@ -118,6 +118,8 @@ all of them and obvious in the first screenshot, and they are listed in
 | `assets/` | The film, its poster, the product screens, the Hebrew subset of Noto Sans |
 | `scripts/build.mjs` | The build. One locale in, one static file out |
 | `scripts/build-film.mjs` | Rebuilds chapter 01's clip from the world legs |
+| `scripts/capture-demo.mjs` | Re-captures the five screens and MEASURES their nav boxes into `data/demo-nav.json` |
+| `data/demo-nav.json` | Where each nav item sits in each capture. The demo hotspots are placed from this |
 | `scripts/gates/` | The acceptance ledger, one file per gate, plus control fixtures |
 | `lab/app-reference/` | Screenshots of the running product. Every figure on the page is read off these |
 | `archive/` | Previous builds' briefs, locales and gates, kept rather than deleted |
@@ -145,8 +147,12 @@ doing the work.
 alert / info / idle, inherited from the product. A metric with no data renders
 a rule, never a zero, because zero is a claim about reality.
 
-**Nothing inside a product screenshot is recoloured.** The screens are the real
-captures, cropped by CSS only.
+**Nothing inside a product screenshot is recoloured**, and they are shown
+whole. The hotspots in chapter 02 are positioned from measurements taken off
+the running app, so a crop or a changed aspect ratio silently moves them onto
+the wrong menu item. G14 checks every one against `data/demo-nav.json` and
+fails on a drift over 0.5%. After re-capturing, run `capture-demo.mjs`, never
+just replace the image.
 
 ---
 

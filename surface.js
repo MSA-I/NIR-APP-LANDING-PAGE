@@ -76,6 +76,14 @@
     panels.forEach(function (p, j) { p.hidden = i !== j; });
   }
 
+  // The product's own navigation, inside the screenshot, drives the same
+  // selection the chain does.
+  Array.prototype.forEach.call(doc.querySelectorAll('.hot'), function (h) {
+    h.addEventListener('click', function () {
+      selectTab(parseInt(h.getAttribute('data-goto'), 10), false);
+    });
+  });
+
   tabs.forEach(function (t, i) {
     t.addEventListener('click', function () { selectTab(i, false); });
     t.addEventListener('keydown', function (e) {

@@ -8,6 +8,21 @@
 // else is ordinary document flow, because a chaptered page IS ordinary document
 // flow — that is the whole difference from build 2, which had no flow at all.
 
+import NAV from '../data/demo-nav.json' with { type: 'json' }
+
+// Which item of the product's own top nav opens which step. Measured, not
+// guessed: scripts/capture-demo.mjs reads the boxes off the running app, and
+// the owner's nav sits ~2% further along than the buyer's, so a single
+// hand-placed set of hotspots would drift on two of the five screens.
+//
+// The measurement is a distance from the LEFT edge; the page is RTL and places
+// the hotspots from the inline-start edge, which is the right one. So the two
+// are converted, not copied: 100 - (x + w). Copied straight across, every
+// hotspot lands mirrored, which is what the first cut of this did.
+const NAV_STEP = {
+  'הזמנות': 0, 'קבלה': 1, 'חשבוניות': 2, 'בקרה': 3, 'ניהול': 4,
+}
+
 const esc = (s) => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;')
@@ -58,6 +73,21 @@ export function render(t) {
               <span class="chain__k">${esc(s.k)}</span>
             </button>`).join('')
 
+  // The screenshot is the demo surface: clicking the product's own navigation
+  // inside it switches the panel. aria-hidden and not focusable on purpose,
+  // because the chain above is the same control with a real accessible name;
+  // two tab stops for one action is worse than one.
+  const hotspots = (file) => {
+    const items = (NAV[file] || []).filter((n) => n.label in NAV_STEP)
+    if (!items.length) return ''
+    return `
+                <div class="hots" aria-hidden="true">${items.map((n) => `
+                  <button class="hot" type="button" tabindex="-1"
+                          data-goto="${NAV_STEP[n.label]}" title="${esc(n.label)}"
+                          style="--x:${(100 - (n.x + n.w) * 100).toFixed(3)}%;--y:${(n.y * 100).toFixed(3)}%;--w:${(n.w * 100).toFixed(3)}%;--h:${(n.h * 100).toFixed(3)}%"></button>`).join('')}
+                </div>`
+  }
+
   const panels = t.what.steps.map((s, i) => `
           <div class="panel" role="tabpanel" id="panel-${i}" aria-labelledby="tab-${i}"${i === 0 ? '' : ' hidden'}>
             <div class="panel__say">
@@ -66,8 +96,10 @@ export function render(t) {
             </div>
             <figure class="panel__shot shot">
               <div class="shot__frame">
-                <img src="${esc(s.img)}" alt="${esc(s.t)}. מסך מתוך InPlace"
-                     width="2000" height="1334" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">
+                <div class="shot__inner">
+                  <img src="${esc(s.img)}" alt="${esc(s.t)}. מסך מתוך InPlace"
+                       width="2000" height="1334" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">${hotspots(s.img.replace(/^assets\/screen-|\.webp$/g, ''))}
+                </div>
               </div>
               <figcaption class="cap">${raw(s.cap)}</figcaption>
             </figure>
@@ -212,6 +244,7 @@ export function render(t) {
 
           <div class="chain" role="tablist" aria-label="${esc(t.what.stepsLabel)}">${chain}
           </div>
+          <p class="chain__hint">${esc(t.what.demoHint)}</p>
 
           <div class="panels">${panels}
           </div>
@@ -227,6 +260,15 @@ export function render(t) {
           <div class="figrow">${stats}
           </div>
         </div>
+        <figure class="board__shot shot">
+          <div class="shot__frame">
+            <div class="shot__inner">
+              <img src="${esc(t.board.img)}" alt="מרכז הבקרה של InPlace, מסך מלא מתוך המערכת"
+                   width="1800" height="1382" loading="lazy" decoding="async">
+            </div>
+          </div>
+          <figcaption class="cap">${esc(t.board.cap)}</figcaption>
+        </figure>
       </div>
 
       <div class="midask">

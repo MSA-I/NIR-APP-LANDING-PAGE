@@ -453,24 +453,23 @@ a { color: inherit; }
   background: #f4f5f3;
   overflow: hidden;
 }
+/* The hotspot layer is positioned against this box, so it has to be exactly
+   the image's box: the measured fractions come from the capture itself. */
+.shot__inner { position: relative; display: block; }
 .shot img {
   inline-size: 100%;
-  /* The width and height attributes on the image are there so the box is reserved
-     before the file lands. Without an explicit height:auto they are used as the
-     height and aspect-ratio never applies. */
+  /* Natural ratio, no crop. The width and height attributes reserve the box
+     before the file lands; block-size:auto stops them being used as a fixed
+     height. A cropped image and hotspots measured against the original cannot
+     both be right, and a demo shows the whole screen anyway. */
   block-size: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: top center;
   display: block;
 }
 
 /* ------------------------------------------------------- chapter 02, closing -- */
 
 .board {
-  /* The screenshot that used to close this section is gone: the film already
-     ends on that screen. What is left is a heading and three readings off it. */
-  padding-block: clamp(50px, 9vh, 104px) clamp(44px, 7vh, 84px);
+  padding-block: clamp(50px, 9vh, 104px) clamp(52px, 9vh, 100px);
   border-block-start: 1px solid var(--onyx-line);
   margin-block-start: clamp(14px, 2.4vh, 26px);
 }
@@ -505,6 +504,7 @@ a { color: inherit; }
   padding-inline: clamp(18px, 4vw, 34px);
 }
 .board .shot__frame { border-color: var(--onyx-line); }
+.board__shot { margin-block-start: clamp(30px, 5vh, 52px); }
 .board .cap { color: var(--on-dark-soft); }
 .board .cap b { color: var(--on-dark); }
 
@@ -528,6 +528,32 @@ a { color: inherit; }
   max-inline-size: 42ch;
 }
 .asks--mid + .fineprint { display: none; }
+
+/* the demo surface: the product's own nav, clickable inside the screenshot */
+
+.chain__hint {
+  margin: 0 0 clamp(20px, 3vh, 30px);
+  font-size: 13.5px;
+  color: var(--on-light-soft);
+}
+.hots { position: absolute; inset: 0; }
+.hot {
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  inline-size: var(--w);
+  block-size: var(--h);
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+.hot:hover {
+  border-color: var(--accent-light);
+  background: color-mix(in srgb, var(--accent-light) 12%, transparent);
+}
 
 /* --------------------------------------------------------------- chapter 03 -- */
 /* Two columns held against each other for the length of the section: what the
@@ -769,7 +795,8 @@ a { color: inherit; }
      into a smudge, the frame scrolls: the screen is shown at a size its labels
      survive and the reader swipes across it. */
   .shot__frame { overflow-x: auto; overscroll-behavior-x: contain; }
-  .shot img { inline-size: 900px; max-inline-size: none; aspect-ratio: auto; block-size: auto; }
+  .shot__inner { inline-size: 900px; }
+  .shot img { inline-size: 900px; max-inline-size: none; }
   .index__row { grid-template-columns: 40px minmax(0, 1fr); }
   .index__d { grid-column: 2; font-size: 13.5px; }
 }
