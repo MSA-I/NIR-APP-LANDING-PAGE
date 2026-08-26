@@ -318,3 +318,88 @@ needed the file copied into the worktree by hand.
 That is a real risk and it is written down rather than fixed here: committing a
 22KB HTML file and two textures would remove it, and the reason not to is only
 that `lab/` is where the render pipeline puts its frames.
+
+---
+
+## Round eight — the owner's second list, 26.08.2026
+
+Eleven notes, in the order they were given. Each one, what was actually wrong,
+and what it cost.
+
+| # | Asked | Done |
+|---|---|---|
+| 1 | The shader should be ALIVE, and not answer the mouse | It already ignored the mouse; it was not alive. `timeScale` was 0.32 and `drift` 0.03, which is a ground that moves about a pixel a second. A travelling fold was added to the fragment shader (the file's own header had claimed one since round one, and only the fbm was drifting), and the two constants went to 0.85 and 0.09. Measured: mean absolute pixel delta over three seconds went from under noise to **18.96**, and with the clock stopped, dragging the pointer corner to corner across the pane changes **0.000** |
+| 2 | The pages in the film should be slightly not straight, so they read as paper | Each of the eleven sheets is clipped to an eight-point polygon whose corners sit a fraction of a percent off true, carries a bend (a soft band of shade where it lifts, light on the far side), and half of them carry a fold line with a lit edge and a shaded one. All per-sheet, all deterministic from one seeded stream, so a rebuild produces the same eleven sheets |
+| 3 | Instead of the dashboard at the end, the pages fly inward and the logo appears; better, they are reflected in an invoice calculation that marks the difference in colour | Act two, `lab/world/world.html` + `scripts/render-recon.mjs`. Three pairs of real documents fly in, each pair lands on one line of a ledger, and the arithmetic runs: **+1,835.50 alert**, **0.00 matched**, **−0.05 in your favour**. Then the lines converge and the mark rises out of them. Every figure is off `lab/app-reference`, the same source the eleven sheets use |
+| 4 | The film is broken on a phone | Two faults, both real. The phone cut is a PORTRAIT render, 810x1440, and both cuts were shown in one `aspect-[16/10]` box with `object-fit: cover`: **65% of every frame was cropped away**. And `build-film.mjs` computed the tail's size as 16:9 of its height for both cuts, producing a 1280x720 tail concatenated with `-c copy` onto a stream of 810x1440 frames, which the container cannot resample. Each cut has its own ratio now, and the phone also gets the sticky film the desktop has always had |
+| 5 | The control centre should show all the graphs and markers, it is terribly empty | It was, and the product was not at fault: six of that screen's cards are scoped to the current month, and the local demo tenant's last activity is 20.07.2026. **Nothing was written to any database.** The capture is taken with the page's wall clock shifted to 17.07.2026 09:40, a day that tenant was trading on. Every figure this page quotes off it was re-read and none moved |
+| 6 | Chapter 03 still reads flat | Four moves, each one the page already makes elsewhere: a ground (one oceanic pool behind the affirmative column, a rule down the gutter), a pointer (the same glow chapter 05's questions use), an index (each row numbered), and an offset (the refusals start lower and their marker does not turn) |
+| 7 | The plans, exactly as 21st.dev's pricing-module, with a switch for the yearly price | @ruixen.ui/pricing-module (id 9189), part for part: centred head, switch, then per card an icon, name, description, amount, period, action, hairline, and two labelled lists. `data-plan-price` stays the MONTHLY amount whatever the switch shows, because G14 asserts the published catalogue and not the state of a toggle |
+| 8 | An announcement strip at the top | Inside the folio's fixed box, not above it: a second fixed element would make every scroll offset on the page depend on whether the strip had been dismissed. Dismissal is remembered for the session only |
+| 9 | A logo cloud exactly like logo-cloud-3, five placeholders for now | @sshahaider/logo-cloud-3 (id 9320), same anatomy. Its `InfiniteSlider` is framer-motion plus react-use-measure driving a motion value; the same loop here is a duplicated run and one CSS animation, which is what the colophon's strip already does |
+| 10 | Five testimonials | Written, and marked. See below |
+| 11 | The colophon's giant text should be the application's name, and the colophon is off centre | Both were bugs rather than taste. The wordmark was positioned `inset-inline-start: 50%` with a `-50%` translate, which centres a left-to-right page and puts the word a whole width off the left edge of a right-to-left one: **measured at x = −997 in a 1440 viewport**. Its opacity was scrubbed on the reveal's scroll progress, which Motion reported as 0.395 at 95% of the page, 0.967 at 98%, and **0 at 100%** — the one position the reader stops at. The scrub is gone and the box centres itself. The bottom bar is three columns instead of two ends |
+
+### The testimonials, and what they are not
+
+The product has not launched and has no customers to quote. Five invented
+people with names and companies would be fabricated proof, so what the section
+carries instead is five ways of DESCRIBING behaviour the product actually has,
+attributed to a role and a kind of business and to nobody in particular, under
+a sentence that says so:
+
+> הציטוטים כאן הם דוגמאות ניסוח שנכתבו על ידינו, לא לקוחות.
+
+**G15** is new and exists for one reason: to stop that sentence being tidied
+away in a later design pass while the five quotes stay. It reads
+`src/content/extra.ts`, finds every block flagged `placeholder: true`, and
+fails if the matching section on the page does not render its disclosure in
+visible text at a readable size. It also fails if any attribution acquires a
+proper name, a company, or a בע"מ.
+
+The same flag covers the five logo slots.
+
+### What round eight cost, and what caught it
+
+Three regressions, each caught by a gate rather than by looking:
+
+- **A physical `left` in the billing switch.** The thumb travelled on
+  `translateX`, which is a physical axis, so it needed a physical `left` to be
+  pinned against — and in Hebrew it would then have travelled the wrong way.
+  It moves on `margin-inline-start` now, which is logical and transitions. G4.
+- **4.39:1 on the "two months free" chip.** The accent itself, on its own
+  wash. Lifted toward the ink rather than swapped for it. G7.
+- **G13 rejecting two correctly labelled controls.** The gate asserted that no
+  `<button>` with empty text content is on the tab path, which was right when
+  the only text-less buttons on the page were demo hotspots. The strip's
+  dismiss control and the billing switch are icon-only and both carry an
+  `aria-label`. The gate reads the accessible name now, and notes the icon-only
+  controls it finds by name.
+
+### The copy the new ending no longer matches
+
+**This is unresolved and it is not a bug in the code.** The film used to end on
+the control centre, and two lines of frozen copy say so:
+
+- `film.blocks[3]`: "וזה המסך שמחליף אותה … מכאן והלאה זו כבר לא הדמיה"
+- `board.h2`: "המסך שהסרט נגמר עליו, במלואו"
+
+The film now ends on the reconciliation and the mark, and the control centre
+appears immediately below it in chapter 02's closing spread. The second line is
+now inaccurate. Both live in `src/content/he.ts`, which **G2 freezes against
+build 3**, so changing either is a decision about that gate rather than an edit.
+Raised with the owner; nothing has been changed on either side.
+
+### Act two, and where it lives
+
+`lab/world/world.html` now carries two acts sharing one frame. Act one is the
+hall, driven by `window.__setT(t)`. Act two is the ledger, driven by
+`window.__setR(u)`, and it does not fade act one out, it switches it off:
+`#recon` paints its own ground, so leaving the hall underneath at any opacity
+means act two's first frame is act one's opening stack showing through. The two
+are painted and switched by separate functions for the same reason — the init
+pass has to lay act two out once so its fonts load before `__ready`, and if
+that also switched acts, the hall would be hidden for the whole film.
+
+That file is still in the main checkout's ignored `lab/`, which is still a real
+risk and is still written down rather than fixed here.

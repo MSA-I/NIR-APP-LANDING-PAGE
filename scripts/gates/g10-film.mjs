@@ -43,7 +43,7 @@ await withPage(async (page) => {
 
   const first = await read(page)
   c.note(`clip: ${first.d.toFixed(2)}s, ${first.src.split('/').pop()}`)
-  c.ok(first.d > 20, `the clip should be the full 27.6s cut, it is ${first.d.toFixed(2)}s`)
+  c.ok(first.d > 30, `the clip should be the full 36.2s cut, it is ${first.d.toFixed(2)}s`)
 
   const readings = []
   for (const f of [0, 0.2, 0.4, 0.6, 0.8, 1]) {

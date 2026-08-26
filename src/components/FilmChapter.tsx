@@ -46,6 +46,10 @@ export function FilmChapter({
     // reset the playhead the scroll is driving.
     const small = window.matchMedia('(max-width: 767px)').matches
     video.src = small ? '/assets/film-m.mp4' : '/assets/film.mp4'
+    // The poster has to match the cut. film.webp is 16:9; behind the portrait
+    // phone cut it is the wrong shape and shows for as long as the clip takes
+    // to open, which on a cold 5MB load is the first thing a phone sees.
+    video.poster = small ? '/assets/film-m.webp' : '/assets/film.webp'
     video.load()
 
     let raf = 0
@@ -87,27 +91,28 @@ export function FilmChapter({
 
   return (
     <section ref={sectionRef} data-folio={folio} data-film className="py-[clamp(3rem,8vh,6rem)]">
-      <div className="wrap grid gap-10 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
-        {/* Copy column: ordinary flow, one screen per block. */}
-        <div className="order-2 lg:order-1">
-          {blocks.map((b, i) => (
-            <FilmBlock key={i} block={b} index={i} count={blocks.length} calm={!!calm} />
-          ))}
-        </div>
-
-        {/* Film column: sticky, and the only thing the scroll drives. */}
-        <figure
-          className={
-            calm
-              ? 'order-1 m-0 lg:order-2'
-              : 'order-1 m-0 self-start lg:sticky lg:top-[calc(50vh-27vh)] lg:order-2'
-          }
-        >
+      {/* The film comes FIRST in the document now, and the desktop grid puts
+          it back on the far side with `order`. Below lg the container is not a
+          grid at all but ordinary block flow, which is the only arrangement in
+          which the film can stay put while the copy travels: a sticky element
+          inside a grid item sticks within its own row, and its own row is
+          exactly as tall as it is. */}
+      <div
+        className={`film-lay wrap gap-10 lg:grid lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16 ${
+          calm ? 'film-lay--calm' : ''
+        }`}
+      >
+        {/* Film column: the only thing the scroll drives. */}
+        <figure className={calm ? 'film-fig m-0 lg:order-2' : 'film-fig film-fig--stick m-0 lg:order-2'}>
           <div className="plate crops mx-0 border border-onyx-line bg-onyx-lift">
             <span className="crops__b" aria-hidden="true" />
+            {/* The ratio is in styles.css, not here: the desktop cut is
+                1920x1080 and the phone cut is 810x1440, and a single
+                `aspect-[16/10]` for both is what cropped two thirds of the
+                phone film away. */}
             <video
               ref={videoRef}
-              className="aspect-[16/10] w-full object-cover"
+              className="film-video"
               poster="/assets/film.webp"
               playsInline
               muted
@@ -117,6 +122,13 @@ export function FilmChapter({
           </div>
           <figcaption className="cap pt-3">{caption}</figcaption>
         </figure>
+
+        {/* Copy column: ordinary flow, one screen per block. */}
+        <div className="film-copy lg:order-1">
+          {blocks.map((b, i) => (
+            <FilmBlock key={i} block={b} index={i} count={blocks.length} calm={!!calm} />
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -142,7 +154,7 @@ function FilmBlock({
       className={
         calm
           ? 'mb-14'
-          : 'flex min-h-[78vh] flex-col justify-center transition-opacity duration-700 lg:min-h-screen'
+          : 'film-block flex flex-col justify-center transition-opacity duration-700'
       }
       style={calm ? undefined : { opacity: active ? 1 : 0.26 }}
     >

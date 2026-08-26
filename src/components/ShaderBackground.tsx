@@ -183,13 +183,25 @@ vec3 shade(vec2 uv, vec2 p, float t) {
   float flutes = mix(42.0, 7.0, u_paramA);
   float cell = fract((p.x + 1.0) * flutes) - 0.5;
   float prism = sin(cell * 3.1415926) * (0.03 + u_intensity * 0.2);
-  vec2 samplePoint = p + vec2(prism, sin(p.x * flutes + t * 0.2) * prism * 0.35);
-  float field = fbm(samplePoint * 2.2 + vec2(t * 0.035, -t * 0.025) + u_seed);
-  field += 0.24 * sin(samplePoint.y * 3.0 + samplePoint.x * 1.3);
+  vec2 samplePoint = p + vec2(prism, sin(p.x * flutes + t * 0.9) * prism * 0.55);
+  float field = fbm(samplePoint * 2.2 + vec2(t * 0.11, -t * 0.08) + u_seed);
+  field += 0.24 * sin(samplePoint.y * 3.0 + samplePoint.x * 1.3 + t * 0.35);
   float highlight = pow(1.0 - abs(cell) * 2.0, mix(12.0, 2.0, u_intensity));
   float shadow = smoothstep(0.18, 0.5, abs(cell));
-  vec3 glass = palette(clamp(field + highlight * 0.3, 0.0, 1.0));
-  return glass * (0.72 + highlight * 0.42 - shadow * 0.12);
+  // The fold. The header of this file has always said a slow fold travels
+  // through the ribs; until round eight only the fbm drifted, which at the
+  // pace it drifted at is a still image to anyone not watching for it, and
+  // that is what the owner meant by asking for a ground that is ALIVE. This
+  // is the moving part: a soft band crossing the pane, lighting the crown of
+  // every rib it passes and leaving them as it goes. It is a function of
+  // u_time and of nothing else, so it stays a ground rather than becoming
+  // something that answers the reader.
+  float foldPos = fract(t * 0.055) * 1.7 - 0.35;
+  float fold = exp(-pow((uv.x - foldPos) * 3.1, 2.0));
+  float wake = exp(-pow((uv.x - foldPos + 0.16) * 5.0, 2.0));
+  vec3 glass = palette(clamp(field + highlight * 0.3 + fold * 0.10, 0.0, 1.0));
+  return glass * (0.72 + highlight * 0.42 - shadow * 0.12
+    + fold * (0.16 + highlight * 0.55) - wake * 0.06);
 }
 
 void main() {
@@ -287,9 +299,13 @@ const UNIFORMS = {
   rotate: 1.9373,
   offsetX: 0.0,
   offsetY: 0.0,
-  drift: 0.03,
+  // Round eight. 0.03 and 0.32 were a ground that moved about a pixel a
+  // second: correct on paper, motionless to look at. Measured against the
+  // title page at 1440x900, the fold now crosses the pane in about 18
+  // seconds and the field underneath it never stops sliding.
+  drift: 0.09,
   oklab: 1.0,
-  timeScale: 0.32,
+  timeScale: 0.85,
 }
 
 const pendingContextReleases = new WeakMap<HTMLCanvasElement, number>()

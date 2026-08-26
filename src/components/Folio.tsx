@@ -8,7 +8,7 @@
 // page's calls to action use, so the header answers a pointer the same way the
 // rest of the page does rather than in a dialect of its own.
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Cta } from './Cta'
 
 export function Mark({ className }: { className?: string }) {
@@ -28,6 +28,7 @@ export function Mark({ className }: { className?: string }) {
 type NavLink = { t: string; href: string }
 
 export function Folio({
+  announcement,
   brand,
   first,
   links,
@@ -36,6 +37,9 @@ export function Folio({
   loginLabel,
   loginHref,
 }: {
+  /** The strip above the running head. Rendered inside this fixed box so the
+      page never has to know how tall two fixed elements are together. */
+  announcement?: ReactNode
   brand: string
   first: string
   links: NavLink[]
@@ -86,6 +90,8 @@ export function Folio({
         borderBottom: `1px solid ${lifted ? 'var(--color-onyx-line)' : 'transparent'}`,
       }}
     >
+      {announcement}
+
       <div className="wrap flex items-center gap-2 py-3">
         <a
           className="flex shrink-0 items-center gap-2 rounded-[100px] border border-onyx-line/80 px-3 py-2 text-[0.92rem] font-semibold text-ink no-underline transition-colors duration-300 hover:border-oceanic hover:text-oceanic"

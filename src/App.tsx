@@ -6,13 +6,17 @@
 // thing this rebuild was not allowed to change is what the page says.
 
 import t from '@/content/he'
+import x from '@/content/extra'
+import { Announcement } from '@/components/Announcement'
 import { Folio } from '@/components/Folio'
 import { TitlePage } from '@/components/TitlePage'
 import { FilmChapter } from '@/components/FilmChapter'
 import { WhatChapter } from '@/components/WhatChapter'
 import { BoardChapter } from '@/components/BoardChapter'
 import { WhyChapter } from '@/components/WhyChapter'
+import { LogoCloud } from '@/components/LogoCloud'
 import { PlansChapter } from '@/components/PlansChapter'
+import { Voices } from '@/components/Voices'
 import { FaqChapter } from '@/components/FaqChapter'
 import { CloseChapter } from '@/components/CloseChapter'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -25,6 +29,14 @@ export default function App() {
       </a>
 
       <Folio
+        announcement={
+          <Announcement
+            text={x.announce.text}
+            linkLabel={x.announce.linkLabel}
+            href={x.announce.href}
+            dismissLabel={x.announce.dismissLabel}
+          />
+        }
         brand={t.brand}
         first={t.title_page.folio}
         links={t.footer.cols[1].links}
@@ -46,6 +58,13 @@ export default function App() {
           ctaHref={t.ctaPrimaryHref}
           secondLabel={t.footer.cols[1].links[0].t}
           fineprint={t.fineprint}
+        />
+
+        <LogoCloud
+          eyebrow={x.logos.eyebrow}
+          h2={x.logos.h2}
+          disclosure={x.logos.disclosure}
+          items={x.logos.items}
         />
 
         <FilmChapter folio={t.film.folio} caption={t.film.caption} blocks={t.film.blocks} />
@@ -82,6 +101,13 @@ export default function App() {
           no={t.why.no}
         />
 
+        <Voices
+          eyebrow={x.testimonials.eyebrow}
+          h2={x.testimonials.h2}
+          disclosure={x.testimonials.disclosure}
+          items={x.testimonials.items}
+        />
+
         <PlansChapter
           folio={t.plans.folio}
           h2={t.plans.h2}
@@ -93,6 +119,10 @@ export default function App() {
           note={t.plans.note}
           ctaLabel={t.ctaPrimary}
           ctaHref={t.ctaPrimaryHref}
+          billing={x.billing}
+          recommendedLabel={x.billing.recommendedLabel}
+          everywhereLabel={x.billing.everywhereLabel}
+          everywhere={x.billing.everywhere}
         />
 
         <FaqChapter folio={t.faq.folio} h2={t.faq.h2} lede={t.faq.lede} items={t.faq.items} />

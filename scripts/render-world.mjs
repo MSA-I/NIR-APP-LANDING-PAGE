@@ -14,7 +14,7 @@
 //   node scripts/render-world.mjs --fast          quarter-rate check render
 
 import { chromium } from 'playwright-core'
-import { mkdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -183,8 +183,23 @@ for (let i = 0; i < LEGS.length; i++) {
 await browser.close()
 
 if (!MOBILE) {
-  await writeFile(path.resolve('data/world-legs.json'),
-    JSON.stringify({ total: TOTAL, rate: RATE, legs: manifest }, null, 2), 'utf8')
+  // MERGE, do not replace. A `--only 04` run knows about one leg, and writing
+  // its manifest whole threw the other three away: the file came back with a
+  // single entry, and nothing downstream noticed because nothing downstream
+  // reads it at build time. Found by `git diff` rather than by a gate.
+  const file = path.resolve('data/world-legs.json')
+  let prior = []
+  try {
+    prior = JSON.parse(await readFile(file, 'utf8')).legs || []
+  } catch { /* first run */ }
+  const merged = [...prior]
+  for (const leg of manifest) {
+    const at = merged.findIndex((l) => l.id === leg.id)
+    if (at === -1) merged.push(leg)
+    else merged[at] = leg
+  }
+  merged.sort((a, b) => a.id.localeCompare(b.id))
+  await writeFile(file, JSON.stringify({ total: TOTAL, rate: RATE, legs: merged }, null, 2), 'utf8')
 }
 
 const rates = manifest.map((m) => m.weight / m.seconds)

@@ -20,8 +20,6 @@
 // Terms and privacy point at app.inplace.digital: they are routes inside the
 // product, and scripts/gates/g14-figures.mjs fails the build if either moves.
 
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { ArrowUp } from 'lucide-react'
 import { Mark } from './Folio'
 import { Cta, Magnetic } from './Cta'
@@ -45,36 +43,25 @@ export function SiteFooter({
   /** Accessible name for the return-to-top control: the title page's own folio. */
   topLabel: string
 }) {
-  const calm = useReducedMotion()
-  const revealRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: revealRef,
-    offset: ['start end', 'end end'],
-  })
-  const wordmarkY = useTransform(scrollYProgress, [0, 1], ['12vh', '0vh'])
-  const wordmarkOpacity = useTransform(scrollYProgress, [0, 0.7], [0, 1])
-
   const strip = [...marquee, ...marquee]
 
   return (
-    <div ref={revealRef} className="footer-reveal">
+    <div className="footer-reveal">
       <footer className="footer-panel">
         <span className="footer-aurora" aria-hidden="true" />
         <span className="footer-grid" aria-hidden="true" />
 
-        {calm ? (
-          <span className="footer-wordmark" aria-hidden="true">
-            {brand}
-          </span>
-        ) : (
-          <motion.span
-            className="footer-wordmark"
-            aria-hidden="true"
-            style={{ y: wordmarkY, opacity: wordmarkOpacity }}
-          >
-            {brand}
-          </motion.span>
-        )}
+        {/* The name of the application, at the size of the screen.
+            It used to be scrubbed in on the reveal's own scroll progress, and
+            at the one position that matters — the page scrolled all the way
+            down, the colophon fully out — Motion reported that progress as 0
+            and the wordmark was not drawn at all. Measured: 0.395 at 95% of
+            the page, 0.967 at 98%, and 0 at 100%. The curtain IS the reveal;
+            a second reveal inside it bought nothing and cost the one frame
+            the reader actually stops on. */}
+        <span className="footer-wordmark" aria-hidden="true" data-decorative="">
+          {brand}
+        </span>
 
         {/* The diagonal strip. The six chapter titles, so the colophon
             repeats what the page just said rather than inventing a slogan. */}
@@ -119,15 +106,21 @@ export function SiteFooter({
           </nav>
         </div>
 
+        {/* Three columns. The line sits on the page's centre; the control and
+            the empty span on either side are the same width, so it stays
+            there whatever is beside it. */}
         <div className="footer-bar wrap">
+          <div className="footer-bar__side">
+            <Magnetic pull={0.2}>
+              <a className="footer-top" href="#top" aria-label={topLabel}>
+                <ArrowUp className="size-4" aria-hidden="true" />
+              </a>
+            </Magnetic>
+          </div>
           <p dir="ltr" className="footer-rights">
             {rights}
           </p>
-          <Magnetic pull={0.2}>
-            <a className="footer-top" href="#top" aria-label={topLabel}>
-              <ArrowUp className="size-4" aria-hidden="true" />
-            </a>
-          </Magnetic>
+          <div className="footer-bar__side footer-bar__side--end" aria-hidden="true" />
         </div>
       </footer>
     </div>

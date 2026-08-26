@@ -27,6 +27,7 @@ await withPage(async (page) => {
         tag: el.tagName.toLowerCase(),
         role: el.getAttribute('role'),
         text: (el.textContent || '').trim().slice(0, 40),
+        label: (el.getAttribute('aria-label') || '').trim().slice(0, 40),
         href: el.getAttribute('href'),
         outline: parseFloat(s.outlineWidth) || 0,
         outlineStyle: s.outlineStyle,
@@ -76,10 +77,19 @@ await withPage(async (page) => {
   // The hotspots stay off the path.
   const hotStops = await page.$$eval('button[tabindex="-1"]', (els) => els.length)
   c.ok(hotStops > 0, 'the demo hotspots are gone')
+  // A button with NO accessible name at all. Text content is not the test:
+  // the strip above the folio and the plans' billing switch are both icon-only
+  // controls that carry an aria-label, and a control a screen reader announces
+  // correctly is not the fault this line is looking for. What it is looking
+  // for is a demo hotspot that has picked up a tabindex, and those carry
+  // neither text nor a label.
+  const unnamed = stops.filter((s) => s.tag === 'button' && !s.text && !s.label)
   c.ok(
-    !stops.some((s) => s.tag === 'button' && s.text === ''),
-    'an unnamed button is on the tab path, which is what a hotspot with a stray tabindex looks like'
+    unnamed.length === 0,
+    `an unnamed button is on the tab path, which is what a hotspot with a stray tabindex looks like`
   )
+  const labelled = stops.filter((s) => s.tag === 'button' && !s.text && s.label)
+  if (labelled.length) c.note(`icon-only controls on the path, each named: ${labelled.map((s) => s.label).join(' | ')}`)
   c.note(`${hotStops} hotspots present, none of them on the tab path`)
 
   // Arrow keys move along the chain, which is how a tablist is meant to work.

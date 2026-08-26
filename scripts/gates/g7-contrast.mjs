@@ -91,6 +91,17 @@ await withPage(async (page) => {
           if (parseFloat(cs.opacity) < 0.85) continue
           const txt = (el.textContent || '').trim()
           if (!txt) continue
+          // Decoration made of letterforms. The colophon sets the application's
+          // name at a quarter of the screen behind everything else, which is
+          // the catalogue component's move and the reason the panel does not
+          // read as an empty box. It is not text: it is out of the
+          // accessibility tree, it says nothing the same panel does not also
+          // say twice in readable type, and grading it as copy would force it
+          // to 3:1, which is a slab of type arguing with the colophon in front
+          // of it. It is not skipped either. It is graded the OTHER way below:
+          // a run marked decorative that measures high enough to read is
+          // readable type wearing a costume, and fails.
+          const decorative = el.hasAttribute('data-decorative')
           // Leaves only. A <p> that wraps a <b> covers two grounds as far as
           // its bounding box is concerned, and the darkest patch inside it may
           // belong to neither run of text.
@@ -180,6 +191,7 @@ await withPage(async (page) => {
             lightest,
             darkest,
             large,
+            decorative,
           })
         }
         return out
@@ -206,15 +218,33 @@ await withPage(async (page) => {
     }
   }
 
-  const fails = [...worst.values()].filter((r) => r.ratio < r.need)
+  const runs = [...worst.values()]
+  const copy = runs.filter((r) => !r.decorative)
+  const decor = runs.filter((r) => r.decorative)
+
+  const fails = copy.filter((r) => r.ratio < r.need)
   for (const f of fails) {
     c.ok(false, `${f.ratio.toFixed(2)}:1 (needs ${f.need}) ${f.sel} "${f.text}"`)
   }
-  const min = [...worst.values()].reduce(
+
+  // The other direction. A run marked decorative is exempt from the floor and
+  // held to a CEILING instead: it has to stay clearly under the AA threshold
+  // for large text, because anything at or above it is readable type that has
+  // been marked decorative to get past this gate.
+  for (const d of decor) {
+    c.ok(
+      d.ratio < 2.5,
+      `${d.sel} "${d.text}" is marked decorative but measures ${d.ratio.toFixed(2)}:1, ` +
+        `which is readable type exempting itself from the floor`
+    )
+    c.note(`decorative, graded as ground: ${d.sel} "${d.text}" at ${d.ratio.toFixed(2)}:1`)
+  }
+
+  const min = copy.reduce(
     (a, r) => (r.ratio < a.ratio ? r : a),
     { ratio: Infinity, sel: '', text: '' }
   )
-  c.note(`${worst.size} text runs sampled across ${stops.length} scroll positions`)
+  c.note(`${copy.length} text runs sampled across ${stops.length} scroll positions, ${decor.length} decorative`)
   c.note(`worst measured: ${min.ratio.toFixed(2)}:1 on ${min.sel} "${min.text}"`)
 
   // ---- positive control ---------------------------------------------------

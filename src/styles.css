@@ -739,24 +739,38 @@
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
 }
 
+/* The name of the application, at the size of the screen.
+   The catalogue component sets this at foreground/10% over a LIGHT ground,
+   where a tenth of black is plainly visible. Over onyx a tenth of the ink is
+   not: the first cut of this footer shipped a wordmark nobody could see, which
+   is what the owner's note of 26.08.2026 was about. It carries a stroke and a
+   ramp that starts at a quarter now, measured against the panel rather than
+   copied off the catalogue. */
 .footer-wordmark {
   position: absolute;
-  inset-block-end: -4vh;
-  inset-inline-start: 50%;
-  translate: -50% 0;
+  inset-block-end: -2.5vh;
+  /* Centred by the box, not by a translate. `inset-inline-start: 50%` with a
+     -50% translate centres in a left-to-right page and puts the word a whole
+     width off the left edge in a right-to-left one, which is where this
+     wordmark spent its first two rounds: measured at x = -997 in a 1440
+     viewport. */
+  inset-inline: 0;
+  text-align: center;
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
   font-family: var(--font-display);
-  font-size: 26vw;
+  font-size: min(26vw, 30rem);
   font-weight: 900;
   line-height: 0.75;
   letter-spacing: -0.05em;
   color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--color-ink) 12%, transparent);
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--color-ink) 11%, transparent) 0%,
-    transparent 62%
+    color-mix(in srgb, var(--color-ink) 26%, transparent) 0%,
+    color-mix(in srgb, var(--color-oceanic) 10%, transparent) 52%,
+    transparent 84%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -866,15 +880,24 @@
 
 /* The pills are the page's own flow button now; nothing here dresses them. */
 
+/* Three columns, not two ends. `space-between` across a 1265px wrap put the
+   copyright hard against one edge and the return-to-top against the other,
+   with the whole width of the page empty between them, which is what read as
+   off-centre under a colophon whose every other row is centred. The middle
+   column carries the line; the outer two are the same width, so the line sits
+   on the page's centre whatever is beside it. */
 .footer-bar {
   position: relative;
   z-index: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding-block-start: 1.5rem;
+  text-align: center;
 }
+.footer-bar__side { display: flex; align-items: center; }
+.footer-bar__side--end { justify-content: flex-end; }
 .footer-rights {
   margin: 0;
   font-size: 0.78rem;
@@ -934,4 +957,506 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* =========================================================================
+   ROUND 8 — the owner's second list of notes, 26.08.2026.
+   ========================================================================= */
+
+/* ------------------------------------------------------------ announcement */
+/* The strip sits inside the folio's fixed box. It paints its own ground so it
+   reads as a bar whether or not the header underneath it has lifted yet. */
+.announce {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-oceanic-deep) 94%, transparent) 0%,
+    color-mix(in srgb, var(--color-action-solid) 94%, transparent) 100%
+  );
+  border-block-end: 1px solid color-mix(in srgb, var(--color-oceanic) 35%, transparent);
+}
+.announce__link {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.75rem;
+  padding-block: 0.55rem;
+  color: var(--color-ink);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+.announce__dot {
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-oceanic);
+  animation: announce-pulse 2.6s var(--ease-out-quint) infinite;
+}
+@keyframes announce-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-oceanic) 70%, transparent); }
+  70%  { box-shadow: 0 0 0 0.5rem color-mix(in srgb, var(--color-oceanic) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-oceanic) 0%, transparent); }
+}
+.announce__text { color: var(--color-ink); }
+.announce__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 650;
+  color: var(--color-ink);
+  border-block-end: 1px solid color-mix(in srgb, var(--color-ink) 45%, transparent);
+  transition: border-color 0.3s var(--ease-out-quint);
+}
+.announce__link:hover .announce__cta { border-color: var(--color-ink); }
+.announce__cta svg { transition: transform 0.35s var(--ease-out-quint); }
+.announce__link:hover .announce__cta svg { transform: translateX(-0.2rem); }
+.announce__close {
+  display: grid;
+  place-content: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  flex: none;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: color-mix(in srgb, var(--color-ink) 72%, transparent);
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease-out-quint), color 0.3s var(--ease-out-quint);
+}
+.announce__close:hover {
+  background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------ the logo wall */
+/* 21st.dev's logo-cloud-3: hairline, endless strip, hairline. The catalogue
+   fades both hairlines and both ends of the strip with the same mask, so a
+   mark never appears or vanishes at a hard edge. */
+.logos__rule {
+  block-size: 1px;
+  background: var(--color-onyx-line);
+  mask-image: linear-gradient(to right, transparent, black, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black, transparent);
+}
+.logos__viewport {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 18%, black 82%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 18%, black 82%, transparent);
+}
+.logos__run {
+  display: flex;
+  inline-size: max-content;
+  align-items: center;
+  gap: 42px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: logos-run 42s linear infinite;
+}
+/* The catalogue's `speedOnHover`. Swapping the duration keeps the direction
+   and the loop; it costs a small phase step, which the colophon's own strip
+   already accepts. */
+.logos__viewport:hover .logos__run { animation-duration: 120s; }
+@keyframes logos-run {
+  from { transform: translateX(50%); }
+  to   { transform: translateX(0); }
+}
+.logos__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex: none;
+  opacity: 0.72;
+  transition: opacity 0.4s var(--ease-out-quint);
+}
+.logos__viewport:hover .logos__item { opacity: 1; }
+.logos__badge {
+  display: grid;
+  place-content: center;
+  inline-size: 2.1rem;
+  block-size: 2.1rem;
+  border-radius: 9px;
+  border: 1px dashed color-mix(in srgb, var(--color-ink-dim) 60%, transparent);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-ink-soft);
+}
+.logos__name {
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--color-ink-soft);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- the voices */
+.voices__note {
+  margin: 0;
+  border-inline-start: 2px solid color-mix(in srgb, var(--color-oceanic) 45%, transparent);
+  padding-inline-start: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.62;
+  color: var(--color-ink-soft);
+}
+.voice {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: color-mix(in srgb, var(--color-onyx-lift) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 85%, transparent);
+  transition:
+    transform 0.45s var(--ease-out-quint),
+    border-color 0.45s var(--ease-out-quint),
+    background-color 0.45s var(--ease-out-quint);
+}
+.voice:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--color-oceanic) 50%, transparent);
+  background: color-mix(in srgb, var(--color-onyx-lift) 85%, transparent);
+}
+.voice--lead {
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--color-oceanic-deep) 45%, transparent) 0%,
+    color-mix(in srgb, var(--color-onyx-lift) 70%, transparent) 64%
+  );
+  border-color: color-mix(in srgb, var(--color-oceanic) 40%, transparent);
+}
+.voice__mark { color: var(--color-oceanic); }
+.voice__q {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+.voice--lead .voice__q {
+  font-size: clamp(1.1rem, 1.9vw, 1.4rem);
+  font-weight: 600;
+}
+.voice__by {
+  margin-block-start: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  border-block-start: 1px solid color-mix(in srgb, var(--color-onyx-line) 90%, transparent);
+  padding-block-start: 0.85rem;
+}
+.voice__who { font-size: 0.9rem; font-weight: 650; color: var(--color-ink-soft); }
+.voice__of { font-size: 0.85rem; color: var(--color-ink-dim); }
+
+/* -------------------------------------------------------- the billing switch */
+.plans-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-block-start: clamp(1.5rem, 4vh, 2.25rem);
+}
+.plans-switch__side {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-ink-dim);
+  transition: color 0.35s var(--ease-out-quint);
+}
+.plans-switch__side.is-on { color: var(--color-ink); }
+.plans-switch__track {
+  position: relative;
+  inline-size: 3rem;
+  block-size: 1.65rem;
+  flex: none;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-oceanic) 45%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-onyx-lift) 90%, transparent);
+  cursor: pointer;
+  transition: background-color 0.35s var(--ease-out-quint), border-color 0.35s var(--ease-out-quint);
+}
+.plans-switch__track[aria-checked='true'] {
+  background: var(--color-action-solid);
+  border-color: var(--color-oceanic);
+}
+/* The thumb travels on a MARGIN, not on a transform.
+   `translateX` is a physical axis: on this page it would send the thumb the
+   wrong way, and G4 rejects the `left` that pinning it the other way needs.
+   An absolutely positioned box with `inset-inline-start` set moves toward the
+   inline END as its inline-start margin grows, in either direction, and a
+   margin transitions. */
+.plans-switch__thumb {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0.18rem;
+  margin-inline-start: 0;
+  translate: 0 -50%;
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+  border-radius: 9999px;
+  background: var(--color-ink);
+  transition: margin-inline-start 0.35s var(--ease-spring);
+}
+.plans-switch__track[aria-checked='true'] .plans-switch__thumb {
+  margin-inline-start: 1.32rem;
+}
+.plans-switch__save {
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-oceanic) 40%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic) 12%, transparent);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.74rem;
+  font-weight: 650;
+  /* The accent itself is 4.39:1 on this chip and G7 wants 4.5. Lifted toward
+     the ink rather than swapped for it, so the chip still reads as accent. */
+  color: color-mix(in srgb, var(--color-oceanic) 60%, var(--color-ink));
+}
+
+/* ------------------------------------------- the pricing card's own anatomy */
+.plan-card__badge {
+  position: absolute;
+  inset-block-start: -0.7rem;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  border-radius: 9999px;
+  background: var(--color-action-solid);
+  padding: 0.2rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+}
+.plan-card__icon {
+  display: grid;
+  place-content: center;
+  inline-size: 2.6rem;
+  block-size: 2.6rem;
+  margin-inline: auto;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-oceanic) 35%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic) 10%, transparent);
+  color: var(--color-oceanic);
+}
+.plan-card--featured .plan-card__icon {
+  border-color: color-mix(in srgb, var(--color-oceanic-deep) 30%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic-deep) 8%, transparent);
+  color: var(--color-oceanic-deep);
+}
+
+/* `.cap` is unlayered and sets `margin: 0`, which beats Tailwind's `mx-auto`
+   in the cascade. The plans' two notes are centred under a centred chapter,
+   so they say so here rather than losing to their own base rule. */
+.plans__notes {
+  margin-inline: auto;
+  max-inline-size: 62ch;
+  text-align: center;
+}
+.plans__notes .cap + .cap { margin-block-start: 0.5rem; }
+
+/* ------------------------------------------------------- chapter 03, round 8 */
+/* The four moves described at the top of WhyChapter.tsx: a ground, a pointer,
+   an index, an offset. */
+.why {
+  position: relative;
+  isolation: isolate;
+}
+/* The pool sits on the affirmative side, which is the reading side. Clipped by
+   the section rather than the page, so it cannot widen the document the way
+   the colophon's aurora once did. */
+.why__pool {
+  position: absolute;
+  inset-block: 12% -10%;
+  inset-inline-start: -14%;
+  inline-size: 62%;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.62;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--color-oceanic-deep) 70%, transparent) 0%,
+    color-mix(in srgb, var(--color-oceanic) 12%, transparent) 45%,
+    transparent 72%
+  );
+}
+@media (max-width: 1023px) {
+  .why__pool { inset-inline-start: -30%; inline-size: 110%; opacity: 0.45; }
+}
+
+/* The rule down the gutter: the chapter is two columns, and a printed spread
+   says so with a line rather than with white space. */
+@media (min-width: 1024px) {
+  .why__cols {
+    position: relative;
+  }
+  .why__cols::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 50%;
+    inline-size: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--color-onyx-line) 100%, transparent) 12%,
+      color-mix(in srgb, var(--color-onyx-line) 100%, transparent) 88%,
+      transparent
+    );
+  }
+}
+
+.why-card { position: relative; overflow: hidden; }
+.why-card__inner { position: relative; }
+
+/* The same pointer glow the questions use in chapter 05, on the dark ground. */
+.why-card__glow {
+  position: absolute;
+  inset: -1.25rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out-quint);
+  background: radial-gradient(
+    220px circle at var(--why-x, 50%) var(--why-y, 50%),
+    color-mix(in srgb, var(--color-oceanic) 14%, transparent),
+    transparent 68%
+  );
+}
+.why-card:hover .why-card__glow { opacity: 1; }
+.why-card--no .why-card__glow {
+  background: radial-gradient(
+    220px circle at var(--why-x, 50%) var(--why-y, 50%),
+    color-mix(in srgb, var(--color-ink) 6%, transparent),
+    transparent 68%
+  );
+}
+
+/* The index. Set in the figure face, quiet enough to be an ordinal rather than
+   a number the reader has to add up. */
+.why-card__n {
+  position: absolute;
+  inset-block-start: -0.15rem;
+  inset-inline-end: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--color-ink-dim) 65%, transparent);
+  transition: color 0.4s var(--ease-out-quint);
+}
+.why-card--yes:hover .why-card__n { color: var(--color-oceanic); }
+
+/* The marker turns a quarter as the card comes forward: the plus opens, the
+   dash does not, which is the difference between the two columns stated in
+   the one element both of them share. */
+.why-card__ring { transition: transform 0.5s var(--ease-out-quint), border-color 0.45s var(--ease-out-quint); }
+.why-card--yes:hover .why-card__ring { transform: rotate(90deg) scale(1.08); }
+.why-card--no:hover .why-card__ring { transform: scale(1.06); }
+
+/* ------------------------------------------------------ chapter 01, round 8 */
+/* The phone bug the owner reported on 26.08.2026.
+ *
+ * The film has two cuts: film.mp4 is 1920x1080 and film-m.mp4 is 810x1440,
+ * a PORTRAIT render made for phones. Both were shown in one `aspect-[16/10]`
+ * box with `object-fit: cover`, so on a phone the portrait cut was cropped to
+ * a 810x506 band out of the middle: 65% of every frame thrown away, the desk
+ * gone, the stack of paper cut off at both ends. That is what was wrong; it
+ * was never a decoding fault.
+ *
+ * Each cut now gets its own ratio, and on the phone the figure also stays put
+ * while the copy travels under it, which is what the desktop layout has always
+ * done and what makes a scroll-driven film worth driving.
+ */
+.film-video {
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+@media (max-width: 767px) {
+  .film-video {
+    /* The phone cut's own 9:16. Height first, width from the ratio, so the
+       film is as tall as it can be without pushing the copy off the screen. */
+    aspect-ratio: 9 / 16;
+    block-size: min(50svh, 128vw);
+    inline-size: auto;
+    margin-inline: auto;
+  }
+
+  /* Sticky needs a scrolling ancestor taller than itself, and it needs to
+     paint over what follows it: the copy is later in the document, so without
+     a stacking order of its own the blocks would slide across the film rather
+     than under it. */
+  .film-lay:not(.film-lay--calm) .film-fig--stick {
+    position: sticky;
+    inset-block-start: 5.25rem;
+    z-index: 2;
+    /* The figure is transparent between the plate and the caption; the
+       colour under it is the page's own ground, so the copy disappears
+       cleanly instead of showing through the gap. */
+    background: var(--color-onyx);
+    padding-block-end: 0.5rem;
+    margin-block-end: 1.5rem;
+  }
+
+  /* One block at a time in what the film leaves: viewport, less the folio,
+     less the film and its caption. */
+  .film-lay:not(.film-lay--calm) .film-block {
+    min-block-size: 38svh;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .film-video { aspect-ratio: 4 / 3; }
+}
+
+@media (min-width: 1024px) {
+  .film-lay:not(.film-lay--calm) .film-fig--stick {
+    position: sticky;
+    align-self: start;
+    inset-block-start: calc(50vh - 27vh);
+  }
+  .film-lay:not(.film-lay--calm) .film-block {
+    min-block-size: 100vh;
+  }
+}
+
+.voice__mark { align-self: flex-start; margin-inline-end: auto; }
+
+@media (max-width: 767px) {
+  /* The plate is the film's frame, so it has to be the film's width. Left to
+     stretch it drew a bordered box with the portrait clip floating in the
+     middle of it and two dead columns of ground either side. */
+  .film-fig .plate {
+    inline-size: fit-content;
+    margin-inline: auto;
+  }
+  .film-fig .cap { text-align: center; }
+
+  /* Two lines of announcement on a phone is a third of the folio. */
+  .announce__link { font-size: 0.76rem; padding-block: 0.45rem; }
+  .announce { padding-inline: 0.5rem; }
+}
+
+@media (max-width: 767px) {
+  /* The sticky film is pinned only for as long as its container lasts, and
+     its container ends with the last block of copy. Without this the clip's
+     final beat — the ledger resolving and the mark coming up — plays while
+     the film is already sliding off the top of the screen, which is the one
+     part of it a phone reader would otherwise never see.
+     The room goes on the COPY, not on the container: a sticky box is
+     constrained to its containing block's CONTENT box, so padding on the
+     container buys nothing. Measured at 390x844, the release moved from
+     currentTime 31.0s of 36.17 to the last frame. */
+  .film-lay:not(.film-lay--calm) .film-copy { padding-block-end: 58svh; }
 }

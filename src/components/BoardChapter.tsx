@@ -108,7 +108,7 @@ export function BoardChapter({
               src={`/${img}`}
               alt="מרכז הבקרה של InPlace, מסך מלא מתוך המערכת"
               width={1800}
-              height={1382}
+              height={1788}
               loading="lazy"
               decoding="async"
               className="w-full"
