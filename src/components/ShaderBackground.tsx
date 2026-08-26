@@ -19,16 +19,11 @@
 // promise.
 //
 // THE COLOURS
-// The catalogue recipe is orange, yellow and pink on black. Until 26.08.2026
-// this ground was painted in the running application's own ramp, and
-// scripts/gates/g3-palette.mjs failed the build on any colour the product did
-// not define. On that date the owner asked for "light purple and almost black,
-// the black like in the pricing image", which is a colour family the product
-// does not contain and never will: the application is teal.
-//
-// So the gate did not go away, it changed shape. G3 now carries a dated
-// allowlist, and every colour here is either a product token or a named entry
-// on that list. A purple that nobody approved still fails.
+// The catalogue recipe is orange, yellow and pink on black, which is the
+// reference's palette and not this product's. See the note on SHADER_PALETTE
+// below for what this one is and why it is not the purple it was for a day.
+// scripts/gates/g3-palette.mjs holds every colour here to being either a
+// product token or a dated, named entry on its allowlist.
 //
 // The first entry is the ground the gradient sits on; the rest are what moves
 // across it, darkest to lightest.
@@ -43,14 +38,27 @@
 import { useEffect, useState } from 'react'
 import { GrainGradient } from '@paper-design/shaders-react'
 
-//   #06060c  the almost-black the plan cards sit on
-//   #241645  the deep end of the purple
-//   #6d4ed6  its middle
-//   #b9a3ff  the light purple the owner asked for
-//   #e8eef1  color-topbar, the one product token left in the ramp: the bar
-//            above every screen in the application, and the only light this
-//            gradient needs that is not purple
-export const SHADER_PALETTE = ['#06060c', '#241645', '#6d4ed6', '#b9a3ff', '#e8eef1']
+// The product's own hue, opened up at both ends.
+//
+// The purple this ground carried for a day is gone. The owner, 27.08.2026: "I
+// cannot think of colours that make it stand out without ruining the overall
+// design." That is the right instinct and it has a cause: a second brand
+// colour cannot make a page stand out, it can only make it two pages. Every
+// other surface here is teal — the accent, the buttons, the ticket cards, the
+// film's own bars — so a purple ground was one thing arguing with all of them.
+//
+// So the ground stands out by LIGHT rather than by hue. It is the application's
+// own teal with the ramp opened at both ends: the black goes deeper than the
+// page's onyx and the light goes brighter than the product's topbar, which is
+// what gives a gradient presence. Three of the five are not product tokens for
+// that reason, and each is on G3's allowlist by name.
+//
+//   #04080b  deeper than the page's onyx, so the dark end reads as depth
+//   #003f47  color-action, the product's primary action
+//   #0d6470  color-action-solid, opened up
+//   #5d9096  color-action-line, the line that action draws
+//   #cfe3e6  a softer white than color-topbar, so the light end is not a glare
+export const SHADER_PALETTE = ['#04080b', '#003f47', '#0d6470', '#5d9096', '#cfe3e6']
 
 // The catalogue component's numbers, kept: softness 0.76, intensity 0.45,
 // noise 0, shape "corners", speed 1. Two departures, both measured against the

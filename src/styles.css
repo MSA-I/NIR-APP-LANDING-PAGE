@@ -489,62 +489,18 @@
 .skip:focus { inset-block-start: 1rem; }
 
 /* -------------------------------------------------------------------- plans */
-/* The tray and the cards, from 21st.dev's pricing-section-3. The catalogue
-   version sets a light tray under light cards; this one is on the onyx ground,
-   so the tray is the lift and the cards are the ground, which keeps the same
-   figure-on-field reading with the values swapped. */
-.plans-tray {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--color-onyx-lift) 90%, transparent),
-    color-mix(in srgb, var(--color-onyx) 92%, transparent)
-  );
-  border: 1px solid var(--color-onyx-line);
-}
-
-.plan-card {
-  position: relative;
-  background: color-mix(in srgb, var(--color-onyx) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 80%, transparent);
-  transition:
-    transform 0.45s var(--ease-out-quint),
-    border-color 0.45s var(--ease-out-quint),
-    background-color 0.45s var(--ease-out-quint);
-}
-.plan-card:hover {
-  transform: translateY(-4px);
-  border-color: color-mix(in srgb, var(--color-oceanic) 55%, transparent);
-  background: color-mix(in srgb, var(--color-onyx-lift) 85%, transparent);
-}
-
-/* The catalogue lifts one card and fills it dark on a light tray. The tray
-   here is onyx, so the same move inverts: the featured card is the cream
-   plate. Lifted rather than scaled, because a scaled card in a five-column
-   grid pushes its neighbours around at every breakpoint. */
-.plan-card--featured {
-  background: var(--color-wheat);
-  border-color: var(--color-wheat);
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--color-oceanic) 40%, transparent),
-    0 34px 80px -40px color-mix(in srgb, #000 90%, transparent);
-  transform: translateY(-8px);
-}
-.plan-card--featured:hover {
-  background: var(--color-wheat);
-  border-color: var(--color-wheat);
-  transform: translateY(-12px);
-}
-.plan-card--featured .plan-card__tick {
-  border-color: color-mix(in srgb, var(--color-oceanic-deep) 40%, transparent);
-  background: color-mix(in srgb, var(--color-oceanic-deep) 10%, transparent);
-  color: var(--color-oceanic-deep);
-}
-
-.plan-card__tick {
-  border: 1px solid color-mix(in srgb, var(--color-oceanic) 45%, transparent);
-  background: color-mix(in srgb, var(--color-oceanic) 14%, transparent);
-  color: var(--color-oceanic);
-}
+/* THE TRAY AND THE CARDS ARE DEFINED IN THE ROUND 10 BLOCK, further down.
+   Three generations of this section's CSS were live at once — the tray of
+   round 8, its anatomy from round 9, and the tickets of round 10 — and the
+   oldest of them carried this:
+       .plan-card:hover { background: color-mix(...) }
+   `background` is a SHORTHAND. It resets `background-image` to `none`, so the
+   instant a card was hovered its gradient was thrown away and snapped back on
+   leave, while `background-color` transitioned over 0.45s underneath. That is
+   the flicker the owner reported on 27.08.2026, and it also came with two
+   competing `translateY` hovers and a `border` the ticket's mask clips.
+   The dead rules are deleted rather than commented out; this note is what is
+   left of them. */
 
 /* ---------------------------------------------------------------------- why */
 /* The same card the plans and the questions use, so the three chapters that
@@ -1219,38 +1175,6 @@
   color: color-mix(in srgb, var(--color-oceanic) 60%, var(--color-ink));
 }
 
-/* ------------------------------------------- the pricing card's own anatomy */
-.plan-card__badge {
-  position: absolute;
-  inset-block-start: -0.7rem;
-  inset-inline-start: 50%;
-  translate: -50% 0;
-  white-space: nowrap;
-  border-radius: 9999px;
-  background: var(--color-action-solid);
-  padding: 0.2rem 0.7rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--color-ink);
-}
-.plan-card__icon {
-  display: grid;
-  place-content: center;
-  inline-size: 2.6rem;
-  block-size: 2.6rem;
-  margin-inline: auto;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--color-oceanic) 35%, transparent);
-  background: color-mix(in srgb, var(--color-oceanic) 10%, transparent);
-  color: var(--color-oceanic);
-}
-.plan-card--featured .plan-card__icon {
-  border-color: color-mix(in srgb, var(--color-oceanic-deep) 30%, transparent);
-  background: color-mix(in srgb, var(--color-oceanic-deep) 8%, transparent);
-  color: var(--color-oceanic-deep);
-}
-
 /* `.cap` is unlayered and sets `margin: 0`, which beats Tailwind's `mx-auto`
    in the cascade. The plans' two notes are centred under a centred chapter,
    so they say so here rather than losing to their own base rule. */
@@ -1815,9 +1739,13 @@
   background-color: #0b1820;
   background-image: linear-gradient(180deg, var(--color-onyx-lift) 0%, #0b1820 100%);
   border-radius: 7px;
-  transition:
-    transform 0.45s var(--ease-out-quint),
-    filter 0.45s var(--ease-out-quint);
+  /* The lift is on `translate`, not on `transform`.
+     Every card is a Motion element and Motion writes `transform` inline for
+     the entrance; an inline transform beats a `:hover` rule, so the two were
+     arguing over the same property, and the loser changed between frames.
+     `translate` is its own property, so the entrance and the lift compose
+     instead of overwriting each other. */
+  transition: translate 0.45s var(--ease-out-quint);
 
   /* The ticket silhouette: four masks intersected.
      Standard `mask-*` only, no `-webkit-` twins. The prefixed property takes
@@ -1843,7 +1771,7 @@
   mask-position: 0 0, 0 100%, 0 0, 0 0;
   mask-composite: intersect;
 }
-.plan-card:hover { transform: translateY(-5px); }
+.plan-card:hover { translate: 0 -5px; }
 
 /* The edge. A `border` would be clipped away by the mask on three sides, so
    the ring is drawn inside and masked with the card. */

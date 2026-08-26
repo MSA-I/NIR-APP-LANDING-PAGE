@@ -20,13 +20,16 @@
 // colours must NOT resolve to product tokens, the token table must be
 // non-empty, and every allowlist entry must actually be in use.
 
-// Approved by the owner, 26.08.2026: "light purple and almost black, the black
-// like in the pricing image".
+// The purple approved on 26.08.2026 lasted a day: the owner's note of
+// 27.08.2026 was that no colour was making the ground stand out without
+// ruining the design, and a second brand colour never could. What is
+// allowlisted now is the product's OWN hue with the ramp opened at both ends,
+// which is a smaller departure than a second hue and is why the list is three
+// entries rather than four.
 const APPROVED = {
-  '#06060c': 'the almost-black the plan cards sit on',
-  '#241645': 'the deep end of the purple',
-  '#6d4ed6': 'the middle of the purple',
-  '#b9a3ff': 'the light purple itself',
+  '#04080b': 'deeper than the page onyx, so the dark end of the ramp reads as depth (27.08.2026)',
+  '#0d6470': 'color-action-solid opened up, so the middle carries light (27.08.2026)',
+  '#cfe3e6': 'softer than color-topbar, so the light end is not a glare (27.08.2026)',
 }
 
 import { readFile } from 'node:fs/promises'
@@ -104,7 +107,7 @@ for (const hex of palette) {
     `${hex} is neither a colour the application defines nor an approved one`
   )
   if (token) c.note(`${hex}  ${token}`)
-  else if (approved) c.note(`${hex}  approved 26.08.2026: ${approved}`)
+  else if (approved) c.note(`${hex}  approved: ${approved}`)
 }
 
 // An allowlist entry that nothing uses is an entry nobody is reading.

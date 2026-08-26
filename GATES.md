@@ -478,3 +478,40 @@ risk and is still written down rather than fixed here.
   run alone and failed inside a full ledger, because how long the amounts take
   to finish counting depends on what else the page is decoding. It waits FOR
   the figures now instead of waiting them out.
+
+---
+
+## Round eleven — two notes, 27.08.2026
+
+| # | Asked | Done |
+|---|---|---|
+| 1 | Hovering a plan card makes a strange flicker | **Three generations of this section's CSS were live at once** — the tray of round 8, its anatomy from round 9, and the tickets of round 10 — and the oldest carried `.plan-card:hover { background: color-mix(...) }`. `background` is a SHORTHAND: it resets `background-image` to `none`, so the instant a card was hovered its gradient was thrown away and snapped back on leave, while `background-color` transitioned over 0.45s underneath. The dead rules are deleted |
+| 2 | No colours make the shader stand out without ruining the design | They could not: a second brand colour cannot make a page stand out, it can only make it two pages. The ground stands out by LIGHT now — the application's own teal with the ramp opened at both ends, deeper than the page's onyx at one end and softer than its topbar at the other. Four candidates were rendered on the real hero before choosing |
+
+### The second half of the flicker
+
+The lift was on `transform`, and every card is a Motion element that writes
+`transform` inline for its entrance. An inline style beats a `:hover` rule, so
+while the entrance was still settling the hover could not apply at all — and
+the moment Motion wrote `transform: none`, the hover suddenly won and the card
+jumped. Two rules were arguing over one property and the loser changed between
+frames.
+
+The lift is on `translate` now, which is its own property, so the entrance and
+the hover compose instead of overwriting each other. Measured after: five
+consecutive hover frames byte-identical, the gradient still present in the
+computed style during hover, and `translate: 0px -5px` applied.
+
+### What "stand out without ruining it" turned out to mean
+
+Rendered on the real hero, at the real size, before choosing:
+
+| | ramp | reading |
+|---|---|---|
+| A | `#04080b → #003f47 → #0d6470 → #5d9096 → #cfe3e6` | the product's hue, opened at both ends. **Shipped** |
+| B | `#06070e → #241645 → #3f4a86 → #5d9096 → #c9d7e2` | violet in the shadows, teal in the lights. The purple barely survives |
+| C | `#07070e → #2a1c4a → #5b4f9a → #93a3c9 → #dfe6ee` | violet, muted toward grey. Quiet, and a little murky |
+| D | `#06060c → #241645 → #6d4ed6 → #b9a3ff → #e8eef1` | the bright purple of round ten. Strong, and a different brand from the rest of the page |
+
+G3's allowlist went from four entries to three, because the product's own hue
+opened up is a smaller departure than a second hue.
