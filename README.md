@@ -85,7 +85,14 @@ Build 3 drove that clip through the scrollcraft engine (56KB of vanilla scroll
 machinery). Build 4 drives it with one scroll progress and one assignment to
 `currentTime`, so the engine is not carried over.
 
-That clip is built, not hand-cut:
+The scene it is rendered from is in this repository, at `world/`: one CSS-3D
+world, one camera as a function of t, its two textures, and the nine product
+captures it hangs on its panels. Render the four legs the film uses, then build
+the clip:
+
+```bash
+node scripts/render-world.mjs --only 01,02,03,04
+```
 
 ```bash
 node scripts/build-film.mjs
@@ -173,5 +180,6 @@ things on this page that nothing measures.
 | `src/components/*Chapter.tsx` | One file per chapter |
 | `src/data/demo-nav.json` | The product's own navigation boxes, measured off the running app |
 | `public/assets/` | The film, its poster, the product screens, both typefaces |
+| `world/` | The scene the film is rendered from: the world, its textures, its product captures |
 | `scripts/gates/` | The harness behind [GATES.md](GATES.md) |
 | `archive/build3/` | Build 3 entire, unedited: page, styles, engine, its own ledger |

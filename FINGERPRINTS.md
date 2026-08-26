@@ -164,5 +164,10 @@ later build should not spend again:
   the same page.
 - **The film's materials.** Photographic walnut and photographed uncoated stock,
   generated at 2K and re-rendered through the world scene. The lesson worth
-  keeping is the one about where that scene lives: it is in an ignored
-  directory, so the film can be rebuilt on exactly one machine.
+  keeping is what the scene's location cost: it lived in an ignored directory,
+  its relative paths went stale when the page was restructured, and a render
+  ran to completion with nine 404s in it and shipped a blank white panel where
+  the product's control centre should be. The scene is tracked now and the
+  renderer refuses to start without its materials. **Anything a shipped artefact
+  is built from belongs in the repository**, whatever directory the pipeline
+  happens to write its frames into.

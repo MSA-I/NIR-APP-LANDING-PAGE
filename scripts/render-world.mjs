@@ -33,7 +33,7 @@ const SUFFIX = MOBILE ? '-m' : ''
 const OUT = path.resolve(arg('out', 'public/assets'))
 const TMP = path.resolve('lab/world/frames' + SUFFIX)
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-const WORLD = pathToFileURL(path.resolve('lab/world/world.html')).href
+const WORLD = pathToFileURL(path.resolve('world/world.html')).href
 
 // leg id, label, and the weight in viewport-heights it owns on the scroll track
 const LEGS = [
@@ -60,8 +60,32 @@ await mkdir(OUT, { recursive: true })
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 })
+
+// Every request the scene makes has to arrive. On 26.08.2026 this render ran
+// to completion with nine 404s in it: the page had been restructured, the
+// scene's relative paths still pointed at the old directories, and 692 frames
+// came out with a blank white rectangle where the control centre should be and
+// the documents set in a system fallback face. Nothing failed, nothing warned,
+// and the clip looked plausible enough to ship. A render that cannot load its
+// own materials is not a render.
+const missing = []
+page.on('requestfailed', (r) => missing.push(r.url()))
+page.on('response', (r) => { if (r.status() >= 400) missing.push(`${r.status()} ${r.url()}`) })
+
 await page.goto(`${WORLD}?w=${W}&h=${H}`, { waitUntil: 'load' })
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 })
+
+const facesFailed = await page.evaluate(async () => {
+  await document.fonts.ready
+  return [...document.fonts].filter((x) => x.status !== 'loaded').map((x) => x.family)
+})
+if (missing.length || facesFailed.length) {
+  console.error('the scene could not load its own materials:')
+  for (const m of missing) console.error('  missing  ' + m)
+  for (const x of facesFailed) console.error('  font     ' + x)
+  await browser.close()
+  process.exit(1)
+}
 
 
 // Capture through CDP, not page.screenshot(). On this machine Playwright's

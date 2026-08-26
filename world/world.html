@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>InPlace — world render source</title>
+<style>
+  @font-face {
+    font-family: "NotoHe";
+    src: url("../public/assets/fonts/NotoSansHebrew-Hebrew.woff2") format("woff2");
+    font-display: block;
+    unicode-range: U+0590-05FF, U+FB1D-FB4F, U+20AA;
+  }
+  @font-face {
+    font-family: "NotoHe";
+    src: url("../public/assets/fonts/NotoSansHebrew-Latin.woff2") format("woff2");
+    font-display: block;
+    unicode-range: U+0000-00FF, U+2000-206F, U+2190-21BB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: "NotoHe", system-ui, sans-serif;
+  }
+
+  #frame {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(140% 90% at 50% 34%, #0b1d25 0%, #071219 42%, #030709 100%);
+  }
+
+  /* Two 3D layers, not one. The floor and the objects standing on it share a
+     camera and a perspective but NOT a stacking context: a floor plane this
+     large is a single huge sibling, and Chrome sorts preserve-3d siblings as
+     whole boxes, so it intermittently paints over the panels and the paper it
+     is supposed to lie under. Separate layers make the order unambiguous. */
+  #floorStage, #stage {
+    position: absolute; inset: 0;
+    perspective: 1600px;
+    perspective-origin: 50% 50%;
+  }
+  #floorStage { z-index: 0; }
+  #stage      { z-index: 1; }
+
+  #floorCam, #cam {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 0; height: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* ---------- the desk ------------------------------------------------
+     A photographed top-down walnut desk, not a gradient and not a road: the
+     documents in leg 1 are a business owner's paperwork, and paperwork lives
+     on a desk. The two gradients fade the surface into the dark at both ends
+     and both sides, so it has no visible horizon and no visible edge. */
+  .floor {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    background-image:
+      linear-gradient(to right,  #04080b 0%, rgba(4,8,11,0) 14%, rgba(4,8,11,0) 86%, #04080b 100%),
+      linear-gradient(to bottom, #04080b 0%, rgba(4,8,11,0) 11%, rgba(4,8,11,0) 82%, #04080b 100%),
+      url("tex/desk2.webp");
+    background-repeat: no-repeat, no-repeat, repeat;
+    /* A 2048px photographic walnut, tiled at 1100 rather than the old 468: the
+       owner asked for wood that reads as wood, and a fine grain repeated every
+       468px reads as wallpaper. At 1100 the figure is legible at the scale the
+       documents sit on it, and the two dark gradients above cover the seams
+       the tile does have. Generated 26.08.2026, GPT Image 2 at 2K. */
+    background-size: 100% 100%, 100% 100%, 1100px 1100px;
+  }
+
+  /* ---------- light pools on the floor under each panel ---------- */
+  .pool {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* ---------- station panels: the real product, framed and lit ---------- */
+  .panel {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #fbfaf7;
+    box-shadow:
+      0 0 0 2px rgba(255,246,233,.14),
+      0 0 120px 14px rgba(0,132,148,.34);
+  }
+  .panel img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .panel .lit {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(202deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 30%),
+      linear-gradient(0deg, rgba(3,10,14,.34) 0%, rgba(3,10,14,0) 30%);
+  }
+  .panel .edge {
+    position: absolute; inset: 0;
+    border-radius: 30px;
+    box-shadow: inset 0 0 0 2px rgba(255,246,233,.20);
+  }
+
+  /* ---------- the twelve documents ---------- */
+  .doc {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    /* Paper, not a rectangle. The gradient stays because it is the light
+       falling across the sheet, but it sits ON a photographed uncoated stock
+       at partial alpha, so the fibres and the tooth come through. The inset
+       shadow is the sheet's own edge catching that light. Generated
+       26.08.2026, GPT Image 2 at 2K. */
+    background-image:
+      linear-gradient(184deg, rgba(254,252,247,.52) 0%, rgba(236,228,212,.62) 100%),
+      url("tex/paper.webp");
+    /* The stock at its native pixels, cropped, not scaled to the sheet: a 2048px
+       tooth downscaled to fit a 700px document is a smooth rectangle again. */
+    background-size: 100% 100%, auto;
+    background-position: center, center;
+    border-radius: 8px;
+    box-shadow:
+      0 40px 90px rgba(0,0,0,.62),
+      0 0 0 1px rgba(10,23,29,.10),
+      inset 0 0 70px rgba(120,104,78,.13);
+    padding: 54px 58px;
+    color: #16232a;
+    text-align: right;
+    overflow: hidden;
+  }
+  .doc .k    { font-size: 30px; letter-spacing: .10em; color: #7d8b90; font-weight: 500; }
+  .doc .sup  { font-size: 58px; font-weight: 700; margin-top: 18px; line-height: 1.12; color: #0a171d; }
+  .doc .amt  { font-size: 76px; font-weight: 800; margin-top: 34px; color: #06323a; font-variant-numeric: tabular-nums; }
+  .doc .rule { height: 2px; background: #d8cfc0; margin: 36px 0 24px; }
+  .doc .meta { font-size: 30px; color: #6d7c82; }
+  .doc.flag .amt { color: #b3123c; }
+  .doc .stamp {
+    position: absolute; inset-inline-start: 58px; bottom: 52px;
+    font-size: 30px; font-weight: 700; letter-spacing: .06em;
+    color: #b3123c; border: 3px solid #b3123c;
+    padding: 8px 20px; border-radius: 6px; transform: rotate(-7deg);
+    opacity: 0;
+  }
+  .doc.flag .stamp { opacity: 1; }
+
+  /* the bar of light a document leaves behind once it has become a row */
+  .rowlight {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgba(0,150,166,0) 0%, rgba(0,168,186,.34) 16%, rgba(0,168,186,.34) 84%, rgba(0,150,166,0) 100%);
+    box-shadow: 0 0 34px 5px rgba(0,168,186,.34);
+    opacity: 0;
+  }
+  .rowlight.flag {
+    background: linear-gradient(90deg, rgba(199,26,72,0) 0%, rgba(226,38,90,.50) 12%, rgba(226,38,90,.50) 88%, rgba(199,26,72,0) 100%);
+    box-shadow: 0 0 46px 6px rgba(214,32,82,.42);
+  }
+
+  /* ---------- atmosphere ---------- */
+  #haze, #vignette, #grain { position: absolute; inset: 0; pointer-events: none; }
+  #haze     { background: radial-gradient(80% 60% at 50% 44%, rgba(0,116,132,.14) 0%, rgba(0,0,0,0) 72%); }
+  #vignette { background: radial-gradient(118% 92% at 50% 48%, rgba(0,0,0,0) 40%, rgba(0,0,0,.66) 100%); }
+  #grain {
+    opacity: .045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.6'/></svg>");
+  }
+</style>
+</head>
+<body>
+<div id="frame"><div id="floorStage"><div id="floorCam"></div></div><div id="stage"><div id="cam"></div></div><div id="haze"></div><div id="vignette"></div><div id="grain"></div></div>
+
+<script>
+// ---------------------------------------------------------------------------
+// InPlace world — one continuous camera path through a dark hall, sliced into
+// worldflight legs by the renderer. Every value is deterministic: the renderer
+// sets a single t and screenshots, so nothing may depend on wall time or on
+// Math.random at draw time.
+//
+// CSS perspective scale is d / (d + dist), which never exceeds 1. An object
+// therefore has to be as wide in world units as it should read on screen.
+// That is why the panels are 2100-3400 wide against a 1600 perspective.
+// ---------------------------------------------------------------------------
+
+const q = new URLSearchParams(location.search)
+const FW = +(q.get('w') || 1920)
+const FH = +(q.get('h') || 1080)
+const PULL = +(q.get('pull') || (FW < FH ? 1.55 : 1))
+const frame = document.getElementById('frame')
+frame.style.width = FW + 'px'
+frame.style.height = FH + 'px'
+const PERSP = (1600 * FW / 1920).toFixed(1) + 'px'
+document.getElementById('stage').style.perspective = PERSP
+document.getElementById('floorStage').style.perspective = PERSP
+
+const clamp = (v, a, b) => (v < a ? a : v > b ? b : v)
+const lerp = (a, b, u) => a + (b - a) * u
+const smooth = (u) => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u) }
+const seg = (x, a, b) => smooth((x - a) / (b - a || 1e-6))
+
+function rng(seed) {
+  let s = seed >>> 0
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
+}
+
+// ---------------------------------------------------------------------------
+// Real product data. Every supplier, number and amount below is read off the
+// captured screens in world/screens. Nothing here is invented.
+//   invoices → office-invoices.png     orders → office-orders.png
+// The three-way match the page is built on is real: order #24 בשר והבן is
+// 2,884.50 and invoice 7702 from the same supplier is 4,720.00, which is why
+// the product has it flagged דורשת בירור.
+// ---------------------------------------------------------------------------
+const DOCS = [
+  { kind: 'חשבונית', n: '1509',   sup: 'חוות השדה',           amt: '780.00',   to: 'inv' },
+  { kind: 'חשבונית', n: '6633',   sup: 'דגי הים התיכון',       amt: '2,950.00', to: 'inv' },
+  { kind: 'חשבונית', n: '45120',  sup: 'מחלבות העמק',         amt: '3,540.00', to: 'inv' },
+  { kind: 'חשבונית', n: '7702',   sup: 'בשר והבן שיווק בשרים', amt: '4,720.00', to: 'inv', flag: true },
+  { kind: 'חשבונית', n: '888214', sup: 'חד פעמי אלף',         amt: '1,650.60', to: 'inv', flag: true },
+  { kind: 'חשבונית', n: '30125',  sup: 'משקאות אור בע״מ',      amt: '2,832.00', to: 'inv' },
+  { kind: 'חשבונית', n: '11390',  sup: 'מאפיית הלחם החם',     amt: '826.00',   to: 'inv' },
+  { kind: 'חשבונית', n: '3377',   sup: 'אריזות הדרום',        amt: '900.00',   to: 'inv' },
+  { kind: 'הזמנה',   n: '24',     sup: 'בשר והבן שיווק בשרים', amt: '2,884.50', to: 'orders' },
+  { kind: 'הזמנה',   n: '21',     sup: 'דגי הים התיכון',       amt: '2,950.00', to: 'orders' },
+  { kind: 'הזמנה',   n: '20',     sup: 'מחלבות העמק',         amt: '3,540.05', to: 'orders' },
+]
+
+// ---------------------------------------------------------------------------
+// The hall. x right, y down, z forward.
+// ---------------------------------------------------------------------------
+const FLOOR = 1200
+
+const PANELS = [
+  { id: 'dash',   img: 'owner-dashboard.png',    x: 0,     z: 3400,  ry: 0,   w: 2900, on: 0.235, off: 0.418 },
+  { id: 'supp',   img: 'office-suppliers.png',   x: -1750, z: 4900,  ry: 26,  w: 2100, on: 0.415 },
+  { id: 'price',  img: 'office-price-lists.png', x: 1750,  z: 5900,  ry: -26, w: 2100, on: 0.445 },
+  { id: 'orders', img: 'office-orders.png',      x: -1750, z: 6900,  ry: 26,  w: 2100, on: 0.470 },
+  { id: 'recv',   img: 'office-receiving.png',   x: 1750,  z: 7200,  ry: -26, w: 2100, on: 0.498 },
+  { id: 'inv',    img: 'office-invoices.png',    x: 0,     z: 9500,  ry: 0,   w: 2900, on: 0.545, off: 0.792 },
+  { id: 'exc',    img: 'owner-exceptions.png',   x: 1850,  z: 10200, ry: -30, w: 1500, on: 0.720, off: 0.940 },
+  { id: 'pay',    img: 'accountant-pay.png',     x: 0,     z: 11400, ry: 0,   w: 2900, on: 0.790 },
+  { id: 'bank',   img: 'accountant-bank.png',    x: 1950,  z: 10000, ry: -28, w: 2100, on: 0.782 },
+]
+const ASPECT = 960 / 1440
+PANELS.forEach((p) => { p.h = Math.round(p.w * ASPECT) })
+const BY = Object.fromEntries(PANELS.map((p) => [p.id, p]))
+
+// ---------------------------------------------------------------------------
+// Camera path. One continuous function of t across the whole flight; the legs
+// are ranges of t, so every seam is exact by construction.
+// ---------------------------------------------------------------------------
+const CAM = [
+  // t,         x,     y,      z,   rotX, rotY
+  [0.00000,   300,   380,   -100,    2,    0],
+  [0.10000,     0,  -600,   -900,  -30,    0],
+  [0.20000,   300,  -820,    900,  -42,   -5],
+  [0.29333,     0,   140,   1700,    2,    2],
+  [0.41333,     0,     0,   2050,    0,    0],
+  [0.53333,     0,   -40,   6100,    0,    0],
+  [0.70667,     0,     0,   8300,    0,    0],
+  [0.80000,  -160,    60,   8980,    0,    0],
+  // lift over the invoices wall rather than flying through it
+  [0.84500,     0, -1450,   9560,  -22,    0],
+  [0.89333,     0,   -40,  10600,    0,    0],
+  // the close: pass between payment and bank and come back to rest head-on on
+  // the control centre the visitor first saw from the dark
+  [1.00000,     0,  -220,  10050,   -3,    0],
+]
+
+function camAt(t) {
+  let i = 0
+  while (i < CAM.length - 2 && t > CAM[i + 1][0]) i++
+  const a = CAM[i], b = CAM[i + 1]
+  const u = smooth((t - a[0]) / (b[0] - a[0]))
+  return {
+    x: lerp(a[1], b[1], u), y: lerp(a[2], b[2], u), z: lerp(a[3], b[3], u),
+    rx: lerp(a[4], b[4], u), ry: lerp(a[5], b[5], u),
+  }
+}
+
+// Depth haze. The ground is near-black, so fading an object toward zero opacity
+// with distance is exactly fog on this ground.
+const fogAt = (dist) => 1 - 0.86 * smooth((dist - 2600) / 6400)
+const RAD = Math.PI / 180
+const frontAt = (x, z, c) => {
+  const f = Math.cos(c.ry * RAD), g = Math.sin(c.ry * RAD)
+  const ahead = (z - c.z) * f - (x - c.x) * g
+  return smooth((ahead - 40) / 220)
+}
+// A screen seen from behind is a mirrored screen. Over the close the panels
+// turn to face the camera, which is what a wall of displays presenting itself
+// looks like, and it is the only way the turn can show their fronts.
+const faceRy = (p, c) => Math.atan2(p.x - c.x, p.z - c.z) / RAD
+
+// ---------------------------------------------------------------------------
+// Build the DOM once.
+// ---------------------------------------------------------------------------
+const cam = document.getElementById('cam')
+const floorCam = document.getElementById('floorCam')
+
+// One floor plane, sized to stay under Chrome's max texture (~16k). Two things
+// were learned the hard way here and both are load-bearing:
+//   - a 32000px-wide element cannot be rastered at all: it comes back as a
+//     single thin band and drags neighbouring layers down with it, so whole
+//     panels render as one corner tile;
+//   - splitting it into 112 tiles trades that for 112 composited layers, and
+//     the drops come back for a different reason.
+// One modest plane, in its own stacking context so it cannot sort over the
+// panels, is the shape that holds.
+// The desk covers 16000 world units but is only a 2200px ELEMENT scaled up.
+// A 16000x16000 div is 256 megapixels; Chrome quietly stops rastering tiles at
+// that size and whole panels start coming back missing from captures, which is
+// the flicker baked into the first cut's clips. Scaling a small element costs
+// nothing and the world geometry is identical.
+const FLOOR_SPAN = 16000, FLOOR_EL = 2200, FLOOR_MID = 6000
+const FLOOR_K = FLOOR_SPAN / FLOOR_EL
+const floorEl = document.createElement('div')
+floorEl.className = 'floor'
+floorEl.style.width = FLOOR_EL + 'px'
+floorEl.style.height = FLOOR_EL + 'px'
+floorCam.appendChild(floorEl)
+
+const pools = [], panelEls = []
+
+for (const p of PANELS) {
+  const pool = document.createElement('div')
+  pool.className = 'pool'
+  pool.style.width = p.w * 1.25 + 'px'
+  pool.style.height = p.w * 0.80 + 'px'
+  pool.style.background =
+    'radial-gradient(50% 50% at 50% 50%, rgba(168,238,248,.40) 0%, rgba(0,140,158,.20) 40%, rgba(0,0,0,0) 100%)'
+  floorCam.appendChild(pool)
+  pools.push(pool)
+
+  const el = document.createElement('div')
+  el.className = 'panel'
+  el.style.width = p.w + 'px'
+  el.style.height = p.h + 'px'
+  const img = document.createElement('img')
+  img.src = 'screens/' + p.img
+  img.alt = ''
+  el.appendChild(img)
+  const lit = document.createElement('div'); lit.className = 'lit'; el.appendChild(lit)
+  const edge = document.createElement('div'); edge.className = 'edge'; el.appendChild(edge)
+  cam.appendChild(el)
+  panelEls.push(el)
+}
+
+const DOC_W = 900, DOC_H = 1220
+const docEls = [], rowEls = []
+
+// where each document ends up, as a row inside its own table
+const ROW = { inv: { top: 0.435, step: 0.0675 }, orders: { top: 0.531, step: 0.0675 } }
+let nInv = 0, nOrd = 0
+const LAND = DOCS.map((d) => {
+  const p = BY[d.to], r = ROW[d.to]
+  const k = d.to === 'inv' ? nInv++ : nOrd++
+  return { p, y: (r.top + k * r.step - 0.5) * p.h }
+})
+
+DOCS.forEach((d, i) => {
+  const el = document.createElement('div')
+  el.className = 'doc' + (d.flag ? ' flag' : '')
+  el.style.width = DOC_W + 'px'
+  el.style.height = DOC_H + 'px'
+  el.innerHTML =
+    '<div class="k">' + d.kind + ' ' + d.n + '</div>' +
+    '<div class="sup">' + d.sup + '</div>' +
+    '<div class="amt">' + d.amt + ' ₪</div>' +
+    '<div class="rule"></div>' +
+    '<div class="meta">InPlace · מסמך ספק</div>' +
+    '<div class="stamp">דורשת בירור</div>'
+  cam.appendChild(el)
+  docEls.push(el)
+
+  const L = LAND[i]
+  const r = document.createElement('div')
+  r.className = 'rowlight' + (d.flag ? ' flag' : '')
+  r.style.width = L.p.w * 0.94 + 'px'
+  r.style.height = Math.round(L.p.h * 0.048) + 'px'
+  cam.appendChild(r)
+  rowEls.push(r)
+})
+
+// deterministic scatter and drift slots
+const r1 = rng(20260826)
+const SCATTER = DOCS.map(() => ({
+  x: (r1() - 0.5) * 6000,
+  z: 1200 + r1() * 3000,
+  rot: (r1() - 0.5) * 170,
+  tilt: 62 + r1() * 26,
+  delay: r1() * 0.030,
+}))
+// The pair the whole page turns on: order #24 at 2,884.50 and invoice 7702 at
+// 4,720.00, same supplier. Leg 2 has to be able to frame both, so they are
+// placed rather than scattered.
+SCATTER[9] = { x: -460, z: 2600, rot: -14, tilt: 84, delay: 0.004 }
+SCATTER[3] = { x:  460, z: 3050, rot:  11, tilt: 84, delay: 0.018 }
+const r2 = rng(77113)
+const FORM = DOCS.map((_, i) => ({
+  x: (i % 2 ? 1 : -1) * (900 + r2() * 2100),
+  y: -900 + r2() * 1800,
+  dz: 950 + r2() * 2000,
+  spinY: (r2() - 0.5) * 50,
+  spinX: (r2() - 0.5) * 34,
+}))
+
+// ---------------------------------------------------------------------------
+// Per-frame layout.
+// ---------------------------------------------------------------------------
+function place(el, x, y, z, extra) {
+  el.style.transform =
+    'translate3d(' + (x * PULL).toFixed(2) + 'px,' + (y * PULL).toFixed(2) + 'px,' + (-z * PULL).toFixed(2) + 'px)' +
+    ' translate(-50%,-50%)' + (extra || '')
+}
+
+function setT(t) {
+  t = clamp(t, 0, 1)
+  const c = camAt(t)
+
+  const camT =
+    'rotateX(' + c.rx.toFixed(3) + 'deg) rotateY(' + c.ry.toFixed(3) + 'deg)' +
+    ' translate3d(' + (-c.x * PULL).toFixed(2) + 'px,' + (-c.y * PULL).toFixed(2) + 'px,' + (c.z * PULL).toFixed(2) + 'px)'
+  cam.style.transform = camT
+  floorCam.style.transform = camT
+
+  place(floorEl, 0, FLOOR, FLOOR_MID, ' rotateX(90deg) scale(' + FLOOR_K.toFixed(4) + ')')
+
+  // at the close every light in the hall comes up at once
+  const closeBoost = smooth((t - 0.900) / 0.065)
+
+  PANELS.forEach((p, i) => {
+    const dist = Math.max(120, Math.hypot(p.x - c.x, c.y, p.z - c.z))
+    // a station's light comes up before you reach it and, where `off` is set,
+    // goes out behind you: two full-frame screens crossfading over each other
+    // is a milky frame belonging to neither
+    const lit0 = Math.max(smooth((t - p.on) / 0.048), closeBoost)
+    const lit = p.off ? lit0 * (1 - smooth((t - p.off) / 0.045)) : lit0
+    const f = fogAt(dist)
+    const nearP = smooth((dist - (p.w * Math.abs(Math.sin(p.ry * RAD)) * 0.5 + 200)) / 700)
+    const a = (f + (1 - f) * closeBoost * 0.85) * lit * nearP * frontAt(p.x, p.z, c)
+    panelEls[i].style.opacity = a.toFixed(3)
+    pools[i].style.opacity = (a * 0.9).toFixed(3)
+    place(panelEls[i], p.x, 0, p.z, ' rotateY(' + p.ry + 'deg)')
+    place(pools[i], p.x, FLOOR - 4, p.z + 260, ' rotateX(90deg)')
+  })
+
+  DOCS.forEach((d, i) => {
+    const el = docEls[i], row = rowEls[i], S = SCATTER[i], F = FORM[i], L = LAND[i]
+    const t0 = 0.042 + S.delay   // the stack starts to go
+    const t1 = 0.100             // everything is down
+    const t2 = 0.215             // lift off the floor
+    const t3 = 0.300             // in drift formation
+    // the orders peel off early, at their own panel; the invoices go at the peak
+    const t4 = d.to === 'orders' ? 0.442 : 0.560
+    const t5 = d.to === 'orders' ? 0.520 : 0.700
+
+    let x, y, z, rx, ry, rz, sc = 1
+
+    if (t < t0) {
+      x = (i % 2 ? 14 : -14); z = 900
+      y = FLOOR - 50 - i * 150
+      rx = 84; ry = 0; rz = (i % 3 - 1) * 2.4
+    } else if (t < t2) {
+      const u = seg(t, t0, t1)
+      x = lerp(i % 2 ? 14 : -14, S.x, u)
+      z = lerp(900, S.z, u)
+      y = lerp(FLOOR - 50 - i * 150, FLOOR - 10 - (i % 4) * 6, u)
+      rx = lerp(84, S.tilt, u); ry = 0
+      rz = lerp((i % 3 - 1) * 2.4, S.rot, u)
+    } else if (t < t4) {
+      const u = seg(t, t2, t3)
+      const cz = camAt(Math.max(t, t3)).z
+      x = lerp(S.x, F.x, u)
+      y = lerp(FLOOR - 10, F.y, u)
+      z = lerp(S.z, cz + F.dz, u)
+      rx = lerp(S.tilt, F.spinX, u)
+      ry = lerp(0, F.spinY, u)
+      rz = lerp(S.rot, 0, u)
+    } else {
+      const u = seg(t, t4, t5)
+      const cz = camAt(t4).z
+      x = lerp(F.x, L.p.x, u)
+      y = lerp(F.y, L.y, u)
+      z = lerp(cz + F.dz, L.p.z - 26, u)
+      rx = lerp(F.spinX, 0, u)
+      ry = lerp(F.spinY, L.p.ry, u)
+      rz = 0
+      sc = lerp(1, 0.34, u)
+    }
+
+    const ddist = Math.max(120, Math.hypot(x - c.x, y - c.y, z - c.z))
+    // A flat page is ~DOC_H deep in world units. Anything that comes closer
+    // than that crosses the camera plane and renders as a full-frame smear.
+    const near = smooth((ddist - 820) / 380)
+    // paper dissolves into the row over the last quarter of its convergence
+    const gone = t < t4 ? 0 : smooth((seg(t, t4, t5) - 0.74) / 0.26)
+    el.style.opacity = (fogAt(ddist) * near * frontAt(x, z, c) * (1 - gone)).toFixed(3)
+    place(el, x, y, z,
+      ' rotateY(' + ry.toFixed(2) + 'deg) rotateX(' + rx.toFixed(2) + 'deg)' +
+      ' rotateZ(' + rz.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')')
+
+    // the bar of light the paper leaves behind
+    const rowIn = t5 - 0.030
+    let rop = smooth((t - rowIn) / 0.050)
+    // ordinary rows settle back down; the two flagged ones stay lit
+    if (!d.flag) rop *= 1 - 0.94 * smooth((t - (t5 + 0.018)) / 0.042)
+    const rdist = Math.max(120, Math.hypot(L.p.x - c.x, c.y, L.p.z - c.z))
+    row.style.opacity = (rop * (d.flag ? 1 : 0.85) * fogAt(rdist) * frontAt(L.p.x, L.p.z, c)).toFixed(3)
+    place(row, L.p.x, L.y, L.p.z - 18, ' rotateY(' + L.p.ry + 'deg)')
+  })
+}
+
+window.__setT = setT
+window.__ready = false
+setT(0)
+
+Promise.all([
+  document.fonts ? document.fonts.ready : Promise.resolve(),
+  ...Array.from(document.images).map((im) =>
+    im.complete ? Promise.resolve() : new Promise((r) => { im.onload = im.onerror = r })),
+]).then(() => { setT(0); window.__ready = true })
+</script>
+</body>
+</html>

@@ -30,7 +30,7 @@ const LEG4_CUT = 5.5
 // The same capture the board section shows, so the greeting on the screen is
 // the same in both places. Two captures taken hours apart said 'good morning'
 // in one and 'good evening' in the other, a few scrolls from each other.
-const DASH = path.join(ROOT, 'lab', 'app-reference', 'owner-dashboard-full.png')
+const DASH = path.join(ROOT, 'world', 'screens', 'owner-dashboard-full.png')
 
 const X264 = (crf, gop) => [
   '-an', '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'slow',

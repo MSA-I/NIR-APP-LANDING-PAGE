@@ -307,14 +307,31 @@ within 20% of the flat-textured clip they replaced, with the textures the owner
 asked for. No gate measures this; the number was chased because it was in the
 commit diff.
 
-### The film's source, and where it lives
+### The film's source, and the defect that shipped
 
-`lab/world/world.html` is the scene the film is rendered from — a CSS-3D world,
-one camera as a function of t, nine legs. **It is not in this repository.** It
-lives in the main checkout's ignored `lab/` directory, which means the film can
-be re-rendered on this machine and nowhere else. Re-texturing it in round two
-needed the file copied into the worktree by hand.
+`world/world.html` is the scene the film is rendered from: a CSS-3D world, one
+camera as a function of t, nine legs. Until 26.08.2026 it was **not in this
+repository** — it lived in the main checkout's ignored `lab/` directory, so the
+film could be rebuilt on exactly one machine. It is tracked now, with its two
+textures and the nine product captures it hangs on its panels, and the scripts
+point at it there.
 
-That is a real risk and it is written down rather than fixed here: committing a
-22KB HTML file and two textures would remove it, and the reason not to is only
-that `lab/` is where the render pipeline puts its frames.
+That move was not tidying. Leaving it outside the repository is what let a real
+defect ship:
+
+Build 4 moved `assets/` to `public/assets/` and `lab/app-reference/` was never
+copied into the worktree at all. The scene's relative paths still pointed at
+both old locations. The re-render of 26.08.2026 therefore ran to completion
+with **nine 404s and two failed @font-face loads** — and produced 692 frames in
+which the product screen leg 04 flies toward is a blank white rectangle and
+every document is set in a system fallback face. Nothing failed. Nothing warned.
+The clip was 27.63s long, the pace spread was 0.07%, G10 passed, and the whole
+thing was committed, merged and pushed.
+
+It was caught by reading the scene's own dependency list before moving it, not
+by any gate and not by any screenshot: the frames that were checked came from
+leg 01, which has no panels in it.
+
+`scripts/render-world.mjs` now refuses to start when the scene cannot load its
+own materials — any request that 404s, any face that does not reach `loaded`.
+A render that cannot open its own textures is not a render.
