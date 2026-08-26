@@ -307,17 +307,34 @@ within 20% of the flat-textured clip they replaced, with the textures the owner
 asked for. No gate measures this; the number was chased because it was in the
 commit diff.
 
-### The film's source, and where it lives
+### The film's source, and the defect that shipped
 
-`lab/world/world.html` is the scene the film is rendered from — a CSS-3D world,
-one camera as a function of t, nine legs. **It is not in this repository.** It
-lives in the main checkout's ignored `lab/` directory, which means the film can
-be re-rendered on this machine and nowhere else. Re-texturing it in round two
-needed the file copied into the worktree by hand.
+`world/world.html` is the scene the film is rendered from: a CSS-3D world, one
+camera as a function of t, nine legs. Until 26.08.2026 it was **not in this
+repository** — it lived in the main checkout's ignored `lab/` directory, so the
+film could be rebuilt on exactly one machine. It is tracked now, with its two
+textures and the nine product captures it hangs on its panels, and the scripts
+point at it there.
 
-That is a real risk and it is written down rather than fixed here: committing a
-22KB HTML file and two textures would remove it, and the reason not to is only
-that `lab/` is where the render pipeline puts its frames.
+That move was not tidying. Leaving it outside the repository is what let a real
+defect ship:
+
+Build 4 moved `assets/` to `public/assets/` and `lab/app-reference/` was never
+copied into the worktree at all. The scene's relative paths still pointed at
+both old locations. The re-render of 26.08.2026 therefore ran to completion
+with **nine 404s and two failed @font-face loads** — and produced 692 frames in
+which the product screen leg 04 flies toward is a blank white rectangle and
+every document is set in a system fallback face. Nothing failed. Nothing warned.
+The clip was 27.63s long, the pace spread was 0.07%, G10 passed, and the whole
+thing was committed, merged and pushed.
+
+It was caught by reading the scene's own dependency list before moving it, not
+by any gate and not by any screenshot: the frames that were checked came from
+leg 01, which has no panels in it.
+
+`scripts/render-world.mjs` now refuses to start when the scene cannot load its
+own materials — any request that 404s, any face that does not reach `loaded`.
+A render that cannot open its own textures is not a render.
 
 ---
 
@@ -330,7 +347,7 @@ and what it cost.
 |---|---|---|
 | 1 | The shader should be ALIVE, and not answer the mouse | It already ignored the mouse; it was not alive. `timeScale` was 0.32 and `drift` 0.03, which is a ground that moves about a pixel a second. A travelling fold was added to the fragment shader (the file's own header had claimed one since round one, and only the fbm was drifting), and the two constants went to 0.85 and 0.09. Measured: mean absolute pixel delta over three seconds went from under noise to **18.96**, and with the clock stopped, dragging the pointer corner to corner across the pane changes **0.000** |
 | 2 | The pages in the film should be slightly not straight, so they read as paper | Each of the eleven sheets is clipped to an eight-point polygon whose corners sit a fraction of a percent off true, carries a bend (a soft band of shade where it lifts, light on the far side), and half of them carry a fold line with a lit edge and a shaded one. All per-sheet, all deterministic from one seeded stream, so a rebuild produces the same eleven sheets |
-| 3 | Instead of the dashboard at the end, the pages fly inward and the logo appears; better, they are reflected in an invoice calculation that marks the difference in colour | Act two, `lab/world/world.html` + `scripts/render-recon.mjs`. Three pairs of real documents fly in, each pair lands on one line of a ledger, and the arithmetic runs: **+1,835.50 alert**, **0.00 matched**, **−0.05 in your favour**. Then the lines converge and the mark rises out of them. Every figure is off `lab/app-reference`, the same source the eleven sheets use |
+| 3 | Instead of the dashboard at the end, the pages fly inward and the logo appears; better, they are reflected in an invoice calculation that marks the difference in colour | Act two, `world/world.html` + `scripts/render-recon.mjs`. Three pairs of real documents fly in, each pair lands on one line of a ledger, and the arithmetic runs: **+1,835.50 alert**, **0.00 matched**, **−0.05 in your favour**. Then the lines converge and the mark rises out of them. Every figure is off `lab/app-reference`, the same source the eleven sheets use |
 | 4 | The film is broken on a phone | Two faults, both real. The phone cut is a PORTRAIT render, 810x1440, and both cuts were shown in one `aspect-[16/10]` box with `object-fit: cover`: **65% of every frame was cropped away**. And `build-film.mjs` computed the tail's size as 16:9 of its height for both cuts, producing a 1280x720 tail concatenated with `-c copy` onto a stream of 810x1440 frames, which the container cannot resample. Each cut has its own ratio now, and the phone also gets the sticky film the desktop has always had |
 | 5 | The control centre should show all the graphs and markers, it is terribly empty | It was, and the product was not at fault: six of that screen's cards are scoped to the current month, and the local demo tenant's last activity is 20.07.2026. **Nothing was written to any database.** The capture is taken with the page's wall clock shifted to 17.07.2026 09:40, a day that tenant was trading on. Every figure this page quotes off it was re-read and none moved |
 | 6 | Chapter 03 still reads flat | Four moves, each one the page already makes elsewhere: a ground (one oceanic pool behind the affirmative column, a rule down the gutter), a pointer (the same glow chapter 05's questions use), an index (each row numbered), and an offset (the refusals start lower and their marker does not turn) |
@@ -392,7 +409,7 @@ Raised with the owner; nothing has been changed on either side.
 
 ### Act two, and where it lives
 
-`lab/world/world.html` now carries two acts sharing one frame. Act one is the
+`world/world.html` now carries two acts sharing one frame. Act one is the
 hall, driven by `window.__setT(t)`. Act two is the ledger, driven by
 `window.__setR(u)`, and it does not fade act one out, it switches it off:
 `#recon` paints its own ground, so leaving the hall underneath at any opacity
@@ -401,8 +418,9 @@ are painted and switched by separate functions for the same reason — the init
 pass has to lay act two out once so its fonts load before `__ready`, and if
 that also switched acts, the hall would be hidden for the whole film.
 
-That file is still in the main checkout's ignored `lab/`, which is still a real
-risk and is still written down rather than fixed here.
+That file is tracked at `world/world.html` as of 26.08.2026, so act two can be
+re-rendered from a clone rather than from the one machine that happened to have
+the scene lying around.
 
 ---
 
@@ -515,3 +533,29 @@ Rendered on the real hero, at the real size, before choosing:
 
 G3's allowlist went from four entries to three, because the product's own hue
 opened up is a smaller departure than a second hue.
+
+---
+
+## The merge of 27.08.2026
+
+Two lines of work met here and both survived. `main` had moved the scene into
+the repository at `world/`, repaired its relative paths, re-textured it off two
+2K photographs and taught `scripts/render-world.mjs` to refuse to start when the
+scene cannot load its own materials. This branch had given the sheets an
+irregular silhouette, taken the control centre out of the film, and added act
+two.
+
+Theirs is the better base and this was ported onto it rather than the other way
+round: a photographed stock beats a CSS gradient for tooth, and a scene that can
+open its own textures beats one that cannot. What this branch's paper work
+contributes ON TOP of that texture is the SILHOUETTE and the fold, because a
+photographed sheet still cuts as a perfect rectangle, which is the thing the
+owner actually asked about.
+
+`scripts/render-recon.mjs` gained the same materials guard, for the same reason:
+act two draws only its own type, so a 404 in it costs less than one in act one —
+but it costs the same NOTHING at render time, which is exactly how nine of them
+shipped.
+
+Everything was re-rendered from the merged scene: four legs in both cuts, act
+two in both cuts, and the film rebuilt.

@@ -3,9 +3,10 @@
 // Act one is a camera flying through a hall, sliced into legs by t. Act two is
 // a card held up to the lens, driven by u, and it does not share the camera at
 // all, so it does not share render-world.mjs's leg arithmetic either. What it
-// does share is the two things that machine learned the hard way on this
-// machine: capture through CDP rather than Playwright's screenshot path, and
-// check every leg for frames that came back with layers unrastered.
+// does share is three things that machine learned the hard way: capture
+// through CDP rather than Playwright's screenshot path, check every leg for
+// frames that came back with layers unrastered, and refuse to start when the
+// scene cannot load its own materials.
 //
 //   node scripts/render-recon.mjs                desktop, 1920x1080
 //   node scripts/render-recon.mjs --mobile       portrait, 810x1440
@@ -41,12 +42,32 @@ const SUFFIX = MOBILE ? '-m' : ''
 const OUT = path.resolve(arg('out', 'public/assets'))
 const TMP = path.resolve('lab/world/recon' + SUFFIX)
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-const WORLD = pathToFileURL(path.resolve('lab/world/world.html')).href
+const WORLD = pathToFileURL(path.resolve('world/world.html')).href
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 })
+// Every request the scene makes has to arrive. Act two draws its own type and
+// nothing else, so a 404 here costs less than it does in act one — but it
+// costs the same NOTHING at render time, which is exactly how nine of them
+// shipped on 26.08.2026. See the note in scripts/render-world.mjs.
+const missing = []
+page.on('requestfailed', (r) => missing.push(r.url()))
+page.on('response', (r) => { if (r.status() >= 400) missing.push(`${r.status()} ${r.url()}`) })
+
 await page.goto(`${WORLD}?w=${W}&h=${H}`, { waitUntil: 'load' })
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 })
+
+const facesFailed = await page.evaluate(async () => {
+  await document.fonts.ready
+  return [...document.fonts].filter((x) => x.status !== 'loaded').map((x) => x.family)
+})
+if (missing.length || facesFailed.length) {
+  console.error('the scene could not load its own materials:')
+  for (const m of missing) console.error('  missing  ' + m)
+  for (const x of facesFailed) console.error('  font     ' + x)
+  await browser.close()
+  process.exit(1)
+}
 
 let cdp = null
 async function capture(file) {

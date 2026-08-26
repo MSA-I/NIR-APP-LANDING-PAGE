@@ -10,7 +10,7 @@ const arg = (k, d) => { const i = args.indexOf('--' + k); return i === -1 ? d : 
 const W = +arg('w', 1920), H = +arg('h', 1080)
 const TS = arg('ts', '0,0.1,0.22,0.3,0.41,0.53,0.66,0.71,0.8,0.89,1').split(',').map(Number)
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-const WORLD = pathToFileURL(path.resolve('lab/world/world.html')).href
+const WORLD = pathToFileURL(path.resolve('world/world.html')).href
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 const page = await browser.newPage({ viewport: { width: W, height: H } })

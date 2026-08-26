@@ -34,9 +34,13 @@ const ff = (...args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args], {
 
 // Leg 04 runs 8.375s. It used to be cut at 5.5s, which was where the control
 // centre read largest — and the control centre is not in it any more (see the
-// note on the `dash` panel in lab/world/world.html). What leg 04 carries now
-// is the paper in drift formation on a dark hall, and three and a half seconds
-// of that is a beat; five and a half is a wait.
+// note on the `dash` panel in world/world.html). What leg 04 carries now is
+// the paper in drift formation on a dark hall, and three and a half seconds of
+// that is a beat; five and a half is a wait.
+//
+// The `DASH` constant that stood here is gone with the tail it fed. It pointed
+// at world/screens/owner-dashboard-full.png, which is still the capture the
+// board section on the page shows; it is simply not in the film any more.
 const LEG4_CUT = 3.4
 
 const X264 = (crf, gop) => [

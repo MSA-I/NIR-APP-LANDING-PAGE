@@ -15,7 +15,7 @@ const W = +arg('w', 1920)
 const H = +arg('h', 1080)
 const OUT = path.resolve(arg('out', 'lab/world/probe'))
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-const WORLD = pathToFileURL(path.resolve('lab/world/world.html')).href
+const WORLD = pathToFileURL(path.resolve('world/world.html')).href
 
 
 // Capture through CDP, not page.screenshot(). On this machine Playwright's

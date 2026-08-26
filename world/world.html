@@ -1,0 +1,1012 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>InPlace — world render source</title>
+<style>
+  @font-face {
+    font-family: "NotoHe";
+    src: url("../public/assets/fonts/NotoSansHebrew-Hebrew.woff2") format("woff2");
+    font-display: block;
+    unicode-range: U+0590-05FF, U+FB1D-FB4F, U+20AA;
+  }
+  @font-face {
+    font-family: "NotoHe";
+    src: url("../public/assets/fonts/NotoSansHebrew-Latin.woff2") format("woff2");
+    font-display: block;
+    unicode-range: U+0000-00FF, U+2000-206F, U+2190-21BB;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: #000;
+    overflow: hidden;
+    font-family: "NotoHe", system-ui, sans-serif;
+  }
+
+  #frame {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(140% 90% at 50% 34%, #0b1d25 0%, #071219 42%, #030709 100%);
+  }
+
+  /* Two 3D layers, not one. The floor and the objects standing on it share a
+     camera and a perspective but NOT a stacking context: a floor plane this
+     large is a single huge sibling, and Chrome sorts preserve-3d siblings as
+     whole boxes, so it intermittently paints over the panels and the paper it
+     is supposed to lie under. Separate layers make the order unambiguous. */
+  #floorStage, #stage {
+    position: absolute; inset: 0;
+    perspective: 1600px;
+    perspective-origin: 50% 50%;
+  }
+  #floorStage { z-index: 0; }
+  #stage      { z-index: 1; }
+
+  #floorCam, #cam {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 0; height: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* ---------- the desk ------------------------------------------------
+     A photographed top-down walnut desk, not a gradient and not a road: the
+     documents in leg 1 are a business owner's paperwork, and paperwork lives
+     on a desk. The two gradients fade the surface into the dark at both ends
+     and both sides, so it has no visible horizon and no visible edge. */
+  .floor {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    background-image:
+      linear-gradient(to right,  #04080b 0%, rgba(4,8,11,0) 14%, rgba(4,8,11,0) 86%, #04080b 100%),
+      linear-gradient(to bottom, #04080b 0%, rgba(4,8,11,0) 11%, rgba(4,8,11,0) 82%, #04080b 100%),
+      url("tex/desk2.webp");
+    background-repeat: no-repeat, no-repeat, repeat;
+    /* A 2048px photographic walnut, tiled at 1100 rather than the old 468: the
+       owner asked for wood that reads as wood, and a fine grain repeated every
+       468px reads as wallpaper. At 1100 the figure is legible at the scale the
+       documents sit on it, and the two dark gradients above cover the seams
+       the tile does have. Generated 26.08.2026, GPT Image 2 at 2K. */
+    background-size: 100% 100%, 100% 100%, 1100px 1100px;
+  }
+
+  /* ---------- light pools on the floor under each panel ---------- */
+  .pool {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+  }
+
+  /* ---------- station panels: the real product, framed and lit ---------- */
+  .panel {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #fbfaf7;
+    box-shadow:
+      0 0 0 2px rgba(255,246,233,.14),
+      0 0 120px 14px rgba(0,132,148,.34);
+  }
+  .panel img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .panel .lit {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(202deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,0) 30%),
+      linear-gradient(0deg, rgba(3,10,14,.34) 0%, rgba(3,10,14,0) 30%);
+  }
+  .panel .edge {
+    position: absolute; inset: 0;
+    border-radius: 30px;
+    box-shadow: inset 0 0 0 2px rgba(255,246,233,.20);
+  }
+
+  /* ---------- the twelve documents ---------- */
+  /* ---------------------------------------------------------------------
+     A sheet of paper, not a rectangle.
+     ---------------------------------------------------------------------
+     Two passes of 26.08.2026 meet here and both stay.
+
+     The TEXTURE is the photographed stock: the gradient is the light falling
+     across the sheet, and it sits on a 2K uncoated paper at partial alpha so
+     the fibres and the tooth come through. Cropped at its native pixels, not
+     scaled to the sheet: a 2048px tooth downscaled to a 700px document is a
+     smooth rectangle again.
+
+     The SHAPE is the owner's other note: "can the pages be slightly not
+     straight, so people understand it is a page and not a digital rectangle."
+     A photographed stock does not answer that on its own, because it still
+     cuts as a perfect rectangle. Three things do, and all three are per-sheet
+     and deterministic (--e1..--e8, --curl, --crease, seeded once at build):
+
+       1. THE SILHOUETTE. A real sheet has no perfectly straight edge and no
+          perfectly square corner. Every doc is clipped to an eight point
+          polygon whose corners sit a fraction of a percent off true.
+       2. THE BEND. Paper lying loose is never flat. A soft band of shade
+          crosses each sheet where it lifts, with the light coming back on the
+          far side of it.
+       3. THE CREASE. Half the sheets carry one fold line: a hairline with a
+          lit side and a shaded side, at the angle the sheet was folded.
+
+     The bend and the crease are gradients rather than a second texture file,
+     because there are eleven sheets on screen at once inside a preserve-3d
+     tree and this render is already at the edge of what Chrome will raster in
+     one go. */
+  .doc {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    background-image:
+      /* the crease: a lit edge and a shaded edge, one hairline apart */
+      linear-gradient(var(--crease-a, 91deg),
+        rgba(0,0,0,0) calc(var(--crease, 50%) - 0.35%),
+        rgba(120,108,88,.20) calc(var(--crease, 50%) - 0.05%),
+        rgba(255,255,255,.75) calc(var(--crease, 50%) + 0.05%),
+        rgba(0,0,0,0) calc(var(--crease, 50%) + 0.45%)),
+      /* the bend: shade where the sheet lifts, light on the far side */
+      linear-gradient(var(--curl-a, 96deg),
+        rgba(255,255,255,.34) 0%,
+        rgba(0,0,0,0) calc(var(--curl, 62%) - 26%),
+        rgba(96,86,68,.16) var(--curl, 62%),
+        rgba(255,255,255,.30) calc(var(--curl, 62%) + 13%),
+        rgba(0,0,0,0) 100%),
+      linear-gradient(184deg, rgba(254,252,247,.52) 0%, rgba(236,228,212,.62) 100%),
+      url("tex/paper.webp");
+    /* The stock at its native pixels, cropped, not scaled to the sheet: a 2048px
+       tooth downscaled to fit a 700px document is a smooth rectangle again. */
+    background-size: 100% 100%, 100% 100%, 100% 100%, auto;
+    background-position: center, center, center, center;
+    border-radius: 8px;
+    box-shadow:
+      0 40px 90px rgba(0,0,0,.62),
+      0 0 0 1px rgba(10,23,29,.10),
+      inset 0 0 70px rgba(120,104,78,.13);
+    padding: 54px 58px;
+    color: #16232a;
+    text-align: right;
+    overflow: hidden;
+    clip-path: polygon(
+      var(--e1, 0.6%) var(--e2, 0.4%),
+      50% 0%,
+      calc(100% - var(--e3, 0.5%)) var(--e4, 0.7%),
+      100% 50%,
+      calc(100% - var(--e5, 0.4%)) calc(100% - var(--e6, 0.6%)),
+      50% 100%,
+      var(--e7, 0.7%) calc(100% - var(--e8, 0.5%)),
+      0% 50%
+    );
+  }
+  .doc .k    { font-size: 30px; letter-spacing: .10em; color: #7d8b90; font-weight: 500; }
+  .doc .sup  { font-size: 58px; font-weight: 700; margin-top: 18px; line-height: 1.12; color: #0a171d; }
+  .doc .amt  { font-size: 76px; font-weight: 800; margin-top: 34px; color: #06323a; font-variant-numeric: tabular-nums; }
+  .doc .rule { height: 2px; background: #d8cfc0; margin: 36px 0 24px; }
+  .doc .meta { font-size: 30px; color: #6d7c82; }
+  .doc.flag .amt { color: #b3123c; }
+  .doc .stamp {
+    position: absolute; inset-inline-start: 58px; bottom: 52px;
+    font-size: 30px; font-weight: 700; letter-spacing: .06em;
+    color: #b3123c; border: 3px solid #b3123c;
+    padding: 8px 20px; border-radius: 6px; transform: rotate(-7deg);
+    opacity: 0;
+  }
+  .doc.flag .stamp { opacity: 1; }
+
+  /* the bar of light a document leaves behind once it has become a row */
+  .rowlight {
+    position: absolute; left: 0; top: 0;
+    transform-style: preserve-3d;
+    border-radius: 6px;
+    background: linear-gradient(90deg, rgba(0,150,166,0) 0%, rgba(0,168,186,.34) 16%, rgba(0,168,186,.34) 84%, rgba(0,150,166,0) 100%);
+    box-shadow: 0 0 34px 5px rgba(0,168,186,.34);
+    opacity: 0;
+  }
+  .rowlight.flag {
+    background: linear-gradient(90deg, rgba(199,26,72,0) 0%, rgba(226,38,90,.50) 12%, rgba(226,38,90,.50) 88%, rgba(199,26,72,0) 100%);
+    box-shadow: 0 0 46px 6px rgba(214,32,82,.42);
+  }
+
+  /* ---------- atmosphere ---------- */
+  /* =====================================================================
+     ACT TWO — the reconciliation, and the mark.
+     =====================================================================
+     The owner's note of 26.08.2026: the film ended on a shrinking, angled
+     picture of the control centre, and "it is not clear what is happening.
+     The dashboard page does not show it well." What they asked for instead,
+     in their own words, was that the pages fly inward and the logo is
+     revealed, and then, thinking about it further: that the pages come in and
+     are reflected in an invoice calculation, which then marks the difference
+     in colour, whether it is missing or whether it earns me money.
+
+     That is the product's whole argument in one shot, so that is what this
+     is. Three pairs of real documents fly in, each pair meets on one line of
+     a ledger, the arithmetic runs, and the difference lights:
+
+       בשר והבן        order 2,884.50   invoice 4,720.00   +1,835.50  alert
+       דגי הים התיכון   order 2,950.00   invoice 2,950.00        0.00  matched
+       מחלבות העמק     order 3,540.05   invoice 3,540.00      -0.05   in your favour
+
+     All six figures are read off lab/app-reference exactly as the eleven
+     sheets in act one are. The three-way match the page is built on is real
+     and so is the 1,835.50 it catches.
+
+     Then the rows converge and the mark comes up out of them.
+
+     The colours are the running product's own status colours, resolved out of
+     data/product-tokens.json: alert #c70036, done #007a55, action-line
+     #5d9096. Nothing here is a colour the application does not contain.
+
+     This act shares the frame but not the camera: act one is a hall on a
+     perspective, this is a card held up to the lens. It is driven by
+     window.__setR(u), u in 0..1, and is invisible until it is. */
+
+  #recon {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    background: radial-gradient(120% 86% at 50% 46%, #0d2028 0%, #071219 44%, #030709 100%);
+    z-index: 4;
+  }
+  #reconInner {
+    position: relative;
+    transform-origin: 50% 50%;
+  }
+
+  /* the ledger the three lines land on */
+  .rc-card {
+    position: relative;
+    inline-size: 1180px;
+    min-block-size: 700px;
+    border-radius: 26px;
+    background: linear-gradient(176deg, #fbfaf7 0%, #f2ece1 100%);
+    box-shadow: 0 60px 150px rgba(0,0,0,.66), 0 0 0 2px rgba(255,246,233,.14);
+    padding: 62px 66px 54px;
+    color: #16232a;
+    text-align: right;
+    transform-origin: 50% 50%;
+  }
+  .rc-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .rc-eyebrow { font-size: 26px; letter-spacing: .16em; color: #5d9096; font-weight: 700; }
+  .rc-title { font-size: 52px; font-weight: 800; letter-spacing: -.02em; color: #0a171d; }
+  .rc-rule { height: 2px; background: #ded5c6; margin: 34px 0 8px; }
+
+  .rc-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 330px 1fr 1fr 320px;
+    align-items: center;
+    gap: 18px;
+    padding: 26px 0;
+    border-bottom: 2px solid #ece4d7;
+    transform-origin: 50% 50%;
+  }
+  .rc-row:last-child { border-bottom: 0; }
+  .rc-sup { font-size: 31px; font-weight: 700; color: #0a171d; line-height: 1.2; }
+  .rc-cell { text-align: center; }
+  .rc-k { font-size: 22px; letter-spacing: .08em; color: #7d8b90; font-weight: 600; }
+  .rc-v {
+    font-size: 42px; font-weight: 800; color: #16232a;
+    font-variant-numeric: tabular-nums; margin-top: 6px;
+    white-space: nowrap; direction: ltr;
+  }
+  .rc-diff {
+    justify-self: start;
+    display: inline-flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    border-radius: 14px;
+    padding: 14px 22px;
+    background: #f4f2ee;
+    border: 2px solid #e3ddd2;
+    transform-origin: 0% 50%;
+  }
+  .rc-diff .n {
+    font-size: 40px; font-weight: 800; color: #46545b;
+    font-variant-numeric: tabular-nums; white-space: nowrap; direction: ltr;
+  }
+  .rc-diff .t { font-size: 22px; font-weight: 700; letter-spacing: .04em; color: #6d7c82; }
+  /* the two verdicts, in the product's own status colours */
+  .rc-row.is-alert .rc-diff { background: #ffe9ed; border-color: #ffccd3; }
+  .rc-row.is-alert .rc-diff .n,
+  .rc-row.is-alert .rc-diff .t { color: #c70036; }
+  .rc-row.is-done  .rc-diff { background: #d0fae5; border-color: #a4f4cf; }
+  .rc-row.is-done  .rc-diff .n,
+  .rc-row.is-done  .rc-diff .t { color: #007a55; }
+  .rc-row.is-flat  .rc-diff { background: #eef3f4; border-color: #cfdcde; }
+  .rc-row.is-flat  .rc-diff .n,
+  .rc-row.is-flat  .rc-diff .t { color: #003f47; }
+
+  /* the bar that runs under a row as its arithmetic lands */
+  .rc-bar {
+    position: absolute; inset-inline: 0; bottom: -2px;
+    height: 4px; border-radius: 4px;
+    transform-origin: 100% 50%;   /* the reading edge: it draws right to left */
+  }
+  .rc-row.is-alert .rc-bar { background: #c70036; box-shadow: 0 0 26px 3px rgba(199,0,54,.5); }
+  .rc-row.is-done  .rc-bar { background: #007a55; box-shadow: 0 0 26px 3px rgba(0,122,85,.45); }
+  .rc-row.is-flat  .rc-bar { background: #5d9096; box-shadow: 0 0 22px 3px rgba(93,144,150,.42); }
+
+  .rc-stamp {
+    display: block;
+    inline-size: fit-content;
+    margin: 34px auto 0;
+    font-size: 30px; font-weight: 800; letter-spacing: .06em;
+    color: #c70036; border: 4px solid #c70036;
+    background: #ffe9ed;
+    padding: 10px 26px; border-radius: 8px; transform: rotate(-2deg);
+    opacity: 0;
+  }
+
+  /* the sheets that fly in and become the lines */
+  .rc-fly {
+    position: absolute; left: 50%; top: 50%;
+    inline-size: 420px; block-size: 570px;
+    margin-inline-start: -210px; margin-block-start: -285px;
+    border-radius: 8px;
+    background: linear-gradient(184deg, #fefcf7 0%, #efe8da 100%);
+    box-shadow: 0 40px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(10,23,29,.12);
+    padding: 30px 32px;
+    color: #16232a; text-align: right;
+    clip-path: polygon(0.8% 0.5%, 50% 0%, 99.2% 0.7%, 100% 50%,
+                       99.4% 99.4%, 50% 100%, 0.6% 99.5%, 0% 50%);
+    opacity: 0;
+  }
+  .rc-fly .k { font-size: 18px; letter-spacing: .1em; color: #7d8b90; font-weight: 600; }
+  .rc-fly .s { font-size: 30px; font-weight: 700; margin-top: 12px; line-height: 1.15; }
+  .rc-fly .a { font-size: 40px; font-weight: 800; margin-top: 20px; color: #06323a;
+               font-variant-numeric: tabular-nums; }
+  .rc-fly.inv .a { color: #b3123c; }
+
+  /* the mark */
+  #reconMark {
+    position: absolute; left: 50%; top: 50%;
+    /* No `translate` property here: setR writes translate(-50%,-50%) into
+       `transform`, and the two compose rather than replace, which is a whole
+       box of vertical error. */
+    display: flex; flex-direction: column; align-items: center; gap: 34px;
+    opacity: 0;
+  }
+  #reconMark svg { inline-size: 190px; block-size: 190px; fill: #fbf6ee; display: block; }
+  #reconMark .wm {
+    font-size: 76px; font-weight: 800; letter-spacing: -.03em; color: #fbf6ee;
+  }
+  #reconMark .tag { font-size: 28px; letter-spacing: .18em; color: #5d9096; font-weight: 600; }
+  #reconGlow {
+    position: absolute; left: 50%; top: 50%;
+    inline-size: 1100px; block-size: 1100px;
+    translate: -50% -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(93,144,150,.42) 0%, rgba(0,63,71,.28) 38%, rgba(0,0,0,0) 68%);
+    filter: blur(30px);
+    opacity: 0;
+  }
+
+  #haze, #vignette, #grain { position: absolute; inset: 0; pointer-events: none; }
+  #haze     { background: radial-gradient(80% 60% at 50% 44%, rgba(0,116,132,.14) 0%, rgba(0,0,0,0) 72%); }
+  #vignette { background: radial-gradient(118% 92% at 50% 48%, rgba(0,0,0,0) 40%, rgba(0,0,0,.66) 100%); }
+  #grain {
+    opacity: .045;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.6'/></svg>");
+  }
+</style>
+</head>
+<body>
+<div id="frame"><div id="floorStage"><div id="floorCam"></div></div><div id="stage"><div id="cam"></div></div><div id="haze"></div><div id="vignette"></div><div id="recon"><div id="reconInner"></div></div><div id="grain"></div></div>
+
+<script>
+// ---------------------------------------------------------------------------
+// InPlace world — one continuous camera path through a dark hall, sliced into
+// worldflight legs by the renderer. Every value is deterministic: the renderer
+// sets a single t and screenshots, so nothing may depend on wall time or on
+// Math.random at draw time.
+//
+// CSS perspective scale is d / (d + dist), which never exceeds 1. An object
+// therefore has to be as wide in world units as it should read on screen.
+// That is why the panels are 2100-3400 wide against a 1600 perspective.
+// ---------------------------------------------------------------------------
+
+const q = new URLSearchParams(location.search)
+const FW = +(q.get('w') || 1920)
+const FH = +(q.get('h') || 1080)
+const PULL = +(q.get('pull') || (FW < FH ? 1.55 : 1))
+const frame = document.getElementById('frame')
+frame.style.width = FW + 'px'
+frame.style.height = FH + 'px'
+const PERSP = (1600 * FW / 1920).toFixed(1) + 'px'
+document.getElementById('stage').style.perspective = PERSP
+document.getElementById('floorStage').style.perspective = PERSP
+
+const clamp = (v, a, b) => (v < a ? a : v > b ? b : v)
+const lerp = (a, b, u) => a + (b - a) * u
+const smooth = (u) => { u = clamp(u, 0, 1); return u * u * (3 - 2 * u) }
+const seg = (x, a, b) => smooth((x - a) / (b - a || 1e-6))
+
+function rng(seed) {
+  let s = seed >>> 0
+  return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
+}
+
+// ---------------------------------------------------------------------------
+// Real product data. Every supplier, number and amount below is read off the
+// captured screens in world/screens. Nothing here is invented.
+//   invoices → office-invoices.png     orders → office-orders.png
+// The three-way match the page is built on is real: order #24 בשר והבן is
+// 2,884.50 and invoice 7702 from the same supplier is 4,720.00, which is why
+// the product has it flagged דורשת בירור.
+// ---------------------------------------------------------------------------
+const DOCS = [
+  { kind: 'חשבונית', n: '1509',   sup: 'חוות השדה',           amt: '780.00',   to: 'inv' },
+  { kind: 'חשבונית', n: '6633',   sup: 'דגי הים התיכון',       amt: '2,950.00', to: 'inv' },
+  { kind: 'חשבונית', n: '45120',  sup: 'מחלבות העמק',         amt: '3,540.00', to: 'inv' },
+  { kind: 'חשבונית', n: '7702',   sup: 'בשר והבן שיווק בשרים', amt: '4,720.00', to: 'inv', flag: true },
+  { kind: 'חשבונית', n: '888214', sup: 'חד פעמי אלף',         amt: '1,650.60', to: 'inv', flag: true },
+  { kind: 'חשבונית', n: '30125',  sup: 'משקאות אור בע״מ',      amt: '2,832.00', to: 'inv' },
+  { kind: 'חשבונית', n: '11390',  sup: 'מאפיית הלחם החם',     amt: '826.00',   to: 'inv' },
+  { kind: 'חשבונית', n: '3377',   sup: 'אריזות הדרום',        amt: '900.00',   to: 'inv' },
+  { kind: 'הזמנה',   n: '24',     sup: 'בשר והבן שיווק בשרים', amt: '2,884.50', to: 'orders' },
+  { kind: 'הזמנה',   n: '21',     sup: 'דגי הים התיכון',       amt: '2,950.00', to: 'orders' },
+  { kind: 'הזמנה',   n: '20',     sup: 'מחלבות העמק',         amt: '3,540.05', to: 'orders' },
+]
+
+// ---------------------------------------------------------------------------
+// The hall. x right, y down, z forward.
+// ---------------------------------------------------------------------------
+const FLOOR = 1200
+
+const PANELS = [
+  // The control centre used to light at t=0.235 and be the subject of leg 04.
+  // The owner's note of 26.08.2026: "in the simulation you can see the
+  // dashboard and that should not happen." It should not: the film hands over
+  // to the real screens further down the page, and a screenshot of one of them
+  // hanging in the hall halfway through is the film spoiling its own handover.
+  // It lights at 0.90 now, which is inside the closing legs the FILM does not
+  // use, so the world still has its wall of displays and the clip does not.
+  { id: 'dash',   img: 'owner-dashboard.png',    x: 0,     z: 3400,  ry: 0,   w: 2900, on: 0.900 },
+  { id: 'supp',   img: 'office-suppliers.png',   x: -1750, z: 4900,  ry: 26,  w: 2100, on: 0.415 },
+  { id: 'price',  img: 'office-price-lists.png', x: 1750,  z: 5900,  ry: -26, w: 2100, on: 0.445 },
+  { id: 'orders', img: 'office-orders.png',      x: -1750, z: 6900,  ry: 26,  w: 2100, on: 0.470 },
+  { id: 'recv',   img: 'office-receiving.png',   x: 1750,  z: 7200,  ry: -26, w: 2100, on: 0.498 },
+  { id: 'inv',    img: 'office-invoices.png',    x: 0,     z: 9500,  ry: 0,   w: 2900, on: 0.545, off: 0.792 },
+  { id: 'exc',    img: 'owner-exceptions.png',   x: 1850,  z: 10200, ry: -30, w: 1500, on: 0.720, off: 0.940 },
+  { id: 'pay',    img: 'accountant-pay.png',     x: 0,     z: 11400, ry: 0,   w: 2900, on: 0.790 },
+  { id: 'bank',   img: 'accountant-bank.png',    x: 1950,  z: 10000, ry: -28, w: 2100, on: 0.782 },
+]
+const ASPECT = 960 / 1440
+PANELS.forEach((p) => { p.h = Math.round(p.w * ASPECT) })
+const BY = Object.fromEntries(PANELS.map((p) => [p.id, p]))
+
+// ---------------------------------------------------------------------------
+// Camera path. One continuous function of t across the whole flight; the legs
+// are ranges of t, so every seam is exact by construction.
+// ---------------------------------------------------------------------------
+const CAM = [
+  // t,         x,     y,      z,   rotX, rotY
+  [0.00000,   300,   380,   -100,    2,    0],
+  [0.10000,     0,  -600,   -900,  -30,    0],
+  [0.20000,   300,  -820,    900,  -42,   -5],
+  [0.29333,     0,   140,   1700,    2,    2],
+  [0.41333,     0,     0,   2050,    0,    0],
+  [0.53333,     0,   -40,   6100,    0,    0],
+  [0.70667,     0,     0,   8300,    0,    0],
+  [0.80000,  -160,    60,   8980,    0,    0],
+  // lift over the invoices wall rather than flying through it
+  [0.84500,     0, -1450,   9560,  -22,    0],
+  [0.89333,     0,   -40,  10600,    0,    0],
+  // the close: pass between payment and bank and come back to rest head-on on
+  // the control centre the visitor first saw from the dark
+  [1.00000,     0,  -220,  10050,   -3,    0],
+]
+
+function camAt(t) {
+  let i = 0
+  while (i < CAM.length - 2 && t > CAM[i + 1][0]) i++
+  const a = CAM[i], b = CAM[i + 1]
+  const u = smooth((t - a[0]) / (b[0] - a[0]))
+  return {
+    x: lerp(a[1], b[1], u), y: lerp(a[2], b[2], u), z: lerp(a[3], b[3], u),
+    rx: lerp(a[4], b[4], u), ry: lerp(a[5], b[5], u),
+  }
+}
+
+// Depth haze. The ground is near-black, so fading an object toward zero opacity
+// with distance is exactly fog on this ground.
+const fogAt = (dist) => 1 - 0.86 * smooth((dist - 2600) / 6400)
+const RAD = Math.PI / 180
+const frontAt = (x, z, c) => {
+  const f = Math.cos(c.ry * RAD), g = Math.sin(c.ry * RAD)
+  const ahead = (z - c.z) * f - (x - c.x) * g
+  return smooth((ahead - 40) / 220)
+}
+// A screen seen from behind is a mirrored screen. Over the close the panels
+// turn to face the camera, which is what a wall of displays presenting itself
+// looks like, and it is the only way the turn can show their fronts.
+const faceRy = (p, c) => Math.atan2(p.x - c.x, p.z - c.z) / RAD
+
+// ---------------------------------------------------------------------------
+// Build the DOM once.
+// ---------------------------------------------------------------------------
+const cam = document.getElementById('cam')
+const floorCam = document.getElementById('floorCam')
+
+// One floor plane, sized to stay under Chrome's max texture (~16k). Two things
+// were learned the hard way here and both are load-bearing:
+//   - a 32000px-wide element cannot be rastered at all: it comes back as a
+//     single thin band and drags neighbouring layers down with it, so whole
+//     panels render as one corner tile;
+//   - splitting it into 112 tiles trades that for 112 composited layers, and
+//     the drops come back for a different reason.
+// One modest plane, in its own stacking context so it cannot sort over the
+// panels, is the shape that holds.
+// The desk covers 16000 world units but is only a 2200px ELEMENT scaled up.
+// A 16000x16000 div is 256 megapixels; Chrome quietly stops rastering tiles at
+// that size and whole panels start coming back missing from captures, which is
+// the flicker baked into the first cut's clips. Scaling a small element costs
+// nothing and the world geometry is identical.
+const FLOOR_SPAN = 16000, FLOOR_EL = 2200, FLOOR_MID = 6000
+const FLOOR_K = FLOOR_SPAN / FLOOR_EL
+const floorEl = document.createElement('div')
+floorEl.className = 'floor'
+floorEl.style.width = FLOOR_EL + 'px'
+floorEl.style.height = FLOOR_EL + 'px'
+floorCam.appendChild(floorEl)
+
+const pools = [], panelEls = []
+
+for (const p of PANELS) {
+  const pool = document.createElement('div')
+  pool.className = 'pool'
+  pool.style.width = p.w * 1.25 + 'px'
+  pool.style.height = p.w * 0.80 + 'px'
+  pool.style.background =
+    'radial-gradient(50% 50% at 50% 50%, rgba(168,238,248,.40) 0%, rgba(0,140,158,.20) 40%, rgba(0,0,0,0) 100%)'
+  floorCam.appendChild(pool)
+  pools.push(pool)
+
+  const el = document.createElement('div')
+  el.className = 'panel'
+  el.style.width = p.w + 'px'
+  el.style.height = p.h + 'px'
+  const img = document.createElement('img')
+  img.src = 'screens/' + p.img
+  img.alt = ''
+  el.appendChild(img)
+  const lit = document.createElement('div'); lit.className = 'lit'; el.appendChild(lit)
+  const edge = document.createElement('div'); edge.className = 'edge'; el.appendChild(edge)
+  cam.appendChild(el)
+  panelEls.push(el)
+}
+
+// The sheet-shape stream. Separate from r1 (scatter) and r2 (formation) so
+// that changing one of them does not reshuffle the others.
+const r3 = rng(31415926)
+
+const DOC_W = 900, DOC_H = 1220
+const docEls = [], rowEls = []
+
+// where each document ends up, as a row inside its own table
+const ROW = { inv: { top: 0.435, step: 0.0675 }, orders: { top: 0.531, step: 0.0675 } }
+let nInv = 0, nOrd = 0
+const LAND = DOCS.map((d) => {
+  const p = BY[d.to], r = ROW[d.to]
+  const k = d.to === 'inv' ? nInv++ : nOrd++
+  return { p, y: (r.top + k * r.step - 0.5) * p.h }
+})
+
+DOCS.forEach((d, i) => {
+  const el = document.createElement('div')
+  el.className = 'doc' + (d.flag ? ' flag' : '')
+  el.style.width = DOC_W + 'px'
+  el.style.height = DOC_H + 'px'
+  // Per-sheet, deterministic. r3 is drawn in a fixed order so a rebuild of
+  // the film produces the same eleven sheets it produced last time.
+  el.style.setProperty('--e1', (0.3 + r3() * 1.5).toFixed(2) + '%')
+  el.style.setProperty('--e2', (0.2 + r3() * 1.1).toFixed(2) + '%')
+  el.style.setProperty('--e3', (0.3 + r3() * 1.5).toFixed(2) + '%')
+  el.style.setProperty('--e4', (0.2 + r3() * 1.1).toFixed(2) + '%')
+  el.style.setProperty('--e5', (0.3 + r3() * 1.5).toFixed(2) + '%')
+  el.style.setProperty('--e6', (0.2 + r3() * 1.1).toFixed(2) + '%')
+  el.style.setProperty('--e7', (0.3 + r3() * 1.5).toFixed(2) + '%')
+  el.style.setProperty('--e8', (0.2 + r3() * 1.1).toFixed(2) + '%')
+  el.style.setProperty('--curl', (44 + r3() * 34).toFixed(1) + '%')
+  el.style.setProperty('--curl-a', (88 + r3() * 18).toFixed(1) + 'deg')
+  // Only some sheets are folded. A page that has been in an envelope has a
+  // crease; one that came off a printer has not.
+  const folded = r3() > 0.45
+  el.style.setProperty('--crease', folded ? (32 + r3() * 38).toFixed(1) + '%' : '150%')
+  el.style.setProperty('--crease-a', (86 + r3() * 12).toFixed(1) + 'deg')
+
+  el.innerHTML =
+    '<div class="k">' + d.kind + ' ' + d.n + '</div>' +
+    '<div class="sup">' + d.sup + '</div>' +
+    '<div class="amt">' + d.amt + ' ₪</div>' +
+    '<div class="rule"></div>' +
+    '<div class="meta">InPlace · מסמך ספק</div>' +
+    '<div class="stamp">דורשת בירור</div>'
+  cam.appendChild(el)
+  docEls.push(el)
+
+  const L = LAND[i]
+  const r = document.createElement('div')
+  r.className = 'rowlight' + (d.flag ? ' flag' : '')
+  r.style.width = L.p.w * 0.94 + 'px'
+  r.style.height = Math.round(L.p.h * 0.048) + 'px'
+  cam.appendChild(r)
+  rowEls.push(r)
+})
+
+// deterministic scatter and drift slots
+const r1 = rng(20260826)
+const SCATTER = DOCS.map(() => ({
+  x: (r1() - 0.5) * 6000,
+  z: 1200 + r1() * 3000,
+  rot: (r1() - 0.5) * 170,
+  tilt: 62 + r1() * 26,
+  delay: r1() * 0.030,
+}))
+// The pair the whole page turns on: order #24 at 2,884.50 and invoice 7702 at
+// 4,720.00, same supplier. Leg 2 has to be able to frame both, so they are
+// placed rather than scattered.
+SCATTER[9] = { x: -460, z: 2600, rot: -14, tilt: 84, delay: 0.004 }
+SCATTER[3] = { x:  460, z: 3050, rot:  11, tilt: 84, delay: 0.018 }
+const r2 = rng(77113)
+const FORM = DOCS.map((_, i) => ({
+  x: (i % 2 ? 1 : -1) * (900 + r2() * 2100),
+  y: -900 + r2() * 1800,
+  dz: 950 + r2() * 2000,
+  spinY: (r2() - 0.5) * 50,
+  spinX: (r2() - 0.5) * 34,
+}))
+
+// ---------------------------------------------------------------------------
+// Per-frame layout.
+// ---------------------------------------------------------------------------
+function place(el, x, y, z, extra) {
+  el.style.transform =
+    'translate3d(' + (x * PULL).toFixed(2) + 'px,' + (y * PULL).toFixed(2) + 'px,' + (-z * PULL).toFixed(2) + 'px)' +
+    ' translate(-50%,-50%)' + (extra || '')
+}
+
+function setT(t) {
+  t = clamp(t, 0, 1)
+  const c = camAt(t)
+
+  const camT =
+    'rotateX(' + c.rx.toFixed(3) + 'deg) rotateY(' + c.ry.toFixed(3) + 'deg)' +
+    ' translate3d(' + (-c.x * PULL).toFixed(2) + 'px,' + (-c.y * PULL).toFixed(2) + 'px,' + (c.z * PULL).toFixed(2) + 'px)'
+  cam.style.transform = camT
+  floorCam.style.transform = camT
+
+  place(floorEl, 0, FLOOR, FLOOR_MID, ' rotateX(90deg) scale(' + FLOOR_K.toFixed(4) + ')')
+
+  // at the close every light in the hall comes up at once
+  const closeBoost = smooth((t - 0.900) / 0.065)
+
+  PANELS.forEach((p, i) => {
+    const dist = Math.max(120, Math.hypot(p.x - c.x, c.y, p.z - c.z))
+    // a station's light comes up before you reach it and, where `off` is set,
+    // goes out behind you: two full-frame screens crossfading over each other
+    // is a milky frame belonging to neither
+    const lit0 = Math.max(smooth((t - p.on) / 0.048), closeBoost)
+    const lit = p.off ? lit0 * (1 - smooth((t - p.off) / 0.045)) : lit0
+    const f = fogAt(dist)
+    const nearP = smooth((dist - (p.w * Math.abs(Math.sin(p.ry * RAD)) * 0.5 + 200)) / 700)
+    const a = (f + (1 - f) * closeBoost * 0.85) * lit * nearP * frontAt(p.x, p.z, c)
+    panelEls[i].style.opacity = a.toFixed(3)
+    pools[i].style.opacity = (a * 0.9).toFixed(3)
+    place(panelEls[i], p.x, 0, p.z, ' rotateY(' + p.ry + 'deg)')
+    place(pools[i], p.x, FLOOR - 4, p.z + 260, ' rotateX(90deg)')
+  })
+
+  DOCS.forEach((d, i) => {
+    const el = docEls[i], row = rowEls[i], S = SCATTER[i], F = FORM[i], L = LAND[i]
+    const t0 = 0.042 + S.delay   // the stack starts to go
+    const t1 = 0.100             // everything is down
+    const t2 = 0.215             // lift off the floor
+    const t3 = 0.300             // in drift formation
+    // the orders peel off early, at their own panel; the invoices go at the peak
+    const t4 = d.to === 'orders' ? 0.442 : 0.560
+    const t5 = d.to === 'orders' ? 0.520 : 0.700
+
+    let x, y, z, rx, ry, rz, sc = 1
+
+    if (t < t0) {
+      x = (i % 2 ? 14 : -14); z = 900
+      y = FLOOR - 50 - i * 150
+      rx = 84; ry = 0; rz = (i % 3 - 1) * 2.4
+    } else if (t < t2) {
+      const u = seg(t, t0, t1)
+      x = lerp(i % 2 ? 14 : -14, S.x, u)
+      z = lerp(900, S.z, u)
+      y = lerp(FLOOR - 50 - i * 150, FLOOR - 10 - (i % 4) * 6, u)
+      rx = lerp(84, S.tilt, u); ry = 0
+      rz = lerp((i % 3 - 1) * 2.4, S.rot, u)
+    } else if (t < t4) {
+      const u = seg(t, t2, t3)
+      const cz = camAt(Math.max(t, t3)).z
+      x = lerp(S.x, F.x, u)
+      y = lerp(FLOOR - 10, F.y, u)
+      z = lerp(S.z, cz + F.dz, u)
+      rx = lerp(S.tilt, F.spinX, u)
+      ry = lerp(0, F.spinY, u)
+      rz = lerp(S.rot, 0, u)
+    } else {
+      const u = seg(t, t4, t5)
+      const cz = camAt(t4).z
+      x = lerp(F.x, L.p.x, u)
+      y = lerp(F.y, L.y, u)
+      z = lerp(cz + F.dz, L.p.z - 26, u)
+      rx = lerp(F.spinX, 0, u)
+      ry = lerp(F.spinY, L.p.ry, u)
+      rz = 0
+      sc = lerp(1, 0.34, u)
+    }
+
+    const ddist = Math.max(120, Math.hypot(x - c.x, y - c.y, z - c.z))
+    // A flat page is ~DOC_H deep in world units. Anything that comes closer
+    // than that crosses the camera plane and renders as a full-frame smear.
+    const near = smooth((ddist - 820) / 380)
+    // paper dissolves into the row over the last quarter of its convergence
+    const gone = t < t4 ? 0 : smooth((seg(t, t4, t5) - 0.74) / 0.26)
+    el.style.opacity = (fogAt(ddist) * near * frontAt(x, z, c) * (1 - gone)).toFixed(3)
+    place(el, x, y, z,
+      ' rotateY(' + ry.toFixed(2) + 'deg) rotateX(' + rx.toFixed(2) + 'deg)' +
+      ' rotateZ(' + rz.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')')
+
+    // the bar of light the paper leaves behind
+    const rowIn = t5 - 0.030
+    let rop = smooth((t - rowIn) / 0.050)
+    // ordinary rows settle back down; the two flagged ones stay lit
+    if (!d.flag) rop *= 1 - 0.94 * smooth((t - (t5 + 0.018)) / 0.042)
+    const rdist = Math.max(120, Math.hypot(L.p.x - c.x, c.y, L.p.z - c.z))
+    row.style.opacity = (rop * (d.flag ? 1 : 0.85) * fogAt(rdist) * frontAt(L.p.x, L.p.z, c)).toFixed(3)
+    place(row, L.p.x, L.y, L.p.z - 18, ' rotateY(' + L.p.ry + 'deg)')
+  })
+}
+
+// ---------------------------------------------------------------------------
+// ACT TWO — the reconciliation, and the mark.
+//
+// Driven by window.__setR(u), u in 0..1, and completely independent of the
+// camera path in act one. See the note above #recon in the stylesheet for why
+// this act exists and where its six figures come from.
+//
+// Timeline, in u:
+//
+//   0.00  0.14   the ledger comes up out of the dark
+//   0.08  0.62   three pairs of sheets fly in, one pair per line, and each
+//                pair dissolves into the line it becomes
+//   0.20  0.70   as each line lands, its bar draws and its difference lights
+//   0.56         the stamp lands on the line that was stopped
+//   0.70  0.87   the lines converge on the centre and the ledger goes with them
+//   0.79  1.00   the mark rises out of the convergence
+//
+// Every value is a function of u alone. The renderer sets u and screenshots,
+// so nothing may read the clock or Math.random at draw time.
+// ---------------------------------------------------------------------------
+
+// The three pairs. Read off lab/app-reference, the same source as DOCS above:
+// orders 24/21/20 in office-orders.png and invoices 7702/6633/45120 in
+// office-invoices.png. `diff` is invoice minus order, to the agora.
+const MATCH = [
+  {
+    sup: 'בשר והבן שיווק בשרים',
+    ord: { n: '24', amt: '2,884.50' },
+    inv: { n: '7702', amt: '4,720.00' },
+    diff: '+1,835.50', verdict: 'פער לחובתך', tone: 'is-alert',
+  },
+  {
+    sup: 'דגי הים התיכון',
+    ord: { n: '21', amt: '2,950.00' },
+    inv: { n: '6633', amt: '2,950.00' },
+    diff: '0.00', verdict: 'תואם', tone: 'is-flat',
+  },
+  {
+    sup: 'מחלבות העמק',
+    ord: { n: '20', amt: '3,540.05' },
+    inv: { n: '45120', amt: '3,540.00' },
+    diff: '−0.05', verdict: 'לזכותך', tone: 'is-done',
+  },
+]
+
+// The mark, from src/components/Folio.tsx. Same two paths, same viewBox.
+const MARK =
+  '<svg viewBox="1659.81 677.84 156.29 156.29" xmlns="http://www.w3.org/2000/svg">' +
+  '<path d="M 1669.44 755.823 L 1710.28 755.879 C 1708.61 767.232 1707.38 778.645 1706.59 790.092 ' +
+  'L 1736.02 790.07 C 1736.92 781.041 1737.62 771.993 1738.13 762.934 L 1760.32 763.051 ' +
+  'C 1759.51 774.972 1758.47 786.875 1757.2 798.755 L 1754.87 825.177 L 1663.53 825.087 L 1669.44 755.823 z"/>' +
+  '<path d="M 1720.4 686.812 L 1812.38 686.801 C 1811.2 709.917 1808.06 732.974 1806.67 756.062 ' +
+  'L 1771.75 756.048 C 1770.71 756.05 1767.89 756.114 1767.79 755.436 C 1766.97 749.628 1769.92 723.931 1770.27 718.871 ' +
+  'L 1740.77 718.879 C 1739.68 728.796 1739.03 738.754 1737.95 748.673 ' +
+  'C 1729.48 748.622 1723.1 748.384 1714.61 749.043 C 1716.84 728.328 1718.77 707.582 1720.4 686.812 z"/></svg>'
+
+const recon = document.getElementById('recon')
+const reconInner = document.getElementById('reconInner')
+
+// The act is designed at 1180px of card inside a 1920x1080 frame and scaled to
+// whatever the renderer asks for, so the phone cut is the same shot rather
+// than a second layout that could drift from this one.
+const PORTRAIT = FH > FW
+const RK = PORTRAIT
+  ? Math.min(FW / 1330, FH / 2250)
+  : Math.min(FW / 1700, FH / 1160)
+reconInner.style.transform = 'scale(' + RK.toFixed(4) + ')'
+
+const glow = document.createElement('div')
+glow.id = 'reconGlow'
+reconInner.appendChild(glow)
+
+const card = document.createElement('div')
+card.className = 'rc-card'
+card.innerHTML =
+  '<div class="rc-head">' +
+  '<div class="rc-title">בדיקה בשלוש דרכים</div>' +
+  '<div class="rc-eyebrow">InPlace</div>' +
+  '</div>' +
+  '<div class="rc-rule"></div>' +
+  '<div class="rc-stamp">נעצר לפני תשלום</div>'
+reconInner.appendChild(card)
+
+const rowEls2 = []
+const barEls = []
+const diffEls = []
+for (const m of MATCH) {
+  const row = document.createElement('div')
+  row.className = 'rc-row ' + m.tone
+  row.innerHTML =
+    '<div class="rc-sup">' + m.sup + '</div>' +
+    '<div class="rc-cell"><div class="rc-k">הזמנה ' + m.ord.n + '</div>' +
+    '<div class="rc-v">' + m.ord.amt + ' ₪</div></div>' +
+    '<div class="rc-cell"><div class="rc-k">חשבונית ' + m.inv.n + '</div>' +
+    '<div class="rc-v">' + m.inv.amt + ' ₪</div></div>' +
+    '<div class="rc-diff"><div class="n">' + m.diff + ' ₪</div>' +
+    '<div class="t">' + m.verdict + '</div></div>' +
+    '<div class="rc-bar"></div>'
+  card.appendChild(row)
+  rowEls2.push(row)
+  barEls.push(row.querySelector('.rc-bar'))
+  diffEls.push(row.querySelector('.rc-diff'))
+}
+// after the lines, not across them
+card.appendChild(card.querySelector('.rc-stamp'))
+const stamp = card.querySelector('.rc-stamp')
+
+// two sheets per line: the order and the invoice it is checked against
+const flyEls = []
+MATCH.forEach((m) => {
+  for (const which of ['ord', 'inv']) {
+    const el = document.createElement('div')
+    el.className = 'rc-fly' + (which === 'inv' ? ' inv' : '')
+    el.innerHTML =
+      '<div class="k">' + (which === 'inv' ? 'חשבונית ' + m.inv.n : 'הזמנה ' + m.ord.n) + '</div>' +
+      '<div class="s">' + m.sup + '</div>' +
+      '<div class="a">' + (which === 'inv' ? m.inv.amt : m.ord.amt) + ' ₪</div>'
+    reconInner.appendChild(el)
+    flyEls.push(el)
+  }
+})
+
+const mark = document.createElement('div')
+mark.id = 'reconMark'
+mark.innerHTML = MARK + '<div class="wm">InPlace</div>' +
+  '<div class="tag">כל דבר במקומו</div>'
+reconInner.appendChild(mark)
+
+// Where each sheet starts: off the frame, on the side it belongs to, and where
+// it ends: the middle of the line it becomes. The offsets are in design units,
+// the same ones the card is laid out in, so the scale above carries them.
+const FROM = [
+  [-1080, -680], [1080, -740],
+  [-1150, 720], [1150, 660],
+  [-1020, 880], [1080, -900],
+]
+const SPIN = [-26, 22, 18, -20, 30, -24]
+
+// Act one is not faded out under act two, it is switched off. The two share a
+// frame, and #recon paints its own ground: leaving the hall underneath at any
+// opacity means the first frame of act two is the opening stack of act one
+// showing through a transparent layer, which is exactly what it was.
+let actTwo = false
+function enterActTwo() {
+  if (actTwo) return
+  actTwo = true
+  for (const id of ['stage', 'floorStage', 'haze', 'vignette']) {
+    document.getElementById(id).style.visibility = 'hidden'
+  }
+  recon.style.opacity = '1'
+}
+
+function paintR(u) {
+  u = clamp(u, 0, 1)
+
+  // the ledger arrives, then leaves with the lines
+  const cardIn = seg(u, 0.0, 0.12)
+  const collapse = seg(u, 0.70, 0.87)
+  card.style.opacity = (cardIn * (1 - collapse)).toFixed(3)
+  card.style.transform =
+    'translateY(' + lerp(70, 0, cardIn).toFixed(1) + 'px)' +
+    ' scale(' + (lerp(0.94, 1, cardIn) * lerp(1, 0.42, collapse)).toFixed(4) + ')'
+
+  MATCH.forEach((m, i) => {
+    // one line every 0.15 of the act, and each sheet is in the air for most
+    // of its own beat: a sheet that spends its flight off frame is a sheet the
+    // reader never sees arrive.
+    const t0 = 0.06 + i * 0.15
+    const land = t0 + 0.22
+    const fly = seg(u, t0, land)
+
+    for (let k = 0; k < 2; k++) {
+      const el = flyEls[i * 2 + k]
+      const f = FROM[i * 2 + k]
+      // The sheet travels from off frame to the middle of its line, shrinking
+      // as it arrives, and is gone by the time the line is lit: the line IS
+      // the sheet, so both may not be on screen at once.
+      const gone = smooth((fly - 0.72) / 0.28)
+      el.style.opacity = (smooth(fly / 0.16) * (1 - gone)).toFixed(3)
+      const rowY = (i - 1) * 168
+      el.style.transform =
+        'translate3d(' + lerp(f[0], (k ? 1 : -1) * 210, fly).toFixed(1) + 'px,' +
+        lerp(f[1], rowY, fly).toFixed(1) + 'px,0)' +
+        ' rotateZ(' + lerp(SPIN[i * 2 + k], 0, fly).toFixed(2) + 'deg)' +
+        ' rotateY(' + lerp((k ? -34 : 34), 0, fly).toFixed(2) + 'deg)' +
+        ' scale(' + lerp(1, 0.34, fly).toFixed(3) + ')'
+    }
+
+    // the line itself: values first, then the bar draws, then the verdict
+    const lit = seg(u, land - 0.06, land + 0.03)
+    const bar = seg(u, land - 0.02, land + 0.09)
+    const verdict = seg(u, land + 0.04, land + 0.12)
+    const row = rowEls2[i]
+    // The line is on the ledger from the moment the ledger is, as a ruled but
+    // unfilled row. Only the arithmetic waits for the paper. A card that comes
+    // up blank and stays blank for a second reads as a loading state.
+    row.style.opacity = (Math.max(cardIn * 0.2, lit) * (1 - collapse)).toFixed(3)
+    row.style.transform =
+      'translateY(' + lerp(0, -(i - 1) * 168 * 0.55, collapse).toFixed(1) + 'px)' +
+      ' scale(' + lerp(1, 0.82, collapse).toFixed(3) + ')'
+    barEls[i].style.transform = 'scaleX(' + bar.toFixed(3) + ')'
+    barEls[i].style.opacity = (bar * (1 - collapse)).toFixed(3)
+    diffEls[i].style.opacity = verdict.toFixed(3)
+    diffEls[i].style.transform =
+      'scale(' + lerp(0.86, 1, smooth(verdict)).toFixed(3) + ')'
+  })
+
+  // the stamp lands on the line that was stopped
+  const st = seg(u, 0.60, 0.66)
+  stamp.style.opacity = (st * (1 - collapse)).toFixed(3)
+  stamp.style.transform =
+    'rotate(-2deg) scale(' + lerp(1.4, 1, smooth(st)).toFixed(3) + ')'
+
+  // and the mark rises out of the convergence
+  const logo = seg(u, 0.79, 1.0)
+  glow.style.opacity = (smooth((u - 0.74) / 0.16) * 0.9).toFixed(3)
+  mark.style.opacity = logo.toFixed(3)
+  mark.style.transform =
+    'translate(-50%,-50%) scale(' + lerp(0.55, 1, logo).toFixed(3) + ')'
+}
+
+// Painting act two and SWITCHING TO it are two different things. The init
+// below has to lay the act out once so its fonts and images are loaded before
+// __ready goes true, and if that also switched the acts the hall would be
+// hidden for the whole of act one, which is a blank film.
+window.__setR = (u) => { enterActTwo(); paintR(u) }
+paintR(0)
+recon.style.opacity = '0'
+
+window.__setT = setT
+window.__ready = false
+setT(0)
+
+Promise.all([
+  document.fonts ? document.fonts.ready : Promise.resolve(),
+  ...Array.from(document.images).map((im) =>
+    im.complete ? Promise.resolve() : new Promise((r) => { im.onload = im.onerror = r })),
+]).then(() => { setT(0); window.__ready = true })
+</script>
+</body>
+</html>
