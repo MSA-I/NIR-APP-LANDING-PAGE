@@ -17,7 +17,7 @@ await withPage(async (page, { errors }) => {
     chapters: [...document.querySelectorAll('[data-folio]')].map((s) => s.getAttribute('data-folio')),
     acts: document.querySelectorAll('[data-sc-act]').length,
     scrubs: document.querySelectorAll('video[data-sc-scrub]').length,
-    tabs: document.querySelectorAll('.tab').length,
+    tabs: document.querySelectorAll('.chain__step').length,
     panels: document.querySelectorAll('.panel').length,
     shown: [...document.querySelectorAll('.panel')].filter((p) => !p.hidden).length,
     figures: [...document.querySelectorAll('.fig[data-note]')].map((f) => f.dataset.note),
@@ -50,7 +50,7 @@ await withPage(async (page, { errors }) => {
 
   // ------------------------------------------------------------ tab switching
   const swap = await page.evaluate(async () => {
-    const tabs = [...document.querySelectorAll('.tab')]
+    const tabs = [...document.querySelectorAll('.chain__step')]
     const seen = []
     for (let i = 0; i < tabs.length; i++) {
       tabs[i].click()
@@ -64,7 +64,7 @@ await withPage(async (page, { errors }) => {
         selected: tabs[i].getAttribute('aria-selected'),
       })
     }
-    document.querySelector('.tab').click()
+    document.querySelector('.chain__step').click()
     return seen
   })
   const badSwap = swap.filter((s) => s.open !== 1 || !s.matches || s.selected !== 'true')
@@ -102,7 +102,7 @@ await withPage(async (page, { errors }) => {
     skip.focus()
     const focusedSkip = document.activeElement === skip
     const target = document.querySelector(skip.getAttribute('href'))
-    const tabs = [...document.querySelectorAll('.tab')]
+    const tabs = [...document.querySelectorAll('.chain__step')]
     const roving = tabs.filter((t) => t.tabIndex === 0).length
     return { focusedSkip, targetExists: !!target, roving, tabCount: tabs.length }
   })
@@ -111,7 +111,7 @@ await withPage(async (page, { errors }) => {
   c.ok(kb.roving === 1, `a tablist has exactly one tab stop; found ${kb.roving} of ${kb.tabCount}`)
 
   // Arrow keys move the selection in reading order (RTL: ArrowLeft advances).
-  await page.evaluate(() => document.querySelector('.tab').focus())
+  await page.evaluate(() => document.querySelector('.chain__step').focus())
   await page.keyboard.press('ArrowLeft')
   const afterArrow = await page.evaluate(() => document.activeElement.id)
   c.ok(afterArrow === 'tab-1', `ArrowLeft in RTL should advance to tab-1, focus went to "${afterArrow}"`)

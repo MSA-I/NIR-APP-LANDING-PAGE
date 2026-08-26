@@ -61,7 +61,7 @@
 
   /* -------------------------------------------------------------- 2. tabs -- */
 
-  var tabs = Array.prototype.slice.call(doc.querySelectorAll('.tab'));
+  var tabs = Array.prototype.slice.call(doc.querySelectorAll('.chain__step'));
   var panels = Array.prototype.slice.call(doc.querySelectorAll('.panel'));
 
   function selectTab(i, focus) {

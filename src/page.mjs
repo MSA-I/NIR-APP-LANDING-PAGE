@@ -48,12 +48,15 @@ export function render(t) {
           </div>
         </div>`).join('')
 
-  const tabs = t.what.steps.map((s, i) => `
-            <button class="tab" role="tab" type="button" id="tab-${i}"
+  // A chain, not a pill strip. All five stations are readable at once, because
+  // "one chain from the supplier to the bank" IS the product's claim, and a
+  // tab strip that shows one keyword at a time hides exactly that.
+  const chain = t.what.steps.map((s, i) => `
+            <button class="chain__step" role="tab" type="button" id="tab-${i}"
                     aria-selected="${i === 0}" aria-controls="panel-${i}"
                     tabindex="${i === 0 ? 0 : -1}">
-              <span class="tab__n">0${i + 1}</span>
-              <span class="tab__k">${esc(s.k)}</span>
+              <span class="chain__n">0${i + 1}</span>
+              <span class="chain__k">${esc(s.k)}</span>
             </button>`).join('')
 
   const panels = t.what.steps.map((s, i) => `
@@ -64,17 +67,20 @@ export function render(t) {
             </div>
             <figure class="panel__shot shot">
               <div class="shot__frame">
-                <img src="${esc(s.img)}" alt="${esc(s.t)} — מסך מתוך InPlace"
+                <img src="${esc(s.img)}" alt="${esc(s.t)}. מסך מתוך InPlace"
                      width="2000" height="1334" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">
               </div>
               <figcaption class="cap">${raw(s.cap)}</figcaption>
             </figure>
           </div>`).join('')
 
-  const stats = t.board.stats.map((s) => `
-            <div class="stat">
-              <p class="stat__v ip-num"><b class="fig" data-note="${esc(s.note)}">${esc(s.v)}</b></p>
-              <p class="stat__l">${esc(s.l)}</p>
+  // A hairline row, not three identical cards. Three equal cards is the stock
+  // feature-grid shape, and all three figures come from ONE screen, so they are
+  // cited once at the end of the row instead of carrying the same marker thrice.
+  const stats = t.board.stats.map((s, i) => `
+            <div class="figrow__cell">
+              <p class="figrow__v ip-num">${esc(s.v)}${i === 2 ? `<b class="fig fig--bare" data-note="${esc(t.board.statsNote)}"></b>` : ''}</p>
+              <p class="figrow__l">${esc(s.l)}</p>
             </div>`).join('')
 
   const notes = t.notes.map((n) => `
@@ -177,7 +183,7 @@ export function render(t) {
             <p class="lede">${esc(t.what.lede)}</p>
           </header>
 
-          <div class="tabs" role="tablist" aria-label="${esc(t.what.h2).replace(/&nbsp;/g, ' ')}">${tabs}
+          <div class="chain" role="tablist" aria-label="${esc(t.what.stepsLabel)}">${chain}
           </div>
 
           <div class="panels">${panels}
@@ -187,20 +193,25 @@ export function render(t) {
 
       <div class="board">
         <div class="wrap">
-          <header class="say say--board">
-            <p class="eyebrow">${esc(t.board.eyebrow)}</p>
+          <div class="board__head">
             <h2 class="h-big">${raw(t.board.h2)}</h2>
             <p class="lede">${esc(t.board.p)}</p>
-          </header>
-          <div class="stats">${stats}
           </div>
-          <figure class="board__shot shot">
-            <div class="shot__frame">
-              <img src="${esc(t.board.img)}" alt="מרכז הבקרה של InPlace — מסך מתוך המערכת"
-                   width="2000" height="1334" loading="lazy" decoding="async">
-            </div>
-            <figcaption class="cap">${esc(t.board.cap)}</figcaption>
-          </figure>
+          <div class="figrow">${stats}
+          </div>
+        </div>
+        <figure class="board__shot shot">
+          <div class="shot__frame">
+            <img src="${esc(t.board.img)}" alt="מרכז הבקרה של InPlace, מסך מתוך המערכת"
+                 width="2000" height="1334" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="cap">${esc(t.board.cap)}</figcaption>
+        </figure>
+      </div>
+
+      <div class="midask">
+        <div class="wrap">
+          <p class="midask__line">${esc(t.midAsk.line)}</p>${asks('mid')}
         </div>
       </div>
     </section>
@@ -216,7 +227,7 @@ export function render(t) {
           </div>
 
           <div class="apparatus-list">
-            <p class="eyebrow">${esc(t.notesLabel)}</p>
+            <p class="apparatus-list__label">${esc(t.notesLabel)}</p>
             <p class="apparatus-list__lede">${esc(t.notesLede)}</p>
             <ol class="notes">${notes}
             </ol>
