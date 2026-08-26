@@ -16,15 +16,14 @@ const esc = (s) => String(s)
 // through unescaped on purpose. None of it is user input.
 const raw = (s) => String(s)
 
-// The film is legs 01-03 of build 2's world plus the first half of leg 04,
-// stream-copied into one clip. 593 frames at 24fps = 24.71s, one continuous
-// camera: the stack standing, leaning and coming down; the two contradicting
-// numbers lighting up on the fallen pages; the lift off the floor toward the
-// lit thing in the dark; and the cut lands mid-reveal of the control centre,
-// which is where the owner asked it to end.
+// Built by scripts/build-film.mjs. 663 frames at 24fps = 27.63s: the stack
+// standing, leaning and coming down; the two contradicting numbers lighting up
+// on the fallen pages; the lift off the floor toward the lit thing in the dark;
+// and a dissolve that lands on the real dashboard filling the whole frame,
+// which is where the film hands the page over to the screenshots.
 //
 // Paced at build 2's measured 0.215 viewport-heights per second of film.
-const FILM_SPAN = 5.3
+const FILM_SPAN = 5.9
 
 export function render(t) {
   const rtl = t.dir === 'rtl'
@@ -75,11 +74,11 @@ export function render(t) {
           </div>`).join('')
 
   // A hairline row, not three identical cards. Three equal cards is the stock
-  // feature-grid shape, and all three figures come from ONE screen, so they are
-  // cited once at the end of the row instead of carrying the same marker thrice.
-  const stats = t.board.stats.map((s, i) => `
+  // feature-grid shape, and these are three readings off one screen, not three
+  // features.
+  const stats = t.board.stats.map((s) => `
             <div class="figrow__cell">
-              <p class="figrow__v ip-num">${esc(s.v)}${i === 2 ? `<b class="fig fig--bare" data-note="${esc(t.board.statsNote)}"></b>` : ''}</p>
+              <p class="figrow__v ip-num">${esc(s.v)}</p>
               <p class="figrow__l">${esc(s.l)}</p>
             </div>`).join('')
 
@@ -116,17 +115,9 @@ export function render(t) {
               </ul>
             </div>`).join('')
 
-  const notes = t.notes.map((n) => `
-            <li class="note" id="note-${esc(n.id)}">
-              <span class="note__id">${esc(n.id)}</span>
-              <span class="note__t ip-num">${esc(n.t)}</span>
-              <span class="note__s">${esc(n.s)}</span>
-            </li>`).join('')
-
   const asks = (variant) => `
         <div class="asks asks--${variant}">
           <a class="btn btn--primary" href="${esc(t.ctaPrimaryHref)}">${esc(t.ctaPrimary)}</a>
-          <a class="btn btn--ghost" href="${esc(t.ctaSecondaryHref)}">${esc(t.ctaSecondary)}</a>
         </div>
         <p class="fineprint">${esc(t.fineprint)}</p>`
 
@@ -138,7 +129,9 @@ export function render(t) {
   <title>${esc(t.title)}</title>
   <meta name="description" content="${esc(t.description)}">
   <meta name="theme-color" content="#0a171d">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230a171d'/%3E%3Cpath fill='%2338b3c0' d='M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" sizes="any" href="assets/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
   <meta property="og:title" content="${esc(t.title)}">
   <meta property="og:description" content="${esc(t.description)}">
   <meta property="og:type" content="website">
@@ -152,8 +145,9 @@ export function render(t) {
 
   <header class="folio" aria-label="${esc(t.folioLabel)}">
     <a class="folio__brand" href="/">
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-        <path d="M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z" opacity=".92"/>
+      <svg class="mark" viewBox="1659.81 677.84 156.29 156.29" aria-hidden="true" fill="currentColor">
+        <path d="M 1669.44 755.823 L 1710.28 755.879 C 1708.61 767.232 1707.38 778.645 1706.59 790.092 L 1736.02 790.07 C 1736.92 781.041 1737.62 771.993 1738.13 762.934 L 1760.32 763.051 C 1759.51 774.972 1758.47 786.875 1757.2 798.755 L 1754.87 825.177 L 1663.53 825.087 L 1669.44 755.823 z"/>
+        <path d="M 1720.4 686.812 L 1812.38 686.801 C 1811.2 709.917 1808.06 732.974 1806.67 756.062 L 1771.75 756.048 C 1770.71 756.05 1767.89 756.114 1767.79 755.436 C 1766.97 749.628 1769.92 723.931 1770.27 718.871 L 1740.77 718.879 C 1739.68 728.796 1739.03 738.754 1737.95 748.673 C 1729.48 748.622 1723.1 748.384 1714.61 749.043 C 1716.84 728.328 1718.77 707.582 1720.4 686.812 z"/>
       </svg>
       ${esc(t.brand)}
     </a>
@@ -233,13 +227,6 @@ export function render(t) {
           <div class="figrow">${stats}
           </div>
         </div>
-        <figure class="board__shot shot">
-          <div class="shot__frame">
-            <img src="${esc(t.board.img)}" alt="מרכז הבקרה של InPlace, מסך מתוך המערכת"
-                 width="2000" height="1334" loading="lazy" decoding="async">
-          </div>
-          <figcaption class="cap">${esc(t.board.cap)}</figcaption>
-        </figure>
       </div>
 
       <div class="midask">
@@ -315,21 +302,11 @@ export function render(t) {
     <!-- ============================================================= chapter 06 -->
     <section class="ch ch--close" data-folio="${esc(t.close.folio)}">
       <div class="wrap">
-        <div class="colophon">
-          <div class="colophon__say">
-            <h2 class="h-big">${raw(t.close.h2)}<em class="h-sub">${raw(t.close.sub)}</em></h2>
-            <p class="lede">${esc(t.close.p)}</p>
-            ${asks('close')}
-          </div>
-
-          <div class="apparatus-list">
-            <p class="apparatus-list__label">${esc(t.notesLabel)}</p>
-            <p class="apparatus-list__lede">${esc(t.notesLede)}</p>
-            <ol class="notes">${notes}
-            </ol>
-          </div>
+        <div class="colophon__say">
+          <h2 class="h-big">${raw(t.close.h2)}<em class="h-sub">${raw(t.close.sub)}</em></h2>
+          <p class="lede">${esc(t.close.p)}</p>
+          ${asks('close')}
         </div>
-
       </div>
     </section>
 
@@ -340,9 +317,10 @@ export function render(t) {
       <div class="sitefoot__top">
         <div class="sitefoot__brand">
           <a class="folio__brand" href="/">
-            <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-              <path d="M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z" opacity=".92"/>
-            </svg>
+            <svg class="mark" viewBox="1659.81 677.84 156.29 156.29" aria-hidden="true" fill="currentColor">
+              <path d="M 1669.44 755.823 L 1710.28 755.879 C 1708.61 767.232 1707.38 778.645 1706.59 790.092 L 1736.02 790.07 C 1736.92 781.041 1737.62 771.993 1738.13 762.934 L 1760.32 763.051 C 1759.51 774.972 1758.47 786.875 1757.2 798.755 L 1754.87 825.177 L 1663.53 825.087 L 1669.44 755.823 z"/>
+              <path d="M 1720.4 686.812 L 1812.38 686.801 C 1811.2 709.917 1808.06 732.974 1806.67 756.062 L 1771.75 756.048 C 1770.71 756.05 1767.89 756.114 1767.79 755.436 C 1766.97 749.628 1769.92 723.931 1770.27 718.871 L 1740.77 718.879 C 1739.68 728.796 1739.03 738.754 1737.95 748.673 C 1729.48 748.622 1723.1 748.384 1714.61 749.043 C 1716.84 728.328 1718.77 707.582 1720.4 686.812 z"/>
+      </svg>
             ${esc(t.brand)}
           </a>
           <p class="sitefoot__tagline">${esc(t.footer.tagline)}</p>
@@ -356,17 +334,6 @@ export function render(t) {
     </div>
   </footer>
 
-  <!-- The signature move. A live footnote strip: every real figure in the
-       running copy is a numbered source, and the strip names the source of the
-       figure the reader is standing on. The <ol> above is the same apparatus,
-       complete, and is what a reader without JS or with a screen reader gets. -->
-  <aside class="apparatus" data-apparatus hidden aria-hidden="true">
-    <span class="apparatus__id" data-apparatus-id>1</span>
-    <span class="apparatus__body">
-      <b class="apparatus__t ip-num" data-apparatus-t></b>
-      <span class="apparatus__s" data-apparatus-s></span>
-    </span>
-  </aside>
 
   <noscript>
     <style>
@@ -377,12 +344,10 @@ export function render(t) {
       .ch--film { display: block !important; height: auto !important; }
       .panel[hidden] { display: block !important; }
       .tabs { display: none !important; }
-      .apparatus { display: none !important; }
     </style>
     <p class="noscript">${esc(t.noscript)}</p>
   </noscript>
 
-  <script>window.IP_NOTES = ${JSON.stringify(t.notes)};</script>
   <script src="engine/scrollcraft.js" defer></script>
   <script src="surface.js" defer></script>
   <script defer>addEventListener('DOMContentLoaded', function () { ScrollCraft.mount(document.body); });</script>

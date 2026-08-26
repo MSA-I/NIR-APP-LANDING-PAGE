@@ -1,12 +1,11 @@
 /* ============================================================================
    InPlace build 3 — the page's own behaviour.
    ----------------------------------------------------------------------------
-   Three things, none of which belong in the engine:
+   Two things, neither of which belongs in the engine:
 
      1. the folio        which chapter the reader is in, and which ground the
                          bar is currently sitting on
-     2. the tabs         chapter 02's five steps
-     3. the apparatus    the signature move: a live footnote
+     2. the chain        chapter 02's five stations
 
    The engine is not touched. Everything here runs off IntersectionObserver and
    ordinary events, not off the scroll loop, because none of it needs a frame.
@@ -92,77 +91,4 @@
     });
   });
 
-  /* --------------------------------------------------------- 3. apparatus -- */
-  /* The signature move. Every real figure in the running copy carries a source
-     number; the strip at the foot of the page names the source of the figure
-     the reader is standing on, and lights its row in the full list at the
-     close. The list is the apparatus; the strip is only its reading head, so
-     it is aria-hidden and nothing is lost without it. */
-
-  var strip = doc.querySelector('[data-apparatus]');
-  var notes = window.IP_NOTES || [];
-  var byId = {};
-  notes.forEach(function (n) { byId[n.id] = n; });
-
-  var figures = Array.prototype.slice.call(doc.querySelectorAll('.fig[data-note]'));
-
-  if (strip && figures.length && notes.length) {
-    var outId = strip.querySelector('[data-apparatus-id]');
-    var outT = strip.querySelector('[data-apparatus-t]');
-    var outS = strip.querySelector('[data-apparatus-s]');
-    var current = null;
-    var hideTimer = 0;
-
-    function show(id) {
-      var n = byId[id];
-      if (!n || current === id) return;
-      current = id;
-
-      outId.textContent = n.id;
-      outT.textContent = n.t;
-      outS.textContent = n.s;
-      strip.hidden = false;
-      // hidden -> shown in the same frame does not transition; let the browser
-      // see the un-hidden element once first.
-      requestAnimationFrame(function () { strip.classList.add('is-on'); });
-
-      figures.forEach(function (f) {
-        f.classList.toggle('is-lit', f.getAttribute('data-note') === id);
-      });
-      Array.prototype.forEach.call(doc.querySelectorAll('.note'), function (li) {
-        li.classList.toggle('is-lit', li.id === 'note-' + id);
-      });
-
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(hide, 4200);
-    }
-
-    function hide() {
-      current = null;
-      strip.classList.remove('is-on');
-      figures.forEach(function (f) { f.classList.remove('is-lit'); });
-      Array.prototype.forEach.call(doc.querySelectorAll('.note'), function (li) {
-        li.classList.remove('is-lit');
-      });
-    }
-
-    // A band across the middle of the viewport, so the note names the figure
-    // the reader is actually looking at rather than one entering at the edge.
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) show(e.target.getAttribute('data-note'));
-      });
-    }, { rootMargin: '-38% 0px -46% 0px', threshold: 0 });
-
-    figures.forEach(function (f) { io.observe(f); });
-
-    // The colophon is where the apparatus lives in full; a floating copy of one
-    // of its rows on top of it is noise.
-    var colophon = doc.querySelector('.apparatus-list');
-    if (colophon) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { if (e.isIntersecting) { clearTimeout(hideTimer); hide(); } });
-      }, { threshold: 0.12 }).observe(colophon);
-    }
-  }
 })();

@@ -178,3 +178,30 @@ the CDP capture: it is the correct path for a page carrying a `<video>` and a
 **ABANDON: the quota deploy dependency, unchanged.** The published quotas
 20/40/150/375 are #266's values and production still stands on migration `0170`
 with 25/50/200/500. The page must not go live before that deploy lands.
+
+---
+
+## Round 6: the owner's seven corrections
+
+| # | Correction | State | Evidence |
+|---|---|---|---|
+| C1 | The mark must be the app's own, the one that is the favicon | **MET** | `public/favicon.svg` from NIR-APP, copied to `assets/logo.svg` with its fill switched to `currentColor` so it takes the colour of whatever it sits on. The real `favicon.ico` and `icon-192.png` came with it, replacing a hand-drawn four-square glyph and a data-URI favicon. `G14 PASS`: the mark appears in the folio and the footer |
+| C2 | The floating note is unclear. Remove it | **MET** | The strip, its script, its styles and its markup are gone |
+| C3 | The film must END on the dashboard full-frame, not partly | **MET** | Rebuilt by `scripts/build-film.mjs`: legs 01-03, leg 04 to 5.5s where the screen reads largest, then a 0.6s dissolve into the real dashboard filling the frame, held. 663 frames, 27.63s. The last frame was extracted and read: header, money row and all three decision panels, head-on and legible. The footage alone never gets there, because the camera is still travelling at the end of leg 04 |
+| C4 | The repeating odd thing must go | **MET** | The superscript source markers. Removed from every figure, and the `.fig` class now sets weight only |
+| C5 | The dashboard already appeared higher up, so the repeat helps nothing | **MET** | The board section's screenshot is gone. Its heading, its line and its three readings stay, and the line now points back at the film: "המסך שראית בסוף הסרט". `G14 PASS` asserts the control centre appears zero more times as a screenshot |
+| C6 | There is no demo to book. The goal is that the customer opens an account | **MET** | `ctaSecondary` and every button, footer link and sentence that promised one are gone. `G14 PASS`: exactly one CTA destination on the page, `app.inplace.digital/signup` |
+| C7 | The source list at the close has no clear role | **MET** | Removed, with C2 and C4: all three were parts of one device. The sources still live in the comment block at the top of `i18n/he.js`, where a maintainer needs them |
+| C8 | Nothing else broke | **MET** | `4 met, 0 unmet`. Detector `[]`. Zero em-dashes. Page 13.71vh. The colophon collapsed to one column and the board's bottom padding tightened, because both had been sized around blocks that no longer exist |
+
+**What this cost, recorded rather than glossed.** The citation apparatus was
+this build's signature move, and removing it leaves the page without the device
+the skill's discipline asks for. What replaced it is `המסירה`: the film
+dissolving into the product's own screen and handing the page over to
+screenshots. That is now the distinctive move, and it is the owner's own
+correction, not a rescue.
+
+**The lesson.** A device that has to be explained is not reassurance, it is a
+second thing to learn. The markers were built to make the numbers trustworthy
+and instead made the page look annotated. The sources did not need to be on the
+page to be true.

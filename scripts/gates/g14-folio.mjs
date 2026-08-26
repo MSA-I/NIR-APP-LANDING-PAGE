@@ -20,8 +20,12 @@ await withPage(async (page, { errors }) => {
     tabs: document.querySelectorAll('.chain__step').length,
     panels: document.querySelectorAll('.panel').length,
     shown: [...document.querySelectorAll('.panel')].filter((p) => !p.hidden).length,
-    figures: [...document.querySelectorAll('.fig[data-note]')].map((f) => f.dataset.note),
-    notes: [...document.querySelectorAll('.note')].map((n) => n.id.replace('note-', '')),
+    // One action on this page. A second CTA intent is what the owner removed,
+    // and the cheapest way for it to come back is a stray link somewhere.
+    ctaHrefs: [...new Set([...document.querySelectorAll('.btn')].map((a) => a.getAttribute('href')))],
+    marks: document.querySelectorAll('.folio .mark, .sitefoot .mark').length,
+    dashShots: [...document.querySelectorAll('img')]
+      .filter((i) => /owner-dashboard/.test(i.getAttribute('src') || '')).length,
     h1: document.querySelectorAll('h1').length,
     faq: document.querySelectorAll('.faq__item').length,
     faqOpenNoJs: document.querySelectorAll('.faq__item[open]').length,
@@ -71,13 +75,17 @@ await withPage(async (page, { errors }) => {
   c.ok(badHrefs.length === 0, `footer links with no destination: ${badHrefs.join(', ')}`)
   c.note(`${shape.faq} FAQ entries, ${shape.footLinks.length} footer links`)
 
-  // The apparatus is only honest if it is complete in both directions: every
-  // figure has a source, and no source is listed that nothing on the page cites.
-  const orphanFigs = shape.figures.filter((f) => !shape.notes.includes(f))
-  const orphanNotes = shape.notes.filter((n) => !shape.figures.includes(n))
-  c.ok(orphanFigs.length === 0, `figures with no source: ${orphanFigs.join(', ')}`)
-  c.ok(orphanNotes.length === 0, `sources nothing cites: ${orphanNotes.join(', ')}`)
-  c.note(`${shape.figures.length} cited figures against ${shape.notes.length} sources`)
+  // One CTA, one destination, everywhere.
+  c.ok(shape.ctaHrefs.length === 1,
+    `expected one call to action across the page, found ${shape.ctaHrefs.length}: ${shape.ctaHrefs.join(', ')}`)
+
+  // The wordmark is the product's own symbol, in the bar and in the footer.
+  c.ok(shape.marks === 2, `expected the app mark in the folio and the footer, found ${shape.marks}`)
+
+  // The film already ends on the control centre. A second copy of that screen
+  // further down was the duplication the owner called out.
+  c.ok(shape.dashShots === 0, `the control centre appears ${shape.dashShots} more time(s) as a screenshot`)
+  c.note(`one CTA: ${shape.ctaHrefs[0]}`)
 
   // ------------------------------------------------------------ tab switching
   const swap = await page.evaluate(async () => {
@@ -154,16 +162,16 @@ await withPage(async (page, { errors }) => {
 await withPage(
   async (page) => {
     const rm = await page.evaluate(() => {
-      const strip = document.querySelector('[data-apparatus]')
       const btn = document.querySelector('.btn')
+      const step = document.querySelector('.chain__step')
       return {
-        stripTransition: getComputedStyle(strip).transitionDuration,
+        stripTransition: getComputedStyle(step).transitionDuration,
         btnTransition: getComputedStyle(btn).transitionDuration,
         scrollBehavior: getComputedStyle(document.documentElement).scrollBehavior,
       }
     })
     const none = (v) => /^(0s)(,\s*0s)*$/.test(v)
-    c.ok(none(rm.stripTransition), `apparatus still transitions under reduced motion: ${rm.stripTransition}`)
+    c.ok(none(rm.stripTransition), `the chain still transitions under reduced motion: ${rm.stripTransition}`)
     c.ok(none(rm.btnTransition), `buttons still transition under reduced motion: ${rm.btnTransition}`)
     c.ok(rm.scrollBehavior === 'auto', `smooth scrolling is still on under reduced motion: ${rm.scrollBehavior}`)
 

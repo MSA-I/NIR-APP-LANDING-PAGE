@@ -14,45 +14,44 @@ preserved on the `archive/astro-site` branch; nothing was deleted.
 
 ## What it is
 
-The page is a **printed feature**: a title page, five chapters and a colophon.
+The page is a **printed feature**: a title page and six chapters.
 Chapters are the unit, they hard-cut between grounds, and only one of them
 carries motion.
 
 | | Chapter | Ground | What it does |
 |---|---|---|---|
-| — | שער | Onyx | What this is, both CTAs, and an index of the five chapters |
-| 01 | מהערימה למרכז הבקרה | Onyx | A 24.7s scrubbed film. Four copy blocks travel beside it |
+| — | שער | Onyx | What this is, the ask, and an index of the six chapters |
+| 01 | מהערימה למרכז הבקרה | Onyx | A 27.6s scrubbed film, the one place the scroll engine is used. Four copy blocks travel beside it |
 | 02 | מה המערכת עושה | Wheat, then Onyx | Five stations, five real product screens, then the control centre |
 | 03 | למה דווקא זה | Onyx | What InPlace does, against what it refuses to be |
 | 04 | מסלולים | Onyx | Five plans, one published usage metric, the launch prices |
 | 05 | שאלות | Wheat | Seven answers, as native `<details>` |
-| 06 | להתחיל | Onyx | The ask, and the source of every figure on the page |
+| 06 | להתחיל | Onyx | The one ask |
 
-About 14 viewport-heights. The design intent, the interview it came from and
+About 13.7 viewport-heights. The design intent, the interview it came from and
 the feeling curve are in [BRIEF.md](BRIEF.md); the acceptance ledger with its
 evidence is [GATES.md](GATES.md); the build's registry row is
 [FINGERPRINTS.md](FINGERPRINTS.md).
 
-### The film
+### The film, and the handover
 
-Chapter 01 is the one place the scroll engine is used. The clip is four legs of
-a previous build's world, stream-copied into one 593-frame file: a stack of
-supplier documents comes down, two numbers for one supplier contradict each
-other, the camera lifts, and the cut lands halfway through the reveal of the
-real control centre. From that cut on, everything on the page is a screenshot
-of the running product.
+A stack of supplier documents comes down, two numbers for one supplier
+contradict each other, and the camera lifts off the floor toward something lit
+in the dark. Then the film does not cut, it hands over: it dissolves out of the
+world and into the product's own control centre, filling the frame head-on, and from that
+second on every pixel on the page is a screenshot of the running system. The
+last frame of `assets/film.mp4` and the first product screen the reader meets
+are deliberately the same screen.
 
-### The signature move: the apparatus
+That clip is built, not hand-cut:
 
-The page cites itself, the way a printed feature does. Every real figure in the
-running copy carries a superscript source number; passing one lights it, lights
-its row in the colophon, and names its source at the foot of the page: which
-screen, which supplier, which date, which status.
+```bash
+node scripts/build-film.mjs
+```
 
-The full list is real markup in the colophon, so a reader with no JavaScript or
-a screen reader gets the whole apparatus and loses only the reading head. The
-gate asserts it in both directions: no figure without a source, no source
-nothing cites.
+Legs are stream-copied from `assets/0{1,2,3,4}.mp4`; only the 1.6s dissolve at
+the end is encoded. Re-encoding the whole clip was tried and produced 18.6MB of
+worse pixels, because a dense-GOP pass over already-compressed video pays twice.
 
 ---
 
@@ -86,7 +85,7 @@ Four gates, about 20 seconds, and it exits non-zero on any failure.
 | G4 | RTL is carried by logical properties only. Runs a control fixture first to prove the scanner fires |
 | G6 | No horizontal overflow, at eight scroll positions across four widths |
 | G7 | Text contrast on the composited render, both grounds. Plants an unreadable line and confirms it is caught |
-| G14 | This build's own behaviour: the chapters, the chain, the film's playhead, the folio, the apparatus, the FAQ, the footer, the prices, the keyboard path and reduced motion |
+| G14 | This build's own behaviour: the chapters, the chain, the film's playhead, the folio, the single CTA, the FAQ, the footer, the prices, the keyboard path and reduced motion |
 
 One gate by id:
 
@@ -114,10 +113,11 @@ all of them and obvious in the first screenshot, and they are listed in
 | `src/page.mjs` | The page, as one function of a dictionary |
 | `i18n/he.js` | All copy and every figure, with the source of each in a comment |
 | `site.css` | The page's own layer. Logical properties only, enforced by G4 |
-| `surface.js` | The folio, the chain, and the apparatus. Three IntersectionObservers, no scroll loop |
+| `surface.js` | The folio and the chain. No scroll loop, no animation frame |
 | `engine/` | scrollcraft, copied verbatim. Never edited per-project |
 | `assets/` | The film, its poster, the product screens, the Hebrew subset of Noto Sans |
 | `scripts/build.mjs` | The build. One locale in, one static file out |
+| `scripts/build-film.mjs` | Rebuilds chapter 01's clip from the world legs |
 | `scripts/gates/` | The acceptance ledger, one file per gate, plus control fixtures |
 | `lab/app-reference/` | Screenshots of the running product. Every figure on the page is read off these |
 | `archive/` | Previous builds' briefs, locales and gates, kept rather than deleted |
@@ -127,10 +127,10 @@ all of them and obvious in the first screenshot, and they are listed in
 ## Before you edit
 
 **No invented figures.** Every number on the page is read off a capture in
-`lab/app-reference/` or a migration in the product repo, and every one of them
-is cited in the apparatus. A figure with no source does not ship; G14 fails on
-one. If a number changes, change its source line in `i18n/he.js` too, or the
-apparatus lies.
+`lab/app-reference/` or a migration in the product repo, and the comment block
+at the top of `i18n/he.js` names the source of each one. The page used to print
+those sources for the visitor; that was removed as noise, so the comment block
+is now the only place they live. Keep it true.
 
 **The prices come from the product's catalogue, not from taste.** They are the
 `launch-il` rows of `0184_launch_plan_and_price_catalogue.sql`. G14 asserts that
