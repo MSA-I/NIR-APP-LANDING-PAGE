@@ -9,23 +9,14 @@ import { withPage, checker, contrast, rgb, scrollTo } from './lib.mjs'
 
 const c = checker('G7')
 
-// Every text-bearing selector on the page, with the AA threshold it must clear.
-// 3:1 is only for text that is genuinely large (>=24px, or >=18.66px bold).
+// Every text-bearing tag on the page. Build 3 kept a list of its own component
+// selectors here; build 4 writes its layout in utility classes, so such a list
+// would go stale without anything failing, which is the worst way for a gate to
+// break. The threshold is AA: 3:1 only for text that is genuinely large
+// (>=24px, or >=18.66px bold), 4.5:1 for everything else.
 const TARGETS = [
-  '.h-hero', '.h-big', '.h-mid', '.h-step', '.h-sub',
-  '.eyebrow', '.lede', '.body', '.cap', '.fig', '.fineprint',
-  '.folio__brand', '.folio__where',
-  '.index__label', '.index__n', '.index__t', '.index__d',
-  '.chain__k', '.chain__n',
-  '.film-plate__cap',
-  '.figrow__v', '.figrow__l', '.midask__line',
-  '.apparatus-list__label', '.apparatus-list__lede', '.note__id', '.note__t', '.note__s',
-  '.apparatus__id', '.apparatus__t', '.apparatus__s',
-  '.why__label', '.why__t', '.why__p',
-  '.faq__q', '.faq__a p',
-  '.plans__name', '.plans__who', '.plans__docs', '.plans__price', '.plans__note',
-  '.sitefoot__tagline', '.sitefoot__h', '.sitefoot__col a', '.sitefoot__rule p',
-  '.btn',
+  'h1', 'h2', 'h3', 'h4', 'p', 'li', 'td', 'th', 'caption', 'summary',
+  'figcaption', 'a', 'button', 'span', 'b', 'em', 'strong',
 ]
 
 let cdp = null
@@ -100,6 +91,10 @@ await withPage(async (page) => {
           if (parseFloat(cs.opacity) < 0.85) continue
           const txt = (el.textContent || '').trim()
           if (!txt) continue
+          // Leaves only. A <p> that wraps a <b> covers two grounds as far as
+          // its bounding box is concerned, and the darkest patch inside it may
+          // belong to neither run of text.
+          if ([...el.children].some((ch) => (ch.textContent || '').trim())) continue
           const r = el.getBoundingClientRect()
           if (r.width < 8 || r.height < 8) continue
           if (r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) continue
@@ -228,8 +223,11 @@ await withPage(async (page) => {
   await scrollTo(page, 0.72)   // the cream plate has to be on screen to be the ground
   const control = await page.evaluate(() => {
     // The cream plate in chapter 02 is the light ground on this page, so a
-    // near-white line planted there is genuinely unreadable.
-    const host = document.querySelector('.plate')
+    // near-white line planted there is genuinely unreadable. It has to be that
+    // plate specifically: the first plate in the document is the shader hero,
+    // and its own background is transparent, so a control planted there would
+    // grade near-white against black and pass.
+    const host = document.querySelector('.plate.on-light')
     const bad = document.createElement('p')
     bad.className = 'lede'
     bad.style.color = 'oklch(0.97 0.01 80)' // near-white, on the wheat plate

@@ -1,13 +1,29 @@
 {
-  "name": "inplace-scroll-landing",
-  "version": "0.1.0",
+  "name": "inplace-aui-landing",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "serve": "node scripts/serve.mjs --root dist --port 4500"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4500",
+    "serve": "vite preview --port 4500",
+    "gates": "node scripts/gates/all.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.545.0",
+    "motion": "^12.23.24",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "playwright-core": "^1.56.0"
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "playwright-core": "^1.56.0",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
   }
 }

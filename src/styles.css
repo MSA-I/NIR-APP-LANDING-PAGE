@@ -1,0 +1,937 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   InPlace — build 4, "aui".
+   ----------------------------------------------------------------------------
+   Build 3 took the reference's LAYOUT (aui.io, read 2026-08-26): a bounded
+   page, plates inset with a small radius, one very large display size per
+   chapter, a small accent micro-label above it. It did not take the
+   reference's SURFACE, and that is what the owner said was missing: the live
+   shader ground, the separate display face, the entrance motion, the buttons
+   that answer when you touch them.
+
+   Build 4 adds exactly that surface. The palette is still the product's own:
+
+     Onyx     #0a171d   the dark ground             (reference's #121212)
+     Wheat    #fff6e9   the light ground            (reference's #f1f0e0)
+     Oceanic  #38b3c0 on dark / #00525d on light    (reference's #ff4800)
+     Alert    #ff7d96 on dark / #a3122f on light
+
+   Direction is carried by logical properties only. No `left`, no `right`, no
+   `margin-left`, no `text-align: left`. Enforced by scripts/gates/g4-rtl.mjs,
+   in the authored CSS and in the Tailwind classes the components use.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- typefaces */
+/* Body. Carried over from build 3, unchanged. */
+@font-face {
+  font-family: "Noto Sans Hebrew";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/assets/fonts/NotoSansHebrew-Hebrew.woff2") format("woff2");
+  unicode-range: U+0590-05FF, U+FB1D-FB4F, U+20AA, U+200E, U+200F;
+}
+@font-face {
+  font-family: "Noto Sans Hebrew";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/assets/fonts/NotoSansHebrew-Latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074,
+                 U+20AC, U+2122, U+2191-2193, U+2212, U+2215, U+FEFF;
+}
+
+/* Display. New in build 4, and the half of the reference's effect that build 3
+   was missing: the reference sets its headlines in a wide grotesque at a
+   weight the body never uses. Heebo is the Hebrew face that carries the same
+   flat terminals and open counters at 800-900. Self-hosted, two subsets. */
+@font-face {
+  font-family: "Heebo";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/assets/fonts/Heebo-hebrew.woff2") format("woff2");
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC,
+                 U+FB1D-FB4F;
+}
+@font-face {
+  font-family: "Heebo";
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url("/assets/fonts/Heebo-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                 U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+                 U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ------------------------------------------------------------------- tokens */
+/* Every colour below is a token read out of the running product, converted
+   from its OKLCH source in data/product-tokens.json. Build 3 and build 4's
+   first cut both used a brighter turquoise (#38b3c0) that the product does not
+   contain; the owner's note on 26.08.2026 was that the page should be in the
+   application's colours, and these are they.
+
+     app token            OKLCH                         hex
+     color-shell / ink    oklch(0.196 0.022 229)        #0a171d
+     color-surface        oklch(0.992 0.006 80)         #fffcf8
+     color-surface-sunken oklch(0.954 0.012 80)         #f4efe7
+     color-line           oklch(0.895 0.022 78)         #e5dbcd
+     color-ink-soft       oklch(0.435 0.021 229)        #46545b
+     color-action         oklch(0.3366 0.058 209)       #003f47
+     color-action-solid   oklch(0.39 0.062 208)         #0d4e56
+     color-action-line    oklch(0.62 0.055 205)         #5d9096
+     color-focus          oklch(0.5 0.085 207)          #03707c
+     color-topbar         oklch(0.945 0.008 229)        #e8eef1
+     color-shell-ink      oklch(0.975 0.012 80)         #fbf6ee
+     color-alert-fg       oklch(0.514 0.222 16.9)       #c70036 */
+@theme {
+  --color-onyx: #0a171d;
+  --color-onyx-lift: #12242c;
+  --color-onyx-line: #1e3540;
+  --color-wheat: #fffcf8;
+  --color-wheat-sink: #f4efe7;
+  --color-wheat-line: #e5dbcd;
+
+  --color-ink: #fbf6ee;
+  --color-ink-soft: #a2b3b8;
+  --color-ink-dim: #7d8f95;
+  --color-ink-on-light: #0a171d;
+  --color-ink-on-light-soft: #46545b;
+
+  /* The accent, both grounds. On dark it is the product's own action-line;
+     on light it is the action colour itself. Neither is invented. */
+  --color-oceanic: #5d9096;
+  --color-oceanic-deep: #003f47;
+  --color-action-solid: #0d4e56;
+  --color-focus-ring: #03707c;
+  --color-topbar: #e8eef1;
+  --color-alert: #ff8ea6;
+  --color-alert-deep: #c70036;
+
+  --font-display: "Heebo", "Noto Sans Hebrew", Arial, sans-serif;
+  --font-body: "Noto Sans Hebrew", Arial, ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+:root {
+  --page: 1265px;
+  --plate-inset: 10px;
+  --plate-radius: 12px;
+  color-scheme: dark;
+}
+
+/* --------------------------------------------------------------------- base */
+@layer base {
+  * { min-inline-size: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-onyx);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.62;
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-oceanic);
+    color: var(--color-onyx);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  img, video, svg { display: block; max-inline-size: 100%; }
+
+  b, strong { font-weight: 650; }
+}
+
+/* ------------------------------------------------------------------- layout */
+.wrap {
+  inline-size: min(100% - 2.5rem, var(--page));
+  margin-inline: auto;
+}
+
+/* A plate is the reference's one structural move: content sits on a bounded
+   sheet inset from the ground, not edge to edge. */
+.plate {
+  position: relative;
+  border-radius: var(--plate-radius);
+  margin-inline: var(--plate-inset);
+  overflow: clip;
+}
+
+/* The reference's crop marks: four hairline corners just inside the plate
+   edge, printer's registration. They are decoration and are hidden from
+   assistive tech by the element that carries them. */
+.crops::before,
+.crops::after,
+.crops > .crops__b::before,
+.crops > .crops__b::after {
+  content: "";
+  position: absolute;
+  inline-size: 14px;
+  block-size: 14px;
+  border-style: solid;
+  border-color: currentColor;
+  border-width: 0;
+  opacity: 0.34;
+  pointer-events: none;
+}
+/* Logical longhands, not the four-value `border-width` shorthand: that
+   shorthand is written top/right/bottom/left, so the mark that should hug the
+   inline start hugs the left instead, and every crop mark mirrors the moment
+   the page is read right to left. */
+.crops::before {
+  inset-block-start: 18px;
+  inset-inline-start: 18px;
+  border-block-start-width: 1px;
+  border-inline-start-width: 1px;
+}
+.crops::after {
+  inset-block-start: 18px;
+  inset-inline-end: 18px;
+  border-block-start-width: 1px;
+  border-inline-end-width: 1px;
+}
+.crops > .crops__b::before {
+  inset-block-end: 18px;
+  inset-inline-start: 18px;
+  border-block-end-width: 1px;
+  border-inline-start-width: 1px;
+}
+.crops > .crops__b::after {
+  inset-block-end: 18px;
+  inset-inline-end: 18px;
+  border-block-end-width: 1px;
+  border-inline-end-width: 1px;
+}
+
+/* --------------------------------------------------------------- typography */
+.h-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.35rem, 5.4vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.h-big {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.95rem, 4.2vw, 3.5rem);
+  line-height: 1.0;
+  letter-spacing: -0.032em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.h-mid {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 3.2vw, 2.55rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.h-step {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* The micro-label above every headline. The reference sets it in a mono at a
+   loose track; Hebrew has no monospaced face worth the swap, so the track and
+   the accent carry it instead. */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.775rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  color: var(--color-oceanic);
+  margin: 0;
+}
+.eyebrow--on-light { color: var(--color-oceanic-deep); }
+
+.lede {
+  font-size: clamp(1.02rem, 1.35vw, 1.19rem);
+  line-height: 1.66;
+  color: var(--color-ink-soft);
+  max-inline-size: 62ch;
+  margin: 0;
+}
+.on-light .lede { color: var(--color-ink-on-light-soft); }
+
+.body { color: var(--color-ink-soft); margin: 0; }
+.on-light .body { color: var(--color-ink-on-light-soft); }
+
+.on-light { color: var(--color-ink-on-light); }
+
+/* The accent, as a role rather than a colour. The same headline tint appears on
+   both grounds, and the light one needs the deep oceanic: the bright one
+   measures 2.34:1 on cream, which g7 catches and which no amount of display
+   size excuses. */
+:root { --tint: var(--color-oceanic); }
+.on-light { --tint: var(--color-oceanic-deep); }
+.text-tint { color: var(--tint); }
+
+/* Latin figures inside Hebrew copy: keep them LTR and tabular so a column of
+   amounts lines up. */
+.ip-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+/* Same figures, but left in the paragraph's own direction. A cell that flips
+   to ltr also flips where its text starts, which parks a column of numbers
+   against the wrong edge of its column. Isolation alone is enough: digits
+   already run left to right inside Hebrew by the bidi algorithm. */
+.ip-fig {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  unicode-bidi: isolate;
+}
+
+.cap {
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--color-ink-dim);
+  margin: 0;
+}
+.on-light .cap { color: color-mix(in srgb, var(--color-ink-on-light) 58%, transparent); }
+
+.sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------ buttons */
+/* The flow button, from 21st.dev (@xubohuah/flow-button). Three moves in one:
+   the ground grows out of the button's own centre, the label slides forward,
+   and an arrow crosses from the far edge to the leading one.
+
+   Written as CSS rather than utility classes because every part of it is
+   direction-dependent. The arrows travel along the inline axis, and in Hebrew
+   that axis runs the other way; logical properties mirror for free, a
+   `translate-x` does not. */
+.flow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1.5px solid var(--color-onyx-line);
+  border-radius: 100px;
+  padding-block: 0.8rem;
+  padding-inline: 2rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    border-radius 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* The ground. A circle at the centre that opens to swallow the button. */
+.flow__fill {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: 50% -50%;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border-radius: 50%;
+  opacity: 0;
+  z-index: -1;
+  background: var(--color-ink);
+  transition:
+    inline-size 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+    block-size 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.flow__label {
+  position: relative;
+  z-index: 1;
+  translate: 0.75rem 0;
+  transition: translate 0.8s ease-out;
+}
+
+.flow__arrow {
+  position: absolute;
+  inline-size: 1rem;
+  block-size: 1rem;
+  z-index: 9;
+  transition:
+    inset-inline-start 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+    inset-inline-end 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.flow__arrow--lead { inset-inline-start: -25%; }
+.flow__arrow--trail { inset-inline-end: 1rem; }
+
+.flow:hover {
+  border-color: transparent;
+  border-radius: 12px;
+  color: var(--color-onyx);
+}
+.flow:hover .flow__fill {
+  inline-size: 15rem;
+  block-size: 15rem;
+  opacity: 1;
+}
+.flow:hover .flow__label { translate: -0.75rem 0; }
+.flow:hover .flow__arrow--lead { inset-inline-start: 1rem; }
+.flow:hover .flow__arrow--trail { inset-inline-end: -25%; }
+.flow:active { scale: 0.96; }
+
+/* Primary: already carrying the product's action colour, so the ground that
+   opens is the cream one and the label crosses to onyx. */
+.flow--primary {
+  background: var(--color-oceanic-deep);
+  border-color: var(--color-oceanic-deep);
+  color: var(--color-ink);
+}
+.flow--primary .flow__fill { background: var(--color-ink); }
+.flow--primary:hover { color: var(--color-onyx); }
+
+/* Ghost: a hairline that fills with the action colour. */
+.flow--ghost {
+  background: transparent;
+  border-color: var(--color-onyx-line);
+  color: var(--color-ink);
+}
+.flow--ghost .flow__fill { background: var(--color-oceanic-deep); }
+.flow--ghost:hover { color: var(--color-ink); }
+
+/* On the cream plate the same button inverts. */
+.on-light .flow--ghost {
+  border-color: var(--color-wheat-line);
+  color: var(--color-ink-on-light);
+}
+.on-light .flow--ghost .flow__fill { background: var(--color-oceanic-deep); }
+.on-light .flow--ghost:hover { color: var(--color-ink); }
+
+/* A card's action fills the card. The circle that opens has to cover a wider
+   box, so it grows further; at 15rem it stops short of the corners on a
+   five-column card and the fill reads as a stripe. */
+.flow--block { display: flex; inline-size: 100%; }
+.flow--block:hover .flow__fill { inline-size: 34rem; block-size: 34rem; }
+
+.flow--sm {
+  padding-block: 0.58rem;
+  padding-inline: 1.35rem;
+  font-size: 0.86rem;
+  gap: 0.2rem;
+}
+.flow--sm .flow__label { translate: 0.55rem 0; }
+.flow--sm:hover .flow__label { translate: -0.55rem 0; }
+.flow--sm .flow__arrow { inline-size: 0.85rem; block-size: 0.85rem; }
+.flow--sm .flow__arrow--trail { inset-inline-end: 0.7rem; }
+.flow--sm:hover .flow__arrow--lead { inset-inline-start: 0.7rem; }
+
+.fineprint {
+  font-size: 0.85rem;
+  color: var(--color-ink-dim);
+  margin: 0;
+}
+
+.skip {
+  position: absolute;
+  inset-block-start: -100px;
+  inset-inline-start: 1rem;
+  z-index: 200;
+  background: var(--color-ink);
+  color: var(--color-onyx);
+  padding: 0.7rem 1.1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip:focus { inset-block-start: 1rem; }
+
+/* -------------------------------------------------------------------- plans */
+/* The tray and the cards, from 21st.dev's pricing-section-3. The catalogue
+   version sets a light tray under light cards; this one is on the onyx ground,
+   so the tray is the lift and the cards are the ground, which keeps the same
+   figure-on-field reading with the values swapped. */
+.plans-tray {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-onyx-lift) 90%, transparent),
+    color-mix(in srgb, var(--color-onyx) 92%, transparent)
+  );
+  border: 1px solid var(--color-onyx-line);
+}
+
+.plan-card {
+  position: relative;
+  background: color-mix(in srgb, var(--color-onyx) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 80%, transparent);
+  transition:
+    transform 0.45s var(--ease-out-quint),
+    border-color 0.45s var(--ease-out-quint),
+    background-color 0.45s var(--ease-out-quint);
+}
+.plan-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--color-oceanic) 55%, transparent);
+  background: color-mix(in srgb, var(--color-onyx-lift) 85%, transparent);
+}
+
+/* The catalogue lifts one card and fills it dark on a light tray. The tray
+   here is onyx, so the same move inverts: the featured card is the cream
+   plate. Lifted rather than scaled, because a scaled card in a five-column
+   grid pushes its neighbours around at every breakpoint. */
+.plan-card--featured {
+  background: var(--color-wheat);
+  border-color: var(--color-wheat);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--color-oceanic) 40%, transparent),
+    0 34px 80px -40px color-mix(in srgb, #000 90%, transparent);
+  transform: translateY(-8px);
+}
+.plan-card--featured:hover {
+  background: var(--color-wheat);
+  border-color: var(--color-wheat);
+  transform: translateY(-12px);
+}
+.plan-card--featured .plan-card__tick {
+  border-color: color-mix(in srgb, var(--color-oceanic-deep) 40%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic-deep) 10%, transparent);
+  color: var(--color-oceanic-deep);
+}
+
+.plan-card__tick {
+  border: 1px solid color-mix(in srgb, var(--color-oceanic) 45%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic) 14%, transparent);
+  color: var(--color-oceanic);
+}
+
+/* ---------------------------------------------------------------------- why */
+/* The same card the plans and the questions use, so the three chapters that
+   carry a list carry it the same way. The refusals get a quieter one: a page
+   that sets "what we are" and "what we are not" in matching panels is arguing
+   with itself. */
+.why-card {
+  background: color-mix(in srgb, var(--color-onyx-lift) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 85%, transparent);
+  transition:
+    transform 0.45s var(--ease-out-quint),
+    border-color 0.45s var(--ease-out-quint),
+    background-color 0.45s var(--ease-out-quint);
+}
+.why-card:hover {
+  transform: translateY(-3px);
+  background: color-mix(in srgb, var(--color-onyx-lift) 85%, transparent);
+}
+.why-card--yes:hover { border-color: color-mix(in srgb, var(--color-oceanic) 55%, transparent); }
+.why-card--no {
+  background: color-mix(in srgb, var(--color-onyx) 55%, transparent);
+  border-style: dashed;
+}
+.why-card--no:hover { border-color: color-mix(in srgb, var(--color-ink-dim) 45%, transparent); }
+
+.why-card__ring {
+  border: 1px solid color-mix(in srgb, var(--color-oceanic) 40%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic) 12%, transparent);
+  color: var(--color-oceanic);
+}
+.why-card--no .why-card__ring {
+  border-color: color-mix(in srgb, var(--color-ink-dim) 35%, transparent);
+  background: transparent;
+  color: var(--color-ink-dim);
+}
+
+/* ---------------------------------------------------------------------- faq */
+/* The card look, from 21st.dev's faq-monocrhome: a separated panel per
+   question, a ring holding a plus that turns into a cross, a lift on hover,
+   and a glow that follows the pointer. The element underneath is still a
+   native <details>, so all of this is paint. */
+.faq-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--color-wheat-line);
+  background: var(--color-wheat);
+  box-shadow: 0 24px 60px -46px color-mix(in srgb, var(--color-onyx) 55%, transparent);
+  transition:
+    transform 0.5s var(--ease-out-quint),
+    border-color 0.5s var(--ease-out-quint),
+    box-shadow 0.5s var(--ease-out-quint);
+}
+.faq-card:hover,
+.faq-card:focus-within {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-oceanic-deep) 35%, transparent);
+}
+
+.faq-card__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-out-quint);
+  background: radial-gradient(
+    240px circle at var(--faq-x, 50%) var(--faq-y, 50%),
+    color-mix(in srgb, var(--color-oceanic-deep) 10%, transparent),
+    transparent 70%
+  );
+}
+.faq-card:hover .faq-card__glow,
+.faq-card:has(> .faq[open]) .faq-card__glow { opacity: 1; }
+
+.faq-card__q {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.15rem;
+  cursor: pointer;
+  list-style: none;
+  padding-block: 1.4rem;
+  padding-inline: 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--color-ink-on-light);
+  transition: color 0.3s var(--ease-out-quint);
+}
+.faq-card__q:hover { color: var(--color-oceanic-deep); }
+
+.faq-card__ring {
+  position: relative;
+  display: grid;
+  place-content: center;
+  flex: 0 0 auto;
+  inline-size: 2.6rem;
+  block-size: 2.6rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--color-oceanic-deep) 28%, transparent);
+  background: color-mix(in srgb, var(--color-oceanic-deep) 6%, transparent);
+  color: var(--color-oceanic-deep);
+  transition: transform 0.5s var(--ease-out-quint);
+}
+.faq-card:hover .faq-card__ring { transform: scale(1.06); }
+
+.faq-card__plus {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+  transition: transform 0.5s var(--ease-out-quint);
+}
+
+.faq-card__text { padding-block-start: 0.55rem; }
+
+.faq-card__a {
+  padding-inline: 1.5rem;
+  padding-inline-start: 5.2rem;
+  padding-block-end: 1.6rem;
+}
+
+.faq > summary::-webkit-details-marker { display: none; }
+.faq > summary::marker { content: ""; }
+.faq[open] .faq-card__plus { transform: rotate(45deg); }
+.faq[open] > .faq__a { animation: faq-in 0.44s var(--ease-out-quint) both; }
+@keyframes faq-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------------------------ colophon */
+/* The curtain. `main` paints its own ground and sits above; the colophon is
+   fixed one viewport tall underneath it, and the reveal element after main is
+   the run of scroll that lets it come out. Below md the whole thing returns to
+   ordinary flow: a panel one viewport tall cannot hold a colophon on a phone
+   without cutting the copyright off the bottom. */
+.footer-reveal {
+  position: relative;
+  z-index: 0;
+  block-size: 100vh;
+  block-size: 100svh;
+}
+
+.footer-panel {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  block-size: 100vh;
+  block-size: 100svh;
+  overflow: hidden;
+  background: var(--color-onyx);
+  padding-block: clamp(3rem, 8vh, 5rem);
+}
+
+.footer-aurora {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  inline-size: 80vw;
+  block-size: 60vh;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--color-oceanic-deep) 55%, transparent) 0%,
+    color-mix(in srgb, var(--color-oceanic) 18%, transparent) 40%,
+    transparent 70%
+  );
+  animation: footer-breathe 9s ease-in-out infinite alternate;
+}
+@keyframes footer-breathe {
+  from { transform: scale(1); opacity: 0.55; }
+  to { transform: scale(1.12); opacity: 0.95; }
+}
+
+.footer-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: 60px 60px;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-ink) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-ink) 4%, transparent) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
+}
+
+.footer-wordmark {
+  position: absolute;
+  inset-block-end: -4vh;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-display);
+  font-size: 26vw;
+  font-weight: 900;
+  line-height: 0.75;
+  letter-spacing: -0.05em;
+  color: transparent;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-ink) 11%, transparent) 0%,
+    transparent 62%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.footer-strip {
+  position: absolute;
+  inset-block-start: 9%;
+  inset-inline: -6%;
+  overflow: hidden;
+  border-block: 1px solid color-mix(in srgb, var(--color-onyx-line) 90%, transparent);
+  background: color-mix(in srgb, var(--color-onyx) 55%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding-block: 0.85rem;
+  rotate: -2deg;
+  pointer-events: none;
+}
+.footer-strip__run {
+  display: flex;
+  inline-size: max-content;
+  gap: 2.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--color-ink-dim);
+  animation: footer-marquee 42s linear infinite;
+}
+.footer-strip__item { display: inline-flex; align-items: center; gap: 2.5rem; }
+.footer-strip__dot { color: color-mix(in srgb, var(--color-oceanic) 70%, transparent); }
+@keyframes footer-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.footer-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  margin-block-start: auto;
+  margin-block-end: auto;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: color 0.3s var(--ease-out-quint);
+}
+.footer-brand:hover { color: var(--color-oceanic); }
+
+.footer-tagline {
+  max-inline-size: 22ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 3.1rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  background: linear-gradient(180deg, var(--color-ink) 0%, #cfd9dc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* No 'color: transparent'. The fill override already hides the glyph body
+     in every browser that clips text to a background; declaring the colour
+     transparent as well throws away the fallback for the ones that do not,
+     and leaves the composited-contrast check grading a colour nobody sees. */
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem 2.5rem;
+  margin-block-start: 0.75rem;
+}
+.footer-nav__group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+.footer-nav__label {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--color-oceanic);
+}
+.footer-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The pills are the page's own flow button now; nothing here dresses them. */
+
+.footer-bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block-start: 1.5rem;
+}
+.footer-rights {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-dim);
+}
+.footer-top {
+  display: grid;
+  place-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 9%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+  color: var(--color-ink-soft);
+  transition: color 0.4s var(--ease-out-quint), border-color 0.4s var(--ease-out-quint);
+}
+.footer-top:hover {
+  color: var(--color-ink);
+  border-color: color-mix(in srgb, var(--color-oceanic) 45%, transparent);
+}
+
+@media (max-width: 767px) {
+  .footer-reveal { block-size: auto; }
+  .footer-panel {
+    position: relative;
+    block-size: auto;
+    min-block-size: 0;
+    border-block-start: 1px solid var(--color-onyx-line);
+    gap: 2.5rem;
+  }
+  .footer-wordmark { font-size: 34vw; inset-block-end: -2vh; }
+  .footer-strip { position: static; inset-inline: 0; rotate: -1.5deg; margin-block-end: 1rem; }
+  .footer-body { margin-block: 0; }
+}
+
+/* -------------------------------------------------------------------- grain */
+/* A single film grain over the whole page. The reference's shader is not clean
+   and neither is this one: grain is what keeps a large flat gradient from
+   banding on an 8-bit display. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.038;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

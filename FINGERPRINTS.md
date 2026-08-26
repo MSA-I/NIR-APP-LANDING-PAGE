@@ -97,3 +97,72 @@ row to make a new build fit is the one thing that makes this file worthless.
 - **The plan table**: the only `<table>` on the page, publishing one metric and
   no amount. Reusable as a shape; the pairing of it with a mechanical gate that
   refuses a currency symbol is specific to this product's decision #267.
+
+---
+
+## Build 4 is not a row
+
+`inplace-aui` (26.08.2026) is **row 3 re-surfaced, not a fourth build**, and it
+is recorded here so nobody later mistakes it for one.
+
+The owner's instruction was explicit: keep the content, keep the order, keep how
+it is arranged — the complaint was that the surface was flat. So build 4
+deliberately changes only one of the six dimensions:
+
+| Dimension | Row 3 | Build 4 |
+|---|---|---|
+| Grammar | Chaptered editorial | **unchanged** |
+| Nav treatment | The folio, with the live chapter name | **unchanged** (boxed section links added beside it) |
+| Hero device | A title page, type on the Onyx ground, no media above the fold | **changed**: the same title page over a live WebGL mesh gradient in the product's palette |
+| Act-sequence shape | Title page and six chapters, one scrub | **unchanged** |
+| Close pattern | A colophon | **unchanged** (on the same live ground as the title page) |
+| Signature move | המסירה, the film's handover | **unchanged** |
+
+One of six is nowhere near the four this file asks for, and that is the right
+answer rather than a failure: a re-skin that kept the argument intact is not a
+new build, and writing it in as one would make the registry claim variety this
+repository does not have.
+
+What build 4 spends, for the next build to avoid:
+
+- **The live shader ground.** A WebGL mesh gradient behind a text plate, in the
+  product's own palette rather than the reference's. Reusable as a technique
+  and thoroughly spent as a look: a second build here opening on a moving
+  gradient would read as the same page.
+- **The display-face split.** Heebo 800 for every headline against Noto Sans
+  Hebrew for reading. This is the single change that did the most work, and
+  it is also the least reusable: there are not many Hebrew grotesques that
+  carry a display weight, so a future build gets a different device, not a
+  different display face.
+- **Word-by-word headline entry.** Effective once per page and unbearable twice;
+  spent.
+- **The lesson, again, sharper.** Three defects on this build were invisible to
+  every gate that existed when it started, and each one was caught only by
+  writing the gate that could see it: a headline tint at 2.34:1 on the cream
+  plate, a film that stayed on frame zero for any reader who scrolled past
+  while it was still opening, and crop marks that mirror in RTL because
+  `border-width` shorthand is written top/right/bottom/left. None of them was
+  visible in a screenshot either. Gates measure what you thought to ask, and
+  screenshots show what you thought to look at.
+
+### Round two, and what it spends
+
+The owner's second review replaced five surfaces and re-textured the film. None
+of it changes a registry dimension — the grammar, the folio, the act shape, the
+close and the signature move are all still row 3's — but it does spend things a
+later build should not spend again:
+
+- **Fluted glass as a ground.** A ribbed material rather than a gradient, in the
+  product's own tokens. Reusable as a technique across products; spent as this
+  product's look.
+- **The application's palette as the page's palette.** Not a look at all, a
+  rule: the landing page draws only from `data/product-tokens.json`. Keep it.
+- **The flow button.** A pill whose ground opens from its centre while an arrow
+  crosses it. One button move per page is the budget, and this is it.
+- **The curtain colophon.** The page slides away and the footer is already
+  there. Strong once; a second page here that ends the same way would read as
+  the same page.
+- **The film's materials.** Photographic walnut and photographed uncoated stock,
+  generated at 2K and re-rendered through the world scene. The lesson worth
+  keeping is the one about where that scene lives: it is in an ignored
+  directory, so the film can be rebuilt on exactly one machine.

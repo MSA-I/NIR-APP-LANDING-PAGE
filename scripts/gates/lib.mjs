@@ -26,6 +26,9 @@ const TYPES = {
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.json': 'application/json',
+  '.webp': 'image/webp',
+  '.mp4': 'video/mp4',
+  '.ico': 'image/x-icon',
 }
 
 /** Serve dist/ on an ephemeral port. Returns { origin, close }. */
@@ -37,7 +40,29 @@ export async function serve(root = DIST) {
       const file = path.join(root, rel)
       if (!file.startsWith(root)) throw new Error('escape')
       const body = await readFile(file)
-      res.writeHead(200, { 'content-type': TYPES[path.extname(file)] || 'application/octet-stream' })
+      const type = TYPES[path.extname(file)] || 'application/octet-stream'
+      // Range, because a <video> that cannot be seeked cannot be scrubbed, and
+      // a gate served without it measures the server, not the page. Against a
+      // 200-only server Chrome reports readyState 4 with an EMPTY `seekable`,
+      // and every assignment to currentTime is then dropped in silence.
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '')
+      if (range) {
+        const start = range[1] ? Number(range[1]) : 0
+        const end = range[2] ? Math.min(Number(range[2]), body.length - 1) : body.length - 1
+        res.writeHead(206, {
+          'content-type': type,
+          'accept-ranges': 'bytes',
+          'content-range': `bytes ${start}-${end}/${body.length}`,
+          'content-length': end - start + 1,
+        })
+        res.end(body.subarray(start, end + 1))
+        return
+      }
+      res.writeHead(200, {
+        'content-type': type,
+        'accept-ranges': 'bytes',
+        'content-length': body.length,
+      })
       res.end(body)
     } catch {
       res.writeHead(404).end('not found')
@@ -53,7 +78,20 @@ export async function serve(root = DIST) {
 
 export async function withPage(fn, opts = {}) {
   const srv = await serve()
-  const browser = await chromium.launch({ executablePath: CHROME, headless: true })
+  // SwiftShader, explicitly. Headless Chrome has no GPU on this machine, and
+  // without these flags the shader ground renders as black: every contrast
+  // reading over the title page would then be taken against a colour the
+  // reader never sees.
+  const browser = await chromium.launch({
+    executablePath: CHROME,
+    headless: true,
+    args: [
+      '--use-gl=angle',
+      '--use-angle=swiftshader',
+      '--enable-unsafe-swiftshader',
+      '--ignore-gpu-blocklist',
+    ],
+  })
   const ctx = await browser.newContext({
     viewport: opts.viewport || { width: 1440, height: 900 },
     reducedMotion: opts.reducedMotion,

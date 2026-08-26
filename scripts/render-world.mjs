@@ -30,7 +30,7 @@ const H = +arg('h', MOBILE ? 1440 : 1080)
 const FPS = +arg('fps', FAST ? 8 : 24)
 const RATE = +arg('rate', 0.215)          // viewport-heights of scroll per second of film
 const SUFFIX = MOBILE ? '-m' : ''
-const OUT = path.resolve(arg('out', 'assets'))
+const OUT = path.resolve(arg('out', 'public/assets'))
 const TMP = path.resolve('lab/world/frames' + SUFFIX)
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
 const WORLD = pathToFileURL(path.resolve('lab/world/world.html')).href
@@ -154,7 +154,13 @@ for (let i = 0; i < LEGS.length; i++) {
     '-framerate', String(FPS),
     '-i', path.join(dir, '%04d.png'),
     '-an',                                   // scrub clips never carry audio
-    '-c:v', 'libx264', '-preset', 'slow', '-crf', MOBILE ? '23' : '21',
+    // 26/28, not 21/23. The photographic desk and paper the film gained on
+    // 26.08.2026 are high-frequency, and x264 spends bits on grain the eye
+    // never sees in motion: at 21 the same four legs came out 3.3x heavier
+    // than the flat-textured ones they replaced. Measured on leg 01 at 1920x1080,
+    // slow preset: crf 21 = 8.05MB, 24 = 4.89MB, 26 = 3.47MB, 28 = 2.47MB, and
+    // the three are indistinguishable at a 760x420 crop of the closest paper.
+    '-c:v', 'libx264', '-preset', 'slow', '-crf', MOBILE ? '28' : '26',
     '-pix_fmt', 'yuv420p',
     '-g', String(gop), '-keyint_min', String(gop), '-sc_threshold', '0',
     '-movflags', '+faststart',

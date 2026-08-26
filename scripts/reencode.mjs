@@ -23,7 +23,7 @@ const MOBILE = has('mobile')
 const CRF = arg('crf', MOBILE ? '29' : '27')
 const SUFFIX = MOBILE ? '-m' : ''
 const FRAMES = path.resolve('lab/world/frames' + SUFFIX)
-const OUT = path.resolve('assets')
+const OUT = path.resolve('public/assets')
 const GOP = MOBILE ? 4 : 8
 
 const legs = (await readdir(FRAMES, { withFileTypes: true }))

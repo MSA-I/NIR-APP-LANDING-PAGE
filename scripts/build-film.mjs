@@ -21,7 +21,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const A = (f) => path.join(ROOT, 'assets', f)
+const A = (f) => path.join(ROOT, 'public', 'assets', f)
 const ff = (...args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args], { stdio: 'inherit' })
 
 // Leg 04 runs 8.375s. At 5.5s the control centre is at its largest and most

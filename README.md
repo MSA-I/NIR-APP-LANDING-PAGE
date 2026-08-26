@@ -3,45 +3,87 @@
 Hebrew-first, RTL landing page for **InPlace**, the procurement-to-payment
 control system in [MSA-I/NIR-APP](https://github.com/MSA-I/NIR-APP).
 
-Static HTML built by one Node script. No framework, no database, no
-credentials, nothing that can reach production. The only runtime dependency is
-`playwright-core`, and only for the verification harness.
-
-This repository replaces the earlier Astro marketing site. That site is
-preserved on the `archive/astro-site` branch; nothing was deleted.
+React 19 + Vite + Tailwind v4 + Motion. No database, no credentials, nothing
+that can reach production. `playwright-core` is a dev dependency and only the
+verification harness uses it.
 
 ---
 
 ## What it is
 
-The page is a **printed feature**: a title page and six chapters.
-Chapters are the unit, they hard-cut between grounds, and only one of them
-carries motion.
+The page is a **printed feature**: a title page and six chapters. Chapters are
+the unit, they hard-cut between grounds, and only one of them carries a scroll.
 
 | | Chapter | Ground | What it does |
 |---|---|---|---|
-| — | שער | Onyx | What this is, the ask, and an index of the six chapters |
-| 01 | מהערימה למרכז הבקרה | Onyx | A 27.6s scrubbed film, the one place the scroll engine is used. Four copy blocks travel beside it |
+| — | שער | Onyx, live | What this is, the ask, and an index of the six chapters, over a fluted-glass shader |
+| 01 | מהערימה למרכז הבקרה | Onyx | A 27.6s scrubbed film. Four copy blocks travel beside it while it stays |
 | 02 | מה המערכת עושה | Wheat, then Onyx | Five stations, five real product screens you can click through from the product's own navigation, then the control centre in full |
 | 03 | למה דווקא זה | Onyx | What InPlace does, against what it refuses to be |
-| 04 | מסלולים | Onyx | Five plans, one published usage metric, the launch prices |
-| 05 | שאלות | Wheat | Seven answers, as native `<details>` |
-| 06 | להתחיל | Onyx | The one ask |
+| 04 | מסלולים | Onyx | Five plan cards, one published usage metric each, the launch prices |
+| 05 | שאלות | Wheat | Seven answers, as native `<details>` in monochrome panels |
+| 06 | להתחיל | Onyx, live | The one ask, on the ground the page opened on |
 
-About 15 viewport-heights. The design intent, the interview it came from and
-the feeling curve are in [BRIEF.md](BRIEF.md); the acceptance ledger with its
-evidence is [GATES.md](GATES.md); the build's registry row is
-[FINGERPRINTS.md](FINGERPRINTS.md).
+The design intent and the interview it came from are in [BRIEF.md](BRIEF.md);
+the acceptance ledger with its evidence is [GATES.md](GATES.md); the build's
+registry row is [FINGERPRINTS.md](FINGERPRINTS.md).
+
+### Build 4, and what changed
+
+Build 3 (`inplace-folio`, static HTML from one Node script) had already taken
+the reference's **layout** — aui.io's bounded page, its inset plates, one very
+large display size per chapter, a small accent label above it. The owner's
+verdict on it was that the layout was right and the surface was not: "הכל נורא
+שטוח ובסיסי".
+
+Build 4 keeps build 3's copy **verbatim** and rebuilds the surface. The list
+below is the second cut, after the owner's review of 26.08.2026:
+
+- A **WebGL fluted-glass shader** behind the title page and the close, from
+  [21st.dev](https://21st.dev/@paper-design/components/fluted-glass-folds)
+  (Paper Shaders, Apache-2.0). Ribbed panes with a slow fold travelling through
+  them, painted in the running application's own tokens — shell → action →
+  action-line → topbar. It does **not** answer the pointer: the cursor branch
+  and its listeners are removed from the component, not switched off.
+- A **display typeface**. Headlines are Heebo 800; reading copy stays Noto Sans
+  Hebrew. Both self-hosted, two subsets each, no third-party font request.
+- **The application's palette**, converted from the OKLCH tokens in
+  `data/product-tokens.json`. The first cut used a turquoise (#38b3c0) the
+  product does not contain.
+- **Entrance motion** on every chapter: headlines arrive word by word, blocks
+  rise and clear as they enter.
+- **The flow button** ([21st.dev](https://21st.dev/@xubohuah/components/flow-button)):
+  the ground opens out of the button's centre, the label slides forward, an
+  arrow crosses. Rewritten on logical properties so it runs the right way in
+  Hebrew.
+- **Plans as cards** ([21st.dev](https://21st.dev/@uilayout.contact/components/pricing-section-3)),
+  **FAQ as monochrome panels** ([21st.dev](https://21st.dev/@larsen66/components/faq-monocrhome)),
+  and a **curtain colophon** ([21st.dev](https://21st.dev/@easemize/components/motion-footer)),
+  all repainted in the product's colours. The colophon is rebuilt on Motion
+  rather than GSAP, and the FAQ keeps its native `<details>` underneath.
+- **Crop marks** on every plate, which is the reference's printer's
+  registration and the one piece of its decoration worth copying.
+- **A re-textured film.** Chapter 01's desk is a photographic dark walnut and
+  its documents are photographed uncoated stock, both generated at 2K
+  (Higgsfield, GPT Image 2) and re-rendered through the world scene.
+
+Build 3's sources are parked, unedited, in `archive/build3/`. Nothing was
+deleted. The copy in `src/content/he.ts` is a byte-for-byte carry of
+`archive/build3/i18n/he.js`, and G2 fails the ledger on any drift.
 
 ### The film, and the handover
 
 A stack of supplier documents comes down, two numbers for one supplier
 contradict each other, and the camera lifts off the floor toward something lit
 in the dark. Then the film does not cut, it hands over: it dissolves out of the
-world and into the product's own control centre, filling the frame head-on, and from that
-second on every pixel on the page is a screenshot of the running system. The
-last frame of `assets/film.mp4` and the first product screen the reader meets
-are deliberately the same screen.
+world and into the product's own control centre, and from that second on every
+pixel on the page is a screenshot of the running system. The last frame of
+`public/assets/film.mp4` and the first product screen the reader meets are
+deliberately the same screen.
+
+Build 3 drove that clip through the scrollcraft engine (56KB of vanilla scroll
+machinery). Build 4 drives it with one scroll progress and one assignment to
+`currentTime`, so the engine is not carried over.
 
 That clip is built, not hand-cut:
 
@@ -49,9 +91,10 @@ That clip is built, not hand-cut:
 node scripts/build-film.mjs
 ```
 
-Legs are stream-copied from `assets/0{1,2,3,4}.mp4`; only the 1.6s dissolve at
-the end is encoded. Re-encoding the whole clip was tried and produced 18.6MB of
-worse pixels, because a dense-GOP pass over already-compressed video pays twice.
+Legs are stream-copied from `public/assets/0{1,2,3,4}.mp4`; only the 1.6s
+dissolve at the end is encoded. Re-encoding the whole clip was tried and
+produced 18.6MB of worse pixels, because a dense-GOP pass over already
+compressed video pays twice.
 
 ---
 
@@ -62,15 +105,19 @@ npm install
 ```
 
 ```bash
+npm run dev
+```
+
+```bash
 npm run build
 ```
 
 ```bash
-npm run serve
+npm run preview
 ```
 
-The page is then at <http://localhost:4500>. `npm run build` writes `dist/`,
-which is not committed.
+`npm run dev` serves on <http://localhost:4501>, `npm run preview` serves the
+built `dist/` on <http://localhost:4500>. `dist/` is not committed.
 
 ## Verify it
 
@@ -78,14 +125,22 @@ which is not committed.
 node scripts/gates/all.mjs
 ```
 
-Four gates, about 20 seconds, and it exits non-zero on any failure.
+Twelve gates, about ninety seconds, non-zero on any failure.
 
 | Gate | What it measures |
 |---|---|
-| G4 | RTL is carried by logical properties only. Runs a control fixture first to prove the scanner fires |
-| G6 | No horizontal overflow, at eight scroll positions across four widths |
-| G7 | Text contrast on the composited render, both grounds. Plants an unreadable line and confirms it is caught |
-| G14 | This build's own behaviour: the chapters, the chain, the film's playhead, the folio, the single CTA, the FAQ, the footer, the prices, the keyboard path and reduced motion |
+| G2 | The copy is build 3's copy, leaf by leaf |
+| G3 | Every shader colour is a token the application defines, and no pointer code survives |
+| G4 | Direction is logical-only, in the CSS **and** in the class names |
+| G6 | No horizontal overflow, eight scroll positions across four widths |
+| G7 | Text contrast on the composited render, over the moving ground included |
+| G8 | Seven chapters, in the printed order |
+| G9 | The display face is loaded and the headlines are actually set in it |
+| G10 | The film's playhead follows the scroll |
+| G11 | The chain switches panels; 25 hotspots land where the navigation is |
+| G12 | `prefers-reduced-motion` stops the shader, the film and every transition |
+| G13 | The keyboard reaches everything, and every stop shows a ring |
+| G14 | The published figures are the launch catalogue; legal links on the app host |
 
 One gate by id:
 
@@ -96,13 +151,12 @@ node scripts/gates/all.mjs g7
 Screenshots at chosen scroll fractions, desktop or phone:
 
 ```bash
-node scripts/peek.mjs --url http://localhost:4500 --out lab/peek --at 0,0.25,0.5,0.75,1
+node scripts/peek.mjs --out lab/build4 --at 0,0.25,0.5,0.75,1
 ```
 
 **A green run is not the whole check.** Look at the frames. Every gate measures
-what somebody thought to ask; four real defects in this build were invisible to
-all of them and obvious in the first screenshot, and they are listed in
-[GATES.md](GATES.md).
+what somebody thought to ask, and [GATES.md](GATES.md) ends with the three
+things on this page that nothing measures.
 
 ---
 
@@ -110,61 +164,14 @@ all of them and obvious in the first screenshot, and they are listed in
 
 | Path | What it is |
 |---|---|
-| `src/page.mjs` | The page, as one function of a dictionary |
-| `i18n/he.js` | All copy and every figure, with the source of each in a comment |
-| `site.css` | The page's own layer. Logical properties only, enforced by G4 |
-| `surface.js` | The folio and the chain. No scroll loop, no animation frame |
-| `engine/` | scrollcraft, copied verbatim. Never edited per-project |
-| `assets/` | The film, its poster, the product screens, the Hebrew subset of Noto Sans |
-| `scripts/build.mjs` | The build. One locale in, one static file out |
-| `scripts/build-film.mjs` | Rebuilds chapter 01's clip from the world legs |
-| `scripts/capture-demo.mjs` | Re-captures the five screens and MEASURES their nav boxes into `data/demo-nav.json` |
-| `data/demo-nav.json` | Where each nav item sits in each capture. The demo hotspots are placed from this |
-| `scripts/gates/` | The acceptance ledger, one file per gate, plus control fixtures |
-| `lab/app-reference/` | Screenshots of the running product. Every figure on the page is read off these |
-| `archive/` | Previous builds' briefs, locales and gates, kept rather than deleted |
-
----
-
-## Before you edit
-
-**No invented figures.** Every number on the page is read off a capture in
-`lab/app-reference/` or a migration in the product repo, and the comment block
-at the top of `i18n/he.js` names the source of each one. The page used to print
-those sources for the visitor; that was removed as noise, so the comment block
-is now the only place they live. Keep it true.
-
-**The prices come from the product's catalogue, not from taste.** They are the
-`launch-il` rows of `0184_launch_plan_and_price_catalogue.sql`. G14 asserts that
-the set of amounts on the page equals that catalogue exactly, so a hand-edited
-price fails the build rather than shipping.
-
-**No em-dash in anything a visitor can see**, including image `alt` text.
-Hebrew takes a colon, a comma, a period or parentheses everywhere the dash was
-doing the work.
-
-**Status colour carries business meaning, never decoration.** done / await /
-alert / info / idle, inherited from the product. A metric with no data renders
-a rule, never a zero, because zero is a claim about reality.
-
-**Nothing inside a product screenshot is recoloured**, and they are shown
-whole. The hotspots in chapter 02 are positioned from measurements taken off
-the running app, so a crop or a changed aspect ratio silently moves them onto
-the wrong menu item. G14 checks every one against `data/demo-nav.json` and
-fails on a drift over 0.5%. After re-capturing, run `capture-demo.mjs`, never
-just replace the image.
-
----
-
-## One thing that must be true before this goes live
-
-**The quota migration has to deploy first.** The plans table publishes
-The plans table publishes 20 / 40 / 150 / 375 documents per month, which are
-decision #266's values. That decision is merged but not deployed, and
-production still stands on migration `0170` with 25 / 50 / 200 / 500.
-Publishing a quota the running system does not enforce is the one thing this
-page must not do.
-
-Prices are published here by owner instruction of 26.08.2026, which reverses
-decision #267 for this page only. #267 still governs the product's own
-`Pricing.tsx` and the `fix/no-public-prices-20260825` branch in NIR-APP.
+| `index.html` | The document shell: title, description, favicons, font preloads |
+| `src/App.tsx` | The page, as one function of the dictionary |
+| `src/content/he.ts` | All copy and every figure, with the source of each in a comment |
+| `src/styles.css` | Tokens, the two faces, the plate, the crop marks, the buttons |
+| `src/lib/motion.tsx` | The whole motion vocabulary: three moves, and no more |
+| `src/components/ShaderBackground.tsx` | The WebGL ground, repainted from 21st.dev |
+| `src/components/*Chapter.tsx` | One file per chapter |
+| `src/data/demo-nav.json` | The product's own navigation boxes, measured off the running app |
+| `public/assets/` | The film, its poster, the product screens, both typefaces |
+| `scripts/gates/` | The harness behind [GATES.md](GATES.md) |
+| `archive/build3/` | Build 3 entire, unedited: page, styles, engine, its own ledger |
