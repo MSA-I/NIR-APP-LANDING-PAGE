@@ -12,22 +12,16 @@ const c = checker('G7')
 // Every text-bearing selector on the page, with the AA threshold it must clear.
 // 3:1 is only for text that is genuinely large (>=24px, or >=18.66px bold).
 const TARGETS = [
-  '.h', '.h--sm', '.lede', '.note', '.eyebrow',
-  '.card__title', '.card__meta',
-  '.open__ref', '.open__note', '.open__foot',
-  '.help__body', '.ctanote',
-  '.tbl th', '.tbl td', '.pill',
-  '.calc__row', '.calc__total span', '.calc__total b',
-  '.match__k', '.match__v',
-  '.gap__k', '.gap__v', '.gap__delta', '.hold',
-  '.doc__ref', '.doc__kind', '.doc__match',
-  '.peakstat b', '.peakstat span',
-  '.role__name', '.role__list li', '.role__k',
-  '.steps__k', '.money',
-  '.recap li', '.trial__label', '.trial input',
-  '.foot', '.foot a', '.foot__claims',
-  '.statusbar__label', '.statusbar__value', '.chip-demo', '.ledger-toggle',
-  '.rail__stop', '.rail__head', '.rail__mark',
+  '.h-hero', '.h-big', '.h-mid', '.h-step', '.h-sub',
+  '.eyebrow', '.lede', '.body', '.cap', '.fig', '.fineprint',
+  '.folio__brand', '.folio__where',
+  '.index__label', '.index__n', '.index__t', '.index__d',
+  '.tab', '.tab__n',
+  '.film-plate__cap',
+  '.stat__v', '.stat__l',
+  '.apparatus-list__lede', '.note__id', '.note__t', '.note__s',
+  '.apparatus__id', '.apparatus__t', '.apparatus__s',
+  '.footrule p',
   '.btn',
 ]
 
@@ -218,12 +212,14 @@ await withPage(async (page) => {
   // ---- positive control ---------------------------------------------------
   // A clean sweep is only meaningful if the sweep can fail. Plant a line that
   // is genuinely unreadable and confirm the same measurement path catches it.
-  await scrollTo(page, 0)
+  await scrollTo(page, 0.72)   // the cream plate has to be on screen to be the ground
   const control = await page.evaluate(() => {
-    const host = document.querySelector('.card')
+    // The cream plate in chapter 02 is the light ground on this page, so a
+    // near-white line planted there is genuinely unreadable.
+    const host = document.querySelector('.plate')
     const bad = document.createElement('p')
-    bad.className = 'h--sm'
-    bad.style.color = 'oklch(0.94 0.01 80)' // near-white, on a near-white card
+    bad.className = 'lede'
+    bad.style.color = 'oklch(0.97 0.01 80)' // near-white, on the wheat plate
     bad.textContent = 'control'
     host.appendChild(bad)
 

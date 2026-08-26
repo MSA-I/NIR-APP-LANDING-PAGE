@@ -1,64 +1,95 @@
-// One template, three locales. The page is a worldflight: one fixed stage,
-// nine legs, one spacer, and nothing else in document flow.
+// Build 3 — `inplace-folio`. Chaptered editorial.
 //
-// The leg weights here MUST match scripts/render-world.mjs. The renderer slices
-// one continuous camera by the same cumulative fractions the engine uses to lay
-// out the track, which is what makes every seam exact instead of matched.
-
-export const LEGS = [
-  { id: '01', w: 1.5, linger: 0.20 },
-  { id: '02', w: 1.5, linger: 0.25 },
-  { id: '03', w: 1.4, linger: 0.15 },
-  { id: '04', w: 1.8, linger: 0.42 },
-  { id: '05', w: 1.8, linger: 0.18 },
-  { id: '06', w: 2.6, linger: 0.45 },   // the peak
-  { id: '07', w: 1.4, linger: 0.40 },
-  { id: '08', w: 1.4, linger: 0.20 },
-  { id: '09', w: 1.6, linger: 0.48 },
-]
+// The page is a printed feature with three chapters and a title page. Chapters
+// are the unit; there are no acts anywhere except chapter 01, which is the one
+// chapter allowed a scrub under this grammar.
+//
+// The engine owns exactly one thing here: the film in chapter 01. Everything
+// else is ordinary document flow, because a chaptered page IS ordinary document
+// flow — that is the whole difference from build 2, which had no flow at all.
 
 const esc = (s) => String(s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;')
 
-// Copy is authored as plain strings with <strong> allowed, so it goes through
-// unescaped on purpose; every string is written in this repo, none is user
-// input.
+// Copy is authored in this repo with <b>, <em> and &nbsp; allowed, so it goes
+// through unescaped on purpose. None of it is user input.
 const raw = (s) => String(s)
+
+// The film is legs 01-03 of build 2's world plus the first half of leg 04,
+// stream-copied into one clip. 593 frames at 24fps = 24.71s, one continuous
+// camera: the stack standing, leaning and coming down; the two contradicting
+// numbers lighting up on the fallen pages; the lift off the floor toward the
+// lit thing in the dark; and the cut lands mid-reveal of the control centre,
+// which is where the owner asked it to end.
+//
+// Paced at build 2's measured 0.215 viewport-heights per second of film.
+const FILM_SPAN = 5.3
 
 export function render(t) {
   const rtl = t.dir === 'rtl'
-  const legs = LEGS.map((l, i) => ({ ...l, label: t.map[i] }))
 
-  const segments = legs.map((l) => `
-        <div data-sc-segment data-sc-w="${l.w}" data-sc-linger="${l.linger}"
-             data-sc-waypoint="${esc(l.label)}">
-          <img class="sc-world__poster" src="assets/${l.id}.webp" alt="" decoding="async">
-          <video data-sc-src="assets/${l.id}.mp4"
-                 data-sc-src-mobile="assets/${l.id}-m.mp4"
-                 playsinline muted preload="none"></video>
+  const index = t.title_page.index.map((c) => `
+            <li class="index__row">
+              <span class="index__n">${esc(c.n)}</span>
+              <span class="index__t">${esc(c.t)}</span>
+              <span class="index__d">${esc(c.d)}</span>
+            </li>`).join('')
+
+  // Each block gets its own slot. The slot is what gives the sticky block a
+  // containing block of exactly one quarter of the act: a sticky grid item
+  // clamps against the whole track in Chrome, not against its own row, and all
+  // four blocks then pile up at the same offset.
+  const filmBlocks = t.film.blocks.map((b) => `
+        <div class="read__slot">
+          <div class="read__block">
+            <h2 class="h-mid">${raw(b.h)}</h2>
+            <p class="body">${raw(b.p)}</p>
+          </div>
         </div>`).join('')
 
-  const stops = legs.map((l, i) => `
-          <li><button class="ip-map__stop" type="button" data-leg="${i}"
-                      aria-current="${i === 0}">
-            <span class="ip-map__label">${esc(l.label)}</span>
-          </button></li>`).join('')
+  const tabs = t.what.steps.map((s, i) => `
+            <button class="tab" role="tab" type="button" id="tab-${i}"
+                    aria-selected="${i === 0}" aria-controls="panel-${i}"
+                    tabindex="${i === 0 ? 0 : -1}">
+              <span class="tab__n">0${i + 1}</span>
+              <span class="tab__k">${esc(s.k)}</span>
+            </button>`).join('')
 
-  const blocks = t.copy.map((c) => `
-        <div class="ip-copy ${c.at}" data-sc-copy data-sc-window="${c.win}">
-          ${c.kicker ? `<p class="ip-kicker">${raw(c.kicker)}</p>` : ''}
-          ${c.h1 ? `<h1 class="ip-h1">${raw(c.h1)}</h1>` : ''}
-          ${c.h2 ? `<h2 class="ip-h2">${raw(c.h2)}</h2>` : ''}
-          ${c.line ? `<p class="ip-line">${raw(c.line)}</p>` : ''}
-          ${c.lede ? `<p class="ip-lede">${raw(c.lede)}</p>` : ''}
-        </div>`).join('')
+  const panels = t.what.steps.map((s, i) => `
+          <div class="panel" role="tabpanel" id="panel-${i}" aria-labelledby="tab-${i}"${i === 0 ? '' : ' hidden'}>
+            <div class="panel__say">
+              <h3 class="h-step">${raw(s.t)}</h3>
+              <p class="body">${raw(s.p)}</p>
+            </div>
+            <figure class="panel__shot shot">
+              <div class="shot__frame">
+                <img src="${esc(s.img)}" alt="${esc(s.t)} — מסך מתוך InPlace"
+                     width="2000" height="1334" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">
+              </div>
+              <figcaption class="cap">${raw(s.cap)}</figcaption>
+            </figure>
+          </div>`).join('')
 
-  const alts = (t.alternates || []).map((a) =>
-    `<link rel="alternate" hreflang="${a.code}" href="${a.href}">`).join('\n  ')
+  const stats = t.board.stats.map((s) => `
+            <div class="stat">
+              <p class="stat__v ip-num"><b class="fig" data-note="${esc(s.note)}">${esc(s.v)}</b></p>
+              <p class="stat__l">${esc(s.l)}</p>
+            </div>`).join('')
 
-  const langs = (t.alternates || []).map((a) =>
-    `<a href="${a.href}" hreflang="${a.code}" aria-current="${a.code === t.code}">${a.code.toUpperCase()}</a>`).join('')
+  const notes = t.notes.map((n) => `
+            <li class="note" id="note-${esc(n.id)}">
+              <span class="note__id">${esc(n.id)}</span>
+              <span class="note__t ip-num">${esc(n.t)}</span>
+              <span class="note__s">${esc(n.s)}</span>
+            </li>`).join('')
+
+  const asks = (variant) => `
+        <div class="asks asks--${variant}">
+          <a class="btn btn--primary" href="${esc(t.ctaPrimaryHref)}">${esc(t.ctaPrimary)}</a>
+          <a class="btn btn--ghost" href="${esc(t.ctaSecondaryHref)}">${esc(t.ctaSecondary)}</a>
+        </div>
+        <p class="fineprint">${esc(t.fineprint)}</p>`
 
   return `<!doctype html>
 <html lang="${t.htmlLang}" dir="${t.dir}">
@@ -67,79 +98,167 @@ export function render(t) {
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${esc(t.title)}</title>
   <meta name="description" content="${esc(t.description)}">
-  <meta name="theme-color" content="#04080b">
+  <meta name="theme-color" content="#0a171d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230a171d'/%3E%3Cpath fill='%2338b3c0' d='M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z'/%3E%3C/svg%3E">
   <meta property="og:title" content="${esc(t.title)}">
   <meta property="og:description" content="${esc(t.description)}">
   <meta property="og:type" content="website">
-  ${alts}
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="assets/fonts/NotoSansHebrew-${rtl ? 'Hebrew' : 'Latin'}.woff2">
-  <link rel="preload" as="image" href="assets/01.webp" fetchpriority="high">
   <link rel="stylesheet" href="engine/scrollcraft.css">
   <link rel="stylesheet" href="site.css">
 </head>
 <body>
-  <a class="ip-skip" href="#ask">${esc(t.skip)}</a>
+  <a class="skip" href="#what">${esc(t.skip)}</a>
 
-  <a class="ip-brand" href="/">
-    <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-      <path d="M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z" opacity=".92"/>
-    </svg>
-    InPlace
-  </a>
+  <header class="folio" aria-label="${esc(t.folioLabel)}">
+    <a class="folio__brand" href="/">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+        <path d="M3 3h8.5v8.5H3V3zm9.5 9.5H21V21h-8.5v-8.5zM12.5 3H21v7.5h-8.5V3zM3 12.5h8.5V21H3v-8.5z" opacity=".92"/>
+      </svg>
+      ${esc(t.brand)}
+    </a>
+    <p class="folio__where" data-folio-out>${esc(t.title_page.folio)}</p>
+    <a class="btn btn--primary btn--sm folio__ask" href="${esc(t.ctaPrimaryHref)}">${esc(t.ctaPrimary)}</a>
+  </header>
 
-  <nav class="ip-langs" aria-label="${esc(t.langsLabel)}">${langs}</nav>
+  <main>
 
-  <div data-sc-mode="worldflight" data-sc-seam="0.16" data-sc-lerp="0.12"
-       role="main" aria-label="${esc(t.title)}">
+    <!-- ============================================================ title page -->
+    <section class="ch ch--title" data-folio="${esc(t.title_page.folio)}">
+      <div class="wrap">
+        <p class="eyebrow">${esc(t.title_page.eyebrow)}</p>
+        <h1 class="h-hero">${raw(t.title_page.h1)}</h1>
+        <div class="title__body">
+          <div class="title__say">
+            <p class="lede">${raw(t.title_page.lede[0])}</p>
+            <p class="lede">${raw(t.title_page.lede[1])}</p>
+          </div>
+          <div class="title__ask">${asks('title')}
+          </div>
+        </div>
 
-    <div data-sc-world>${segments}
-    </div>
+        <nav class="index" aria-label="${esc(t.title_page.indexLabel)}">
+          <p class="index__label">${esc(t.title_page.indexLabel)}</p>
+          <ul class="index__list">${index}
+          </ul>
+        </nav>
+      </div>
+    </section>
 
-    <div data-sc-world-copy>
-${blocks}
-    </div>
+    <!-- ============================================================= chapter 01 -->
+    <section class="ch ch--film" data-folio="${esc(t.film.folio)}"
+             data-sc-act="scrub" data-sc-span="${FILM_SPAN}">
+      <div class="read">${filmBlocks}
+      </div>
+      <div class="sc-stage film-stage">
+        <figure class="film-plate">
+          <div class="film-plate__frame">
+            <img class="sc-stage__poster" src="assets/film.webp" alt=""
+                 decoding="async" fetchpriority="high">
+            <video data-sc-scrub
+                   data-sc-src="assets/film.mp4"
+                   data-sc-src-mobile="assets/film-m.mp4"
+                   playsinline muted preload="none"
+                   aria-label="${esc(t.film.caption)}"></video>
+          </div>
+          <figcaption class="film-plate__cap">${esc(t.film.caption)}</figcaption>
+        </figure>
+      </div>
+    </section>
 
-    <div data-sc-spacer aria-hidden="true"></div>
-  </div>
+    <!-- ============================================================= chapter 02 -->
+    <section class="ch ch--what" id="what" data-folio="${esc(t.what.folio)}">
+      <div class="plate">
+        <div class="wrap">
+          <header class="say">
+            <p class="eyebrow eyebrow--on-light">${esc(t.what.eyebrow)}</p>
+            <h2 class="h-big">${raw(t.what.h2)}</h2>
+            <p class="lede">${esc(t.what.lede)}</p>
+          </header>
 
-  <nav class="ip-map" aria-label="${esc(t.mapLabel)}">
-    <div class="ip-map__rule" aria-hidden="true"></div>
-    <div class="ip-map__run" aria-hidden="true"></div>
-    <ul class="ip-map__list">${stops}
-    </ul>
-  </nav>
+          <div class="tabs" role="tablist" aria-label="${esc(t.what.h2).replace(/&nbsp;/g, ' ')}">${tabs}
+          </div>
 
-  <aside class="ip-doc" id="ask" aria-label="${esc(t.doc.label)}">
-    <p class="ip-doc__kind">${esc(t.doc.kind)}</p>
-    <p class="ip-doc__sup">${esc(t.doc.supplier)}</p>
-    <p class="ip-doc__amt ip-num">${esc(t.doc.amount)}</p>
-    <div class="ip-doc__rule" aria-hidden="true"></div>
-    <p class="ip-doc__state" data-doc-state>${esc(t.doc.states[0].text)}</p>
-    <div class="ip-doc__ask">
-      <a class="ip-btn ip-btn--primary" href="${esc(t.ctaPrimaryHref)}">${esc(t.ctaPrimary)}</a>
-      <a class="ip-btn ip-btn--ghost" href="${esc(t.ctaSecondaryHref)}">${esc(t.ctaSecondary)}</a>
-      <p class="ip-fineprint">${esc(t.fineprint)}</p>
-      <nav class="ip-langs ip-langs--close" aria-label="${esc(t.langsLabel)}">${langs}</nav>
-    </div>
+          <div class="panels">${panels}
+          </div>
+        </div>
+      </div>
+
+      <div class="board">
+        <div class="wrap">
+          <header class="say say--board">
+            <p class="eyebrow">${esc(t.board.eyebrow)}</p>
+            <h2 class="h-big">${raw(t.board.h2)}</h2>
+            <p class="lede">${esc(t.board.p)}</p>
+          </header>
+          <div class="stats">${stats}
+          </div>
+          <figure class="board__shot shot">
+            <div class="shot__frame">
+              <img src="${esc(t.board.img)}" alt="מרכז הבקרה של InPlace — מסך מתוך המערכת"
+                   width="2000" height="1334" loading="lazy" decoding="async">
+            </div>
+            <figcaption class="cap">${esc(t.board.cap)}</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= chapter 03 -->
+    <section class="ch ch--close" data-folio="${esc(t.close.folio)}">
+      <div class="wrap">
+        <div class="colophon">
+          <div class="colophon__say">
+            <h2 class="h-big">${raw(t.close.h2)}<em class="h-sub">${raw(t.close.sub)}</em></h2>
+            <p class="lede">${esc(t.close.p)}</p>
+            ${asks('close')}
+          </div>
+
+          <div class="apparatus-list">
+            <p class="eyebrow">${esc(t.notesLabel)}</p>
+            <p class="apparatus-list__lede">${esc(t.notesLede)}</p>
+            <ol class="notes">${notes}
+            </ol>
+          </div>
+        </div>
+
+        <footer class="footrule">
+          <p dir="ltr">${esc(t.footer.rights)}</p>
+          <p>${esc(t.footer.tagline)}</p>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- The signature move. A live footnote strip: every real figure in the
+       running copy is a numbered source, and the strip names the source of the
+       figure the reader is standing on. The <ol> above is the same apparatus,
+       complete, and is what a reader without JS or with a screen reader gets. -->
+  <aside class="apparatus" data-apparatus hidden aria-hidden="true">
+    <span class="apparatus__id" data-apparatus-id>1</span>
+    <span class="apparatus__body">
+      <b class="apparatus__t ip-num" data-apparatus-t></b>
+      <span class="apparatus__s" data-apparatus-s></span>
+    </span>
   </aside>
 
   <noscript>
     <style>
-      .sc-world, .ip-map, .ip-doc { display: none !important; }
-      .ip-copy { position: static; opacity: 1 !important; max-width: none; }
-      .ip-copy::before { display: none; }
-      body { display: block; }
+      .film-stage { position: static !important; height: auto !important; }
+      .film-stage__media { position: static !important; inset: auto !important;
+                           width: 100% !important; height: auto !important; }
+      video.film-stage__media { display: none !important; }
+      .ch--film { display: block !important; height: auto !important; }
+      .panel[hidden] { display: block !important; }
+      .tabs { display: none !important; }
+      .apparatus { display: none !important; }
     </style>
-    <div class="ip-nojs">
-      <h1 class="ip-h2">${raw(t.copy[0].h1)}</h1>
-      <p class="ip-lede">${raw(t.copy[0].lede)}</p>
-      <p class="ip-lede">${raw(t.noscript)}</p>
-      <p><a class="ip-btn ip-btn--primary" href="${esc(t.ctaPrimaryHref)}">${esc(t.ctaPrimary)}</a></p>
-    </div>
+    <p class="noscript">${esc(t.noscript)}</p>
   </noscript>
 
-  <script>window.IP_DOC_STATES = ${JSON.stringify(t.doc.states)};</script>
+  <script>window.IP_NOTES = ${JSON.stringify(t.notes)};</script>
   <script src="engine/scrollcraft.js" defer></script>
   <script src="surface.js" defer></script>
   <script defer>addEventListener('DOMContentLoaded', function () { ScrollCraft.mount(document.body); });</script>

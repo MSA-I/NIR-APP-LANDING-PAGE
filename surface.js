@@ -1,236 +1,165 @@
 /* ============================================================================
-   InPlace — the page's own behaviour. The engine is never touched.
+   InPlace build 3 — the page's own behaviour.
+   ----------------------------------------------------------------------------
+   Three things, none of which belong in the engine:
 
-   Two things live here:
+     1. the folio        which chapter the reader is in, and which ground the
+                         bar is currently sitting on
+     2. the tabs         chapter 02's five steps
+     3. the apparatus    the signature move: a live footnote
 
-     1. THE MAP. A continuous world's navigation is a map, and a map you cannot
-        move around in is a video. Nine stations along the floor of the hall, a
-        run that fills as you travel, and every station is a real button that
-        scrolls there.
-
-     2. THE TWELFTH DOCUMENT. Eleven documents fall in leg one and are in the
-        film. This is the twelfth: live markup that drifts after the pointer
-        with mass, restates itself at every waypoint, leaves the hand at the
-        peak to become a row, comes back for the exception, and opens at the
-        close as the object the ask sits on.
+   The engine is not touched. Everything here runs off IntersectionObserver and
+   ordinary events, not off the scroll loop, because none of it needs a frame.
    ========================================================================== */
 (function () {
-  'use strict'
+  'use strict';
 
-  var root = document.documentElement
-  var world = document.querySelector('[data-sc-mode="worldflight"]')
-  if (!world) return
+  var doc = document;
 
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
-  var fine = matchMedia('(hover: hover) and (pointer: fine)').matches
+  /* ------------------------------------------------------------- 1. folio -- */
 
-  var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v }
-  var clamp01 = function (v) { return clamp(v, 0, 1) }
-  var smooth = function (u) { u = clamp01(u); return u * u * (3 - 2 * u) }
+  var folio = doc.querySelector('.folio');
+  var folioOut = doc.querySelector('[data-folio-out]');
+  var chapters = Array.prototype.slice.call(doc.querySelectorAll('[data-folio]'));
+  var lightPlate = doc.querySelector('.ch--what .plate');
 
-  // Leg weights, in the same order and the same units the markup declares.
-  var segs = [].slice.call(world.querySelectorAll('[data-sc-segment]'))
-  var W = segs.map(function (s) { return parseFloat(s.getAttribute('data-sc-w')) || 1.3 })
-  var TOTAL = W.reduce(function (a, b) { return a + b }, 0)
-  var C0 = []
-  ;(function () { var run = 0; W.forEach(function (w, i) { C0[i] = run; run += w }) })()
+  if (folio && folioOut && chapters.length) {
+    // The chapter the bar is standing on is the last one whose top has passed
+    // the bar. An observer alone gets this wrong on a fast flick, so the state
+    // is derived from geometry and the observer only decides when to re-derive.
+    var barH = folio.offsetHeight;
 
-  /* ------------------------------------------------------------- the map -- */
-  var stops = [].slice.call(document.querySelectorAll('.ip-map__stop'))
-  var run = document.querySelector('.ip-map__run')
-
-  stops.forEach(function (b, i) {
-    b.addEventListener('click', function () {
-      // Land a little past the leg's own start so the reader arrives inside the
-      // shot rather than on its first frame.
-      var y = world.offsetTop + (C0[i] + W[i] * 0.12) * innerHeight
-      scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' })
-    })
-  })
-
-  // one copy block per leg, in order, so the leg index reads its anchor
-  var copyBlocks = [].slice.call(document.querySelectorAll('[data-sc-copy]'))
-
-  addEventListener('sc:waypoint', function (e) {
-    var i = e.detail.index
-    stops.forEach(function (b, k) { b.setAttribute('aria-current', String(k === i)) })
-    setDocState(i)
-    setDocSide(i)
-  })
-
-  /* --------------------------------------------- the twelfth document ---- */
-  var card = document.querySelector('.ip-doc')
-  var stateEl = card && card.querySelector('[data-doc-state]')
-  var STATES = window.IP_DOC_STATES || []
-  var lastState = -1
-
-  function setDocState(i) {
-    if (!stateEl || !STATES[i] || i === lastState) return
-    lastState = i
-    stateEl.textContent = STATES[i].text
-    card.setAttribute('data-tone', STATES[i].tone)
-  }
-  setDocState(0)
-
-  function setDocSide(i) {
-    if (!card) return
-    var block = copyBlocks[i]
-    // the copy sits at the start edge, so the card takes the other one
-    var toEnd = !block || block.classList.contains('ip-at-start') ||
-                block.classList.contains('ip-at-middle')
-    card.classList.toggle('ip-doc--end', toEnd)
-    card.classList.toggle('ip-doc--start', !toEnd)
-  }
-  setDocSide(0)
-
-  // Where on the track the card does each thing. These are fractions of the
-  // whole track and they line up with the copy windows in i18n/*.js.
-  // Legs 1-3 already have eleven documents in the film; a twelfth live one
-  // there is just more paper, and it lands on the headline. The visitor picks
-  // it up when the camera lifts off the floor, and it is the one they carry.
-  var TAKE_FROM  = 0.268, TAKE_TO  = 0.322
-  var LEAVE_FROM = 0.600, LEAVE_TO = 0.688   // flies out of the hand, becomes a row
-  var BACK_FROM  = 0.706, BACK_TO  = 0.740   // returns for the exception
-  var OPEN_AT    = 0.928                     // opens as the ask
-
-  // pointer drift, interpolated rather than tracked: direct tracking carries no
-  // momentum and reads as artificial
-  var px = 0, py = 0, tx = 0, ty = 0, rot = -2, open = false
-
-  if (fine && !reduce) {
-    addEventListener('pointermove', function (e) {
-      var r = card.getBoundingClientRect()
-      var cx = r.left + r.width / 2
-      var cy = r.top + r.height / 2
-      tx = clamp((e.clientX - cx) * 0.22, -170, 170)
-      ty = clamp((e.clientY - cy) * 0.22, -130, 130)
-    }, { passive: true })
-  }
-
-  // On touch there is no pointer, so the sway comes from how hard the reader is
-  // scrolling. Same idea, different input.
-  var lastY = scrollY, vel = 0
-  addEventListener('scroll', function () {
-    vel = vel * 0.72 + (scrollY - lastY) * 0.28
-    lastY = scrollY
-    if (!fine) { tx = clamp(-vel * 1.4, -60, 60); ty = clamp(vel * 0.9, -70, 70) }
-  }, { passive: true })
-
-  function track() {
-    var top = world.offsetTop
-    var t = clamp((scrollY - top) / innerHeight, 0, TOTAL)
-    return t / TOTAL
-  }
-
-  function frame() {
-    var pr = track()
-
-    if (run) run.style.setProperty('--ip-run', pr.toFixed(4))
-
-    // The wordmark and the language links belong to the dark. Once the hall is
-    // lit they sit on top of the product's own chrome inside every screenshot,
-    // so they leave, and the close carries the languages on the card instead.
-    var chrome = 1 - smooth((pr - 0.185) / 0.055)
-    root.style.setProperty('--ip-chrome', chrome.toFixed(3))
-    root.style.setProperty('--ip-chrome-pe', chrome > 0.5 ? 'auto' : 'none')
-    root.classList.toggle('ip-chrome-off', chrome < 0.02)
-
-    if (card) {
-      // The card is absent until it has fallen with the others, present through
-      // the journey, gone through the release, back for the exception, and open
-      // at the close.
-      var vis = smooth((pr - TAKE_FROM) / (TAKE_TO - TAKE_FROM))
-      vis *= 1 - smooth((pr - LEAVE_FROM) / (LEAVE_TO - LEAVE_FROM))
-      vis = Math.max(vis, smooth((pr - BACK_FROM) / (BACK_TO - BACK_FROM)))
-
-      var leaving = smooth((pr - LEAVE_FROM) / (LEAVE_TO - LEAVE_FROM))
-      var shouldOpen = pr >= OPEN_AT
-      if (shouldOpen !== open) {
-        open = shouldOpen
-        card.classList.toggle('is-open', open)
+    var settle = function () {
+      // A third of the way down the viewport, not the bar's own edge: the
+      // folio names the chapter the reader is IN, and a reader whose screen
+      // is mostly the next chapter is already in it.
+      var y = window.scrollY + Math.max(barH + 1, innerHeight * 0.34);
+      var now = chapters[0];
+      for (var i = 0; i < chapters.length; i++) {
+        if (chapters[i].offsetTop <= y) now = chapters[i];
       }
+      var label = now.getAttribute('data-folio');
+      if (folioOut.textContent !== label) folioOut.textContent = label;
 
-      px += (tx - px) * (reduce ? 1 : 0.065)
-      py += (ty - py) * (reduce ? 1 : 0.065)
-
-      // While it is leaving the hand it stops answering the pointer and travels
-      // to the middle of the frame, where the wall is.
-      var toMid = leaving * (1 - Math.min(pr >= BACK_FROM ? 1 : 0, 1))
-      var dx = px * (1 - toMid)
-      var dy = py * (1 - toMid)
-      var scale = 1 - 0.42 * toMid
-      var targetRot = reduce ? 0 : clamp(-2 - px * 0.02, -7, 3)
-      rot += (targetRot - rot) * 0.08
-
-      if (open) {
-        card.style.setProperty('--ip-dx', '0px')
-        card.style.setProperty('--ip-dy', '0px')
-        card.style.setProperty('--ip-rot', '0deg')
-        card.style.setProperty('--ip-scale', '1')
-        card.style.setProperty('--ip-doc-op', '1')
-      } else {
-        card.style.setProperty('--ip-dx', dx.toFixed(1) + 'px')
-        card.style.setProperty('--ip-dy', dy.toFixed(1) + 'px')
-        card.style.setProperty('--ip-rot', rot.toFixed(2) + 'deg')
-        card.style.setProperty('--ip-scale', scale.toFixed(3))
-        card.style.setProperty('--ip-doc-op', vis.toFixed(3))
+      if (lightPlate) {
+        var r = lightPlate.getBoundingClientRect();
+        folio.classList.toggle('folio--light', r.top <= barH && r.bottom >= barH);
       }
+    };
+
+    var queued = false;
+    var onScroll = function () {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; settle(); });
+    };
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', function () { barH = folio.offsetHeight; settle(); });
+    settle();
+  }
+
+  /* -------------------------------------------------------------- 2. tabs -- */
+
+  var tabs = Array.prototype.slice.call(doc.querySelectorAll('.tab'));
+  var panels = Array.prototype.slice.call(doc.querySelectorAll('.panel'));
+
+  function selectTab(i, focus) {
+    tabs.forEach(function (t, j) {
+      var on = i === j;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      if (on && focus) t.focus();
+    });
+    panels.forEach(function (p, j) { p.hidden = i !== j; });
+  }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { selectTab(i, false); });
+    t.addEventListener('keydown', function (e) {
+      // RTL: ArrowLeft advances, ArrowRight goes back. Reading order, not
+      // screen order, is what a keyboard user means by "next".
+      var rtl = doc.documentElement.dir === 'rtl';
+      var next = rtl ? 'ArrowLeft' : 'ArrowRight';
+      var prev = rtl ? 'ArrowRight' : 'ArrowLeft';
+      if (e.key === next) { e.preventDefault(); selectTab((i + 1) % tabs.length, true); }
+      else if (e.key === prev) { e.preventDefault(); selectTab((i - 1 + tabs.length) % tabs.length, true); }
+      else if (e.key === 'Home') { e.preventDefault(); selectTab(0, true); }
+      else if (e.key === 'End') { e.preventDefault(); selectTab(tabs.length - 1, true); }
+    });
+  });
+
+  /* --------------------------------------------------------- 3. apparatus -- */
+  /* The signature move. Every real figure in the running copy carries a source
+     number; the strip at the foot of the page names the source of the figure
+     the reader is standing on, and lights its row in the full list at the
+     close. The list is the apparatus; the strip is only its reading head, so
+     it is aria-hidden and nothing is lost without it. */
+
+  var strip = doc.querySelector('[data-apparatus]');
+  var notes = window.IP_NOTES || [];
+  var byId = {};
+  notes.forEach(function (n) { byId[n.id] = n; });
+
+  var figures = Array.prototype.slice.call(doc.querySelectorAll('.fig[data-note]'));
+
+  if (strip && figures.length && notes.length) {
+    var outId = strip.querySelector('[data-apparatus-id]');
+    var outT = strip.querySelector('[data-apparatus-t]');
+    var outS = strip.querySelector('[data-apparatus-s]');
+    var current = null;
+    var hideTimer = 0;
+
+    function show(id) {
+      var n = byId[id];
+      if (!n || current === id) return;
+      current = id;
+
+      outId.textContent = n.id;
+      outT.textContent = n.t;
+      outS.textContent = n.s;
+      strip.hidden = false;
+      // hidden -> shown in the same frame does not transition; let the browser
+      // see the un-hidden element once first.
+      requestAnimationFrame(function () { strip.classList.add('is-on'); });
+
+      figures.forEach(function (f) {
+        f.classList.toggle('is-lit', f.getAttribute('data-note') === id);
+      });
+      Array.prototype.forEach.call(doc.querySelectorAll('.note'), function (li) {
+        li.classList.toggle('is-lit', li.id === 'note-' + id);
+      });
+
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(hide, 4200);
     }
 
-    requestAnimationFrame(frame)
+    function hide() {
+      current = null;
+      strip.classList.remove('is-on');
+      figures.forEach(function (f) { f.classList.remove('is-lit'); });
+      Array.prototype.forEach.call(doc.querySelectorAll('.note'), function (li) {
+        li.classList.remove('is-lit');
+      });
+    }
+
+    // A band across the middle of the viewport, so the note names the figure
+    // the reader is actually looking at rather than one entering at the edge.
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) show(e.target.getAttribute('data-note'));
+      });
+    }, { rootMargin: '-38% 0px -46% 0px', threshold: 0 });
+
+    figures.forEach(function (f) { io.observe(f); });
+
+    // The colophon is where the apparatus lives in full; a floating copy of one
+    // of its rows on top of it is noise.
+    var colophon = doc.querySelector('.apparatus-list');
+    if (colophon) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { clearTimeout(hideTimer); hide(); } });
+      }, { threshold: 0.12 }).observe(colophon);
+    }
   }
-  requestAnimationFrame(frame)
-
-  /* --------------------------------------------------------- clip warmth --
-     The engine fetches a leg only within 1.6 viewport-heights of it, which is
-     right for bandwidth and means the reader can still arrive at a poster. It
-     fetches with fetch(), so warming the same URLs into the HTTP cache first
-     makes that fetch resolve immediately. Sequential and idle-timed, so it
-     never competes with the leg the reader is actually looking at. */
-  var warmList = segs.map(function (s) {
-    var v = s.querySelector('video')
-    if (!v) return null
-    var mobile = !matchMedia('(hover: hover) and (pointer: fine)').matches || innerWidth < 860
-    return (mobile && v.getAttribute('data-sc-src-mobile')) || v.getAttribute('data-sc-src')
-  }).filter(Boolean)
-
-  var warmed = []
-  function warm(i) {
-    if (reduce || i < 0 || i >= warmList.length || warmed[i]) return
-    warmed[i] = true
-    fetch(warmList[i], { cache: 'force-cache' }).then(function (r) { return r.blob() }).catch(function () {})
-  }
-  // Bounded on purpose: warming all nine up front would download the whole
-  // flight before the first screen and undo the point of loading on approach.
-  addEventListener('load', function () { warm(0); warm(1); warm(2) })
-  addEventListener('sc:waypoint', function (e) { warm(e.detail.index + 1); warm(e.detail.index + 2) })
-
-  /* ------------------------------------------------------------- layout --
-     The engine sizes the spacer once, at mount, from innerHeight. If that
-     reports 0 the track is 0px and the flight silently never advances, which
-     looks exactly like success. One resize after the window and the fonts have
-     settled makes it re-measure. */
-  function relayout() { dispatchEvent(new Event('resize')) }
-  addEventListener('load', relayout)
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayout)
-
-  /* ------------------------------------------------------------ the skip --
-     The ask lives on an object at the end of a 16-viewport flight, and it is
-     display:none until it opens, so a keyboard user tabbing from the top never
-     reaches it. The skip link takes them to the end of the track and puts the
-     cursor on the button. */
-  var skip = document.querySelector('.ip-skip')
-  if (skip) {
-    skip.addEventListener('click', function (e) {
-      e.preventDefault()
-      scrollTo({ top: document.documentElement.scrollHeight, behavior: 'auto' })
-      // one frame for the open state to land before the button can take focus
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          var btn = card && card.querySelector('.ip-btn--primary')
-          if (btn) btn.focus()
-        })
-      })
-    })
-  }
-})()
+})();

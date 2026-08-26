@@ -1,21 +1,24 @@
 /* ============================================================================
-   InPlace — "the hall"
+   InPlace — build 3, "the folio"
    ----------------------------------------------------------------------------
-   A continuous-world page. The engine owns the stage, the legs and the copy
-   windows; everything below is either a token override or markup this page
-   drew itself.
+   Chaptered editorial. The page is a printed feature: a title page, three
+   chapters, a colophon. Chapters are bounded plates on a ground, hard-cut, each
+   one landing on its own ground and staying there.
 
-   The product's own palette is Onyx #0a171d, Wheat #fff6e9, Oceanic #003f47 on
-   a #f4f5f3 canvas. Two of those move here and the move is deliberate:
+   The layout language is taken from the reference the owner supplied
+   (aui.io, read 2026-08-26): a ~1265px page, plates inset 10px with a 12px
+   radius, one very large display size per chapter, a small accent micro-label
+   above it, body copy at 17-19px, and real product screens shown inside their
+   own bounded panel with a caption. What is NOT taken from it is the palette.
 
-     - the ground is Onyx graded down to #04080b, because the world is a dark
-       hall and the product's own light canvas is what the screens in it emit.
-     - the accent is Oceanic lifted to #38b3c0. #003f47 on a near-black ground
-       is invisible; this is the same hue at the lightness the hall needs, and
-       it is literally the colour the screens spill onto the floor.
+   Palette is the product's own, unchanged in role:
+     Onyx     #0a171d   the dark ground            (reference's #121212)
+     Wheat    #fff6e9   the light ground           (reference's #f1f0e0)
+     Oceanic  #38b3c0 on dark / #00525d on light   (reference's #ff4800)
+     Alert    #ff7d96 on dark / #a3122f on light
 
-   Nothing inside a product screen is recoloured. Every panel in the world is
-   the real capture, ungraded.
+   Nothing inside a product screen is recoloured. Every screen is the real
+   capture from lab/app-reference, cropped by CSS only.
    ========================================================================== */
 
 @font-face {
@@ -37,432 +40,620 @@
 }
 
 :root {
-  --sc-canvas:     #04080b;
-  --sc-surface:    #0a171d;
+  /* engine tokens */
+  --sc-canvas:     #0a171d;
+  --sc-surface:    #0e1f26;
   --sc-ink:        #fbf6ec;
-  --sc-ink-soft:   #9db0b5;
+  --sc-ink-soft:   #a7bcc1;
   --sc-accent:     #38b3c0;
   --sc-accent-ink: #04141a;
-
-  --ip-wheat:  #fff6e9;
-  --ip-onyx:   #0a171d;
-  --ip-alert:  #ff7d96;
-
   --sc-font-text:    "Noto Sans Hebrew", Arial, ui-sans-serif, system-ui, sans-serif;
   --sc-font-display: var(--sc-font-text);
-
   --sc-shadow-color: 197 60% 2%;
-  --sc-r-sm: 6px; --sc-r-md: 12px; --sc-r-lg: 18px;
+  --sc-r-sm: 6px; --sc-r-md: 12px; --sc-r-lg: 12px;
+
+  /* page */
+  --onyx:      #0a171d;
+  --onyx-lift: #12242c;
+  --onyx-line: #1e3540;
+  --wheat:     #fff6e9;
+  --wheat-sink:#f7ead6;
+  --wheat-line:#e4d3ba;
+
+  --on-dark:      #fbf6ec;
+  --on-dark-soft: #a7bcc1;
+  --on-light:     #0a171d;
+  --on-light-soft:#3a4d54;
+
+  --accent-dark:  #38b3c0;   /* accent ON the dark ground */
+  --accent-light: #00525d;   /* accent ON the light ground */
+  --alert-dark:   #ff7d96;
+  --alert-light:  #a3122f;
+
+  --page:  1265px;
+  --plate: 1225px;
+  --wrap:  1210px;
+  --gut:   10px;
+  --r:     12px;
+  --bar:   62px;
 }
+
+/* ------------------------------------------------------------------- base -- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--onyx);
+  color: var(--on-dark);
+  font-family: var(--sc-font-text);
+  font-size: 17px;
+  line-height: 1.62;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img, video { max-inline-size: 100%; display: block; }
+
+a { color: inherit; }
+
+::selection { background: var(--accent-dark); color: var(--onyx); }
+
+:focus-visible {
+  outline: 2px solid var(--accent-dark);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.plate :focus-visible { outline-color: var(--accent-light); }
+
+.skip {
+  position: fixed; inset-block-start: 8px; inset-inline-start: 8px;
+  z-index: 90;
+  transform: translateY(-160%);
+  background: var(--wheat); color: var(--onyx);
+  padding: 10px 16px; border-radius: 999px;
+  font-weight: 600; text-decoration: none;
+}
+.skip:focus-visible { transform: none; }
 
 /* Hebrew numerals and Latin figures sit on different baselines in a mixed run,
    and every amount on this page is a mixed run. */
 .ip-num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
 
-/* ------------------------------------------------------------ type ramp -- */
-.ip-h1 {
-  font-size: clamp(2.5rem, 1.4rem + 5.4vw, 6.2rem);
-  line-height: 0.98;
-  letter-spacing: -0.035em;
-  font-weight: 800;
+.wrap {
+  inline-size: 100%;
+  max-inline-size: var(--wrap);
+  margin-inline: auto;
+  padding-inline: clamp(18px, 4vw, 34px);
+}
+
+/* -------------------------------------------------------------------- type -- */
+
+.h-hero, .h-big, .h-mid, .h-step {
   margin: 0;
-  text-wrap: balance;
-}
-.ip-h2 {
-  font-size: clamp(1.9rem, 1.2rem + 3.2vw, 4rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  font-weight: 800;
-  margin: 0;
-  text-wrap: balance;
-}
-.ip-lede {
-  font-size: clamp(1.02rem, 0.95rem + 0.6vw, 1.35rem);
-  line-height: 1.5;
-  color: var(--sc-ink-soft);
-  margin: 0.9rem 0 0;
-  max-width: 34ch;
-}
-.ip-line {
-  font-size: clamp(1.3rem, 1rem + 1.8vw, 2.4rem);
-  line-height: 1.24;
-  letter-spacing: -0.02em;
-  font-weight: 600;
-  margin: 0;
-  text-wrap: balance;
-}
-.ip-kicker {
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  font-weight: 600;
-  color: var(--sc-accent);
-  margin: 0 0 0.9rem;
-}
-.ip-alert { color: var(--ip-alert); }
-strong { font-weight: 700; color: var(--sc-ink); }
-
-/* --------------------------------------------------------- copy blocks --
-   A scrim belongs to the copy it protects, not to the frame. Making it a
-   ::before of the block means it arrives and leaves on exactly the same
-   window the engine already drives, and it never darkens a screen the reader
-   is looking at with no text on it. */
-.ip-copy {
-  position: absolute;
-  z-index: 2;
-  max-width: min(34rem, 76vw);
-  padding: clamp(1.05rem, 2.2vw, 1.75rem) clamp(1.25rem, 2.6vw, 2.15rem);
-  border-radius: var(--sc-r-lg);
-  background: color-mix(in oklab, var(--sc-surface) 95%, transparent);
-  box-shadow:
-    0 26px 76px hsl(var(--sc-shadow-color) / 0.6),
-    0 4px 14px hsl(var(--sc-shadow-color) / 0.4),
-    inset 0 1px 0 color-mix(in oklab, var(--sc-ink) 13%, transparent);
-}
-
-.ip-at-start  { inset-inline-start: var(--sc-gutter); bottom: clamp(7rem, 16vh, 12rem); }
-.ip-at-end    { inset-inline-end:   var(--sc-gutter); bottom: clamp(7rem, 16vh, 12rem); text-align: end; }
-.ip-at-middle {
-  left: 50%; bottom: clamp(8rem, 20vh, 14rem);
-  translate: -50% 0;
-  text-align: center;
-}
-
-/* ------------------------------------------------------------ the map --
-   The nav for a world is a map, and a map you cannot move around in is a
-   video. This one is the hall seen from above: nine stations on the floor,
-   a marker where the camera is, and every station is a real link. */
-.ip-map {
-  position: fixed;
-  z-index: var(--sc-z-chrome);
-  inset-inline: clamp(1rem, 5vw, 4rem);
-  bottom: clamp(1rem, 2.6vh, 1.9rem);
-  pointer-events: none;
-}
-.ip-map__rule {
-  position: absolute;
-  inset-inline: 0;
-  top: 11px;
-  height: 1px;
-  background: color-mix(in oklab, var(--sc-ink) 16%, transparent);
-}
-/* the stretch of hall already travelled */
-/* transform, never width: a width driven from a per-frame write forces layout
-   on every single frame of the scroll */
-.ip-map__run {
-  position: absolute;
-  inset-inline: 0;
-  top: 11px;
-  height: 1px;
-  background: var(--sc-accent);
-  transform: scaleX(var(--ip-run, 0));
-  transform-origin: 0 50%;
-  will-change: transform;
-}
-[dir="rtl"] .ip-map__run { transform-origin: 100% 50%; }
-.ip-map__list {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  pointer-events: auto;
-}
-.ip-map__stop {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 2px 0;
-  background: none;
-  border: 0;
-  color: var(--sc-ink-soft);
-  font: inherit;
-  font-size: 0.66rem;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  text-decoration: none;
-  opacity: 0.55;
-  transition: opacity var(--sc-d-base) var(--sc-ease-out),
-              color var(--sc-d-base) var(--sc-ease-out);
-}
-.ip-map__stop::before {
-  content: "";
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: color-mix(in oklab, var(--sc-ink) 34%, transparent);
-  transition: background var(--sc-d-base) var(--sc-ease-out),
-              scale var(--sc-d-base) var(--sc-ease-out);
-}
-.ip-map__stop:hover,
-.ip-map__stop:focus-visible { opacity: 1; color: var(--sc-ink); }
-.ip-map__stop[aria-current="true"] { opacity: 1; color: var(--sc-ink); }
-.ip-map__stop[aria-current="true"]::before { background: var(--sc-accent); scale: 1.5; }
-.ip-map__label { white-space: nowrap; }
-
-@media (max-width: 720px) {
-  .ip-map__label { display: none; }
-  .ip-map__stop[aria-current="true"] .ip-map__label {
-    display: block;
-    position: absolute;
-    inset-inline: 0;
-    bottom: 26px;
-    text-align: center;
-    font-size: 0.7rem;
-  }
-  .ip-map { bottom: 0.9rem; }
-}
-
-/* ------------------------------------------------- the twelfth document --
-   Eleven documents fall in leg one and are in the film. This is the twelfth:
-   it is live markup, it drifts after the pointer with mass, it restates itself
-   at every waypoint, and at the close it is the object the CTA sits on. */
-.ip-doc {
-  position: fixed;
-  z-index: calc(var(--sc-z-copy) + 2);
-  inset-inline-end: clamp(1.5rem, 6vw, 6rem);
-  top: 26%;
-  width: clamp(11.5rem, 16vw, 14.5rem);
-  padding: 1.1rem 1.2rem 1.15rem;
-  border-radius: var(--sc-r-md);
-  background: linear-gradient(184deg, #fefcf7 0%, #efe8da 100%);
-  color: var(--ip-onyx);
-  text-align: start;
-  box-shadow: 0 30px 70px hsl(var(--sc-shadow-color) / 0.62),
-              0 6px 18px hsl(var(--sc-shadow-color) / 0.34),
-              0 0 0 1px rgba(10, 23, 29, 0.22),
-              0 2px 0 0 rgba(255, 255, 255, 0.5) inset;
-  transform: translate3d(var(--ip-dx, 0px), var(--ip-dy, 0px), 0)
-             rotate(var(--ip-rot, -2deg)) scale(var(--ip-scale, 1));
-  opacity: var(--ip-doc-op, 0);
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-.ip-doc__kind {
-  font-size: 0.66rem;
-  letter-spacing: 0.14em;
-  font-weight: 600;
-  color: #7d8b90;
-}
-.ip-doc__sup { font-size: 1.06rem; font-weight: 700; line-height: 1.2; margin-top: 0.35rem; }
-.ip-doc__amt { font-size: 1.6rem; font-weight: 800; margin-top: 0.5rem; color: #06323a; }
-.ip-doc__rule { height: 1px; background: #d8cfc0; margin: 0.8rem 0 0.6rem; }
-.ip-doc__state {
-  display: flex; align-items: center; gap: 0.45rem;
-  font-size: 0.78rem; font-weight: 600; color: #4c5f66;
-}
-.ip-doc__state::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%;
-  background: #b9a889;
-  transition: background var(--sc-d-slow) var(--sc-ease-out);
-}
-.ip-doc[data-tone="done"]  .ip-doc__state::before { background: #1f7a52; }
-.ip-doc[data-tone="alert"] .ip-doc__state::before { background: #b3123c; }
-.ip-doc[data-tone="alert"] .ip-doc__state { color: #b3123c; }
-
-/* the close: the same card, opened out, carrying the ask */
-.ip-doc__ask { display: none; margin-top: 0.9rem; }
-.ip-doc.is-open { width: min(28rem, 86vw); pointer-events: auto; }
-.ip-doc.is-open .ip-doc__ask { display: block; }
-.ip-doc.is-open .ip-doc__amt { font-size: 1.9rem; }
-
-.ip-btn {
-  display: block;
-  width: 100%;
-  padding: 0.85rem 1.2rem;
-  border-radius: var(--sc-r-sm);
+  font-family: var(--sc-font-display);
   font-weight: 700;
-  font-size: 0.98rem;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+}
+
+.h-hero { font-size: clamp(38px, 6.4vw, 76px); line-height: 0.99; }
+.h-big  { font-size: clamp(31px, 4.5vw, 58px); line-height: 1.02; }
+.h-mid  { font-size: clamp(26px, 3.4vw, 42px); line-height: 1.06; }
+.h-step { font-size: clamp(21px, 2.2vw, 29px); line-height: 1.15; font-weight: 650; }
+
+.h-sub {
+  display: block;
+  font-style: normal;
+  color: var(--on-dark-soft);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.055em;
+  color: var(--accent-dark);
+}
+.eyebrow--on-light { color: var(--accent-light); }
+
+.lede {
+  margin: 0 0 18px;
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.66;
+  color: var(--on-dark-soft);
+  max-inline-size: 62ch;
+}
+.body {
+  margin: 0;
+  font-size: clamp(15.5px, 1.2vw, 17.5px);
+  line-height: 1.7;
+  color: var(--on-dark-soft);
+  max-inline-size: 58ch;
+}
+.plate .lede, .plate .body { color: var(--on-light-soft); }
+
+.cap {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--on-light-soft);
+}
+.cap b { font-weight: 650; color: var(--on-light); }
+
+/* A figure in the running copy is a numbered source, not a bold word. The
+   marker is real content: it is the anchor for the apparatus at the close. */
+.fig {
+  font-weight: 700;
+  color: var(--on-dark);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.fig--alert { color: var(--alert-dark); }
+.plate .fig { color: var(--on-light); }
+.plate .fig--alert { color: var(--alert-light); }
+
+.fig::after {
+  content: attr(data-note);
+  font-size: 0.58em;
+  font-weight: 600;
+  vertical-align: super;
+  line-height: 1;
+  margin-inline-start: 2px;
+  color: var(--accent-dark);
+}
+.plate .fig::after { color: var(--accent-light); }
+.fig.is-lit::after { color: var(--wheat); }
+
+/* ----------------------------------------------------------------- buttons -- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 13px 24px;
+  border-radius: 999px;
+  font-size: 15.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.btn--sm { padding: 8px 16px; font-size: 14px; }
+
+.btn--primary { background: var(--accent-dark); color: #04141a; }
+.btn--primary:hover { background: #4ec6d2; }
+
+.btn--ghost { border-color: #2b4a55; color: var(--on-dark); }
+.btn--ghost:hover { border-color: var(--accent-dark); color: var(--accent-dark); }
+
+.plate .btn--primary { background: var(--accent-light); color: var(--wheat); }
+.plate .btn--primary:hover { background: #00404a; }
+
+.asks { display: flex; flex-wrap: wrap; gap: 10px; }
+.fineprint {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  color: var(--on-dark-soft);
+}
+
+/* ------------------------------------------------------------------- folio -- */
+/* Not a nav bar with a wordmark and links. A folio: where you are in the
+   feature, updating as chapters pass, plus the one ask. */
+
+.folio {
+  position: fixed; inset-block-start: 0; inset-inline: 0;
+  z-index: 60;
+  block-size: var(--bar);
+  display: flex; align-items: center; gap: 16px;
+  padding-inline: clamp(14px, 3vw, 26px);
+  background: color-mix(in srgb, var(--onyx) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--onyx-line);
+}
+.folio--light {
+  background: color-mix(in srgb, var(--wheat) 90%, transparent);
+  border-block-end-color: var(--wheat-line);
+  color: var(--on-light);
+}
+
+.folio__brand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 700; font-size: 17px; letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.folio__brand svg { inline-size: 19px; block-size: 19px; }
+
+.folio__where {
+  margin: 0;
+  flex: 1;
+  font-size: 13.5px;
+  color: var(--on-dark-soft);
+  letter-spacing: 0.02em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   text-align: center;
-  text-decoration: none;
-  transition: background var(--sc-d-fast) var(--sc-ease-out),
-              color var(--sc-d-fast) var(--sc-ease-out);
 }
-.ip-btn--primary { background: #003f47; color: var(--ip-wheat); }
-.ip-btn--primary:hover { background: #05555f; }
-.ip-btn--ghost {
-  margin-top: 0.5rem;
-  background: transparent;
-  color: #274852;
-  box-shadow: inset 0 0 0 1px #bcae98;
-}
-.ip-btn--ghost:hover { background: #e7ddca; }
-.ip-fineprint { margin: 0.7rem 0 0; font-size: 0.74rem; color: #6d7c82; }
+.folio--light .folio__where { color: var(--on-light-soft); }
+.folio--light .btn--primary { background: var(--accent-light); color: var(--wheat); }
 
-/* --------------------------------------------------------------- misc -- */
-.ip-brand {
-  position: fixed;
-  z-index: var(--sc-z-chrome);
-  inset-inline-start: var(--sc-gutter);
-  top: clamp(1rem, 3vh, 2rem);
-  display: flex; align-items: center; gap: 0.6rem;
-  font-weight: 700; letter-spacing: -0.01em;
-  color: var(--sc-ink);
-  text-decoration: none;
-  opacity: var(--ip-chrome, 1);
-  pointer-events: var(--ip-chrome-pe, auto);
-}
-.ip-brand svg { width: 20px; height: 20px; }
+/* --------------------------------------------------------------- title page -- */
+/* No media above the fold. The chapter's media starts in chapter 01. */
 
-.ip-langs {
-  position: fixed;
-  z-index: var(--sc-z-chrome);
-  inset-inline-end: var(--sc-gutter);
-  top: clamp(1rem, 3vh, 2rem);
-  display: flex; gap: 0.75rem;
-  font-size: 0.76rem; letter-spacing: 0.08em;
-  opacity: var(--ip-chrome, 1);
-  pointer-events: var(--ip-chrome-pe, auto);
-}
-.ip-langs a { color: var(--sc-ink-soft); text-decoration: none; opacity: 0.8; }
-.ip-langs a[aria-current="true"] { color: var(--sc-ink); opacity: 1; }
-.ip-langs a:hover { color: var(--sc-ink); }
+.ch { position: relative; }
 
-.ip-skip {
-  position: absolute; left: -9999px; top: 0;
-  z-index: 200; padding: 0.75rem 1rem;
-  background: var(--sc-ink); color: var(--sc-canvas);
-}
-.ip-skip:focus { left: var(--sc-gutter); top: 0.75rem; }
-
-:where(a, button):focus-visible {
-  outline: 2px solid var(--sc-accent);
-  outline-offset: 3px;
-  border-radius: 3px;
+.ch--title {
+  padding-block: calc(var(--bar) + clamp(56px, 11vh, 122px)) clamp(52px, 9vh, 104px);
+  border-block-end: 1px solid var(--onyx-line);
 }
 
-/* Without JS the engine never sizes the spacer, so the page would be a fixed
-   stage with nothing behind it. Show the first frame and let the copy stack. */
-.ip-nojs {
-  padding: var(--sc-gutter);
-  padding-block: 22vh 12vh;
+.title__body {
   display: grid;
-  gap: 2.5rem;
-  max-width: 46rem;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: end;
+  margin-block-start: clamp(28px, 5vh, 52px);
 }
+.title__say .lede:last-child { margin-block-end: 0; }
+.title__ask { padding-block-start: 6px; }
+
+/* ------------------------------------------------------------------- index -- */
+
+.index { margin-block-start: clamp(38px, 7vh, 76px); }
+.index__label {
+  margin: 0 0 14px;
+  font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--on-dark-soft);
+}
+.index__list { list-style: none; margin: 0; padding: 0; border-block-start: 1px solid var(--onyx-line); }
+.index__row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 14px;
+  align-items: baseline;
+  padding-block: 15px;
+  border-block-end: 1px solid var(--onyx-line);
+}
+.index__n { font-size: 13px; color: var(--accent-dark); font-weight: 650; }
+.index__t { font-size: clamp(16px, 1.5vw, 20px); font-weight: 650; letter-spacing: -0.015em; }
+.index__d { font-size: 14.5px; color: var(--on-dark-soft); }
+
+/* --------------------------------------------------------------- chapter 01 -- */
+/* The one scrub this grammar allows. Media sits in its own column with a
+   caption; the reading column travels past it. No type over the film. */
+
+/* The reading column comes FIRST in the markup and therefore sits on the
+   reading-start side. The reference puts its headline on the reading-start
+   side and the visual opposite; mirrored into RTL that is text right, film
+   left, and the mirror is the point — not the pixel positions. */
+.ch--film {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.62fr);
+  gap: clamp(16px, 2.6vw, 40px);
+  padding-inline: clamp(18px, 4vw, 34px);
+  background: var(--onyx);
+}
+
+.film-stage {
+  align-self: start;
+  position: sticky;
+  inset-block-start: var(--bar);
+  block-size: calc(100svh - var(--bar));
+  overflow: clip;
+  display: grid;
+  align-content: center;
+}
+
+/* Bounded, not full-bleed. The clip is 16:9 and it is shown at 16:9: a film
+   cropped to a column loses the edges of the frame, and the last thing this
+   film does is reveal a screen that has to be legible edge to edge. */
+.film-plate { margin: 0; }
+.film-plate__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: #050d11;
+  border: 1px solid var(--onyx-line);
+}
+.film-plate__cap {
+  margin: 12px 2px 0;
+  font-size: 13px;
+  color: var(--on-dark-soft);
+}
+
+/* One block per quarter of the act, each one holding while the leg of the film
+   it belongs to plays. Sticky rather than spaced: with four blocks spread over
+   five viewport-heights of scroll, anything else leaves a viewport of empty
+   column between them, and an empty column reads as a page that stopped. */
+.read { display: block; block-size: 100%; }
+.read__slot { block-size: 25%; }
+.read__block {
+  position: sticky;
+  inset-block-start: calc(var(--bar) + 24vh);
+  max-inline-size: 46ch;
+  /* Inside the sticky box, so the block un-sticks this much earlier and clears
+     the next one instead of handing off flush against it. */
+  padding-block-end: 16vh;
+}
+.read__block .h-mid { margin-block-end: 16px; }
+
+/* --------------------------------------------------------------- chapter 02 -- */
+/* The contrast flip. One cream plate on the dark ground, exactly as the
+   reference does it, and the chapter stays on that ground. */
+
+.ch--what { padding-block: clamp(14px, 2.4vh, 26px) 0; }
+
+.plate {
+  max-inline-size: var(--plate);
+  margin-inline: auto;
+  background: var(--wheat);
+  color: var(--on-light);
+  border-radius: var(--r);
+  padding-block: clamp(46px, 8vh, 92px) clamp(40px, 7vh, 76px);
+}
+
+.say { max-inline-size: 64ch; }
+.say .h-big { margin-block-end: 18px; }
+.say .lede:last-child { margin-block-end: 0; }
+
+/* tabs */
+
+.tabs {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-block: clamp(30px, 5vh, 54px) clamp(22px, 3.5vh, 34px);
+  padding-block-end: 2px;
+}
+.tab {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 10px 17px;
+  border-radius: 999px;
+  border: 1px solid var(--wheat-line);
+  background: transparent;
+  color: var(--on-light-soft);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.tab:hover { border-color: var(--accent-light); color: var(--accent-light); }
+.tab__n { font-size: 12px; font-weight: 650; opacity: 0.75; font-variant-numeric: tabular-nums; }
+.tab[aria-selected="true"] {
+  background: var(--on-light);
+  border-color: var(--on-light);
+  color: var(--wheat);
+}
+.tab[aria-selected="true"] .tab__n { color: var(--accent-dark); opacity: 1; }
+
+/* panels */
+
+/* The step reads across the top and the screen runs the full width of the
+   plate underneath it. A product screen shown in a half-column is 0.44 of the
+   size it was captured at, which makes every label in it unreadable — and an
+   unreadable screen is a decoration, not an explanation. */
+.panel { display: block; }
+.panel[hidden] { display: none; }
+
+.panel__say {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: clamp(18px, 3vw, 44px);
+  align-items: start;
+  margin-block-end: clamp(22px, 3.4vh, 34px);
+}
+.panel__say .h-step { margin: 0; }
+.panel__say .body { max-inline-size: none; }
+
+.shot { margin: 0; }
+.shot__frame {
+  border-radius: var(--r);
+  border: 1px solid var(--wheat-line);
+  background: #f4f5f3;
+  overflow: hidden;
+}
+.shot img {
+  inline-size: 100%;
+  /* The width/height attributes on the <img> are there so the box is reserved
+     before the file lands. Without an explicit height:auto they are used as the
+     height and aspect-ratio never applies. */
+  block-size: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* ------------------------------------------------------- chapter 02, closing -- */
+
+.board {
+  padding-block: clamp(56px, 10vh, 118px) clamp(56px, 10vh, 112px);
+  border-block-start: 1px solid var(--onyx-line);
+  margin-block-start: clamp(14px, 2.4vh, 26px);
+}
+.say--board { max-inline-size: 58ch; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 24px);
+  margin-block: clamp(30px, 5vh, 52px);
+}
+.stat {
+  padding: 20px 22px;
+  background: var(--onyx-lift);
+  border: 1px solid var(--onyx-line);
+  border-radius: var(--r);
+}
+.stat__v {
+  margin: 0 0 6px;
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.stat__v .fig { color: var(--on-dark); }
+.stat__l { margin: 0; font-size: 14px; color: var(--on-dark-soft); }
+
+.board .shot__frame { border-color: var(--onyx-line); }
+.board .cap { color: var(--on-dark-soft); }
+.board .cap b { color: var(--on-dark); }
+
+/* --------------------------------------------------------------- chapter 03 -- */
+
+.ch--close {
+  padding-block: clamp(56px, 10vh, 116px) clamp(28px, 4vh, 48px);
+  border-block-start: 1px solid var(--onyx-line);
+  background: var(--onyx);
+}
+
+.colophon {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(30px, 5vw, 72px);
+  align-items: start;
+}
+.colophon__say .h-big { margin-block-end: 18px; }
+.colophon__say .h-sub { margin-block-start: 6px; }
+.colophon__say .asks { margin-block-start: 26px; }
+
+/* the apparatus, complete and in document flow */
+
+.apparatus-list__lede {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--on-dark-soft);
+  max-inline-size: 54ch;
+}
+.notes {
+  list-style: none;
+  margin: 0; padding: 0;
+  border-block-start: 1px solid var(--onyx-line);
+}
+.note {
+  display: grid;
+  grid-template-columns: 26px minmax(0, auto) minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding-block: 12px;
+  border-block-end: 1px solid var(--onyx-line);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.note__id { color: var(--accent-dark); font-weight: 650; font-size: 12px; }
+.note__t { font-weight: 650; white-space: nowrap; }
+.note__s { color: var(--on-dark-soft); }
+.note.is-lit { background: #10222a; }
+
+.footrule {
+  display: flex; flex-wrap: wrap; gap: 8px 26px;
+  justify-content: space-between;
+  margin-block-start: clamp(38px, 6vh, 72px);
+  padding-block-start: 18px;
+  border-block-start: 1px solid var(--onyx-line);
+  font-size: 13px;
+  color: var(--on-dark-soft);
+}
+.footrule p { margin: 0; }
+
+/* ------------------------------------------------- the apparatus, live strip -- */
+/* Fixed at the foot of the page, the way a footnote sits at the foot of a
+   printed one. Reads the figure the reader is standing on. aria-hidden: the
+   <ol> in the colophon is the accessible copy of the same apparatus. */
+
+.apparatus {
+  position: fixed;
+  inset-block-end: 14px;
+  inset-inline-end: 14px;
+  z-index: 55;
+  max-inline-size: min(430px, calc(100vw - 28px));
+  display: flex; gap: 10px; align-items: baseline;
+  padding: 11px 15px;
+  background: var(--onyx-lift);
+  border: 1px solid var(--onyx-line);
+  border-radius: var(--r);
+  box-shadow: 0 12px 30px rgb(2 8 11 / 0.5);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+.apparatus.is-on { opacity: 1; transform: none; }
+.apparatus__id {
+  font-size: 11px; font-weight: 700;
+  color: var(--accent-dark);
+  line-height: 1.5;
+}
+.apparatus__body { min-inline-size: 0; }
+.apparatus__t {
+  display: block;
+  font-size: 14px; font-weight: 700;
+  color: var(--on-dark);
+}
+.apparatus__s {
+  display: block;
+  margin-block-start: 2px;
+  font-size: 12.5px; line-height: 1.45;
+  color: var(--on-dark-soft);
+}
+
+.noscript {
+  padding: 20px clamp(18px, 4vw, 34px);
+  color: var(--on-dark-soft);
+  border-block-start: 1px solid var(--onyx-line);
+}
+
+/* -------------------------------------------------------------- responsive -- */
+
+@media (max-width: 940px) {
+  .title__body { grid-template-columns: 1fr; align-items: start; }
+  .colophon { grid-template-columns: 1fr; }
+  .panel { grid-template-columns: 1fr; }
+  .panel__say { grid-template-columns: 1fr; }
+  /* A desktop admin screen cannot be read at 390px wide. Rather than shrink it
+     into a smudge, the frame scrolls: the screen is shown at a size its labels
+     survive and the reader swipes across it. */
+  .shot__frame { overflow-x: auto; overscroll-behavior-x: contain; }
+  .shot img { inline-size: 900px; max-inline-size: none; aspect-ratio: auto; block-size: auto; }
+  .index__row { grid-template-columns: 40px minmax(0, 1fr); }
+  .index__d { grid-column: 2; font-size: 13.5px; }
+  .stats { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 820px) {
+  /* One column, and the film and the reading share the cell: the film holds
+     the top of the screen and the copy travels through the space under it. Two
+     rows would end the film's stickiness at the end of its own row, and the
+     copy would then run out long before the film does. */
+  .ch--film { grid-template-columns: 1fr; gap: 0; }
+  .film-stage, .read { grid-column: 1; grid-row: 1; }
+  .film-stage {
+    block-size: 34svh;
+    align-content: start;
+    padding-block-start: 10px;
+    background: var(--onyx);   /* copy passes behind it, not through it */
+    z-index: 2;
+  }
+  .read__block { inset-block-start: calc(var(--bar) + 36svh); padding-block-end: 10svh; }
+  .read__block { max-inline-size: none; }
+  .folio__where { display: none; }
+  .btn { padding: 12px 20px; }
+}
+
+@media (max-width: 520px) {
+  body { font-size: 16px; }
+  .apparatus { inset-inline: 12px; max-inline-size: none; }
+  .tabs { gap: 6px; }
+  .tab { padding: 9px 13px; font-size: 14px; }
+}
+
+/* ---------------------------------------------------------- reduced motion -- */
 
 @media (prefers-reduced-motion: reduce) {
-  .ip-doc { transition: none; }
+  .apparatus { transition: none; }
+  .btn { transition: none; }
+  .tab { transition: none; }
 }
-
-@media (max-width: 860px) {
-  .ip-copy { max-width: none; inset-inline: var(--sc-gutter); bottom: clamp(6.5rem, 22vh, 13rem); }
-  .ip-at-end { text-align: start; }
-  .ip-at-middle { left: auto; translate: none; text-align: start; }
-  .ip-doc {
-    inset-inline-end: auto;
-    inset-inline-start: var(--sc-gutter);
-    top: auto; bottom: clamp(4.5rem, 14vh, 8rem);
-    width: min(15rem, 62vw);
-    padding: 0.85rem 0.95rem 0.9rem;
-  }
-  .ip-doc.is-open { width: min(22rem, 88vw); }
-  .ip-doc__amt { font-size: 1.35rem; }
-}
-
-/* the close sits above the card, which opens in the middle of the frame */
-.ip-at-crown {
-  left: 50%;
-  top: clamp(11vh, 17vh, 22vh);
-  bottom: auto;
-  translate: -50% 0;
-  text-align: center;
-}
-.ip-at-crown .ip-lede { margin-inline: auto; }
-
-.ip-doc.is-open {
-  inset-inline-end: auto;
-  inset-inline-start: 50%;
-  top: auto;
-  bottom: clamp(6rem, 16vh, 11rem);
-  margin-inline-start: calc(min(28rem, 86vw) / -2);
-}
-
-@media (max-width: 860px) {
-  .ip-at-crown { left: auto; translate: none; text-align: start; top: clamp(9vh, 13vh, 16vh); }
-  .ip-at-crown .ip-lede { margin-inline: 0; }
-  .ip-doc.is-open {
-    inset-inline-start: var(--sc-gutter);
-    margin-inline-start: 0;
-    bottom: clamp(4.5rem, 13vh, 8rem);
-  }
-}
-
-/* Every copy block is now a plate, so the close only needs its own width. */
-.ip-at-crown { max-width: min(30rem, 84vw); }
-
-
-/* The page's own wordmark and language links sit exactly where the product's
-   screenshots carry their own logo and search bar, so they read as duplication
-   the moment the world lights up. They belong to the dark: present before the
-   flight starts, gone while the hall is lit, back at the close where the ask
-   is. --ip-chrome is written from surface.js against the track. */
-.ip-langs--close {
-  position: static;
-  justify-content: center;
-  margin-top: 0.9rem;
-  opacity: 1;
-  pointer-events: auto;
-}
-.ip-langs--close a { font-size: 0.72rem; }
-
-
-/* The card and the copy must never share a corner. The copy alternates sides
-   leg by leg, so the card alternates with it, always to the other side. */
-.ip-doc--start { inset-inline-start: clamp(1.5rem, 6vw, 6rem); inset-inline-end: auto; }
-.ip-doc--end   { inset-inline-end:   clamp(1.5rem, 6vw, 6rem); inset-inline-start: auto; }
-
-/* ------------------------------------------------------------- phone --
-   A phone has no room for the desktop arrangement: the card and the copy
-   cannot alternate around a 390px frame, they can only collide. So the axis
-   changes rather than the sizes — the document sits at the top of the frame,
-   the copy at the bottom, and the side-alternation is switched off. This block
-   is last in the file on purpose: it has to win over the .ip-doc--start /
-   .ip-doc--end classes the page writes at runtime. */
-@media (max-width: 860px) {
-  .ip-doc,
-  .ip-doc--start,
-  .ip-doc--end {
-    inset-inline-start: var(--sc-gutter);
-    inset-inline-end: auto;
-    top: clamp(4.25rem, 11vh, 7rem);
-    bottom: auto;
-    width: min(11rem, 46vw);
-    padding: 0.7rem 0.8rem 0.75rem;
-  }
-  .ip-doc__sup { font-size: 0.92rem; }
-  .ip-doc__amt { font-size: 1.2rem; margin-top: 0.35rem; }
-  .ip-doc__rule { margin: 0.55rem 0 0.45rem; }
-  .ip-doc__state { font-size: 0.7rem; }
-
-  .ip-doc.is-open,
-  .ip-doc--start.is-open,
-  .ip-doc--end.is-open {
-    inset-inline-start: var(--sc-gutter);
-    inset-inline-end: var(--sc-gutter);
-    top: auto;
-    bottom: clamp(3.5rem, 11vh, 6rem);
-    width: auto;
-    padding: 1rem 1.1rem 1.1rem;
-  }
-
-  .ip-copy { bottom: clamp(6rem, 20vh, 11rem); }
-  .ip-at-crown { top: clamp(6.5rem, 15vh, 10rem); }
-}
-
-
-/* Opacity alone leaves the faded chrome in the tab order, so focus lands on a
-   control nobody can see. visibility takes it out of the sequence too. The
-   language links inside the card are a different element and must stay. */
-.ip-chrome-off .ip-brand,
-.ip-chrome-off .ip-langs:not(.ip-langs--close) { visibility: hidden; }
-
-/* The engine pushes the poster in (scale 1.03 → 1.17) so a still does not sit
-   dead while the page scrolls. That is right when a poster is on screen for a
-   while — and wrong here, because the poster IS the clip's first frame, so the
-   moment the clip paints the frame jumps from scaled to unscaled. Every leg
-   pops once, on arrival, which is exactly when the reader is looking.
-   Holding the poster at scale 1 makes the swap invisible; surface.js warms the
-   clips ahead of time so a motionless poster is barely seen at all. */
-.sc-world__poster { transform: none !important; }

@@ -15,7 +15,7 @@ import path from 'node:path'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DIST = path.join(ROOT, 'dist')
 
-const LOCALES = ['he', 'en', 'fr']
+const LOCALES = ['he']
 const SITE = 'https://inplace.digital'
 
 const dicts = {}

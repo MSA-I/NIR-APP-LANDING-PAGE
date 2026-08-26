@@ -1,133 +1,47 @@
-# GATES.md — build 2, remediation round
+# GATES.md — build 3 (`inplace-folio`), branch `aui-editorial`
 
-Round 1's ledger is archived at `archive/GATES-round1.md`. Every gate in it
-passed, and the owner then found four faults in the page. That is the finding
-worth carrying forward: **round 1 measured still frames and never measured
-motion.** This ledger fixes that.
+Acceptance gates for this build only. Build 2's ledger is archived in
+`archive/GATES-round2.md`; its gates for a worldflight page (map stops, leg
+seams, one continuous camera) do not describe this page and are not run.
 
-The owner's four findings, taken at face value:
+Every row below is either **MET** with the measurement that proves it, or
+**ABANDON:** with the reason. Nothing is reported as done on inspection alone.
 
-1. "מלא פליקרים ובאגים בגלילה" — flicker and jank while scrolling.
-2. "הפס שמראה את סדר התנועה" — the map bar is part of it.
-3. "הטקסטים לא מודגשים מספיק ומתערבבים בבלאגן" — copy loses against a busy frame.
-4. "למה יש אספלט ולא טקסטורה של שולחן עבודה" — the ground is wrong. A business
-   owner's documents sit on a desk, not on a road. This is the most damaging of
-   the four, because it makes the world's whole premise wrong.
+Run: `node scripts/gates/g4-rtl.mjs`, `g6-overflow`, `g7-contrast`, `g14-folio`.
 
----
+| # | Gate | State | Evidence |
+|---|---|---|---|
+| G1 | The page builds, one locale, no template errors | **MET** | `npm run build` → `he dist\index.html 20.4 KB` |
+| G4 | RTL is carried by logical properties only | **MET** | `G4 PASS` — control fixture fires on 18 physical properties; `site.css` 613 lines, 0 hits |
+| G6 | No horizontal overflow at any width | **MET** | `G6 PASS` — clean at 8 scroll positions × 390 / 768 / 1024 / 1440 px |
+| G7 | Text clears WCAG AA on the composited render, both grounds | **MET** | `G7 PASS` — 94 text runs × 10 scroll positions, worst **5.85:1** (`.btn`, needs 4.5). Positive control: a near-white line planted on the wheat plate measures 1.01:1 and is caught |
+| G14a | Grammar holds: one scrub chapter, one `<h1>`, four chapters | **MET** | `G14 PASS` — 4 chapters, 1 act, 1 scrub clip, 1 `<h1>` |
+| G14b | Tabs: five steps, five distinct screens, exactly one panel open | **MET** | `G14 PASS` — each tab opens its own panel, 5 distinct image sources, `aria-selected` follows |
+| G14c | The apparatus is complete in both directions | **MET** | `G14 PASS` — 10 cited figures against 8 sources, no orphan figure, no uncited source |
+| G14d | The film actually scrubs with scroll | **MET** | `G14 PASS` — `currentTime` 4.84s → 12.74s across a fifth of the page |
+| G14e | The folio names the chapter the reader is in | **MET** | `G14 PASS` — "שער" at the top, "פרק 03 — להתחיל" at the foot |
+| G14f | Keyboard: skip link focusable and targeted, tablist has one tab stop, RTL arrow keys advance in reading order | **MET** | `G14 PASS` — skip link takes focus and resolves; 1 of 5 tabs is a tab stop; ArrowLeft moves to `tab-1` |
+| G14g | Reduced motion: no transitions, no smooth scroll, poster still paints | **MET** | `G14 PASS` — strip and button transitions 0s, `scroll-behavior: auto`, poster loaded |
+| G14h | No console or page errors | **MET** | `G14 PASS` — zero after adding the inline favicon that was 404ing |
+| G-vis | Every stage of the page looked at, not just measured | **MET** | Desktop 1600×900 at 0.16 / 0.30 / 0.44 / 0.55 / 0.68 / 0.74 / 0.86 / 0.90 / 1.0; mobile 390×844 at 0.10 / 0.22 / 0.34 / 0.46 / 0.60 / 0.70 / 0.74 / 0.88 / 1.0. Four defects found by eye that no gate caught: the engine's media rule out-specifying the plate inset, all five tab panels rendering at once (`display:grid` beating `[hidden]`), the `<img>` height attribute defeating `aspect-ratio`, and light-ground ink inherited by the dark board spread |
+| G-mob | The product screens are readable on a phone | **MET** | 390px capture at 0.70: `הזמנות רכש`, `7 הזמנות בתצוגה · 17 בסך הכול`, supplier names and dates all legible. The frame scrolls horizontally at 900px rather than shrinking the screen to a smudge |
+| G-fp | Clears 4 of 6 fingerprint dimensions against every existing row | **MET** | See `FINGERPRINTS.md` — 6 of 6 against row 1, 6 of 6 against row 2 |
+| G-fig | Every figure on the page is real | **MET** | All eight sources re-read off `lab/app-reference/*.png` this session, four of them opened and checked by eye: `owner-dashboard`, `office-orders`, `office-invoices`, `owner-exceptions`, `owner-payment-requests` |
 
-## G1 — no layout-animating property is driven per frame
+## Abandoned
 
-    CHECK: node scripts/gates/no-layout-anim.mjs
-    EXPECT: LAYOUT-ANIM-CLEAN
+**ABANDON: G8 scroll smoothness / G-fps frame rate.** Build 2's motion gates
+measure a nine-leg worldflight scrubbing one continuous camera across 16vh —
+the failure mode they exist for. This page has one 5.3vh scrub in a bounded
+plate and no camera handover anywhere, so the gates' thresholds describe a
+different page. Not re-authored, because the defect class they guard (a seam
+between legs) does not exist here. If a second scrub chapter is ever added,
+they come back first.
 
-Driving `width`/`height`/`top`/`left`/`inset` from a per-frame write forces
-layout every frame. The map's run bar did exactly that.
+**ABANDON: G12 locale parity.** One locale on this branch by instruction. The
+gate returns when `en` and `fr` come back out of `archive/i18n-v2/`.
 
-## G2 — no CSS transition fights a per-frame write
-
-    CHECK: node scripts/gates/no-transition-fight.mjs
-    EXPECT: TRANSITION-FIGHT-CLEAN
-
-An element with `transition: opacity` whose opacity is rewritten every rAF
-restarts that transition every frame and never settles. It reads as a pulse.
-
-## G3 — continuous scroll has no frame-to-frame discontinuity
-
-    CHECK: node scripts/gates/scroll-smooth.mjs --url http://localhost:4500
-    EXPECT: SCROLL-SMOOTH-OK
-
-Scrolls the whole track in small real steps and compares consecutive frames. A
-jump beyond threshold between adjacent samples is a visible flicker. This is
-the gate round 1 did not have.
-
-## G4 — every map stop lands inside its own leg
-
-    CHECK: node scripts/gates/map-stops.mjs --url http://localhost:4500
-    EXPECT: MAP-STOPS-OK
-
-## G5 — the page holds a real frame rate while scrolling
-
-    CHECK: node scripts/gates/frame-rate.mjs --url http://localhost:4500
-    EXPECT: FRAME-RATE-OK
-
-Measures actual rAF deltas during a driven scroll. Long frames are what the
-owner is seeing, and no screenshot can show them.
-
-## G6 — copy is legible against the worst frame it is ever shown on
-
-    CHECK: node scripts/gates/copy-contrast.mjs --url http://localhost:4500
-    EXPECT: COPY-CONTRAST-OK
-
-Round 1 cleared 4.5:1 with a soft scrim and the owner still could not read the
-copy against a busy frame. This gate requires 7:1.
-
-## G7 — the ground is a desk, and no road surface remains
-
-    MANUAL: probe frames from the ground-level legs show a desk surface.
-    Evidence: `lab/world/desk/*.png`, read and described in the report.
-
-## G8 — the scroll harness still passes on all three profiles
-
-    CHECK: node scripts/gates/harness-all.mjs
-    EXPECT: HARNESS-ALL-OK
-
-Desktop, 390px and reduced motion: no dead scroll, all legs paint, contrast.
-
----
-
-## Evidence log
-
-Measured 2026-08-26, after the re-render. Shell: Git Bash on Windows.
-CWD: `D:\משה פרוייקטים\פיתוח אתרים\LANDING-PAGE-NIR`. Server: `http://localhost:4500`.
-
-| Gate | Result | Evidence |
-|---|---|---|
-| G1 | MET | `LAYOUT-ANIM-CLEAN`. Falsified first: with the old `width: calc(var(--ip-run) * 100%)` restored in a control stylesheet the gate printed `LAYOUT-ANIM-BAD` and exited 1. The first version of the gate MISSED that control because it anchored the property to line start; it was fixed before being trusted. |
-| G2 | MET | `TRANSITION-FIGHT-CLEAN`. Falsified: a control carrying `transition: opacity 420ms` on `.ip-brand` printed `TRANSITION-FIGHT-BAD`. That rule was real and shipped in round 1. |
-| G3 | MET | `SCROLL-SMOOTH-OK`, 170 frames, worst adjacent step 48.8 at t=0.888, no pops, no cliffs. Falsified: one frame replaced with black in a copied capture produced `CLIFF` + `POP` and exit 1. **Before the fixes the same gate found 17 flagged steps with a worst of 126.2.** |
-| G4 | MET | `MAP-STOPS-OK`. All nine stations land inside their own leg and `aria-current` agrees each time. |
-| G5 | MET | `FRAME-RATE-OK`. 417 driven frames, mean 16.7ms, p95 16.8ms, zero frames over 33ms. The flicker was never jank. |
-| G6 | MET | `COPY-CONTRAST-OK`. All **nine** copy blocks measured, every one on a plate at alpha 0.95, worst text 8.36:1 against a 7:1 floor. The first version of this gate passed having measured **two of nine** because it only read what the harness happened to sample; it was rewritten to measure every block itself. |
-| G7 | MET | The ground is a photographed walnut desk. Evidence read: `lab/peek/hx.png` (paper stack and scatter on wood), `lab/peek/fin.png`, `lab/peek-m/m.png`. No road or concrete surface remains anywhere; the concrete texture is deleted. |
-| G8 | MET | `HARNESS-ALL-OK`. desktop / 390px / reduced motion all pass: no dead scroll, all 9 legs paint a real frame, contrast clear. |
-
-**Measured: 8 met, 0 unmet, 0 abandoned.**
-
-## What actually caused the owner's four findings
-
-1. **Flicker.** Not jank. Chrome silently stops rastering tiles for very large
-   layers, and the ground was a 16000x16000 element — 256 megapixels. Captures
-   came back with whole panels missing, and those frames were encoded into the
-   clips. The DOM was correct at every sampled position, which is why round 1's
-   still-frame gates all passed. Fixed at the source (a 2200px element scaled
-   up covers the same ground) and now proven per frame: the renderer reduces
-   every frame to a signature and recaptures any frame unlike both its
-   neighbours. Both full re-renders reported `dropped frames recaptured: 0`.
-2. **The map bar.** It animated `width` from a value rewritten every frame,
-   forcing layout on every frame of the scroll. Now `transform: scaleX()`.
-   Separately, `.ip-brand` and `.ip-langs` carried a 420ms opacity transition
-   while JS rewrote their opacity every frame, so the transition restarted
-   every frame and never settled. Both are now gated.
-3. **Copy lost in the mess.** It sat on a soft radial scrim that cleared 4.5:1
-   and no more. Every block now sits on an opaque Onyx plate at 8.4:1 or better.
-4. **The ground.** It was polished concrete, which is a road, not a desk. The
-   owner was right and it is now walnut.
-
-Two further faults were found while measuring, neither of them reported:
-the leg 4 / leg 5 seam did not line up (leg 4's last frame had no dashboard in
-it at all, from a dropped raster), and the engine's poster push-in scaled the
-poster to 1.03–1.17 while the video played unscaled, so every leg popped once
-on arrival. Both fixed.
-
-## Known limits, stated rather than hidden
-
-- **A real phone is still not covered.** Headless Chrome cannot reproduce an
-  iPhone's video decoder, autoplay policy or Low Power Mode. The 390px pass is
-  a layout and contrast check.
-- **The demo CTA URL is an assumption.** `https://inplace.digital/demo` is a
-  placeholder pending the owner's confirmation.
-- **G3's thresholds are judgement, not physics.** A pop is any frame unlike
-  both neighbours; a cliff is one step over 70. The page contains deliberate
-  dissolves that legitimately move 30-50 in a step, and those are not failures.
-  The numbers are reported rather than hidden behind the verdict.
+**ABANDON: real-device check.** Headless Chrome cannot reproduce an iPhone's
+video decoder, autoplay policy or Low Power Mode. Everything above is a desktop
+Chrome measurement at a phone viewport, which is not the same thing. The film
+clip in particular has only been proven to scrub in headless Chrome.

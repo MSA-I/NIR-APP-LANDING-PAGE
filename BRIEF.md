@@ -1,207 +1,228 @@
-# BRIEF.md — InPlace scroll landing, build 2
+# BRIEF.md — InPlace landing, build 3
 
-Build name: `inplace-hall`
+Build name: `inplace-folio`
+Branch: `aui-editorial` (cut from the `main` baseline that holds build 2)
 Interviewed: 2026-08-26, with Moshe. **Not self-authored.**
-Supersedes build 1 (`inplace`, 2026-08-25), which Moshe rejected. Build 1's
-BRIEF is preserved in `archive/BRIEF-v1.md`.
+Supersedes build 2 (`inplace-hall`), whose BRIEF is preserved in
+`archive/BRIEF-v2.md`. Build 1's is in `archive/BRIEF-v1.md`.
 
 Product: InPlace (codebase name SupplyFlow) — Hebrew-first, RTL, multi-tenant
 procurement-to-payment control system. Product repo: `../NIR-APP`.
-Out of scope by instruction: `../NIR-LANDING PAGE`.
 
 ---
 
-## Why build 1 was rejected
+## Why build 2 was cut down rather than rejected
 
-Asked directly, Moshe selected all four available faults at once:
+Moshe's words: he liked the idea, and specifically the stretch **"מערימה עד
+פערים"**. Everything after it was *"נורא מבולגן וממש לא כמו שדימיינתי"*, and the
+consequence he named is the one that matters: *"לקוח עתידי שייכנס לדף נחיתה לא
+יבין מי נגד מי. האתר נחיתה אמור להסביר ללקוח מה המוצר עושה."*
 
-- **ריק ומופשט מדי** — too much white space, one small card in the middle, no
-  visual presence.
-- **לא מסביר מה המוצר עושה** — a visitor who does not already know InPlace
-  cannot tell what it is from looking at it.
-- **משעמם / לא מרשים** — nothing on the page makes anyone stop.
-- **סכמטי במקום אמיתי** — diagrams and abstractions where the real screens and
-  the real numbers should have been.
+That is a precise diagnosis, not a mood. Build 2 was one unbroken world with no
+document flow at all: nine legs of camera, copy arriving at waypoints, and not a
+single place where a visitor could stop and read what the product does. It was
+an experience about a feeling. A landing page has to be an explanation.
 
-That is one fault, stated four ways: **build 1 talked about the product instead
-of showing it, and it did so quietly.** Build 2 inverts both halves.
+So build 3 keeps the part that worked — the film — and replaces the grammar
+around it.
+
+**Correction taken mid-build:** the first plan ended the film after "פערים".
+Moshe corrected it to **"נגמר באמצע בקרה"**, so the film now runs legs 01-03 and
+stops halfway through leg 04, on the reveal of the control centre. That is a
+better cut than the one I proposed: the film ends on the product, not on the
+mess, and it hands straight into the chapter that explains the product.
+
+---
+
+## The interview answers
+
+Asked as four questions, answered 2026-08-26.
+
+**1. Where does the film end and the structured page begin?**
+
+> "אחרי 'פערים'" — corrected the same session to **"נגמר באמצע בקרה"**.
+
+**2. Palette: copy the reference, or stay with InPlace?**
+
+> "מבנה הרפרנס, צבעי InPlace"
+
+The layout language is taken from the reference. The palette is not.
+
+**3. Which content sections go into the structured page?**
+
+> "מה המערכת עושה — 5 יכולות + מסך אמיתי"
+
+One section, chosen out of four offered. The other three (before/after with
+tabs, the three roles, the full chain) were **not** selected and are not on the
+page. They are one instruction away and nothing in the build blocks them.
+
+**4. Languages?**
+
+> "עברית בלבד (מומלץ לעכשיו)"
+
+`en` and `fr` are parked in `archive/i18n-v2/`. `scripts/build.mjs` builds `he`
+only. The template is unchanged in shape, so restoring them is a one-line edit.
+
+## The reference, read rather than glanced at
+
+`https://www.aui.io/` read on 2026-08-26, computed styles sampled off the live
+page rather than eyeballed from the screenshot:
+
+| | measured | used here as |
+|---|---|---|
+| page ground | `#121212` | Onyx `#0a171d` |
+| light band | `#f1f0e0` | Wheat `#fff6e9` |
+| accent | `#ff4800` | Oceanic `#38b3c0` on dark, `#00525d` on light |
+| plates | inset 10px, radius 12px, max ~1225px | same |
+| display | 72 / 64 / 54px, weight 350-400, tracking -0.05em, leading 0.95 | Hebrew has no uppercase, so scale and weight carry it: clamp to 76 / 58 / 42px at weight 700, tracking -0.022em, leading ~1.0 |
+| micro-label | 14px, uppercase, accent, tracking +0.01em | 13px, weight 600, accent, tracking +0.055em |
+| body | 16-20px, weight 300-400 | 16-19px, weight 400 |
+| structure | bounded plates on a ground, hard cuts, alternating dark and cream, real product UI inside its own panel with a label | same |
+
+What was **not** taken: the section counters, the careers grid, the partnership
+card, the logo wall (InPlace has no client logos it can show), and the palette.
 
 ---
 
-## The eight interview answers, verbatim
+## The grammar — chaptered editorial
 
-**1. Vibe**
+The page is a printed feature: a title page, three chapters, a colophon. This is
+the fork that makes build 3 a different page rather than build 2 with a new
+skin, and it is the grammar the reference is actually written in.
 
-> "עוצמתי ומרשים"
+Why the other seven lost:
 
-**2. The scroll journey — what comes first**
+- **Filmic one-shot** — the default drift, and the thing Moshe just rejected in
+  a different costume. It forbids a visible index, which is exactly the thing a
+  confused visitor needs.
+- **Live surface** — spent by build 1, and it forbids display type and marketing
+  chrome, which is the entire layout Moshe asked for.
+- **Continuous world** — spent by build 2, and it is the grammar that produced
+  the complaint.
+- **Typographic poster** — forbids photographic ground and any real screens. The
+  brief is "show the customer what the product does".
+- **Gallery / catalog** — the visitor's question here is not "what are the
+  options", it is "what is this".
+- **Split stage** — the before/after comparison it exists for is exactly the
+  section Moshe did **not** select.
+- **Rhythmic cutlist** — hard cuts at speed, no dwell. The product screens need
+  dwell; they are dense tables a reader has to actually read.
 
-> "הכאב קודם"
+What the grammar forbids, and how it is honoured: no full-bleed scrub hero (the
+film is a bounded plate in chapter 01, and the hero is a title page with no
+media above the fold); no pinned crossfade type acts (the copy in chapter 01 is
+sticky text in its own column, never cued over the film); media never bleeds
+under type (film and copy are separate columns, every screen has a caption);
+scrub in one chapter only (one act on the page, asserted by G14); no magnetic
+CTA (the close is a colophon, the ask is a line of running text plus buttons).
 
-The visitor opens on the mess, not on the product. The stack of documents that
-does not hold, and the numbers that do not agree.
+## The chapters
 
-**3. The energy curve**
+| | Chapter | Ground | What it does |
+|---|---|---|---|
+| — | Title page | Onyx | What this is, in two paragraphs. Both CTAs. An index of the three chapters, so a visitor knows the shape before scrolling |
+| 01 | מהערימה למרכז הבקרה | Onyx | The film. Four copy blocks travelling beside it |
+| 02 | מה המערכת עושה | Wheat plate, then Onyx | Five steps, five real screens, tab-switched. Then the control centre at full width with three real figures |
+| 03 | להתחיל | Onyx | The colophon: the ask, and the full source apparatus |
 
-Powerful from the first frame, so the curve is not quiet-to-loud. It is
-**pressure, then release**: the weight of the mess up front, held through the
-journey, resolved at the peak, and settled — not deflated — at the close.
+Length: **10.15 viewport-heights**. Deliberately outside the 13.6-13.8 band the
+first four scrollcraft builds clustered in, and outside build 1's 12.3 and build
+2's 16.0.
 
-**4. How it should feel, and the ONE moment**
+## The film
 
-> "הכאוס מסתדר לסדר"
+Legs 01, 02, 03 of build 2's world plus the first half of leg 04, stream-copied
+into one clip: 593 frames, 24.71s, 9.5MB desktop / 4.2MB mobile. Stream copy,
+not a re-encode — a re-encode of the same four legs came out at 18.6MB for worse
+pixels, because a dense-GOP encode of already-compressed video pays twice.
 
-The remembered moment: the scattered paper stops being paper and becomes the
-system. Not "documents tidy themselves into a grid" — they **turn into rows in
-the real InPlace table**. The name proven in motion.
-
-**5. One thing no other site does**
-
-The document the visitor is carrying. See the signature move below.
-
-**6. Aesthetic range**
-
-> "שילוב של מה שהצעת ב 1 ו 3"
-
-Option 1 was *bold in scale*: product colours, large scale, large typography,
-strong contrast. Option 3 was *very cinematic*: deep dark ground, dramatic
-lighting, screens floating in space. Both, combined. So: the brand's own Onyx
-graded down to a lit room over a walnut desk, real screens as physical objects in it, and
-typography at a scale the product itself would never use.
-
-Note the tension this creates with the product's own anti-references
-(`../NIR-APP/PRODUCT.md`: never loud, never flashy). Resolution, recorded and
-agreed by the answers above: **the product surface stays exactly as it is —
-every screen shown is the real one, uncoloured and unretouched. The drama is in
-the room around it, never inside it.** InPlace stays calm; the hall it is
-standing in is lit like a film.
-
-**7. One unbroken world, or distinct scenes?**
-
-> "עולם רציף אחד"
-
-Explicit. This is the single biggest structural fork and Moshe took the
-continuous side, so the page is worldflight and has no acts anywhere.
-
-**8. Assets**
-
-> "אצלם מחדש מהאפליקציה"
-
-Only that, at interview time. Fourteen screens were captured fresh from the app
-running locally against a local Supabase, on 2026-08-26.
-
-**Changed mid-build, on Moshe's instruction.** Partway through he said the
-Higgsfield CLI was available to use. Generated stills were added for the ground
-only. Nothing generated appears as content — no product screen, no document, no
-figure. The generated material is the room; everything in the room is a real
-capture.
-
-**Then changed again, on his review.** The first ground was polished concrete,
-and he asked the right question: "למה יש אספלט ולא למשל טקסטורה של שולחן עבודה
-הרי בעל העסק לא עובד על הכביש". A business owner's paperwork is on a desk. The
-ground is now a photographed top-down **walnut desk**, and the concrete is
-deleted. This is the single change that made the world's premise true rather
-than merely atmospheric.
-
-## The four production answers
-
-- **Languages:** he / en / fr. Hebrew RTL is the source; en and fr mirror it.
-- **CTA:** both — primary פתיחת חשבון חינם, secondary תיאום דמו.
-- **Length:** long, ~16 viewport-heights.
-- **Audience the page speaks to first:** בעלים / מנהל עסק. The owner's pain is
-  "I cannot see the picture", so the page opens on not being able to see it.
-- **Name on the page:** InPlace.
-- **Pain scene, specified:** ערימת מסמכים מתערערת + מספרים שלא מתאימים. Both,
-  in that order.
-
----
+Span 5.3vh, which is build 2's measured pace of 0.215 viewport-heights per
+second of film.
 
 ## The feeling curve
 
-Written before the legs. One line per leg: the emotion, then what causes it.
-
-| # | Leg | Feeling | What causes it |
+| # | Beat | Feeling | What causes it |
 |---|---|---|---|
-| 1 | הערימה | Weight, then alarm | A stack of twelve documents stands on a dark walnut desk, leans, and comes down toward the camera |
-| 2 | המספרים | Sharp frustration | Three fallen pages light up and contradict each other: ordered, received, invoiced |
-| 3 | האור בקצה | Curiosity | The camera lifts off the floor; far ahead in the dark something is lit |
-| 4 | מרכז הבקרה | Relief, first competence | The lit thing is the real dashboard, and it is legible |
-| 5 | המסע | Orientation | The camera travels the hall past the stations, each one a real screen |
-| 6 | **הנייר הופך לשורות** | **Release — the peak** | The scattered paper rotates, flies in, and lands as rows in the real table |
-| 7 | החריגה | Tension, then trust | One row goes red on its own. Nobody caught it; the system did |
-| 8 | הכסף עובר | Quiet finality | Payment and bank meet once, matched, with a receipt |
-| 9 | הכול במקום | Settled, then invited | The camera passes between payment and bank and comes back to rest head-on on the control centre it first saw from the dark |
+| — | Title page | Orientation | A sentence that says what this is, and an index that says how long it will take |
+| 1 | הערימה | Weight, then alarm | The stack of twelve supplier documents stands, leans and comes down |
+| 2 | הפערים | Sharp frustration | Two numbers for one supplier, and nobody compared them |
+| 3 | האור | Curiosity | The camera lifts off the floor; something is lit far ahead |
+| 4 | הבקרה | Relief — **the peak** | The lit thing is the real control centre, and the film stops there, mid-reveal, and hands the page to the product |
+| 5 | חמשת השלבים | Competence | Five real screens, readable, one click apart |
+| 6 | מרכז הבקרה, מלא | Settled | The same screen the film stopped on, now full width and legible, with its three real numbers |
+| 7 | הסגירה | Trust, then invited | Every number on the page, with the screen it came from. Then the ask |
 
-No two adjacent legs carry the same feeling. Leg 5 (orientation) is
-deliberately the calmest motion on the page so leg 6 has something to break.
+No two adjacent beats carry the same feeling. Beat 3 is the calmest thing on the
+page, deliberately, so beat 4 has something to break.
 
 ## The peak
 
-**Leg 6. "הנייר הופך לשורות".** Largest weight on the page by a visible margin
-(2.6 against a 1.55 average), the most render budget, and the calm of leg 5 in
-front of it.
+**The cut.** The film stops halfway through the control-centre reveal and the
+page hard-cuts to the cream plate. It is the largest single change on the page —
+ground, grammar, and mode of attention all change in one scroll — and it is
+where the visitor stops watching and starts reading.
 
-The sentence a visitor says to a friend:
+The sentence a visitor would say:
 
-> "There's a bit where all the paper flying around just turns into the actual
-> rows of the system, and that's when you get what the product is."
+> "The mess comes down, the camera finds the screen, and right when you want to
+> look at the screen the film stops and hands you the actual thing."
 
-Deliberately **not** build 1's peak, which was scattered objects converging into
-a sorted grid with one exception left ringed. That mechanic is spent and logged.
-Here nothing sorts: paper **converts**. The exception is not part of the peak at
-all; it is leg 7, and it arrives after the release, not inside it.
+Deliberately **not** build 2's peak (paper converting into rows) and not build
+1's (objects sorting into a grid). Both are spent and logged.
 
 ## Authored silence
 
 Two places, intentional, not dead scroll:
 
-1. The last third of leg 5 — the camera stops banking and simply travels. The
-   world is legible and nothing demands anything. This is the inhale.
-2. The first third of leg 9 — the flight settles and the control centre holds,
-   lit and still, before the invitation arrives.
-
-**Changed during the build, recorded rather than quietly dropped.** Leg 9 was
-written as "the camera pulls back and the whole hall is lit at once". A corridor
-travelled forwards has everything behind it at the end, so that shot needs the
-camera to turn around, which shows the backs of the screens; billboarding them
-to face the camera turned every panel oblique mid-turn and a 2100-wide oblique
-plane 900 units away crosses the camera plane and renders as a full-frame smear.
-The close now returns to the control centre head-on instead. Same beat —
-arrival, resolution, everything in its place — reached with geometry that
-holds.
+1. The third copy block in chapter 01 — the camera simply travels, the copy says
+   one plain sentence, nothing is claimed. This is the inhale before the reveal.
+2. The head of chapter 02, above the tabs — an eyebrow, a heading and one line,
+   on an empty cream plate, before any screen appears.
 
 ## The tell-someone sentence
 
-> It's the site where the mess on your desk turns into the software while you
-> scroll.
+> It's the site where the film stops in the middle and hands you the actual
+> screens, with a receipt for every number on the page.
 
 ---
 
-## The signature move — "המסמך שנוסע איתך"
+## The signature move — "מנגנון ההערות"
 
-Twelve documents fall in leg 1. Eleven of them are in the film. **The twelfth is
-not.** It is live markup in the copy layer: a real paper card, and from the
-moment it lands it follows the pointer with mass and lag, drifting over the
-world like something the visitor is holding.
+The page cites itself, the way a printed feature does.
 
-It is the same document for the whole page, and it changes as the journey
-changes it:
+Every real figure in the running copy carries a superscript source number:
+2,884.50 ₪, 4,720.00 ₪, 17 הזמנות, 5 הזמנות ממתינות, 14 חשבוניות, 8 חריגים,
+דרישה 58#, and the control centre's 13 / 17,825 ₪ / 6. As the reader passes one,
+a footnote strip at the foot of the page names its source: which screen, which
+supplier, which date, which status. The figure and its row in the full list both
+light while it is named.
 
-It is invoice **2088, נקי וזוהר, 1,062.00 ₪** — a real row in the real invoices
-table — and its state line restates at every waypoint:
+The full apparatus is real markup in the colophon — an ordered list of all eight
+sources — so a reader with no JavaScript, or a screen reader, gets the whole
+thing and loses only the reading head. G14 asserts it in both directions: no
+figure without a source, and no source nothing cites.
 
-`בערימה` → `לא הושוותה` → `נסרקה` → `נקלטה למערכת` → `שויכה להזמנה` →
-`קיבלה שורה` → `נבדקה מול ההזמנה` → `אושרה לתשלום` → `שולמה חלקית`
+Why this and not a nicer effect: the fault Moshe named is that a visitor cannot
+tell what is real. A page about a system whose entire promise is "numbers that
+agree" should be able to show where its own numbers came from. It is the only
+device on the page that argues rather than decorates.
 
-The last state is the one the product actually records for that invoice.
+Distinct from build 1's `השקל בתנועה` (one amount riding a chrome rail, mutating
+with scroll velocity) and build 2's `המסמך שנוסע איתך` (an object following the
+pointer through a world). Neither of those was a citation, and neither had a
+non-JS equivalent.
 
-At the peak it leaves the pointer, flies into the panel, and takes its place as
-a row. At the close it comes back stamped, and it is the object the CTA lives
-on — which is what this grammar requires an ending to be.
+---
 
-On touch it follows scroll velocity instead of a pointer. Under reduced motion
-it stops moving and simply updates its state at each waypoint.
+## What is deliberately not here
 
-Distinct from build 1's signature (`השקל בתנועה`, one amount riding a fixed
-rail): that was a number on chrome the page drew; this is an object in the world
-the visitor is holding.
+Stated so it reads as a decision rather than an omission:
+
+- **Three of the four offered content sections.** Moshe selected one. The
+  before/after comparison, the three roles, and the full supplier-to-bank chain
+  are not on the page.
+- **English and French.** Parked, not deleted.
+- **Any invented number.** Every figure is read off a capture in
+  `lab/app-reference/`, taken 2026-08-26 from the product running locally.
+- **A logo wall.** InPlace has no customer logos it can show, and a row of
+  greyed placeholder marks is the reference's least honest component.
