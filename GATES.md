@@ -220,3 +220,26 @@ page to be true.
 | D6 | The screens are shown whole, at their own ratio | **MET** | They were cropped to 16:9 with `object-fit: cover`. A cropped image and hotspots measured against the original cannot both be right, and a demo shows the whole screen anyway. `G14` asserts the rendered box is within 0.02 of 2000/1334 |
 | D7 | The demo is discoverable, and keyboard users are not stranded | **MET** | A line under the chain says the menu inside the screen is clickable. The hotspots are `aria-hidden` and not focusable on purpose: the chain above is the same control with a real accessible name, and two tab stops for one action is worse than one |
 | D8 | Nothing else broke | **MET** | `4 met, 0 unmet`. Detector `[]`. Zero em-dashes. Page 14.94vh. Figures re-read off the fresh captures and unchanged: 17 orders, 5 receiving, 14 invoices, 8 exceptions, request 58#, and 13 / 17,825 / 6 |
+
+---
+
+## Round 8: the legal links pointed at the wrong host
+
+The owner asked whether the two links were not already in the app. They are,
+and that is exactly what made the footer wrong.
+
+| # | Gate | State | Evidence |
+|---|---|---|---|
+| L1 | The legal pages exist and are reachable without a login | **MET** | `../NIR-APP/src/App.tsx:265-266` declares `/terms` and `/privacy` **above** the auth-guarded route block, so no session is required. Both answer `200` on the running app |
+| L2 | They are linked at the host that actually serves them | **MET** | They pointed at `inplace.digital/terms` and `/privacy`, taken from a pre-cutover route snapshot. The pages live in the app, whose host is `app.inplace.digital`, the same host every other action on this page already uses. Both links moved |
+| L3 | The wrong host cannot come back quietly | **MET** | `G14` now fails on a footer link matching `https://inplace.digital/(terms\|privacy)` |
+| L4 | Every outbound link on the page resolves to one host | **MET** | `grep` of the built file returns four absolute links, all `app.inplace.digital`: the site root, signup, terms, privacy |
+| L5 | Nothing else broke | **MET** | `4 met, 0 unmet` |
+
+**This closes the second of the two pre-launch items.** Only the quota
+migration deploy remains.
+
+**What the mistake was.** The route list in `artifacts/domain-cutover/` is a
+snapshot of the domain *before* the cutover, and I read it as a list of pages on
+the marketing domain. It was a list of routes in the app. I flagged the links as
+unconfirmed rather than checking, and the check took one grep and one curl.

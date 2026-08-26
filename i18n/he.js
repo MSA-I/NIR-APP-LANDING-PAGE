@@ -274,8 +274,8 @@ export default {
       {
         h: 'משפטי',
         links: [
-          { t: 'תנאי שימוש', href: 'https://inplace.digital/terms' },
-          { t: 'פרטיות',     href: 'https://inplace.digital/privacy' },
+          { t: 'תנאי שימוש', href: 'https://app.inplace.digital/terms' },
+          { t: 'פרטיות',     href: 'https://app.inplace.digital/privacy' },
         ],
       },
     ],

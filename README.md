@@ -156,18 +156,14 @@ just replace the image.
 
 ---
 
-## Two things that must be true before this goes live
+## One thing that must be true before this goes live
 
-1. **The quota migration has to deploy first.** The plans table publishes
-   20 / 40 / 150 / 375 documents per month, which are decision #266's values.
-   That decision is merged but not deployed, and production still stands on
-   migration `0170` with 25 / 50 / 200 / 500. Publishing a quota the running
-   system does not enforce is the one thing this page must not do.
-
-2. **Two footer destinations need confirming**: `inplace.digital/terms` and
-   `inplace.digital/privacy`. Both come from the product's own route list in
-   `artifacts/domain-cutover/`, which is a snapshot of the pre-cutover domain.
-   They are together in `i18n/he.js` under `footer.cols`.
+**The quota migration has to deploy first.** The plans table publishes
+The plans table publishes 20 / 40 / 150 / 375 documents per month, which are
+decision #266's values. That decision is merged but not deployed, and
+production still stands on migration `0170` with 25 / 50 / 200 / 500.
+Publishing a quota the running system does not enforce is the one thing this
+page must not do.
 
 Prices are published here by owner instruction of 26.08.2026, which reverses
 decision #267 for this page only. #267 still governs the product's own

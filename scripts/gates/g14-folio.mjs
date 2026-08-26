@@ -101,6 +101,11 @@ await withPage(async (page, { errors }) => {
   c.ok(shape.faqOpenNoJs === 1, `exactly one FAQ entry should be open at rest, found ${shape.faqOpenNoJs}`)
   const badHrefs = shape.footLinks.filter((h) => !h || h === '#' || /example\.com|TODO/i.test(h))
   c.ok(badHrefs.length === 0, `footer links with no destination: ${badHrefs.join(', ')}`)
+  // /terms and /privacy are public routes in the APP (NIR-APP src/App.tsx),
+  // not pages on the marketing domain. Linking them at inplace.digital was a
+  // guess taken from a pre-cutover route list, and it was wrong.
+  const wrongHost = shape.footLinks.filter((h) => /^https:\/\/inplace\.digital\/(terms|privacy)/.test(h || ''))
+  c.ok(wrongHost.length === 0, `legal pages linked on the marketing domain, but they live in the app: ${wrongHost.join(', ')}`)
   c.note(`${shape.faq} FAQ entries, ${shape.footLinks.length} footer links`)
 
   // One CTA, one destination, everywhere.
