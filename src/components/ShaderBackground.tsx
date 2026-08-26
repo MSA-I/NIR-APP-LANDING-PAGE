@@ -19,11 +19,19 @@
 // promise.
 //
 // THE COLOURS
-// The catalogue recipe is orange, yellow and pink on black — the reference's
-// palette, not this product's. SHADER_PALETTE below is the application's own
-// ramp, and scripts/gates/g3-palette.mjs fails the build if a colour appears
-// in it that `data/product-tokens.json` does not define. The first entry is
-// the ground the gradient sits on; the rest are what moves across it.
+// The catalogue recipe is orange, yellow and pink on black. Until 26.08.2026
+// this ground was painted in the running application's own ramp, and
+// scripts/gates/g3-palette.mjs failed the build on any colour the product did
+// not define. On that date the owner asked for "light purple and almost black,
+// the black like in the pricing image", which is a colour family the product
+// does not contain and never will: the application is teal.
+//
+// So the gate did not go away, it changed shape. G3 now carries a dated
+// allowlist, and every colour here is either a product token or a named entry
+// on that list. A purple that nobody approved still fails.
+//
+// The first entry is the ground the gradient sits on; the rest are what moves
+// across it, darkest to lightest.
 //
 // THE POINTER
 // `GrainGradient` has no pointer input at all: it is a function of time and
@@ -35,13 +43,14 @@
 import { useEffect, useState } from 'react'
 import { GrainGradient } from '@paper-design/shaders-react'
 
-// The running product's own ramp, dark to light:
-//   #0a171d  color-shell / color-ink   the application's chrome, and the ground
-//   #003f47  color-action              its primary action
-//   #0d4e56  color-action-solid        the fill that action paints
-//   #5d9096  color-action-line         the line that action draws
-//   #e8eef1  color-topbar              the bar above every screen
-export const SHADER_PALETTE = ['#0a171d', '#003f47', '#0d4e56', '#5d9096', '#e8eef1']
+//   #06060c  the almost-black the plan cards sit on
+//   #241645  the deep end of the purple
+//   #6d4ed6  its middle
+//   #b9a3ff  the light purple the owner asked for
+//   #e8eef1  color-topbar, the one product token left in the ramp: the bar
+//            above every screen in the application, and the only light this
+//            gradient needs that is not purple
+export const SHADER_PALETTE = ['#06060c', '#241645', '#6d4ed6', '#b9a3ff', '#e8eef1']
 
 // The catalogue component's numbers, kept: softness 0.76, intensity 0.45,
 // noise 0, shape "corners", speed 1. Two departures, both measured against the

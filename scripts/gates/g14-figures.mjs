@@ -61,11 +61,23 @@ await withPage(async (page) => {
   // on 26.08.2026. It is the switch's job now, so the gate presses the switch
   // and reads the cards, which is what a reader does.
   await page.click('#plans [role="switch"]')
-  // The amounts COUNT between the two catalogues rather than swapping, so the
-  // card does not carry its new figure for about half a second. Measured on
-  // this page with the film decoding in the background it settles by 1.5s and
-  // not by 0.8s, which is why this wait is what it is.
-  await page.waitForTimeout(2000)
+  // The amounts COUNT between the two catalogues rather than swapping, so a
+  // card does not carry its new figure for the length of the count. Waited FOR
+  // rather than waited OUT: a fixed timeout passed on its own and failed in a
+  // full ledger run, because how long the count takes depends on what else the
+  // page is decoding at the time.
+  await page
+    .waitForFunction(
+      (want) =>
+        want.every((y) =>
+          [...document.querySelectorAll('#plans [data-plan-name]')].some((el) =>
+            el.textContent.includes(y)
+          )
+        ),
+      WANT_YEARLY,
+      { timeout: 15000 }
+    )
+    .catch(() => {})
   const checked = await page.$eval('#plans [role="switch"]', (el) => el.getAttribute('aria-checked'))
   c.ok(checked === 'true', `the billing switch did not flip; aria-checked is "${checked}"`)
 

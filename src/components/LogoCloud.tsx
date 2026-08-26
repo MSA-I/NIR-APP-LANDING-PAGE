@@ -57,8 +57,18 @@ export function LogoCloud({
                     alt={echo ? '' : it.name}
                     width={it.w}
                     height={it.h}
-                    loading="lazy"
-                    decoding="async"
+                    // EAGER, and deliberately.
+                    //
+                    // Lazy images inside a marquee are the second half of the
+                    // fault the owner reported on 26.08.2026: the strip is
+                    // `width: max-content` and the animation translates it by
+                    // -50% of ITS OWN width, so every mark that decodes late
+                    // changes that width and the whole run visibly re-seats.
+                    // Scrolling to the section looked like the animation
+                    // restarting because, measured against its own geometry,
+                    // it did. Six marks come to 35KB.
+                    loading="eager"
+                    decoding="sync"
                     // The marks are keyed at 2x of their display height and
                     // each one carries its own optical scale, so the height
                     // comes off the file rather than off one class.

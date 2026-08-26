@@ -443,3 +443,38 @@ risk and is still written down rather than fixed here.
   was written against a swap; the amounts animate over 520ms and settle by 1.5s
   with the film decoding alongside. Measured, then the wait was set from the
   measurement rather than from a guess.
+
+---
+
+## Round ten — the owner's fourth list, 26.08.2026
+
+| # | Asked | Done |
+|---|---|---|
+| 1 | The shader in light purple and almost black, the black like in the pricing image | `#06060c` ground, `#241645 → #6d4ed6 → #b9a3ff`, and one product token left in the ramp. **G3 became an allowlist rather than a freeze**: the application is teal and owns no purple, so a gate that could only say "every colour is a product token" had to be either deleted or made honest. Four dated entries; a purple nobody approved still fails, an entry nothing uses fails, and an entry for a colour the product has since defined fails |
+| 2 | The plan cards like the reference image | Tickets. Scalloped top and bottom edges, a notch cut into both sides at the height of the action, plan codes (`PRO-2026`), an icon chip, three dotted rules, a drawn barcode. The silhouette is ONE mask of four radial gradients composited with `mask-composite: intersect`, not a stack of pseudo-elements, and the edge ring is drawn inside because a `border` cannot follow it |
+| 3 | ביזנס with the animation from the image | A wide diagonal highlight crossing the glossy near-black card and starting again. Eight seconds across, then a rest: it is the only animation on the tray, so it is slow |
+| 4 | The announcement strip almost white, with an animation | `#fffdfa`, and the same sweep at half the speed |
+| 5 | Still the bug with the buttons and the shader | The title page reserved **`58px`** for the folio, hard-coded, which was the folio's height on the day that line was written. The announcement strip made it 102px and nothing told the hero, so the nav row sat 44px INSIDE the shader plate and cut its top edge and its crop marks. The folio measures itself with a ResizeObserver and publishes `--folio-h` now, which also survives the strip being dismissed at runtime |
+| 6 | Hovering the logo wall stops it; scrolling to it looks like it restarts | Two separate faults. Swapping `animation-duration` on hover does not slow a CSS animation, it re-times it: Chrome keeps the progress FRACTION, so the strip jumps and then crawls. That hover is gone. And the marks were `loading="lazy"` inside a `width: max-content` strip whose animation translates by -50% of its OWN width, so every mark that decoded late changed that width and the run visibly re-seated. Measured after: duration constant at 42s, `playState` "running" throughout, run width constant at 1685px from first paint |
+| 7 | On dark ground the brand should be light, on light ground dark | It was tinted teal both ways. The name departs from the copy around it by BRIGHTNESS now, which also survives a reader who cannot separate a teal from a grey |
+
+### What round ten cost, and what caught it
+
+- **Twelve contrast failures at 1.09:1, all on the cream card.** The same trap
+  the announcement strip fell into a round earlier and the reason it is worth
+  writing down twice: `background: linear-gradient(...)` leaves
+  `background-color` transparent, and everything that asks an element what
+  ground it is on reads the COLOUR. Dark type that is 16:1 on paper was graded
+  against the page's onyx four ancestors up. Every surface that paints a
+  gradient declares the colour under it now. G7.
+- **A masked card with no perforation at all.** Declaring both
+  `-webkit-mask-*` and `mask-*` lets the prefixed pair win in Chrome, and it
+  takes `source-in` where the standard property takes `intersect`, so the four
+  mask layers composited the wrong way and the ticket came out a plain rounded
+  rectangle. Standard properties only.
+- **Six three-value `padding`/`margin` shorthands.** Three values is
+  top / left-and-right / bottom, which is a physical axis. G4.
+- **G14 timing out on a count rather than a swap.** Its fixed wait passed when
+  run alone and failed inside a full ledger, because how long the amounts take
+  to finish counting depends on what else the page is decoding. It waits FOR
+  the figures now instead of waiting them out.

@@ -8,7 +8,7 @@
 // page's calls to action use, so the header answers a pointer the same way the
 // rest of the page does rather than in a dialect of its own.
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Cta } from './Cta'
 
 export function Mark({ className }: { className?: string }) {
@@ -51,6 +51,27 @@ export function Folio({
 }) {
   const [where, setWhere] = useState(first)
   const [lifted, setLifted] = useState(false)
+  const boxRef = useRef<HTMLElement>(null)
+
+  // The folio publishes its own height.
+  //
+  // The title page used to reserve 58px for it, hard-coded, which was its
+  // height on the day it was written. The announcement strip made the folio
+  // 102px tall and nothing told the hero, so the nav row sat 44px INSIDE the
+  // shader plate and cut its top edge and its crop marks: the fault the owner
+  // circled on 26.08.2026. It also has to survive the strip being dismissed,
+  // which changes the height back again at runtime, so a second constant would
+  // have been wrong half the time too.
+  useEffect(() => {
+    const box = boxRef.current
+    if (!box) return
+    const publish = () =>
+      document.documentElement.style.setProperty('--folio-h', `${Math.round(box.offsetHeight)}px`)
+    publish()
+    const ro = new ResizeObserver(publish)
+    ro.observe(box)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setLifted(window.scrollY > 40)
@@ -82,6 +103,7 @@ export function Folio({
 
   return (
     <header
+      ref={boxRef}
       className="fixed inset-x-0 top-0 z-[100] transition-[background-color,backdrop-filter,border-color] duration-500"
       style={{
         backgroundColor: lifted ? 'color-mix(in srgb, #0a171d 82%, transparent)' : 'transparent',

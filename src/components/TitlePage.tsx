@@ -44,7 +44,13 @@ export function TitlePage({
   const calm = useReducedMotion()
 
   return (
-    <section id="top" data-folio={folio} className="pt-[58px]">
+    <section
+      id="top"
+      data-folio={folio}
+      // The folio measures itself and publishes --folio-h; see the note in
+      // Folio.tsx for what the constant that used to be here cost.
+      style={{ paddingBlockStart: 'calc(var(--folio-h, 58px) + 0.5rem)' }}
+    >
       <div className="plate crops border border-onyx-line/70 text-ink">
         <div className="absolute inset-0 -z-10">
           <ShaderBackground className="h-full w-full" />

@@ -1,14 +1,33 @@
-// G3: the shader ground is painted in the application's own colours.
+// G3: every colour in the shader ground is either the application's own or one
+// the owner asked for by name.
 //
-// The owner's note on 26.08.2026: "הצבעים צריכים להיות בצבעי האפליקציה כרגע זה
-// לא המצב". The build before this one used a turquoise the product does not
-// contain, so "in the palette family" is no longer a strong enough test. This
-// gate now asserts something exact: every colour in the shader is a token the
-// running application actually defines, matched against the OKLCH values
-// captured in data/product-tokens.json and converted here.
+// The owner's note on 26.08.2026, in the morning: "הצבעים צריכים להיות בצבעי
+// האפליקציה כרגע זה לא המצב". The gate that answered it asserted something
+// exact: every colour in the shader is a token the running application
+// defines, matched against the OKLCH values in data/product-tokens.json.
 //
-// Two controls, because two things could make it vacuous: aui.io's own colours
-// must NOT resolve to product tokens, and the token table must be non-empty.
+// The owner's note on 26.08.2026, in the evening: the ground should be light
+// purple and almost black. The application is teal and contains no purple, so
+// the first rule and the second instruction cannot both hold, and the gate had
+// a choice between being deleted and being made honest.
+//
+// It carries an ALLOWLIST now, the same shape G2 grew for the copy: a dated
+// entry per approved colour, with what it is and why it is there. A colour in
+// the shader that is neither a product token nor an entry on this list still
+// fails, which is the failure this gate was written for.
+//
+// Three controls, because three things could make it vacuous: aui.io's own
+// colours must NOT resolve to product tokens, the token table must be
+// non-empty, and every allowlist entry must actually be in use.
+
+// Approved by the owner, 26.08.2026: "light purple and almost black, the black
+// like in the pricing image".
+const APPROVED = {
+  '#06060c': 'the almost-black the plan cards sit on',
+  '#241645': 'the deep end of the purple',
+  '#6d4ed6': 'the middle of the purple',
+  '#b9a3ff': 'the light purple itself',
+}
 
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
@@ -79,9 +98,30 @@ c.ok(palette.length >= 4, `the shader needs at least four colours, it has ${pale
 
 for (const hex of palette) {
   const token = appColours.get(hex)
-  c.ok(Boolean(token), `${hex} is not a colour the application defines`)
+  const approved = APPROVED[hex]
+  c.ok(
+    Boolean(token) || Boolean(approved),
+    `${hex} is neither a colour the application defines nor an approved one`
+  )
   if (token) c.note(`${hex}  ${token}`)
+  else if (approved) c.note(`${hex}  approved 26.08.2026: ${approved}`)
 }
+
+// An allowlist entry that nothing uses is an entry nobody is reading.
+for (const [hex, why] of Object.entries(APPROVED)) {
+  c.ok(palette.includes(hex), `${hex} is allowlisted (${why}) but is not in the shader; drop it`)
+}
+
+// The control that keeps the allowlist from swallowing the gate: the four
+// approved colours must NOT be product tokens. If one ever became one, the
+// entry is stale and the note above would be claiming an approval the palette
+// no longer needs.
+const nowNative = Object.keys(APPROVED).filter((hex) => appColours.has(hex))
+c.ok(
+  nowNative.length === 0,
+  `the allowlist claims to approve colours the application already defines: ${nowNative.join(', ')}`
+)
+c.note(`control: none of the ${Object.keys(APPROVED).length} approved colours is a product token`)
 
 // ---- and the pointer is really gone ---------------------------------------
 // The owner asked for a ground that does not answer the mouse. The catalogue

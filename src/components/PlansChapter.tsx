@@ -1,32 +1,34 @@
-// Chapter 04. The plans, as 21st.dev's pricing-module.
+// Chapter 04. The plans, as tickets.
 //
-// @ruixen.ui/pricing-module (id 9189), named by the owner on 26.08.2026 to
-// replace the tray of five cards this build shipped first. Its anatomy is
-// followed part for part: a centred title and subtitle, a switch that flips
-// every card between the monthly and the yearly catalogue, then one card per
-// plan carrying an icon, the plan's name, its description, the amount, the
-// period under it, the action, and beneath a hairline two labelled lists,
-// "Overview" and "Highlights", the second ticked item by item.
+// The owner supplied a reference image on 26.08.2026 and asked for the cards to
+// look like it. Read off that image, part by part, because the whole point of a
+// reference is that it is more specific than a description:
 //
-// What is adapted, and why:
+//   THE SHAPE   a ticket. Scalloped top and bottom edges, a notch cut into both
+//               sides at the height of the action, a small corner radius. The
+//               scallop and the notches are one mask, not a border.
+//   THE HEAD    a plan code on the reading side (PRO-2026), an icon in a
+//               rounded-square chip on the other. Nothing centred.
+//   THE BODY    plan name, then two lines of description, both centred.
+//   THE RULES   dotted, not solid, and there are three: under the description,
+//               under the action, and above the barcode.
+//   THE PRICE   a small label, the amount large under it, the term under that.
+//               Three lines, centred, in that order.
+//   THE ACTION  a pill, the full width of the card's inner column.
+//   THE COUNT   the document quota with a ticked circle beside it.
+//   THE LIST    three ticked lines, ragged to the reading edge.
+//   THE FOOT    a barcode.
 //
-//   - Colour. The catalogue component is shadcn's light `bg-background` with a
-//     `primary` ring on the recommended card. Here the tray is the onyx ground
-//     and the recommended card is the cream plate, which is the same contrast
-//     inverted, and every token is the product's own.
-//   - Dependencies. The catalogue pulls shadcn's Card, Button and a
-//     react-aria Switch. This project has none of those and the component is
-//     three boxes and a toggle, so it is written against the page's own
-//     button, its own card and a plain `role="switch"`.
-//   - The checklist is the same in every card ON PURPOSE. The chapter's lede
-//     says the plans differ only in how many documents the system takes in a
-//     month, so a per-plan feature list that differed would contradict the
-//     sentence above it. What the ticks carry is what is open everywhere.
+// FOUR FACES, also from the image: the recommended plan is cream paper with a
+// badge riding its top edge, one card is deep purple, one is a glossy
+// near-black with a light sweeping across it, and the rest are the page's own
+// onyx. The owner asked for the sweep on ביזנס, which is the top plan, so the
+// glossy card is the top plan and the purple one sits beside it.
 //
-// The `data-plan-*` attributes are the contract scripts/gates/g14-figures.mjs
-// reads. `data-plan-price` is ALWAYS the monthly amount whatever the switch is
-// showing: the gate asserts the published catalogue, not the current state of
-// a toggle.
+// The billing switch is unchanged — @ruixen.ui/pricing-module's — and
+// `data-plan-price` is still ALWAYS the monthly amount whatever the switch is
+// showing, because scripts/gates/g14-figures.mjs asserts the published
+// catalogue and not the state of a toggle.
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { Building, Building2, Check, Landmark, Sprout, Store } from 'lucide-react'
@@ -55,10 +57,10 @@ type Billing = {
  * number that dissolves into another one does not.
  *
  * Only the digits move. "ללא עלות" and "בשיחה" carry no figure, so they swap
- * outright, and the shekel sign and the thousands separators are re-rendered
- * from the target's own shape at every step so the width does not jitter.
+ * outright, and the thousands separators are re-rendered from the target's own
+ * shape at every step so the width does not jitter.
  */
-function Amount({ value, className }: { value: string; className?: string }) {
+function Amount({ value }: { value: string }) {
   const calm = useReducedMotion()
   const [shown, setShown] = useState(value)
   const from = useRef(value)
@@ -95,13 +97,44 @@ function Amount({ value, className }: { value: string; className?: string }) {
     return () => cancelAnimationFrame(raf)
   }, [calm, value])
 
-  return <span className={className}>{shown}</span>
+  return <>{shown}</>
+}
+
+/**
+ * The barcode along the bottom edge.
+ *
+ * Drawn, not fetched: a barcode is a run of bars at three widths, and the
+ * widths come from the plan's own name, so the same plan draws the same code
+ * every render and no two cards carry the same one. An <img> would be a
+ * network request per card for a texture nobody scans.
+ */
+function Barcode({ seed }: { seed: string }) {
+  let h = 0
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
+  const bars: number[] = []
+  for (let i = 0; i < 46; i++) {
+    h = (h * 1664525 + 1013904223) >>> 0
+    bars.push(1 + ((h >>> 16) % 3))
+  }
+  return (
+    <span className="plan-card__barcode" aria-hidden="true">
+      {bars.map((w, i) => (
+        <span key={i} style={{ inlineSize: `${w}px`, opacity: i % 2 ? 0.16 : 1 }} />
+      ))}
+    </span>
+  )
 }
 
 /** The plan the vendor points at. Third of five, the fullest workflow. */
 const RECOMMENDED = 2
 
 const ICONS = [Sprout, Store, Building2, Building, Landmark]
+
+/** The plan codes, off the reference image: three letters and the year. */
+const CODES = ['FRE', 'BSC', 'PRO', 'PRN', 'BZN']
+
+/** Which face each card wears. Index 4 is ביזנס, which carries the sweep. */
+const FACE = ['', '', 'plan-card--paper', 'plan-card--violet', 'plan-card--gloss']
 
 export function PlansChapter({
   folio,
@@ -140,7 +173,6 @@ export function PlansChapter({
   return (
     <section id="plans" data-folio={folio} className="py-[clamp(4rem,10vh,7rem)]">
       <div className="wrap">
-        {/* The catalogue component centres its head. So does this one. */}
         <header className="mx-auto max-w-[46rem] text-center">
           <SplitHeading className="h-big text-center" text={h2} />
           <Reveal delay={0.08}>
@@ -148,13 +180,9 @@ export function PlansChapter({
           </Reveal>
         </header>
 
-        {/* The switch. */}
         <Reveal delay={0.12}>
           <div className="plans-switch">
-            <span
-              className={`plans-switch__side ${yearly ? '' : 'is-on'}`}
-              aria-hidden="true"
-            >
+            <span className={`plans-switch__side ${yearly ? '' : 'is-on'}`} aria-hidden="true">
               {billing.monthlyLabel}
             </span>
             <button
@@ -168,17 +196,14 @@ export function PlansChapter({
             >
               <span className="plans-switch__thumb" aria-hidden="true" />
             </button>
-            <span
-              className={`plans-switch__side ${yearly ? 'is-on' : ''}`}
-              aria-hidden="true"
-            >
+            <span className={`plans-switch__side ${yearly ? 'is-on' : ''}`} aria-hidden="true">
               {billing.yearlyLabel}
             </span>
           </div>
         </Reveal>
 
         <RevealGroup
-          className="plans-tray mt-[clamp(2rem,5vh,3rem)] grid items-stretch gap-3 rounded-[18px] p-3 sm:grid-cols-2 xl:grid-cols-5"
+          className="plans-tray mt-[clamp(2rem,5vh,3rem)] grid items-stretch gap-4 rounded-[18px] p-4 sm:grid-cols-2 xl:grid-cols-5"
           each={0.06}
           aria-label={tableLabel}
         >
@@ -190,117 +215,74 @@ export function PlansChapter({
             return (
               <RevealItem
                 key={r.name}
-                className={[
-                  'plan-card flex flex-col rounded-[14px] p-6 text-center',
-                  featured ? 'plan-card--featured on-light' : '',
-                ].join(' ')}
+                className={['plan-card', FACE[i], featured ? 'on-light' : '']
+                  .filter(Boolean)
+                  .join(' ')}
               >
+                {/* The sweep. One element, so a card that does not carry it
+                    costs nothing, and it sits behind everything the card says. */}
+                {FACE[i] === 'plan-card--gloss' && (
+                  <span className="plan-card__sweep" aria-hidden="true" />
+                )}
+
                 {featured && <span className="plan-card__badge">{recommendedLabel}</span>}
 
-                <span className="plan-card__icon" aria-hidden="true">
-                  <Icon className="size-5" strokeWidth={1.8} />
+                <span className="plan-card__head">
+                  <span className="plan-card__code">{CODES[i]}-2026</span>
+                  <span className="plan-card__icon" aria-hidden="true">
+                    <Icon className="size-[1.15rem]" strokeWidth={1.7} />
+                  </span>
                 </span>
 
-                <h3
-                  className={[
-                    'mt-4 font-display text-[1.4rem] leading-tight font-bold tracking-[-0.02em]',
-                    featured ? 'text-ink-on-light' : 'text-ink',
-                  ].join(' ')}
-                >
-                  {r.name}
-                </h3>
-                <p
-                  className={[
-                    'mt-1.5 min-h-[3.2em] text-[0.86rem] leading-[1.5]',
-                    featured ? 'text-ink-on-light-soft' : 'text-ink-dim',
-                  ].join(' ')}
-                >
-                  {r.who}
-                </p>
+                <h3 className="plan-card__name">{r.name}</h3>
+                <p className="plan-card__who">{r.who}</p>
 
+                <span className="plan-card__perf" aria-hidden="true" />
+
+                <p className="plan-card__label">{headers.price}</p>
                 <p
                   data-plan-name={r.name}
                   data-plan-price={r.price}
-                  className={[
-                    'mt-5 font-display leading-none font-extrabold tracking-[-0.03em]',
-                    featured ? 'text-ink-on-light' : 'text-ink',
-                    hasAmount
-                      ? 'ip-fig text-[clamp(1.9rem,3vw,2.5rem)]'
-                      : 'text-[clamp(1.2rem,1.9vw,1.55rem)]',
-                  ].join(' ')}
+                  className={`plan-card__price ${hasAmount ? 'ip-fig' : 'plan-card__price--words'}`}
                 >
                   <Amount value={shown} />
                 </p>
-                <p
-                  className={[
-                    'mt-1.5 text-[0.74rem] tracking-[0.1em]',
-                    featured ? 'text-oceanic-deep' : 'text-ink-dim',
-                  ].join(' ')}
-                >
-                  {hasAmount ? (yearly ? billing.perYear : billing.perMonth) : headers.price}
+                <p className="plan-card__term">
+                  {hasAmount ? (yearly ? billing.perYear : billing.perMonth) : ' '}
                 </p>
 
-                <div className="mt-5">
+                <div className="plan-card__action">
                   <Cta href={ctaHref} variant={featured ? 'primary' : 'ghost'} size="sm" block>
                     {ctaLabel}
                   </Cta>
                 </div>
 
-                <div
-                  className={[
-                    'mt-6 flex-1 border-t pt-5 text-start',
-                    featured ? 'border-wheat-line' : 'border-onyx-line',
-                  ].join(' ')}
-                >
-                  <p
-                    className={[
-                      'mb-2.5 text-[0.78rem] font-semibold',
-                      featured ? 'text-ink-on-light' : 'text-ink-soft',
-                    ].join(' ')}
-                  >
-                    {billing.docsLabel}
-                  </p>
-                  <p className="flex items-center gap-2.5">
-                    <span className="plan-card__tick grid size-6 shrink-0 place-content-center rounded-full">
-                      <Check className="size-3.5" strokeWidth={2.5} />
-                    </span>
-                    <span
-                      data-plan-docs={r.docs}
-                      className={[
-                        'ip-fig font-display text-[1.1rem] font-bold',
-                        featured ? 'text-ink-on-light' : 'text-ink',
-                      ].join(' ')}
-                    >
-                      {r.docs}
-                    </span>
-                  </p>
+                <span className="plan-card__perf" aria-hidden="true" />
 
-                  <p
-                    className={[
-                      'mt-5 mb-2.5 text-[0.78rem] font-semibold',
-                      featured ? 'text-ink-on-light' : 'text-ink-soft',
-                    ].join(' ')}
-                  >
-                    {everywhereLabel}
-                  </p>
-                  <ul className="m-0 grid list-none gap-2 p-0">
-                    {everywhere.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5">
-                        <span className="plan-card__tick mt-0.5 grid size-5 shrink-0 place-content-center rounded-full">
-                          <Check className="size-3" strokeWidth={2.5} />
-                        </span>
-                        <span
-                          className={[
-                            'text-[0.85rem] leading-[1.5]',
-                            featured ? 'text-ink-on-light-soft' : 'text-ink-dim',
-                          ].join(' ')}
-                        >
-                          {f}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <p className="plan-card__label">{billing.docsLabel}</p>
+                <p className="plan-card__quota">
+                  <span className="plan-card__tick">
+                    <Check className="size-3.5" strokeWidth={2.5} />
+                  </span>
+                  <span data-plan-docs={r.docs} className="ip-fig">
+                    {r.docs}
+                  </span>
+                </p>
+
+                <p className="plan-card__label plan-card__label--gap">{everywhereLabel}</p>
+                <ul className="plan-card__list">
+                  {everywhere.map((f) => (
+                    <li key={f}>
+                      <span className="plan-card__tick plan-card__tick--sm">
+                        <Check className="size-3" strokeWidth={2.5} />
+                      </span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <span className="plan-card__perf plan-card__perf--last" aria-hidden="true" />
+                <Barcode seed={r.name} />
               </RevealItem>
             )
           })}
