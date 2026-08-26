@@ -21,7 +21,9 @@
   var folio = doc.querySelector('.folio');
   var folioOut = doc.querySelector('[data-folio-out]');
   var chapters = Array.prototype.slice.call(doc.querySelectorAll('[data-folio]'));
-  var lightPlate = doc.querySelector('.ch--what .plate');
+  // Every cream plate, not just the first one: the FAQ sits on a second
+  // plate, and a dark translucent bar over a cream section reads as a bug.
+  var lightPlates = Array.prototype.slice.call(doc.querySelectorAll('.plate'));
 
   if (folio && folioOut && chapters.length) {
     // The chapter the bar is standing on is the last one whose top has passed
@@ -41,10 +43,11 @@
       var label = now.getAttribute('data-folio');
       if (folioOut.textContent !== label) folioOut.textContent = label;
 
-      if (lightPlate) {
-        var r = lightPlate.getBoundingClientRect();
-        folio.classList.toggle('folio--light', r.top <= barH && r.bottom >= barH);
-      }
+      var onLight = lightPlates.some(function (el) {
+        var r = el.getBoundingClientRect();
+        return r.top <= barH && r.bottom >= barH;
+      });
+      folio.classList.toggle('folio--light', onLight);
     };
 
     var queued = false;

@@ -150,3 +150,31 @@ call, not mine; the copy and the gate are both one edit away.
 production still stands on migration `0170`, which carries the earlier
 25/50/200/500. **This page must not go live before that migration deploys**, or
 it will publish a quota the running system does not enforce.
+
+---
+
+## Round 5: prices published
+
+The owner reversed decision #267 for this page on 26.08.2026: *"תוסיף את
+המחירים, זה יהיה נתון לשינוי בכל מקרה, יש עוד מלא זמן לאתר נחיתה עד שהוא יהיה
+באוויר."* #267 still governs the product's own `Pricing.tsx` and the branch
+`fix/no-public-prices-20260825`; nothing here touches those.
+
+| # | Gate | State | Evidence |
+|---|---|---|---|
+| M1 | Every amount matches the launch catalogue | **MET, and the check is proven to fire** | `G14 PASS`: the six amounts on the page are exactly `69, 249, 449, 690, 2490, 4490`, the `launch-il` rows of `0184_launch_plan_and_price_catalogue.sql:234-241`. Editing one cell to `259 ₪` made it fail with both a stray and a missing amount, then the file was restored |
+| M2 | The prices carry a source, like every other figure | **MET** | Note 9 in the apparatus names the catalogue, the interval, the before-tax basis and the date. `G14 PASS`: 9 cited figures against 9 sources |
+| M3 | The old no-price assertion is replaced, not deleted | **MET** | The negative check became a positive one. A gate that was removed rather than replaced would have left the amounts unguarded |
+| M4 | Contrast holds | **MET, after fixing a real defect it caught** | `G7 PASS`, 132 runs, worst now **6.76:1**. It first reported **4.43:1** on the primary CTA. That was neither a false positive nor a capture artifact: the folio's ground flip transitions the button's colours, and for ~160ms the CTA sits blended between two palettes. Measured mid-flip at `rgb(50,169,182)` on `rgb(29,43,47)`. The transition is now suppressed on that button |
+| M5 | The bar's ground follows every cream plate | **MET** | The flip was bound to the first plate only, so the bar stayed dark over the FAQ plate. It now tracks all of them |
+
+**Note on the diagnosis in M4.** The first hypothesis was that Playwright's
+screenshot path had dropped a composited layer, which is a known failure on this
+machine. Switching the capture to CDP reproduced the same 4.43:1, which is what
+ruled the hypothesis out and sent the search to the transition. The gate keeps
+the CDP capture: it is the correct path for a page carrying a `<video>` and a
+`backdrop-filter`.
+
+**ABANDON: the quota deploy dependency, unchanged.** The published quotas
+20/40/150/375 are #266's values and production still stands on migration `0170`
+with 25/50/200/500. The page must not go live before that deploy lands.

@@ -283,6 +283,11 @@ a { color: inherit; }
   text-align: center;
 }
 .folio--light .folio__where { color: var(--on-light-soft); }
+
+/* The bar's ground flip is a state change, not a hover. Transitioned, the CTA
+   spends ~160ms blended between two palettes, and the blend measured 4.43:1 on
+   the composited page. Snap it. */
+.folio__ask { transition: none; }
 .folio--light .btn--primary { background: var(--accent-light); color: var(--wheat); }
 
 /* --------------------------------------------------------------- title page -- */
@@ -649,12 +654,14 @@ a { color: inherit; }
   inline-size: 1%; white-space: nowrap;
 }
 .plans__price {
-  font-size: 14.5px;
-  color: var(--on-dark-soft);
+  font-size: clamp(15px, 1.3vw, 18px); font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--on-dark);
+  font-variant-numeric: tabular-nums;
   inline-size: 1%; white-space: nowrap;
 }
 .plans__note {
-  margin: clamp(18px, 3vh, 26px) 0 0;
+  margin: clamp(14px, 2.2vh, 20px) 0 0;
   font-size: 14px; line-height: 1.6;
   color: var(--on-dark-soft);
   max-inline-size: 62ch;

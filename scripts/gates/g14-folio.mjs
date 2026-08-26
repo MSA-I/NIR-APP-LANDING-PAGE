@@ -27,11 +27,16 @@ await withPage(async (page, { errors }) => {
     faqOpenNoJs: document.querySelectorAll('.faq__item[open]').length,
     footLinks: [...document.querySelectorAll('.sitefoot__col a')].map((a) => a.getAttribute('href')),
     planRows: document.querySelectorAll('.plans tbody tr').length,
-    // Owner decision #267: no sum on a public surface. Asserted mechanically,
-    // the same way the marketing repo's own check does it, so nobody restores
-    // a price here by accident.
-    moneyInPlans: (document.querySelector('.ch--plans')?.innerText || '')
-      .match(/[₪$€]|\d{2,3}(\.\d{2})?\s*(ש"ח|שח|ILS)/g) || [],
+    // Prices are published by owner instruction, 26.08.2026, reversing #267
+    // for this page. The guard is now positive: the amounts on the page must be
+    // exactly the ILS launch catalogue seeded in migration 0184. A hand-edited
+    // figure fails here rather than shipping. Read from the price cells and the
+    // annual-price note, not by scanning for a currency symbol: the note lists
+    // three amounts behind one symbol.
+    planAmounts: [
+      ...[...document.querySelectorAll('.plans__price')].map((el) => el.textContent),
+      document.querySelector('.plans__prices')?.textContent || '',
+    ].join(' ').match(/[\d][\d,]*/g)?.map((a) => a.replace(/,/g, '')) || [],
     vhUnits: +(document.documentElement.scrollHeight / innerHeight).toFixed(2),
   }))
 
@@ -51,8 +56,13 @@ await withPage(async (page, { errors }) => {
 
   // Plans
   c.ok(shape.planRows === 5, `expected five plan rows, found ${shape.planRows}`)
-  c.ok(shape.moneyInPlans.length === 0,
-    `decision #267 forbids a sum on a public surface; found ${shape.moneyInPlans.join(', ')} in the plans section`)
+  // 0184_launch_plan_and_price_catalogue.sql:234-241, catalogue `launch-il`.
+  const CATALOGUE = ['69', '249', '449', '690', '2490', '4490']
+  const stray = shape.planAmounts.filter((a) => !CATALOGUE.includes(a))
+  const missing = CATALOGUE.filter((a) => !shape.planAmounts.includes(a))
+  c.ok(stray.length === 0, `amounts on the page that are not in the launch catalogue: ${stray.join(', ')}`)
+  c.ok(missing.length === 0, `catalogue amounts missing from the page: ${missing.join(', ')}`)
+  c.note(`plan amounts published: ${shape.planAmounts.join(', ')}`)
 
   // FAQ and footer
   c.ok(shape.faq >= 5, `expected at least five FAQ entries, found ${shape.faq}`)

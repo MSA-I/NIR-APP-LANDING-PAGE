@@ -293,6 +293,7 @@ export function render(t) {
             </tbody>
           </table>
         </div>
+        <p class="plans__note plans__prices">${raw(t.plans.priceNote)}</p>
         <p class="plans__note">${esc(t.plans.note)}</p>
       </div>
     </section>

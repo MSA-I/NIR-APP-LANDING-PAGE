@@ -28,6 +28,8 @@ const TARGETS = [
   '.btn',
 ]
 
+let cdp = null
+
 await withPage(async (page) => {
   // Walk the page so pinned acts are actually on screen when sampled.
   const stops = [0, 0.12, 0.24, 0.36, 0.46, 0.56, 0.66, 0.78, 0.9, 1]
@@ -44,7 +46,15 @@ await withPage(async (page) => {
       document.querySelectorAll(sels.join(',')).forEach((el) => el.setAttribute('data-sc-shot', ''))
     }, TARGETS)
 
-    const shot = (await page.screenshot({ type: 'png' })).toString('base64')
+    // CDP, not page.screenshot(). Playwright's own capture path on this machine
+    // drops composited layers, and this page has two of them the sampler walks
+    // over: a scrub <video> and the folio bar's backdrop-filter. Sampling a
+    // dropped layer reported a 7.48:1 button as 4.43:1, which is a measurement
+    // defect reported as a design defect.
+    if (!cdp) cdp = await page.context().newCDPSession(page)
+    const shot = (await cdp.send('Page.captureScreenshot', {
+      format: 'png', captureBeyondViewport: false, fromSurface: true,
+    })).data
 
     const rows = await page.evaluate(
       async ({ b64, sels }) => {

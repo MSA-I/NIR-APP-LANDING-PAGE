@@ -172,36 +172,39 @@ export default {
   },
 
   // ------------------------------------------------------------------ chapter 4
-  // CONSTRAINED BY TWO OWNER DECISIONS IN ../NIR-APP/docs/OPEN-DECISIONS.md.
-  // Do not "improve" this section by adding amounts.
+  // PRICES ARE PUBLISHED HERE BY OWNER INSTRUCTION, 26.08.2026.
   //
-  //   #267 (25.08.2026) — no sum reaches a public surface before launch. The
-  //   decision names this marketing site by name and records that a check was
-  //   added there which FAILS on any currency symbol inside the pricing block.
-  //   Public surfaces publish volume only; the amount is shown inside the
-  //   account at the moment of upgrade, where the billing country is known.
+  // This reverses decision #267 in ../NIR-APP/docs/OPEN-DECISIONS.md ("no sum
+  // reaches a public surface before launch"), for this page, on the owner's
+  // stated reasoning: the figures are subject to change and the site is a long
+  // way from going live. #267 still governs the product's own Pricing.tsx and
+  // the branch `fix/no-public-prices-20260825`; nothing here touches those.
   //
-  //   #266 (24.08.2026) — exactly ONE usage metric is published: documents per
-  //   month. The page ceiling is derived and deliberately unpublished, and the
-  //   assistant quota stays hidden from every customer surface until a signed
-  //   DPA (#271).
+  // Every amount below is the ILS launch catalogue, verified in
+  // ../NIR-APP/supabase/migrations/0184_launch_plan_and_price_catalogue.sql
+  // lines 234-241: monthly 0/69/249/449 and yearly 0/690/2,490/4,490, all
+  // before tax. Business carries no figure by #201. g14 asserts that the set of
+  // amounts on the page is exactly this set, so a hand-edited price fails.
   //
-  // The quotas below (20/40/150/375) are #266's values. Production still stands
-  // on migration 0170, so that deploy has to land before this page goes live.
-  // #201 keeps ביזנס without a published figure.
+  // Still NOT published, and these are not reversed:
+  //   #266 — one usage metric only, documents per month. No page ceiling.
+  //   #271 — the assistant quota stays hidden until a signed DPA.
+  //   #274 / #276 — per-plan capability locks and the 30-day intro window are
+  //                 both DECIDED / NOT_IMPLEMENTED, so neither is advertised.
   plans: {
     folio: 'פרק 04: מסלולים',
     h2: 'מסלולים',
-    lede: 'מדד אחד מפורסם: כמה מסמכים המערכת קולטת בחודש. המחיר עצמו מוצג בתוך החשבון, ברגע המעבר למסלול בתשלום, כשכתובת החיוב ידועה והסכום הוא עובדה ולא הערכה.',
+    lede: 'ההבדל בין המסלולים הוא כמה מסמכים המערכת קולטת בחודש. כל שאר היכולות פתוחות בכל מסלול.',
     tableLabel: 'השוואת מסלולים',
     headers: { plan: 'מסלול', who: 'למי זה מתאים', docs: 'מסמכים בחודש', price: 'מחיר' },
     rows: [
       { name: 'חינם',     who: 'להתחיל ולראות את המערכת רצה על העסק שלך', docs: '20',   price: 'ללא עלות' },
-      { name: 'בסיס',     who: 'עסק שעובד מול כמה ספקים קבועים',          docs: '40',   price: 'בתוך החשבון' },
-      { name: 'פרו',      who: 'עסק שרואה החשבון שלו עובד בתוך המערכת',   docs: '150',  price: 'בתוך החשבון' },
-      { name: 'פרימיום',  who: 'עסק עם יותר מסניף אחד',                    docs: '375',  price: 'בתוך החשבון' },
+      { name: 'בסיס',     who: 'עסק שעובד מול כמה ספקים קבועים',          docs: '40',   price: '69 ₪' },
+      { name: 'פרו',      who: 'עסק שרואה החשבון שלו עובד בתוך המערכת',   docs: '150',  price: '249 ₪' },
+      { name: 'פרימיום',  who: 'עסק עם יותר מסניף אחד',                    docs: '375',  price: '449 ₪' },
       { name: 'ביזנס',    who: 'ארגון שצריך מכסות והסדר משלו',            docs: 'חוזי', price: 'בשיחה' },
     ],
+    priceNote: 'המחירים לחודש, לפני מע״מ. בתשלום שנתי: <b class="fig" data-note="9">690, 2,490 ו‑4,490 ₪ לשנה</b>.',
     note: 'אפשר לעבור בין מסלולים בכל שלב. נתונים שנצברו נשארים במלואם גם אם מורידים מסלול.',
   },
 
@@ -262,6 +265,7 @@ export default {
     { id: '6', t: '8 חריגים פתוחים', s: 'מסך "חריגים": שמונה בתצוגה, שניים בחומרה גבוהה (חשד לחשבונית כפולה, וחשד לתשלום כפול).' },
     { id: '7', t: 'דרישה 58#',       s: 'מסך "דרישות תשלום": משקאות אור בע"מ, 2,832.00 ₪, סטטוס "חשד לכפילות", מול דרישה 57# מאושרת לאותו ספק ובאותו סכום.' },
     { id: '8', t: '13 · 17,825 ₪ · 6', s: 'מסך "מרכז הבקרה": 13 משימות פתוחות בכל התורים, 17,825 ₪ יתרת חשבוניות פתוחות (תשע חשבוניות), שישה פריטים דורשים טיפול היום.' },
+    { id: '9', t: 'המחירים',          s: 'קטלוג ההשקה לישראל (launch-il): חודשי 0, 69, 249 ו‑449 ₪, שנתי 0, 690, 2,490 ו‑4,490 ₪, כולם לפני מע״מ. מסלול ביזנס ללא מחיר מפורסם. נכון ל‑26.08.2026 ונתון לשינוי עד ההשקה.' },
   ],
 
   // The two action hrefs are the ones used everywhere else on the page. The
