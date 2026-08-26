@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InPlace · every shekel passes one screen before it leaves</title>
+<meta name="description" content="A control system for procurement, invoices and payments. Scroll, and watch one payment travel the whole route, from the price list to the bank reconciliation.">
+<meta property="og:title" content="InPlace · every shekel passes one screen before it leaves">
+<meta property="og:description" content="A control system for procurement, invoices and payments. Scroll, and watch one payment travel the whole route, from the price list to the bank reconciliation.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a171d">
+<link rel="alternate" hreflang="he" href="https://inplace.digital/">
+<link rel="alternate" hreflang="en" href="https://inplace.digital/en/">
+<link rel="alternate" hreflang="fr" href="https://inplace.digital/fr/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a171d'/><path d='M9 9h6v6H9zM17 17h6v6h-6zM17 9h6v3h-6zM9 17h3v6H9z' fill='%23f4f5f3'/></svg>">
+<link rel="preload" href="../assets/fonts/NotoSansHebrew-Hebrew.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../engine/scrollcraft.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#top">Skip to content</a>
+
+<nav class="rail" aria-label="Station navigation">
+  <a class="rail__mark" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <rect width="32" height="32" rx="7" fill="currentColor"/>
+  <path d="M9 9h6v6H9zM17 17h6v6h-6zM17 9h6v3h-6zM9 17h3v6H9z" fill="var(--canvas)"/>
+</svg><span>InPlace</span></a>
+  <p class="rail__head">Stations</p>
+  <div class="rail__track" data-track>
+    <span class="rail__line" aria-hidden="true"></span>
+    
+    <a class="rail__stop" href="#pricelist" data-stop="pricelist" data-index="0">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Price list</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#order" data-stop="order" data-index="1">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Order</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#receiving" data-stop="receiving" data-index="2">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Receiving</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#invoice" data-stop="invoice" data-index="3">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Invoice</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#decision" data-stop="decision" data-index="4">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Decision</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#request" data-stop="request" data-index="5">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Request</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#payment" data-stop="payment" data-index="6">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Payment</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <a class="rail__stop" href="#bank" data-stop="bank" data-index="7">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Bank</span>
+      <span class="rail__skip">skipped</span>
+    </a>
+    <span class="token" data-token aria-hidden="true">
+      <span class="token__glyph">₪</span><span data-token-amount>—</span>
+    </span>
+  </div>
+</nav>
+<main class="page">
+
+<section class="act" id="top" data-sc-act="pin" data-sc-span="1.5" data-station="pricelist">
+  <div class="stagehold" data-sc-stage>
+    <div class="wrap">
+      <div class="open__grid">
+        <article class="card">
+          <div class="card__head">
+            <h1 class="card__title">Needs attention</h1>
+            <span class="card__meta">Three items waiting on your decision</span>
+          </div>
+          <ul class="open__rows">
+            
+            <li data-sc-cue="0 1 0 0">
+              <span class="open__ref">INV-2311 · Gal Bakery</span>
+              <span class="open__note">Price above the order</span>
+              <span class="open__val"><span class="money num money--alert">+₪ 1,240</span></span>
+            </li>
+            <li data-sc-cue="0.16 1 0.22 0">
+              <span class="open__ref">INV-2287 · North Packaging</span>
+              <span class="open__note">No purchase order behind it</span>
+              <span class="open__val"><span class="money num money--alert">₪ 3,150</span></span>
+            </li>
+            <li data-sc-cue="0.34 1 0.22 0">
+              <span class="open__ref">Credit · Dagan Farm</span>
+              <span class="open__note">Open 18 days</span>
+              <span class="open__val"><span class="money num">₪ 780</span></span>
+            </li>
+          </ul>
+          <p class="open__foot">The other 41 documents this month went through without a human touching them.</p>
+        </article>
+
+        <article class="card card--dark">
+          <div class="card__head"><h2 class="card__title">What you are looking at</h2></div>
+          <div class="card__body">
+            <p class="help__body">This is not a screenshot. It is the InPlace surface, and your scrolling is running it. Every shekel that leaves the business passes this screen first.</p>
+            <div class="help__actions">
+              <a class="btn" href="https://app.inplace.digital/signup">Open a free account</a>
+            </div>
+            <p class="ctanote">No card. The price is given inside the account, at the point you move to a paid plan.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="act act--flow" id="pricelist" data-ground="paper" data-sc-act="flow" data-station="pricelist">
+  <div class="wrap stack">
+    <div class="stack__head" data-sc-in data-sc-stagger="70">
+      <h2 class="h">The price is settled once</h2>
+      <p class="lede">A supplier price list is not a document in a folder. It is the value every order, every receipt and every invoice is measured against. Once it is set, it is the line.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head"><h3 class="card__title">Price list · Gal Bakery</h3></div>
+      <div class="tblwrap">
+        <table class="tbl">
+          <thead><tr><th scope="col">Item</th><th scope="col" class="cell-end">Agreed price</th><th scope="col">Valid to</th><th scope="col">State</th></tr></thead>
+          <tbody>
+            
+            <tr>
+              <td class="cell-key">Cherry tomatoes · crate</td>
+              <td class="cell-end"><span class="num">₪ 39.90</span></td>
+              <td><span class="num">31.12</span></td>
+              <td><span class="pill" data-state="done">Active</span></td>
+            </tr>
+            <tr>
+              <td class="cell-key">Pastry tray · unit</td>
+              <td class="cell-end"><span class="num">₪ 57.00</span></td>
+              <td><span class="num">31.12</span></td>
+              <td><span class="pill" data-state="done">Active</span></td>
+            </tr>
+            <tr>
+              <td class="cell-key">Packing carton · pack</td>
+              <td class="cell-end"><span class="num">₪ 21.50</span></td>
+              <td><span class="num">30.09</span></td>
+              <td><span class="pill" data-state="await">Renewing</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="act act--flow" id="order" data-sc-act="flow" data-station="order">
+  <div class="wrap solo">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">The order is the commitment</h2>
+      <p class="lede">The moment the order goes out there is an amount. Not an estimate, not a range: one number the business committed to, and the number everything after it is measured against.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head"><h3 class="card__title">Order line</h3></div>
+      <div class="calc">
+        <p class="calc__row"><span>160 crates</span> <span aria-hidden="true">×</span> <b class="num">₪ 39.90</b></p>
+        <hr class="calc__rule">
+        <p class="calc__total">
+          <span>Order total</span>
+          <b class="num" data-sc-count="0 6,384" data-sc-count-at="0.32 0.66">0</b>
+        </p>
+      </div>
+    </article>
+    <p class="note" data-sc-in>That amount is now on the rail beside you. It stays with you all the way to the bank.</p>
+  </div>
+</section>
+
+<section class="act act--flow" id="receiving" data-ground="paper" data-sc-act="flow" data-station="receiving">
+  <div class="wrap two">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">What arrived, not what was written</h2>
+      <p class="lede">Receiving is the moment reality gets a vote. Here the delivery matches: 160 crates ordered, 160 received. Other times it does not.</p>
+      <p class="note">When there is a gap it is held here and reaches the invoice as a fact, not as somebody’s memory.<br><span class="num">Order 4131 · pastry trays: 20 ordered, 14 received, 20 billed. A gap worth ₪ 342.</span></p>
+    </div>
+    <article class="card">
+      <div class="card__head"><h3 class="card__title">Crates received</h3></div>
+      <div class="match" data-sc-reveal="up" data-sc-reveal-at="0.14 0.5">
+        <div class="match__pair">
+          <span class="match__side">
+            <span class="match__k">Ordered</span>
+            <span class="match__v num">160</span>
+          </span>
+          <span class="match__op" aria-hidden="true">=</span>
+          <span class="match__side">
+            <span class="match__k">Received</span>
+            <span class="match__v num">160</span>
+          </span>
+        </div>
+        <p><span class="pill" data-state="done">Matched</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="act act--flow" id="invoice" data-sc-act="flow" data-station="invoice">
+  <div class="wrap two two--flip">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">The invoice asked for more</h2>
+      <p class="lede">Same item. Same quantity. Different price.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head">
+        <h3 class="card__title">Invoice INV-2311</h3>
+        <span class="card__meta">₪ 47.65 per unit</span>
+      </div>
+      <div class="gap">
+        <div class="gap__two">
+          <p class="gap__cell">
+            <span class="gap__k">Per the order</span>
+            <span class="gap__v num">₪ 6,384</span>
+          </p>
+          <p class="gap__cell gap__cell--alert">
+            <span class="gap__k">Per the invoice</span>
+            <span class="gap__v num">₪ 7,624</span>
+          </p>
+        </div>
+        <p class="gap__delta">
+          <span>Gap <span class="num">(19%)</span></span>
+          <b class="num">+₪ 1,240</b>
+        </p>
+        <p class="hold"><span class="pill" data-state="alert">Stopped</span><span>The invoice stopped. No payment request was created.</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="act act--flow act--quiet" data-ground="wash" data-sc-act="flow" data-station="invoice">
+  <!-- The held line is wiped into view rather than faded. A fade is what every
+       other beat on the page does; an uncovering is the quietest way to put one
+       sentence on a screen and still have it read as authored. The reveal sits
+       on a wrapper so the clip cannot eat the type's own descenders. -->
+  <div class="wrap">
+    <div data-sc-reveal="up" data-sc-reveal-at="0.18 0.58">
+      <p class="lede lede--held">Not an alert, not an email, not a red dot somebody sees tomorrow. A stop. The money simply does not continue.</p>
+    </div>
+  </div>
+</section>
+
+<section class="act act--shell on-shell" id="decision" data-sc-act="pin" data-sc-span="2.9" data-station="decision">
+  <div class="stagehold" data-sc-stage data-sorter>
+    <div class="wrap">
+      <!-- The heading holds through the whole sort. Letting it fade at a third
+           left the reader watching unlabelled cards move for a viewport and a
+           half, which is when a peak stops reading as a point being made. -->
+      <p class="eyebrow" data-sc-cue="0 0.66 0 0.12">One moment</p>
+      <h2 class="h" data-sc-cue="0 0.7 0 0.12">The screen sorts itself out</h2>
+      <p class="lede" data-sc-cue="0.04 0.46 0.06 0.3">Forty-four documents arrived this month by message, by email and by photograph. They are not sorted by supplier and not by date. They are sorted by what they do to the money.</p>
+
+      <div class="sorter" data-stage>
+      <article class="doc doc--exception"
+        style="--row:0;--col:0;--sx:-0.077;--sy:-0.078;--sr:-3.0">
+        <span class="doc__ref">INV-2311</span>
+        <span class="doc__kind">Invoice</span>
+        <span class="doc__match">Needs a decision</span>
+      </article>
+      <article class="doc"
+        style="--row:0;--col:1;--sx:0.162;--sy:0.073;--sr:2.3">
+        <span class="doc__ref">DN-8841</span>
+        <span class="doc__kind">Delivery note</span>
+        <span class="doc__match">Order 4127</span>
+      </article>
+      <article class="doc"
+        style="--row:1;--col:0;--sx:-0.161;--sy:-0.020;--sr:4.5">
+        <span class="doc__ref">INV-2298</span>
+        <span class="doc__kind">Invoice</span>
+        <span class="doc__match">Order 4119</span>
+      </article>
+      <article class="doc"
+        style="--row:1;--col:1;--sx:-0.025;--sy:0.184;--sr:-3.5">
+        <span class="doc__ref">CN-114</span>
+        <span class="doc__kind">Credit note</span>
+        <span class="doc__match">Return 771</span>
+      </article>
+      <article class="doc"
+        style="--row:2;--col:0;--sx:-0.173;--sy:-0.238;--sr:6.0">
+        <span class="doc__ref">INV-2303</span>
+        <span class="doc__kind">Invoice</span>
+        <span class="doc__match">Order 4123</span>
+      </article>
+      <article class="doc"
+        style="--row:2;--col:1;--sx:-0.124;--sy:-0.071;--sr:-5.0">
+        <span class="doc__ref">DN-8846</span>
+        <span class="doc__kind">Delivery note</span>
+        <span class="doc__match">Order 4131</span>
+      </article>
+      <article class="doc"
+        style="--row:3;--col:0;--sx:0.213;--sy:0.206;--sr:7.2">
+        <span class="doc__ref">INV-2307</span>
+        <span class="doc__kind">Invoice</span>
+        <span class="doc__match">Order 4126</span>
+      </article>
+      <article class="doc"
+        style="--row:3;--col:1;--sx:-0.222;--sy:0.132;--sr:-4.6">
+        <span class="doc__ref">DN-8850</span>
+        <span class="doc__kind">Delivery note</span>
+        <span class="doc__match">Order 4129</span>
+      </article></div>
+
+      <div class="peakfoot" data-sc-cue="0.62 1 0.1 0.02">
+        <span class="peakstat"><b class="num">43</b><span>documents that closed themselves</span></span>
+        <span class="peakstat"><b class="num">1</b><span>one left</span></span>
+        <span class="peakstat"><span class="pill" data-state="alert">Price above order · +₪ 1,240</span></span>
+      </div>
+      <p class="note" data-sc-cue="0.72 1 0.08 0.02">That is the whole product. Not a dashboard showing you forty-three things that are fine. A screen that leaves you one.</p>
+    </div>
+  </div>
+</section>
+
+<section class="act act--flow" id="request" data-ground="paper" data-sc-act="flow" data-station="request">
+  <div class="wrap">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">Who can touch the money</h2>
+      <p class="lede">Three accounts, three surfaces. Not permissions that hide a button in the interface. Boundaries enforced in the database.</p>
+      <p class="note"><span>The request on the table</span> <span class="money num">₪ 6,384</span></p>
+    </div>
+    <div class="roles" data-sc-in data-sc-stagger="60">
+      
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">Owner</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">can</span><span>Sees the whole picture, approves the request</span></li>
+            <li><span class="role__k" data-k="cannot">cannot</span><span>Does not make the payment</span></li>
+          </ul>
+        </div>
+      </article>
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">Procurement</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">can</span><span>Builds the journey: supplier, price list, order, receipt, invoice</span></li>
+            <li><span class="role__k" data-k="cannot">cannot</span><span>Sees no bank and moves no payments</span></li>
+          </ul>
+        </div>
+      </article>
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">Accountant</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">can</span><span>Makes an approved payment, files the reference, matches the bank</span></li>
+            <li><span class="role__k" data-k="cannot">cannot</span><span>Changes no order, product or price list</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+    <p class="note" data-sc-in>The owner’s emergency route was removed. Payment always goes through an approved request, a second factor, a reason and a record.</p>
+  </div>
+</section>
+
+<section class="act act--flow" id="payment" data-sc-act="flow" data-station="payment">
+  <div class="wrap stack">
+    <div class="stack__head" data-sc-in data-sc-stagger="70">
+      <h2 class="h">Once, and with a reference</h2>
+      <p class="lede">The payment goes out once, for the amount that was approved, from the account that was set. Then it comes back from the bank and matches itself to the movement.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <ul class="steps">
+        
+        <li>
+          <span class="steps__k">Request approved</span>
+          <span class="money num">₪ 6,384</span>
+          <span class="pill" data-state="done">Done</span>
+        </li>
+        <li>
+          <span class="steps__k">Payment made</span>
+          <span class="money num">reference 88214</span>
+          <span class="pill" data-state="done">Done</span>
+        </li>
+        <li>
+          <span class="steps__k">Bank movement</span>
+          <span class="money num">matched</span>
+          <span class="pill" data-state="done">Done</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- act 7b · what is still open · reveal. The honesty beat: a system that
+     rounded its own corners to look finished would be lying about money. -->
+<section class="act act--flow" id="bank" data-ground="paper" data-sc-act="flow" data-station="bank">
+  <div class="wrap two two--flip">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">What is still open</h2>
+      <p class="lede">The system does not round its own corners to look finished.</p>
+    </div>
+    <article class="card" data-sc-reveal="up" data-sc-reveal-at="0.16 0.54">
+      <ul class="steps">
+        
+        <li>
+          <span class="steps__k">Open credits · two suppliers</span>
+          <span class="money num">₪ 2,180</span>
+          <span class="pill" data-state="await">Open</span>
+        </li>
+        <li>
+          <span class="steps__k">Bank movements awaiting a match</span>
+          <span class="money num">₪ 9,640</span>
+          <span class="pill" data-state="await">Open</span>
+        </li>
+        <li>
+          <span class="steps__k">Invoice with no order · INV-2287</span>
+          <span class="money num money--alert">₪ 3,150</span>
+          <span class="pill" data-state="alert">Blocked</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="act act--shell on-shell" id="close" data-sc-act="pin" data-sc-span="1.3">
+  <div class="stagehold" data-sc-stage>
+    <div class="wrap">
+      <div class="close__grid">
+        <div data-sc-cue="0.04">
+          <h2 class="h">This is what your scrolling did</h2>
+          <p class="lede">One payment, eight stations, a full log.</p>
+          <ol class="recap" data-recap></ol>
+          <p class="note" data-recap-note>You skipped nothing. That is what it is supposed to look like.</p>
+        </div>
+        <form class="trial" data-sc-cue="0.04" action="https://app.inplace.digital/signup" method="get">
+          <h3 class="h--sm" style="color:var(--shell-ink)">Start with your own data</h3>
+          <label class="trial__label" for="trial-email">Work email address</label>
+          <div class="trial__field">
+            <input id="trial-email" name="email" type="email" inputmode="email"
+                   autocomplete="email" placeholder="you@company.com" required>
+            <button class="btn" type="submit">Open a free account</button>
+          </div>
+          <p class="ctanote">You get an empty account. You upload one price list, and it starts working.</p>
+          <p class="ctanote">No card. The price is given inside the account, at the point you move to a paid plan.</p>
+        </form>
+      </div>
+
+      <footer class="foot">
+        <span>InPlace · procurement, invoices and payments</span>
+        <a href="https://app.inplace.digital">Sign in</a>
+        <a href="https://app.inplace.digital/legal/terms">Terms of use</a>
+        <a href="https://app.inplace.digital/legal/privacy">Privacy policy</a>
+        <span class="foot__claims">The amounts on this page are a fixed demo scenario carrying the product’s real semantics. There is no customer data here, no savings percentage and no availability commitment.</span>
+      </footer>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="statusbar" role="status" aria-live="polite">
+  <span class="statusbar__group">
+    <span class="statusbar__label">Amount tracked</span>
+    <span class="statusbar__value num" data-status-amount>—</span>
+  </span>
+  <span class="statusbar__sep" aria-hidden="true"></span>
+  <span class="statusbar__group statusbar__hideable">
+    <span class="statusbar__label">Tracking</span>
+    <span class="statusbar__value" data-status-entity>Order 4127 · Gal Bakery</span>
+  </span>
+  <span class="statusbar__sep statusbar__hideable" aria-hidden="true"></span>
+  <span class="statusbar__group statusbar__hideable">
+    <span class="statusbar__label">Pace</span>
+    <span class="statusbar__value" data-status-velocity>steady</span>
+  </span>
+  <span class="statusbar__spacer"></span>
+  <span class="chip-demo statusbar__hideable" title="A fixed demo scenario with the product’s real semantics. Every amount comes from stored fixtures.">demo data</span>
+  <button type="button" class="ledger-toggle" data-ledger-toggle aria-expanded="false" aria-controls="ledger">
+    <span>Open the log</span>
+    <span class="ledger-toggle__count num" data-ledger-count>0</span>
+  </button>
+</div>
+
+<aside class="ledger" id="ledger" data-ledger hidden>
+  <h2 class="ledger__title">Journey log</h2>
+  <p class="ledger__empty" data-ledger-empty>You have not passed a station yet.</p>
+  <ol class="ledger__list" data-ledger-list></ol>
+</aside>
+<script src="../engine/scrollcraft.js"></script>
+<script src="../surface.js"></script>
+<script>
+  ScrollCraft.mount(document.body);
+  InPlaceSurface.mount({"stations":[{"id":"pricelist","nav":"Price list","amount":null,"state":"done","ledger":"Agreed price set: ₪ 39.90 per unit."},{"id":"order","nav":"Order","amount":6384,"state":"done","ledger":"Order 4127 opened at ₪ 6,384."},{"id":"receiving","nav":"Receiving","amount":6384,"state":"done","ledger":"The receipt matches the order: 160 of 160."},{"id":"invoice","nav":"Invoice","amount":7624,"state":"alert","ledger":"The invoice asked for ₪ 7,624: ₪ 1,240 above the order."},{"id":"decision","nav":"Decision","amount":6384,"state":"done","ledger":"The gap was refused. The amount returned to ₪ 6,384, with a reason on the record."},{"id":"request","nav":"Request","amount":6384,"state":"done","ledger":"Payment request approved at ₪ 6,384."},{"id":"payment","nav":"Payment","amount":6384,"state":"done","ledger":"The payment went out: ₪ 6,384, with a reference."},{"id":"bank","nav":"Bank","amount":6384,"state":"done","ledger":"The bank movement was matched. The journey closes."}],"strings":{"ledgerOpen":"Open the log","ledgerClose":"Close the log","velocityCalm":"steady","velocityFast":"faster than the checks","skipLine":"You skipped {station}. The check never ran.","cleanNote":"You skipped nothing. That is what it is supposed to look like.","skippedNote":"You scrolled faster than the checks. In a real system that is exactly what happens when payment comes before review, except that there you cannot scroll back.","dash":"—"},"locale":"en-IL","currency":"ILS"});
+</script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InPlace · כל שקל עובר מסך אחד לפני שהוא יוצא</title>
+<meta name="description" content="מערכת שליטה לרכש, חשבוניות ותשלומים. גללו את המסך ותראו שקל אחד עובר את כל המסלול, מהמחירון ועד ההתאמה בבנק.">
+<meta property="og:title" content="InPlace · כל שקל עובר מסך אחד לפני שהוא יוצא">
+<meta property="og:description" content="מערכת שליטה לרכש, חשבוניות ותשלומים. גללו את המסך ותראו שקל אחד עובר את כל המסלול, מהמחירון ועד ההתאמה בבנק.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a171d">
+<link rel="alternate" hreflang="he" href="https://inplace.digital/">
+<link rel="alternate" hreflang="en" href="https://inplace.digital/en/">
+<link rel="alternate" hreflang="fr" href="https://inplace.digital/fr/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a171d'/><path d='M9 9h6v6H9zM17 17h6v6h-6zM17 9h6v3h-6zM9 17h3v6H9z' fill='%23f4f5f3'/></svg>">
+<link rel="preload" href="assets/fonts/NotoSansHebrew-Hebrew.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="engine/scrollcraft.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#top">דילוג לתוכן</a>
+
+<nav class="rail" aria-label="ניווט תחנות">
+  <a class="rail__mark" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <rect width="32" height="32" rx="7" fill="currentColor"/>
+  <path d="M9 9h6v6H9zM17 17h6v6h-6zM17 9h6v3h-6zM9 17h3v6H9z" fill="var(--canvas)"/>
+</svg><span>InPlace</span></a>
+  <p class="rail__head">תחנות המסע</p>
+  <div class="rail__track" data-track>
+    <span class="rail__line" aria-hidden="true"></span>
+    
+    <a class="rail__stop" href="#pricelist" data-stop="pricelist" data-index="0">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>מחירון</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#order" data-stop="order" data-index="1">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>הזמנה</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#receiving" data-stop="receiving" data-index="2">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>קבלה</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#invoice" data-stop="invoice" data-index="3">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>חשבונית</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#decision" data-stop="decision" data-index="4">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>החלטה</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#request" data-stop="request" data-index="5">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>דרישה</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#payment" data-stop="payment" data-index="6">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>תשלום</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <a class="rail__stop" href="#bank" data-stop="bank" data-index="7">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>בנק</span>
+      <span class="rail__skip">דולג</span>
+    </a>
+    <span class="token" data-token aria-hidden="true">
+      <span class="token__glyph">₪</span><span data-token-amount>—</span>
+    </span>
+  </div>
+</nav>
+<main class="page">
+
+<section class="act" id="top" data-sc-act="pin" data-sc-span="1.5" data-station="pricelist">
+  <div class="stagehold" data-sc-stage>
+    <div class="wrap">
+      <div class="open__grid">
+        <article class="card">
+          <div class="card__head">
+            <h1 class="card__title">מה דורש טיפול</h1>
+            <span class="card__meta">שלושה פריטים ממתינים להחלטה שלכם</span>
+          </div>
+          <ul class="open__rows">
+            
+            <li data-sc-cue="0 1 0 0">
+              <span class="open__ref">INV-2311 · מאפיית גל</span>
+              <span class="open__note">מחיר מעל ההזמנה</span>
+              <span class="open__val"><span class="money num money--alert">‎+1,240 ₪</span></span>
+            </li>
+            <li data-sc-cue="0.16 1 0.22 0">
+              <span class="open__ref">INV-2287 · אריזות הצפון</span>
+              <span class="open__note">אין הזמנת רכש מקושרת</span>
+              <span class="open__val"><span class="money num money--alert">‎3,150 ₪</span></span>
+            </li>
+            <li data-sc-cue="0.34 1 0.22 0">
+              <span class="open__ref">זיכוי · משק דגן</span>
+              <span class="open__note">פתוח 18 ימים</span>
+              <span class="open__val"><span class="money num">‎780 ₪</span></span>
+            </li>
+          </ul>
+          <p class="open__foot">שאר 41 המסמכים החודש עברו בלי יד אדם.</p>
+        </article>
+
+        <article class="card card--dark">
+          <div class="card__head"><h2 class="card__title">מה אתם רואים כאן</h2></div>
+          <div class="card__body">
+            <p class="help__body">זה לא צילום מסך. זה המשטח של InPlace, והגלילה שלכם מריצה אותו. כל שקל שיוצא מהעסק עובר את המסך הזה קודם.</p>
+            <div class="help__actions">
+              <a class="btn" href="https://app.inplace.digital/signup">פתיחת חשבון חינם</a>
+            </div>
+            <p class="ctanote">בלי כרטיס אשראי. המחיר נמסר בתוך החשבון, בשלב המעבר למסלול בתשלום.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="act act--flow" id="pricelist" data-ground="paper" data-sc-act="flow" data-station="pricelist">
+  <div class="wrap stack">
+    <div class="stack__head" data-sc-in data-sc-stagger="70">
+      <h2 class="h">המחיר נסגר פעם אחת</h2>
+      <p class="lede">מחירון ספק אינו מסמך שמור בתיקייה. הוא הערך שכל הזמנה, כל קבלה וכל חשבונית נמדדות מולו. ברגע שהוא נקבע, הוא הופך לרף.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head"><h3 class="card__title">מחירון · מאפיית גל</h3></div>
+      <div class="tblwrap">
+        <table class="tbl">
+          <thead><tr><th scope="col">פריט</th><th scope="col" class="cell-end">מחיר מוסכם</th><th scope="col">תוקף</th><th scope="col">מצב</th></tr></thead>
+          <tbody>
+            
+            <tr>
+              <td class="cell-key">עגבניות שרי · ארגז</td>
+              <td class="cell-end"><span class="num">‎39.90 ₪</span></td>
+              <td><span class="num">31.12</span></td>
+              <td><span class="pill" data-state="done">פעיל</span></td>
+            </tr>
+            <tr>
+              <td class="cell-key">מגש מאפה · יחידה</td>
+              <td class="cell-end"><span class="num">‎57.00 ₪</span></td>
+              <td><span class="num">31.12</span></td>
+              <td><span class="pill" data-state="done">פעיל</span></td>
+            </tr>
+            <tr>
+              <td class="cell-key">קרטון אריזה · חבילה</td>
+              <td class="cell-end"><span class="num">‎21.50 ₪</span></td>
+              <td><span class="num">30.09</span></td>
+              <td><span class="pill" data-state="await">מתחדש</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="act act--flow" id="order" data-sc-act="flow" data-station="order">
+  <div class="wrap solo">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">ההזמנה היא ההתחייבות</h2>
+      <p class="lede">מרגע שההזמנה יצאה, יש סכום. לא הערכה, לא טווח: מספר אחד שהעסק התחייב אליו, ושכל מה שיגיע אחריו נמדד מולו.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head"><h3 class="card__title">שורת הזמנה</h3></div>
+      <div class="calc">
+        <p class="calc__row"><span>160 ארגזים</span> <span aria-hidden="true">×</span> <b class="num">‎39.90 ₪</b></p>
+        <hr class="calc__rule">
+        <p class="calc__total">
+          <span>סך ההזמנה</span>
+          <b class="num" data-sc-count="0 6,384" data-sc-count-at="0.32 0.66">0</b>
+        </p>
+      </div>
+    </article>
+    <p class="note" data-sc-in>הסכום הזה נכנס עכשיו למעקב ברצועה בצד. הוא ילווה אתכם עד הבנק.</p>
+  </div>
+</section>
+
+<section class="act act--flow" id="receiving" data-ground="paper" data-sc-act="flow" data-station="receiving">
+  <div class="wrap two">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">מה שהגיע, לא מה שנכתב</h2>
+      <p class="lede">קבלת הסחורה היא הרגע שבו המציאות מקבלת זכות דיבור. פה, המשלוח תואם: 160 ארגזים הוזמנו, 160 התקבלו. בפעמים אחרות זה לא כך.</p>
+      <p class="note">כשיש פער, הוא נשמר כאן ומגיע לחשבונית בתור עובדה, לא בתור זיכרון של מישהו.<br><span class="num">הזמנה 4131 · מגשי מאפה: הוזמנו 20, התקבלו 14, חויבו 20. פער בשווי ‎342 ₪.</span></p>
+    </div>
+    <article class="card">
+      <div class="card__head"><h3 class="card__title">ארגזים שנקלטו</h3></div>
+      <div class="match" data-sc-reveal="up" data-sc-reveal-at="0.14 0.5">
+        <div class="match__pair">
+          <span class="match__side">
+            <span class="match__k">הוזמן</span>
+            <span class="match__v num">160</span>
+          </span>
+          <span class="match__op" aria-hidden="true">=</span>
+          <span class="match__side">
+            <span class="match__k">התקבל</span>
+            <span class="match__v num">160</span>
+          </span>
+        </div>
+        <p><span class="pill" data-state="done">תואם</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="act act--flow" id="invoice" data-sc-act="flow" data-station="invoice">
+  <div class="wrap two two--flip">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">החשבונית ביקשה יותר</h2>
+      <p class="lede">אותו פריט. אותה כמות. מחיר אחר.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head">
+        <h3 class="card__title">חשבונית INV-2311</h3>
+        <span class="card__meta">‎47.65 ₪ ליחידה</span>
+      </div>
+      <div class="gap">
+        <div class="gap__two">
+          <p class="gap__cell">
+            <span class="gap__k">לפי ההזמנה</span>
+            <span class="gap__v num">‎6,384 ₪</span>
+          </p>
+          <p class="gap__cell gap__cell--alert">
+            <span class="gap__k">לפי החשבונית</span>
+            <span class="gap__v num">‎7,624 ₪</span>
+          </p>
+        </div>
+        <p class="gap__delta">
+          <span>פער <span class="num">(‎19%)</span></span>
+          <b class="num">‎+1,240 ₪</b>
+        </p>
+        <p class="hold"><span class="pill" data-state="alert">נעצר</span><span>החשבונית נעצרה. שום דרישת תשלום לא נוצרה.</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="act act--flow act--quiet" data-ground="wash" data-sc-act="flow" data-station="invoice">
+  <!-- The held line is wiped into view rather than faded. A fade is what every
+       other beat on the page does; an uncovering is the quietest way to put one
+       sentence on a screen and still have it read as authored. The reveal sits
+       on a wrapper so the clip cannot eat the type's own descenders. -->
+  <div class="wrap">
+    <div data-sc-reveal="up" data-sc-reveal-at="0.18 0.58">
+      <p class="lede lede--held">לא התראה, לא מייל, לא נקודה אדומה שמישהו יראה מחר. עצירה. הכסף פשוט לא ממשיך.</p>
+    </div>
+  </div>
+</section>
+
+<section class="act act--shell on-shell" id="decision" data-sc-act="pin" data-sc-span="2.9" data-station="decision">
+  <div class="stagehold" data-sc-stage data-sorter>
+    <div class="wrap">
+      <!-- The heading holds through the whole sort. Letting it fade at a third
+           left the reader watching unlabelled cards move for a viewport and a
+           half, which is when a peak stops reading as a point being made. -->
+      <p class="eyebrow" data-sc-cue="0 0.66 0 0.12">רגע אחד</p>
+      <h2 class="h" data-sc-cue="0 0.7 0 0.12">המסך מסתדר</h2>
+      <p class="lede" data-sc-cue="0.04 0.46 0.06 0.3">ארבעים וארבעה מסמכים הגיעו החודש בוואטסאפ, במייל ובצילום. הם לא ממוינים לפי ספק ולא לפי תאריך. הם ממוינים לפי מה שהם עושים לכסף.</p>
+
+      <div class="sorter" data-stage>
+      <article class="doc doc--exception"
+        style="--row:0;--col:0;--sx:-0.077;--sy:-0.078;--sr:-3.0">
+        <span class="doc__ref">INV-2311</span>
+        <span class="doc__kind">חשבונית</span>
+        <span class="doc__match">דורש החלטה</span>
+      </article>
+      <article class="doc"
+        style="--row:0;--col:1;--sx:0.162;--sy:0.073;--sr:2.3">
+        <span class="doc__ref">DN-8841</span>
+        <span class="doc__kind">תעודת משלוח</span>
+        <span class="doc__match">הזמנה 4127</span>
+      </article>
+      <article class="doc"
+        style="--row:1;--col:0;--sx:-0.161;--sy:-0.020;--sr:4.5">
+        <span class="doc__ref">INV-2298</span>
+        <span class="doc__kind">חשבונית</span>
+        <span class="doc__match">הזמנה 4119</span>
+      </article>
+      <article class="doc"
+        style="--row:1;--col:1;--sx:-0.025;--sy:0.184;--sr:-3.5">
+        <span class="doc__ref">CN-114</span>
+        <span class="doc__kind">זיכוי</span>
+        <span class="doc__match">החזרה 771</span>
+      </article>
+      <article class="doc"
+        style="--row:2;--col:0;--sx:-0.173;--sy:-0.238;--sr:6.0">
+        <span class="doc__ref">INV-2303</span>
+        <span class="doc__kind">חשבונית</span>
+        <span class="doc__match">הזמנה 4123</span>
+      </article>
+      <article class="doc"
+        style="--row:2;--col:1;--sx:-0.124;--sy:-0.071;--sr:-5.0">
+        <span class="doc__ref">DN-8846</span>
+        <span class="doc__kind">תעודת משלוח</span>
+        <span class="doc__match">הזמנה 4131</span>
+      </article>
+      <article class="doc"
+        style="--row:3;--col:0;--sx:0.213;--sy:0.206;--sr:7.2">
+        <span class="doc__ref">INV-2307</span>
+        <span class="doc__kind">חשבונית</span>
+        <span class="doc__match">הזמנה 4126</span>
+      </article>
+      <article class="doc"
+        style="--row:3;--col:1;--sx:-0.222;--sy:0.132;--sr:-4.6">
+        <span class="doc__ref">DN-8850</span>
+        <span class="doc__kind">תעודת משלוח</span>
+        <span class="doc__match">הזמנה 4129</span>
+      </article></div>
+
+      <div class="peakfoot" data-sc-cue="0.62 1 0.1 0.02">
+        <span class="peakstat"><b class="num">43</b><span>מסמכים שנסגרו לבד</span></span>
+        <span class="peakstat"><b class="num">1</b><span>נשאר אחד</span></span>
+        <span class="peakstat"><span class="pill" data-state="alert">מחיר מעל הזמנה · ‎+1,240 ₪</span></span>
+      </div>
+      <p class="note" data-sc-cue="0.72 1 0.08 0.02">זה כל המוצר. לא לוח מחוונים שמראה לכם ארבעים ושלושה דברים תקינים. מסך שמשאיר לכם אחד.</p>
+    </div>
+  </div>
+</section>
+
+<section class="act act--flow" id="request" data-ground="paper" data-sc-act="flow" data-station="request">
+  <div class="wrap">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">מי יכול לגעת בכסף</h2>
+      <p class="lede">שלושה חשבונות, שלושה משטחים. לא הרשאות שמסתירות כפתור בממשק. גבולות שנאכפים במסד הנתונים.</p>
+      <p class="note"><span>הדרישה שעל השולחן</span> <span class="money num">‎6,384 ₪</span></p>
+    </div>
+    <div class="roles" data-sc-in data-sc-stagger="60">
+      
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">בעלים</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">יכול</span><span>רואה את כל התמונה, מאשר את הדרישה</span></li>
+            <li><span class="role__k" data-k="cannot">לא יכול</span><span>לא מבצע את התשלום</span></li>
+          </ul>
+        </div>
+      </article>
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">מנהל רכש</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">יכול</span><span>בונה את המסע: ספק, מחירון, הזמנה, קבלה, חשבונית</span></li>
+            <li><span class="role__k" data-k="cannot">לא יכול</span><span>לא רואה בנק ולא מפעיל תשלומים</span></li>
+          </ul>
+        </div>
+      </article>
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">רואה חשבון</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">יכול</span><span>מבצע תשלום מאושר, מעלה אסמכתה, מתאים מול הבנק</span></li>
+            <li><span class="role__k" data-k="cannot">לא יכול</span><span>לא משנה הזמנה, מוצר או מחירון</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+    <p class="note" data-sc-in>מסלול החירום של הבעלים הוסר. תשלום עובר תמיד דרך דרישה מאושרת, אימות נוסף, סיבה ורישום ביומן.</p>
+  </div>
+</section>
+
+<section class="act act--flow" id="payment" data-sc-act="flow" data-station="payment">
+  <div class="wrap stack">
+    <div class="stack__head" data-sc-in data-sc-stagger="70">
+      <h2 class="h">פעם אחת, ועם אסמכתה</h2>
+      <p class="lede">התשלום יוצא פעם אחת, על הסכום שאושר, מהחשבון שנקבע. אחר כך הוא חוזר מהבנק ומתאים את עצמו לתנועה.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <ul class="steps">
+        
+        <li>
+          <span class="steps__k">דרישה מאושרת</span>
+          <span class="money num">‎6,384 ₪</span>
+          <span class="pill" data-state="done">הושלם</span>
+        </li>
+        <li>
+          <span class="steps__k">תשלום בוצע</span>
+          <span class="money num">אסמכתה 88214</span>
+          <span class="pill" data-state="done">הושלם</span>
+        </li>
+        <li>
+          <span class="steps__k">תנועה בבנק</span>
+          <span class="money num">הותאמה</span>
+          <span class="pill" data-state="done">הושלם</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- act 7b · what is still open · reveal. The honesty beat: a system that
+     rounded its own corners to look finished would be lying about money. -->
+<section class="act act--flow" id="bank" data-ground="paper" data-sc-act="flow" data-station="bank">
+  <div class="wrap two two--flip">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">מה שעוד פתוח</h2>
+      <p class="lede">המערכת לא מעגלת פינות כדי להיראות נקייה.</p>
+    </div>
+    <article class="card" data-sc-reveal="up" data-sc-reveal-at="0.16 0.54">
+      <ul class="steps">
+        
+        <li>
+          <span class="steps__k">זיכויים פתוחים · שני ספקים</span>
+          <span class="money num">‎2,180 ₪</span>
+          <span class="pill" data-state="await">פתוח</span>
+        </li>
+        <li>
+          <span class="steps__k">תנועות בנק ממתינות להתאמה</span>
+          <span class="money num">‎9,640 ₪</span>
+          <span class="pill" data-state="await">פתוח</span>
+        </li>
+        <li>
+          <span class="steps__k">חשבונית ללא הזמנה · INV-2287</span>
+          <span class="money num money--alert">‎3,150 ₪</span>
+          <span class="pill" data-state="alert">חסום</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="act act--shell on-shell" id="close" data-sc-act="pin" data-sc-span="1.3">
+  <div class="stagehold" data-sc-stage>
+    <div class="wrap">
+      <div class="close__grid">
+        <div data-sc-cue="0.04">
+          <h2 class="h">זה מה שהגלילה שלכם עשתה</h2>
+          <p class="lede">שקל אחד, שמונה תחנות, יומן מלא.</p>
+          <ol class="recap" data-recap></ol>
+          <p class="note" data-recap-note>לא דילגתם על אף תחנה. ככה זה אמור להיראות.</p>
+        </div>
+        <form class="trial" data-sc-cue="0.04" action="https://app.inplace.digital/signup" method="get">
+          <h3 class="h--sm" style="color:var(--shell-ink)">להתחיל עם הנתונים שלכם</h3>
+          <label class="trial__label" for="trial-email">כתובת אימייל בעבודה</label>
+          <div class="trial__field">
+            <input id="trial-email" name="email" type="email" inputmode="email"
+                   autocomplete="email" placeholder="you@company.co.il" required>
+            <button class="btn" type="submit">פתיחת חשבון חינם</button>
+          </div>
+          <p class="ctanote">נפתח חשבון ריק. אתם מעלים מחירון אחד, וזה מתחיל לעבוד.</p>
+          <p class="ctanote">בלי כרטיס אשראי. המחיר נמסר בתוך החשבון, בשלב המעבר למסלול בתשלום.</p>
+        </form>
+      </div>
+
+      <footer class="foot">
+        <span>InPlace · רכש, חשבוניות ותשלומים</span>
+        <a href="https://app.inplace.digital">כניסה לחשבון</a>
+        <a href="https://app.inplace.digital/legal/terms">תנאי שימוש</a>
+        <a href="https://app.inplace.digital/legal/privacy">מדיניות פרטיות</a>
+        <span class="foot__claims">הסכומים בעמוד הם תרחיש הדגמה קבוע עם סמנטיקה אמיתית של המוצר. אין באתר נתוני לקוחות, אחוזי חיסכון או התחייבות לזמינות.</span>
+      </footer>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="statusbar" role="status" aria-live="polite">
+  <span class="statusbar__group">
+    <span class="statusbar__label">סכום במעקב</span>
+    <span class="statusbar__value num" data-status-amount>—</span>
+  </span>
+  <span class="statusbar__sep" aria-hidden="true"></span>
+  <span class="statusbar__group statusbar__hideable">
+    <span class="statusbar__label">במעקב</span>
+    <span class="statusbar__value" data-status-entity>הזמנה 4127 · מאפיית גל</span>
+  </span>
+  <span class="statusbar__sep statusbar__hideable" aria-hidden="true"></span>
+  <span class="statusbar__group statusbar__hideable">
+    <span class="statusbar__label">קצב</span>
+    <span class="statusbar__value" data-status-velocity>תקין</span>
+  </span>
+  <span class="statusbar__spacer"></span>
+  <span class="chip-demo statusbar__hideable" title="תרחיש הדגמה עם סמנטיקה אמיתית של המוצר. הסכומים לקוחים מ־fixtures קבועים.">נתוני דמו</span>
+  <button type="button" class="ledger-toggle" data-ledger-toggle aria-expanded="false" aria-controls="ledger">
+    <span>פתיחת היומן</span>
+    <span class="ledger-toggle__count num" data-ledger-count>0</span>
+  </button>
+</div>
+
+<aside class="ledger" id="ledger" data-ledger hidden>
+  <h2 class="ledger__title">יומן המסע</h2>
+  <p class="ledger__empty" data-ledger-empty>עוד לא עברתם אף תחנה.</p>
+  <ol class="ledger__list" data-ledger-list></ol>
+</aside>
+<script src="engine/scrollcraft.js"></script>
+<script src="surface.js"></script>
+<script>
+  ScrollCraft.mount(document.body);
+  InPlaceSurface.mount({"stations":[{"id":"pricelist","nav":"מחירון","amount":null,"state":"done","ledger":"מחיר מוסכם נקבע: ‎39.90 ₪ ליחידה."},{"id":"order","nav":"הזמנה","amount":6384,"state":"done","ledger":"הזמנה 4127 נפתחה על ‎6,384 ₪."},{"id":"receiving","nav":"קבלה","amount":6384,"state":"done","ledger":"הקבלה תואמת להזמנה: 160 מתוך 160."},{"id":"invoice","nav":"חשבונית","amount":7624,"state":"alert","ledger":"החשבונית ביקשה ‎7,624 ₪: פער של ‎1,240 ₪ מעל ההזמנה."},{"id":"decision","nav":"החלטה","amount":6384,"state":"done","ledger":"הפער נדחה. הסכום חזר ל‎6,384 ₪, עם סיבה ביומן."},{"id":"request","nav":"דרישה","amount":6384,"state":"done","ledger":"דרישת תשלום אושרה על ‎6,384 ₪."},{"id":"payment","nav":"תשלום","amount":6384,"state":"done","ledger":"התשלום בוצע: ‎6,384 ₪, עם אסמכתה."},{"id":"bank","nav":"בנק","amount":6384,"state":"done","ledger":"התנועה בבנק הותאמה. המסע נסגר."}],"strings":{"ledgerOpen":"פתיחת היומן","ledgerClose":"סגירת היומן","velocityCalm":"תקין","velocityFast":"מהיר מהבקרות","skipLine":"דילגתם על {station}. הבקרה לא רצה.","cleanNote":"לא דילגתם על אף תחנה. ככה זה אמור להיראות.","skippedNote":"גללתם מהר יותר מהבקרות. במערכת אמיתית זה בדיוק מה שקורה כשמשלמים לפני שבודקים. רק ששם לא מגללים אחורה.","dash":"—"},"locale":"he-IL","currency":"ILS"});
+</script>
+</body>
+</html>

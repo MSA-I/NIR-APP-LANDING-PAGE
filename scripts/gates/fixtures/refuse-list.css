@@ -1,0 +1,6 @@
+/* Positive control for G13, CSS half. Do not "fix" this file. */
+.grad { background: linear-gradient(90deg, #8b5cf6, #6366f1); -webkit-background-clip: text; }
+.glow { box-shadow: 0 0 24px #6366f1; }
+.lazy { transition: all 300ms ease; }
+.layout { transition: width 200ms ease, height 200ms ease; }
+.black { color: #000; }

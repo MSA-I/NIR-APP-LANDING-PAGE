@@ -1,0 +1,992 @@
+/* InPlace scroll landing — the page's own layer.
+   scrollcraft.css is the mechanism; nothing here restyles a [data-sc-*]
+   selector. Every colour is the product's own token, resolved from the running
+   app (data/product-tokens.json), not transcribed from a document.
+
+   RTL is carried by logical properties only. There is no left, right,
+   margin-left or padding-right in this file, and a gate enforces that. */
+
+/* ------------------------------------------------------------- the face --
+   One family. The product has no display face, and in the live-surface
+   grammar a 6rem display heading would break the grammar on sight, so the
+   page has no display face either. Weight and size do the work. */
+@font-face {
+  font-family: "Noto Sans Hebrew";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/NotoSansHebrew-Hebrew.woff2") format("woff2");
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+@font-face {
+  font-family: "Noto Sans Hebrew";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/NotoSansHebrew-Latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+:root {
+  /* ---- the product's palette, resolved from the running app ----
+     Authored in oklch by the product; written here as the exact sRGB Chrome
+     paints for those values, so the page is measurable by tools that only
+     parse rgb(). scripts/oklch-to-hex.mjs did the conversion. ---- */
+  --canvas: #f4f5f3;
+  --surface: #fffcf8;
+  --surface-sunken: #f4efe7;
+  --line: #e5dbcd;
+  --line-soft: #f0e8dd;
+
+  --ink: #0a171d;
+  --ink-body: #1e2b31;
+  --ink-mid: #334147;
+  --ink-muted: #505d64;
+  --ink-faint: #627076;
+
+  --action: #003f47;
+  --action-soft: #d8edee;
+  --action-wash: #ecf6f6;
+  --focus: #03707c;
+  --on-solid: #fff;
+
+  --shell: #0a171d;
+  --shell-ink: #fbf6ee;
+  --shell-ink-soft: #dcd7cd;
+  --shell-ink-dim: #ada79d;
+  /* The accent's second stop. The page hard-cuts between a paper ground and an
+     Onyx one, and a single Oceanic cannot clear 4.5:1 on both. One hue, two
+     lightnesses, keyed to the ground. */
+  --action-bright: #8bd3d6;
+
+  /* ---- status: business meaning only, never decoration ---- */
+  --done-fg: #007a55;
+  --done-soft: #d0fae5;
+  --done-on-soft: #006045;
+  --await-fg: #bb4d00;
+  --await-soft: #fef3c6;
+  --await-on-soft: #973c00;
+  --alert-fg: #c70036;
+  --alert-soft: #ffe4e6;
+  --alert-on-soft: #a50036;
+  --info-fg: #0069a8;
+  --info-soft: #dff2fe;
+  --info-on-soft: #00598a;
+  --idle-fg: #314158;
+  --idle-soft: #f1f5f9;
+  --idle-on-soft: #1d293d;
+  /* On Onyx the soft pairs invert: the wash goes translucent-bright and the
+     text takes the bright stop, because a 95%-lightness pill on Onyx is a
+     lamp, not a label. */
+  --done-bright: #51daa7;
+  --await-bright: #f4c352;
+  --alert-bright: #ff828c;
+  --idle-bright: #a9b9ca;
+
+  /* ---- shape. One radius scale, held across the page. ---- */
+  --r-card: 24px;
+  --r-control: 8px;
+  --r-pill: 999px;
+
+  /* ---- depth. Onyx-tinted, offset and blur. No haloes. ---- */
+  --e1: 0 1px 2px color-mix(in oklab, var(--shell) 6%, transparent),
+        0 4px 10px color-mix(in oklab, var(--shell) 8%, transparent);
+  --e2: 0 2px 4px color-mix(in oklab, var(--shell) 7%, transparent),
+        0 12px 28px color-mix(in oklab, var(--shell) 13%, transparent);
+  --e3: 0 4px 10px color-mix(in oklab, var(--shell) 10%, transparent),
+        0 24px 48px -12px color-mix(in oklab, var(--shell) 22%, transparent);
+
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --rail-w: 13.5rem;
+  --bar-h: 3.5rem;
+  --gutter: clamp(1rem, 4vw, 3.5rem);
+  --measure: 58ch;
+
+  /* scrollcraft's own tokens, re-pointed at the product */
+  --sc-canvas: var(--canvas);
+  --sc-surface: var(--surface);
+  --sc-ink: var(--ink-body);
+  --sc-ink-soft: var(--ink-muted);
+  --sc-accent: var(--action);
+  --sc-accent-ink: var(--on-solid);
+  --sc-font-text: "Noto Sans Hebrew", Arial, ui-sans-serif, system-ui, sans-serif;
+  --sc-font-display: var(--sc-font-text);
+  --sc-r-sm: var(--r-control);
+}
+
+/* ------------------------------------------------------------ the ground --
+   Two grounds, hard-cut. No engine drift: the interview asked for distinct
+   scenes, and a cut is not an interpolation. */
+body {
+  background: var(--canvas);
+  color: var(--ink-body);
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.0625rem);
+  line-height: 1.62;
+  letter-spacing: 0;
+}
+
+::selection { background: var(--action-soft); color: var(--ink); }
+:root { caret-color: var(--action); accent-color: var(--action); }
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-control);
+}
+.on-shell :focus-visible { outline-color: var(--action-bright); }
+
+/* A filled control needs its ring keyed to the ground the ring lands on, not
+   to the fill it surrounds. An Oceanic ring around an Oceanic button is a
+   2:1 ring: present in the DOM, invisible to the eye. The offset puts it
+   outside the button, so the ground is what it has to beat. */
+.btn:focus-visible {
+  outline-offset: 3px;
+  outline-color: var(--ink);
+}
+.card--dark .btn:focus-visible,
+.act--shell .btn:focus-visible {
+  outline-color: var(--shell-ink);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  unicode-bidi: isolate;
+}
+
+.skip {
+  position: absolute;
+  inset-block-start: -100vh;
+  inset-inline-start: var(--gutter);
+  z-index: 200;
+  background: var(--shell);
+  color: var(--shell-ink);
+  padding: 0.6rem 1rem;
+  border-radius: var(--r-control);
+}
+.skip:focus-visible { inset-block-start: 0.5rem; }
+
+/* ================================================================ CHROME ==
+   The live-surface grammar has no marketing bar. What the product would have
+   is what the page has: a station rail that is the real navigation, and a
+   status bar that reports what the surface is doing. */
+
+.rail {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 60;
+  inline-size: var(--rail-w);
+  padding-block: 1.25rem calc(var(--bar-h) + 1rem);
+  padding-inline: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: color-mix(in oklab, var(--canvas) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-inline-end: 1px solid var(--line-soft);
+}
+
+.rail__mark {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 0.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.rail__mark svg { inline-size: 1.5rem; block-size: 1.5rem; flex: none; }
+
+.rail__head {
+  padding-inline: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+
+/* The track. Scroll position is the money's position, so the rail is drawn as
+   a real track with a token on it rather than as a list with a highlight. */
+.rail__track {
+  position: relative;
+  flex: 1;
+  min-block-size: 0;
+  display: grid;
+  grid-auto-rows: 1fr;
+  align-content: stretch;
+}
+.rail__line {
+  position: absolute;
+  inset-block: 0.9rem;
+  inset-inline-start: 1.4rem;
+  inline-size: 2px;
+  background: var(--line);
+  border-radius: var(--r-pill);
+}
+.rail__line::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: calc(var(--trail, 0) * 100%);
+  background: var(--action);
+  border-radius: inherit;
+}
+
+.rail__stop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-inline: 0.55rem;
+  min-block-size: 2.4rem;
+  color: var(--ink-muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  border-radius: var(--r-control);
+  transition: color 160ms var(--ease), background-color 160ms var(--ease);
+}
+.rail__stop:hover { background: var(--action-wash); color: var(--ink-body); }
+.rail__dot {
+  position: relative;
+  z-index: 1;
+  inline-size: 0.7rem;
+  block-size: 0.7rem;
+  flex: none;
+  margin-inline-start: 0.5rem;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: 0 0 0 2px var(--line);
+  transition: background-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.rail__stop[data-passed="1"] { color: var(--ink-body); }
+.rail__stop[data-passed="1"] .rail__dot {
+  background: var(--action);
+  box-shadow: 0 0 0 2px var(--action);
+}
+.rail__stop[aria-current="true"] { color: var(--ink); font-weight: 600; }
+.rail__stop[aria-current="true"] .rail__dot {
+  background: var(--action);
+  box-shadow: 0 0 0 3px var(--action-soft);
+}
+.rail__stop[data-skipped="1"] .rail__dot {
+  background: var(--surface);
+  box-shadow: 0 0 0 2px var(--alert-fg);
+}
+.rail__skip {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--alert-on-soft);
+  background: var(--alert-soft);
+  border-radius: var(--r-pill);
+  padding: 0.05rem 0.4rem;
+  margin-inline-start: auto;
+}
+.rail__stop:not([data-skipped="1"]) .rail__skip { display: none; }
+
+/* The token: one amount, riding the track. */
+.token {
+  position: absolute;
+  /* On the rail's outer seam, not on top of it. Sitting in the dot column put
+     the badge over the station label it had just arrived at, so the last stop
+     read as having no name. */
+  inset-inline-start: auto;
+  inset-inline-end: -0.85rem;
+  inset-block-start: 0;
+  translate: 0 calc(var(--tokenY, 0) * 1px);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--r-pill);
+  background: var(--shell);
+  color: var(--shell-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--e2);
+  pointer-events: none;
+  transition: background-color 260ms var(--ease);
+}
+.token[data-state="alert"] { background: var(--alert-fg); }
+.token[data-state="await"] { background: var(--await-fg); }
+.token__glyph { opacity: 0.72; font-weight: 400; }
+
+.statusbar {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: 70;
+  block-size: var(--bar-h);
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-inline: var(--gutter);
+  background: var(--shell);
+  color: var(--shell-ink-soft);
+  font-size: 0.78rem;
+}
+.statusbar__group { display: flex; align-items: center; gap: 0.45rem; }
+.statusbar__label { color: var(--shell-ink-dim); }
+.statusbar__value { color: var(--shell-ink); font-weight: 600; }
+.statusbar__sep {
+  inline-size: 1px;
+  block-size: 1.1rem;
+  background: color-mix(in oklab, var(--shell-ink) 22%, transparent);
+}
+.statusbar__spacer { flex: 1; }
+
+.chip-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--r-pill);
+  font-size: 0.7rem;
+  /* A disclosure chip is neutral. It is not a status. */
+  background: color-mix(in oklab, var(--shell-ink) 14%, transparent);
+  color: var(--shell-ink);
+}
+
+.ledger-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-block-size: 2rem;
+  padding-inline: 0.7rem;
+  border: 1px solid color-mix(in oklab, var(--shell-ink) 26%, transparent);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--shell-ink);
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease), transform 120ms var(--ease);
+}
+.ledger-toggle:hover { background: color-mix(in oklab, var(--shell-ink) 12%, transparent); }
+.ledger-toggle:active { transform: translateY(1px); }
+.ledger-toggle__count {
+  font-variant-numeric: tabular-nums;
+  background: var(--action-bright);
+  color: var(--shell);
+  border-radius: var(--r-pill);
+  min-inline-size: 1.25rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.7rem;
+}
+
+.ledger {
+  position: fixed;
+  inset-block-end: var(--bar-h);
+  inset-inline-end: var(--gutter);
+  z-index: 69;
+  inline-size: min(24rem, calc(100vw - 2 * var(--gutter)));
+  max-block-size: min(28rem, 60vh);
+  overflow: auto;
+  padding: 1rem;
+  background: var(--surface);
+  border-radius: var(--r-card) var(--r-card) 0 0;
+  box-shadow: var(--e3);
+  transform-origin: bottom center;
+}
+.ledger[hidden] { display: none; }
+.ledger__title {
+  margin: 0 0 0.15rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.ledger__empty { color: var(--ink-faint); font-size: 0.85rem; margin: 0.5rem 0 0; }
+.ledger__list { list-style: none; margin: 0.75rem 0 0; padding: 0; }
+.ledger__list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  padding-block: 0.5rem;
+  border-block-start: 1px solid var(--line-soft);
+  font-size: 0.83rem;
+  color: var(--ink-mid);
+}
+.ledger__list li:first-child { border-block-start: 0; }
+.ledger__n {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  font-size: 0.72rem;
+  padding-block-start: 0.15rem;
+}
+.ledger__list li[data-kind="skip"] { color: var(--alert-on-soft); }
+
+/* ================================================================ LAYOUT == */
+.page { padding-inline-start: var(--rail-w); }
+
+/* Distinct scenes, not one continuous place. Each act owns a screen and lands
+   on its own ground with a hard edge. There is no engine drift on this page:
+   the interview asked for scenes, and a cut is not an interpolation. */
+.act {
+  position: relative;
+  background: var(--canvas);
+}
+.act[data-ground="paper"] { background: var(--surface-sunken); }
+.act[data-ground="wash"] { background: var(--action-wash); }
+.act--shell,
+.act[data-ground="shell"] {
+  background: var(--shell);
+  color: var(--shell-ink-soft);
+}
+.act--shell .h, .act--shell .lede strong { color: var(--shell-ink); }
+
+.wrap {
+  inline-size: 100%;
+  max-inline-size: 68rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Every scene owns one screen, so the cut between grounds lands on a full
+   frame rather than half way down one. Content sits at the optical centre,
+   which on a page with a status bar means slightly above the true centre. */
+.act--flow {
+  display: grid;
+  align-content: center;
+  /* Not a full screen. At 100svh a centred content band leaves a third of a
+     viewport of nothing on each side of it, so the travel between two scenes
+     is two half-screens of padding meeting in the middle. The harness reads
+     that as motion, correctly, and the reader reads it as the page being over. */
+  min-block-size: 86svh;
+  padding-block: clamp(2.5rem, 6vh, 5rem) calc(clamp(2.5rem, 6vh, 5rem) + var(--bar-h));
+}
+/* A scene that is a single held line does not need a screen's worth of
+   padding on top of a screen's worth of height. */
+.act--quiet { min-block-size: 62svh; }
+/* The held line before the peak. It is the only place on the page where one
+   sentence gets a screen to itself, so it is set larger than body and given
+   the measure of a pull quote. */
+.lede--held {
+  font-size: clamp(1.15rem, 0.95rem + 0.9vw, 1.6rem);
+  line-height: 1.4;
+  color: var(--ink-body);
+  max-inline-size: 34ch;
+}
+
+.stagehold {
+  block-size: 100vh;
+  block-size: 100svh;
+  display: grid;
+  align-content: center;
+  padding-block: 1.5rem calc(var(--bar-h) + 1.5rem);
+  overflow: clip;
+}
+
+/* ---- type. No display face; weight, size and space carry hierarchy. ---- */
+.h {
+  margin: 0;
+  font-weight: 650;
+  font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.4rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.h--sm {
+  font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+.lede {
+  margin: 0.9rem 0 0;
+  max-inline-size: var(--measure);
+  color: var(--ink-mid);
+  text-wrap: pretty;
+}
+.act--shell .lede { color: var(--shell-ink-soft); }
+.note {
+  margin: 0.6rem 0 0;
+  font-size: 0.83rem;
+  color: var(--ink-muted);
+  max-inline-size: var(--measure);
+}
+/* A figure and its currency are one token, held together by a non-breaking
+   space in the copy itself rather than by nowrap. nowrap on .num was wrong:
+   .num also lands on whole sentences, and one of them then refused to wrap and
+   pushed the page 75px wide at 390. */
+.money { white-space: nowrap; }
+.act--shell .note { color: var(--shell-ink-dim); }
+.eyebrow {
+  margin: 0 0 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--action);
+}
+.act--shell .eyebrow { color: var(--action-bright); }
+
+/* ================================================= SURFACE PRIMITIVES ==
+   Borrowed from the product itself: a 24px card with an Onyx-tinted shadow
+   and no border, an Onyx table head, and soft status pills. */
+.card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--e2);
+  overflow: clip;
+}
+.card--dark {
+  background: var(--shell);
+  color: var(--shell-ink-soft);
+}
+.card__head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 1rem 1.15rem 0.75rem;
+}
+.card__title { margin: 0; font-size: 0.95rem; font-weight: 600; color: var(--ink); }
+.card--dark .card__title { color: var(--shell-ink); }
+.card__meta { font-size: 0.78rem; color: var(--ink-faint); margin-inline-start: auto; }
+.card--dark .card__meta { color: var(--shell-ink-dim); }
+.card__body { padding: 0 1.15rem 1.15rem; }
+
+.tbl { inline-size: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.tbl thead th {
+  background: var(--shell);
+  color: var(--shell-ink);
+  font-weight: 500;
+  font-size: 0.78rem;
+  text-align: start;
+  padding: 0.7rem 1rem;
+  white-space: nowrap;
+}
+.tbl tbody td {
+  padding: 0.7rem 1rem;
+  border-block-start: 1px solid var(--line-soft);
+  color: var(--ink-mid);
+  vertical-align: middle;
+}
+.tbl tbody tr:first-child td { border-block-start: 0; }
+.tbl .cell-end { text-align: end; }
+.tbl .cell-key { color: var(--ink-body); font-weight: 500; }
+.tblwrap { overflow-x: auto; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.12rem 0.6rem;
+  border-radius: var(--r-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pill::before {
+  content: "";
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  border-radius: var(--r-pill);
+  background: currentColor;
+  flex: none;
+}
+.pill[data-state="done"]  { background: var(--done-soft);  color: var(--done-on-soft); }
+.pill[data-state="await"] { background: var(--await-soft); color: var(--await-on-soft); }
+.pill[data-state="alert"] { background: var(--alert-soft); color: var(--alert-on-soft); }
+.pill[data-state="info"]  { background: var(--info-soft);  color: var(--info-on-soft); }
+.pill[data-state="idle"]  { background: var(--idle-soft);  color: var(--idle-on-soft); }
+
+.act--shell .pill,
+.card--dark .pill { background: color-mix(in oklab, var(--shell-ink) 13%, transparent); }
+.act--shell .pill[data-state="done"],  .card--dark .pill[data-state="done"]  { color: var(--done-bright); }
+.act--shell .pill[data-state="await"], .card--dark .pill[data-state="await"] { color: var(--await-bright); }
+.act--shell .pill[data-state="alert"], .card--dark .pill[data-state="alert"] { color: var(--alert-bright); }
+.act--shell .pill[data-state="idle"],  .card--dark .pill[data-state="idle"]  { color: var(--idle-bright); }
+
+.money { font-variant-numeric: tabular-nums; unicode-bidi: isolate; font-weight: 600; color: var(--ink); }
+.act--shell .money { color: var(--shell-ink); }
+.money--alert { color: var(--alert-fg); }
+.act--shell .money--alert { color: var(--alert-bright); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-block-size: 2.75rem;
+  padding-inline: 1.1rem;
+  border: 0;
+  border-radius: var(--r-control);
+  background: var(--action);
+  color: var(--on-solid);
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease), transform 120ms var(--ease);
+}
+.btn:hover { background: #05333a; }
+.btn:active { transform: translateY(1px); }
+.act--shell .btn { background: var(--action-bright); color: var(--shell); }
+.act--shell .btn:hover { background: #a9e4e7; }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--action);
+  border: 1px solid var(--line);
+}
+.btn--ghost:hover { background: var(--action-wash); }
+
+/* ==================================================== ACT 0 · COLD OPEN ==
+   The surface is already running, and something in it is already wrong. */
+.open__grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+@media (min-width: 62rem) {
+  .open__grid { grid-template-columns: 1.55fr 1fr; }
+}
+.open__rows { list-style: none; margin: 0; padding: 0; }
+.open__rows li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 1rem;
+  align-items: center;
+  padding: 0.8rem 1.15rem;
+  border-block-start: 1px solid var(--line-soft);
+}
+.open__rows li:first-child { border-block-start: 0; }
+.open__ref { color: var(--ink-body); font-weight: 500; font-size: 0.88rem; }
+.open__note { grid-column: 1; font-size: 0.78rem; color: var(--ink-faint); }
+.open__val { grid-row: 1 / span 2; align-self: center; text-align: end; }
+.open__foot {
+  padding: 0.75rem 1.15rem;
+  background: var(--surface-sunken);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+.help__body { margin: 0.5rem 0 0; color: var(--shell-ink-soft); font-size: 0.9rem; }
+.help__actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-block-start: 1rem; }
+.ctanote { margin: 0.55rem 0 0; font-size: 0.76rem; color: var(--shell-ink-dim); }
+
+/* ============================================ ACTS 1-3 · THE WORKING PART == */
+/* Four layout families, so no two adjacent scenes share a skeleton. A page of
+   heading-left / card-right repeated is the zigzag tell, and the first build
+   shipped four of them in a row. */
+.two {
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+@media (min-width: 62rem) {
+  .two { grid-template-columns: 1fr 1.15fr; }
+  .two--flip > :first-child { order: 2; }
+}
+
+/* Stacked: a heading over a full-width surface. What a real list page is. */
+.stack { display: grid; gap: clamp(1.25rem, 3vw, 2rem); }
+.stack__head { max-inline-size: var(--measure); }
+
+/* Centred: one card, alone, because the number in it is the whole beat. */
+.solo { display: grid; justify-items: center; text-align: center; gap: clamp(1.25rem, 3vw, 2rem); }
+.solo .lede, .solo .note { margin-inline: auto; }
+.solo .card { inline-size: min(26rem, 100%); text-align: start; }
+
+.calc { display: grid; gap: 0.55rem; padding: 1.15rem; }
+.calc__row { display: flex; align-items: baseline; gap: 0.6rem; font-size: 0.9rem; color: var(--ink-mid); }
+.calc__row b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.calc__rule { border: 0; border-block-start: 1px solid var(--line); margin: 0.35rem 0; }
+.calc__total { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.calc__total span { color: var(--ink-muted); font-size: 0.85rem; }
+.calc__total b { font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.match { display: grid; gap: 0.9rem; padding: 1.15rem; }
+.match__pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.75rem; align-items: center; }
+.match__side { text-align: center; }
+.match__k { display: block; font-size: 0.75rem; color: var(--ink-faint); }
+.match__v { display: block; font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.2rem); font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.match__op { color: var(--ink-ghost, var(--ink-faint)); font-size: 1.1rem; }
+.match__v--alert { color: var(--alert-fg); }
+
+/* =================================================== ACT 4 · THE INVOICE ==
+   The quiet before the peak. Two numbers, and the gap between them. */
+.gap { display: grid; gap: 1.15rem; padding: 1.4rem; }
+.gap__two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.gap__cell {
+  padding: 0.9rem 1rem;
+  border-radius: var(--r-control);
+  background: var(--surface-sunken);
+}
+.gap__cell--alert { background: var(--alert-soft); }
+.gap__k { display: block; font-size: 0.76rem; color: var(--ink-muted); }
+.gap__v { display: block; margin-block-start: 0.15rem; font-size: clamp(1.3rem, 1.05rem + 1vw, 1.8rem); font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; }
+.gap__cell--alert .gap__v { color: var(--alert-on-soft); }
+.gap__delta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block-start: 0.9rem;
+  border-block-start: 1px solid var(--line);
+}
+.gap__delta b { font-size: clamp(1.4rem, 1.1rem + 1.2vw, 2rem); color: var(--alert-fg); font-variant-numeric: tabular-nums; }
+.hold > span:last-child { flex: 1; }
+.hold {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  /* The pill keeps its width; the sentence takes the rest and wraps on its own
+     terms instead of being squeezed into an anonymous flex item. */
+  flex-wrap: nowrap;
+  padding: 0.85rem 1rem;
+  border-radius: var(--r-control);
+  background: var(--alert-soft);
+  color: var(--alert-on-soft);
+  font-size: 0.87rem;
+  font-weight: 500;
+}
+
+/* ================================================ ACT 5 · THE PEAK ==
+   The screen sorts itself out. Cards travel from a deterministic scatter to a
+   matched list, driven by the act's own --sc-p. */
+.sorter {
+  position: relative;
+  inline-size: 100%;
+  max-inline-size: 44rem;
+  margin-inline: auto;
+  margin-block-start: clamp(1.25rem, 3vh, 2.25rem);
+  block-size: min(44vh, 20rem);
+  /* Bounds the scatter. Whatever the offsets, the page cannot gain a
+     horizontal scrollbar from this act. */
+  overflow: clip;
+}
+/* A document has to LOOK like a document at both ends of the move. A card
+   sized like a table row reads as a bar when it is tilted, which is what the
+   first build shipped: eight white slashes across the frame. It keeps its
+   shape and travels into a grid instead. */
+.doc {
+  position: absolute;
+  inset-block-start: calc(var(--row) * 4.85rem);
+  inset-inline-start: calc(var(--col) * 52%);
+  inline-size: min(19rem, 46%);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 0.6rem;
+  align-items: baseline;
+  padding: 0.6rem 0.85rem;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--e1);
+  font-size: 0.82rem;
+  color: var(--ink-mid);
+  /* Scatter -> settle. The offsets are unitless fractions of the stage box,
+     scaled by --sw / --sh (written by surface.js), so the scatter is
+     proportional and can never reach outside the frame.
+
+     --sc-p is published by the engine on the act element and inherits down, so
+     the interpolation needs no per-frame JS at all. It is remapped so the
+     sorting completes around 60% of the act and then HOLDS, which is what
+     gives the peak its dwell instead of finishing on the last pixel. */
+  --p: clamp(0, calc((var(--sc-p, 0) - 0.08) * 1.9), 1);
+  translate:
+    calc(var(--sx) * var(--sw, 600) * (1 - var(--p)) * 1px)
+    calc(var(--sy) * var(--sh, 400) * (1 - var(--p)) * 1px);
+  rotate: calc(var(--sr) * (1 - var(--p)) * 1deg);
+  transform-origin: center;
+  will-change: translate, rotate;
+}
+.doc__ref { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.doc__kind { color: var(--ink-muted); font-size: 0.75rem; }
+/* The match line is the payload of the sort: it does not exist until the
+   document has found what it belongs to. */
+.doc__match {
+  grid-column: 1 / -1;
+  margin-block-start: 0.35rem;
+  padding-block-start: 0.35rem;
+  border-block-start: 1px solid var(--line-soft);
+  font-size: 0.74rem;
+  color: var(--done-on-soft);
+  opacity: var(--p);
+}
+/* The one that is left. It does not fade the others out; it out-weighs them. */
+.doc--exception {
+  z-index: 3;
+  box-shadow:
+    var(--e3),
+    0 0 0 calc(2px * var(--p)) var(--alert-fg);
+  scale: calc(1 + 0.05 * var(--p));
+}
+.doc--exception .doc__match { color: var(--alert-on-soft); opacity: 1; font-weight: 600; }
+
+.peakfoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.25rem;
+  margin-block-start: 1.5rem;
+}
+.peakstat { display: flex; align-items: baseline; gap: 0.45rem; }
+.peakstat b {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+  font-weight: 650;
+  color: var(--shell-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.peakstat span { font-size: 0.85rem; color: var(--shell-ink-dim); }
+
+/* ==================================================== ACT 6 · THE ROLES == */
+.roles { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 52rem) { .roles { grid-template-columns: repeat(3, 1fr); } }
+.role__name { margin: 0; font-size: 1rem; font-weight: 600; color: var(--ink); }
+.role__list { list-style: none; margin: 0.85rem 0 0; padding: 0; display: grid; gap: 0.6rem; }
+.role__list li { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem; font-size: 0.85rem; }
+.role__k {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--r-pill);
+  block-size: fit-content;
+  white-space: nowrap;
+}
+.role__k[data-k="can"] { background: var(--done-soft); color: var(--done-on-soft); }
+.role__k[data-k="cannot"] { background: var(--idle-soft); color: var(--idle-on-soft); }
+
+/* ==================================================== ACT 7 · THE SETTLE == */
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.85rem 1.15rem;
+  border-block-start: 1px solid var(--line-soft);
+}
+.steps li:first-child { border-block-start: 0; }
+.steps__k { color: var(--ink-body); font-size: 0.88rem; }
+
+/* ===================================================== ACT 8 · THE CLOSE == */
+.close__grid { display: grid; gap: 1.25rem; grid-template-columns: 1fr; align-items: start; }
+@media (min-width: 62rem) { .close__grid { grid-template-columns: 1.1fr 1fr; } }
+.recap { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+.recap li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+  color: var(--shell-ink-soft);
+  padding-block: 0.45rem;
+  border-block-start: 1px solid color-mix(in oklab, var(--shell-ink) 12%, transparent);
+}
+.recap li:first-child { border-block-start: 0; }
+.recap__n { color: var(--shell-ink-dim); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+.recap li[data-kind="skip"] .recap__n,
+.recap li[data-kind="skip"] { color: var(--alert-bright); }
+
+.trial { display: grid; gap: 0.7rem; }
+.trial__label { font-size: 0.8rem; color: var(--shell-ink-dim); }
+.trial__field { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.trial input {
+  flex: 1 1 14rem;
+  min-block-size: 2.75rem;
+  padding-inline: 0.9rem;
+  border-radius: var(--r-control);
+  border: 1px solid color-mix(in oklab, var(--shell-ink) 30%, transparent);
+  background: color-mix(in oklab, var(--shell-ink) 7%, transparent);
+  color: var(--shell-ink);
+}
+.trial input::placeholder { color: var(--shell-ink-dim); }
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  align-items: center;
+  margin-block-start: 2rem;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid color-mix(in oklab, var(--shell-ink) 14%, transparent);
+  font-size: 0.78rem;
+  color: var(--shell-ink-dim);
+}
+/* A 20px link is a 20px tap target. The footer is the one place a page
+   reliably ships them, and this page's audience includes people finding the
+   terms on a phone. */
+.foot a {
+  color: var(--shell-ink-soft);
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.25rem;
+}
+.foot__claims { flex-basis: 100%; max-inline-size: 46rem; line-height: 1.55; }
+
+/* ======================================================== SMALL SCREENS ==
+   The rail becomes a horizontal track above the status bar. It is still the
+   navigation and still the money's track; only its axis changes. */
+@media (max-width: 61.99rem) {
+  :root { --rail-w: 0px; }
+  .page { padding-inline-start: 0; padding-block-end: calc(var(--bar-h) + 3.25rem); }
+  .rail {
+    inset-block: auto 0;
+    inset-inline: 0;
+    inline-size: auto;
+    block-size: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    padding-block-end: calc(var(--bar-h) + 0.4rem);
+    border-inline-end: 0;
+    border-block-start: 1px solid var(--line-soft);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .rail__mark, .rail__head { display: none; }
+  .rail__track {
+    flex-direction: row;
+    display: flex;
+    gap: 0.15rem;
+    inline-size: max-content;
+  }
+  .rail__line, .token { display: none; }
+  .rail__stop { min-block-size: 2.25rem; font-size: 0.75rem; padding-inline: 0.5rem; }
+  .rail__dot { margin-inline-start: 0; }
+  .rail__skip { margin-inline-start: 0.25rem; }
+  .statusbar { font-size: 0.72rem; gap: 0.6rem; padding-inline: 0.75rem; }
+  .statusbar__hideable { display: none; }
+  .ledger { inset-block-end: calc(var(--bar-h) + 3rem); inset-inline: 0.5rem; }
+  .stagehold { padding-block-end: calc(var(--bar-h) + 4rem); }
+  .gap__two { grid-template-columns: 1fr; }
+}
+
+/* ======================================================== REDUCED MOTION ==
+   Fewer and gentler, not zero. Every act is fully present and readable; the
+   sorter lands settled instead of animating; the rail shows every station. */
+@media (prefers-reduced-motion: reduce) {
+  .doc { --p: 1 !important; position: relative; inset: auto; translate: none; rotate: none; inline-size: auto; opacity: 1 !important; }
+  .doc__match { opacity: 1; }
+  .sorter {
+    position: static;
+    block-size: auto;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  }
+  .stagehold { block-size: auto; padding-block: clamp(3rem, 7vw, 5rem); }
+  .token { display: none; }
+  .rail__line::after { block-size: 100%; }
+  [data-sc-cue] { opacity: 1 !important; transform: none !important; }
+  /* Entry reveals are gated on an IntersectionObserver, so with motion off a
+     reader who has not scrolled past a section still meets it at opacity 0.
+     "Fewer and gentler" does not extend to content that is simply not there. */
+  [data-sc-in],
+  [data-sc-stagger] > *,
+  [data-sc-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}

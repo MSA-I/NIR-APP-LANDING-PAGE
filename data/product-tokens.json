@@ -1,0 +1,269 @@
+{
+  "color-canvas": {
+    "raw": "oklch(96.88% 0.0028 128)",
+    "resolved": "oklch(0.9688 0.0028 128)"
+  },
+  "color-surface": {
+    "raw": "oklch(99.2% 0.006 80)",
+    "resolved": "oklch(0.992 0.006 80)"
+  },
+  "color-surface-sunken": {
+    "raw": "oklch(95.4% 0.012 80)",
+    "resolved": "oklch(0.954 0.012 80)"
+  },
+  "color-surface-hover": {
+    "raw": "oklch(95.6% 0.018 200)",
+    "resolved": "oklch(0.956 0.018 200)"
+  },
+  "color-surface-selected": {
+    "raw": "oklch(91.5% 0.028 202)",
+    "resolved": "oklch(0.915 0.028 202)"
+  },
+  "color-line": {
+    "raw": "oklch(89.5% 0.022 78)",
+    "resolved": "oklch(0.895 0.022 78)"
+  },
+  "color-line-soft": {
+    "raw": "oklch(93.5% 0.017 78)",
+    "resolved": "oklch(0.935 0.017 78)"
+  },
+  "color-line-strong": {
+    "raw": "oklch(63% 0.018 78)",
+    "resolved": "oklch(0.63 0.018 78)"
+  },
+  "color-ink": {
+    "raw": "oklch(19.6% 0.022 229)",
+    "resolved": "oklch(0.196 0.022 229)"
+  },
+  "color-ink-body": {
+    "raw": "oklch(28% 0.021 229)",
+    "resolved": "oklch(0.28 0.021 229)"
+  },
+  "color-ink-mid": {
+    "raw": "oklch(36.5% 0.021 229)",
+    "resolved": "oklch(0.365 0.021 229)"
+  },
+  "color-ink-soft": {
+    "raw": "oklch(43.5% 0.021 229)",
+    "resolved": "oklch(0.435 0.021 229)"
+  },
+  "color-ink-muted": {
+    "raw": "oklch(47% 0.02 229)",
+    "resolved": "oklch(0.47 0.02 229)"
+  },
+  "color-ink-faint": {
+    "raw": "oklch(53.5% 0.019 229)",
+    "resolved": "oklch(0.535 0.019 229)"
+  },
+  "color-ink-ghost": {
+    "raw": "oklch(75.5% 0.014 80)",
+    "resolved": "oklch(0.755 0.014 80)"
+  },
+  "color-action": {
+    "raw": "oklch(33.66% 0.058 209)",
+    "resolved": "oklch(0.3366 0.058 209)"
+  },
+  "color-action-hover": {
+    "raw": "oklch(29.5% 0.048 210)",
+    "resolved": "oklch(0.295 0.048 210)"
+  },
+  "color-action-solid": {
+    "raw": "oklch(39% 0.062 208)",
+    "resolved": "oklch(0.39 0.062 208)"
+  },
+  "color-action-soft": {
+    "raw": "oklch(93% 0.022 200)",
+    "resolved": "oklch(0.93 0.022 200)"
+  },
+  "color-action-on-soft": {
+    "raw": "oklch(32% 0.05 209)",
+    "resolved": "oklch(0.32 0.05 209)"
+  },
+  "color-action-wash": {
+    "raw": "oklch(96.6% 0.011 195)",
+    "resolved": "oklch(0.966 0.011 195)"
+  },
+  "color-action-line": {
+    "raw": "oklch(62% 0.055 205)",
+    "resolved": "oklch(0.62 0.055 205)"
+  },
+  "color-focus": {
+    "raw": "oklch(50% 0.085 207)",
+    "resolved": "oklch(0.5 0.085 207)"
+  },
+  "color-on-solid": {
+    "raw": "#ffffff",
+    "resolved": "rgb(255, 255, 255)"
+  },
+  "color-topbar": {
+    "raw": "oklch(94.5% 0.008 229)",
+    "resolved": "oklch(0.945 0.008 229)"
+  },
+  "color-shell": {
+    "raw": "oklch(19.57% 0.022 229)",
+    "resolved": "oklch(0.1957 0.022 229)"
+  },
+  "color-shell-ink": {
+    "raw": "oklch(97.5% 0.012 80)",
+    "resolved": "oklch(0.975 0.012 80)"
+  },
+  "color-shell-ink-soft": {
+    "raw": "oklch(88% 0.014 80)",
+    "resolved": "oklch(0.88 0.014 80)"
+  },
+  "color-shell-ink-dim": {
+    "raw": "oklch(73% 0.016 80)",
+    "resolved": "oklch(0.73 0.016 80)"
+  },
+  "font-sans": {
+    "raw": "\"Noto Sans Hebrew\", Arial, ui-sans-serif, system-ui, sans-serif",
+    "resolved": "\"Noto Sans Hebrew\", Arial, ui-sans-serif, system-ui, sans-serif"
+  },
+  "shadow-card": {
+    "raw": "0 2px 4px color-mix(in oklab, oklch(19.57% 0.022 229) 7%, transparent),\r\n    0 12px 28px color-mix(in oklab, oklch(19.57% 0.022 229) 13%, transparent)",
+    "resolved": "0 2px 4px color-mix(in oklab, oklch(19.57% 0.022 229) 7%, transparent),\r\n    0 12px 28px color-mix(in oklab, oklch(19.57% 0.022 229) 13%, transparent)"
+  },
+  "shadow-card-hover": {
+    "raw": "0 3px 6px color-mix(in oklab, oklch(19.57% 0.022 229) 9%, transparent),\r\n    0 16px 34px color-mix(in oklab, oklch(19.57% 0.022 229) 17%, transparent)",
+    "resolved": "0 3px 6px color-mix(in oklab, oklch(19.57% 0.022 229) 9%, transparent),\r\n    0 16px 34px color-mix(in oklab, oklch(19.57% 0.022 229) 17%, transparent)"
+  },
+  "shadow-dialog": {
+    "raw": "0 4px 10px color-mix(in oklab, oklch(19.57% 0.022 229) 10%, transparent),\r\n    0 24px 48px -12px color-mix(in oklab, oklch(19.57% 0.022 229) 22%, transparent)",
+    "resolved": "0 4px 10px color-mix(in oklab, oklch(19.57% 0.022 229) 10%, transparent),\r\n    0 24px 48px -12px color-mix(in oklab, oklch(19.57% 0.022 229) 22%, transparent)"
+  },
+  "color-done-wash": {
+    "raw": "oklch(97.9% 0.021 166.113)",
+    "resolved": "oklch(0.979 0.021 166.113)"
+  },
+  "color-done-line": {
+    "raw": "oklch(90.5% 0.093 164.15)",
+    "resolved": "oklch(0.905 0.093 164.15)"
+  },
+  "color-done-soft": {
+    "raw": "oklch(95% 0.052 163.051)",
+    "resolved": "oklch(0.95 0.052 163.051)"
+  },
+  "color-done-on-soft": {
+    "raw": "oklch(43.2% 0.095 166.913)",
+    "resolved": "oklch(0.432 0.095 166.913)"
+  },
+  "color-done-fg": {
+    "raw": "oklch(50.8% 0.118 165.612)",
+    "resolved": "oklch(0.508 0.118 165.612)"
+  },
+  "color-done-solid": {
+    "raw": "oklch(50.8% 0.118 165.612)",
+    "resolved": "oklch(0.508 0.118 165.612)"
+  },
+  "color-await-wash": {
+    "raw": "oklch(98.7% 0.022 95.277)",
+    "resolved": "oklch(0.987 0.022 95.277)"
+  },
+  "color-await-line": {
+    "raw": "oklch(92.4% 0.12 95.746)",
+    "resolved": "oklch(0.924 0.12 95.746)"
+  },
+  "color-await-soft": {
+    "raw": "oklch(96.2% 0.059 95.617)",
+    "resolved": "oklch(0.962 0.059 95.617)"
+  },
+  "color-await-on-soft": {
+    "raw": "oklch(47.3% 0.137 46.201)",
+    "resolved": "oklch(0.473 0.137 46.201)"
+  },
+  "color-await-fg": {
+    "raw": "oklch(55.5% 0.163 48.998)",
+    "resolved": "oklch(0.555 0.163 48.998)"
+  },
+  "color-await-solid": {
+    "raw": "oklch(55.5% 0.163 48.998)",
+    "resolved": "oklch(0.555 0.163 48.998)"
+  },
+  "color-alert-wash": {
+    "raw": "oklch(96.9% 0.015 12.422)",
+    "resolved": "oklch(0.969 0.015 12.422)"
+  },
+  "color-alert-line": {
+    "raw": "oklch(89.2% 0.058 10.001)",
+    "resolved": "oklch(0.892 0.058 10.001)"
+  },
+  "color-alert-soft": {
+    "raw": "oklch(94.1% 0.03 12.58)",
+    "resolved": "oklch(0.941 0.03 12.58)"
+  },
+  "color-alert-on-soft": {
+    "raw": "oklch(45.5% 0.188 13.697)",
+    "resolved": "oklch(0.455 0.188 13.697)"
+  },
+  "color-alert-fg": {
+    "raw": "oklch(51.4% 0.222 16.935)",
+    "resolved": "oklch(0.514 0.222 16.935)"
+  },
+  "color-alert-solid": {
+    "raw": "oklch(51.4% 0.222 16.935)",
+    "resolved": "oklch(0.514 0.222 16.935)"
+  },
+  "color-info-wash": {
+    "raw": "oklch(97.7% 0.013 236.62)",
+    "resolved": "oklch(0.977 0.013 236.62)"
+  },
+  "color-info-line": {
+    "raw": "oklch(90.1% 0.058 230.902)",
+    "resolved": "oklch(0.901 0.058 230.902)"
+  },
+  "color-info-soft": {
+    "raw": "oklch(95.1% 0.026 236.824)",
+    "resolved": "oklch(0.951 0.026 236.824)"
+  },
+  "color-info-on-soft": {
+    "raw": "oklch(44.3% 0.11 240.79)",
+    "resolved": "oklch(0.443 0.11 240.79)"
+  },
+  "color-info-fg": {
+    "raw": "oklch(50% 0.134 242.749)",
+    "resolved": "oklch(0.5 0.134 242.749)"
+  },
+  "color-info-solid": {
+    "raw": "oklch(50% 0.134 242.749)",
+    "resolved": "oklch(0.5 0.134 242.749)"
+  },
+  "color-idle-wash": {
+    "raw": "oklch(98.4% 0.003 247.858)",
+    "resolved": "oklch(0.984 0.003 247.858)"
+  },
+  "color-idle-line": {
+    "raw": "oklch(92.9% 0.013 255.508)",
+    "resolved": "oklch(0.929 0.013 255.508)"
+  },
+  "color-idle-soft": {
+    "raw": "oklch(96.8% 0.007 247.896)",
+    "resolved": "oklch(0.968 0.007 247.896)"
+  },
+  "color-idle-on-soft": {
+    "raw": "oklch(27.9% 0.041 260.031)",
+    "resolved": "oklch(0.279 0.041 260.031)"
+  },
+  "color-idle-fg": {
+    "raw": "oklch(37.2% 0.044 257.287)",
+    "resolved": "oklch(0.372 0.044 257.287)"
+  },
+  "color-idle-solid": {
+    "raw": "oklch(37.2% 0.044 257.287)",
+    "resolved": "oklch(0.372 0.044 257.287)"
+  },
+  "_card": {
+    "borderRadius": "24px",
+    "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.1957 -0.0144333 -0.0166036 / 0.07) 0px 2px 4px 0px, oklab(0.1957 -0.0144333 -0.0166036 / 0.13) 0px 12px 28px 0px",
+    "background": "oklch(0.992 0.006 80)"
+  },
+  "_body": {
+    "fontFamily": "\"Noto Sans Hebrew\", Arial, ui-sans-serif, system-ui, sans-serif",
+    "fontSize": "15px",
+    "direction": "rtl",
+    "background": "oklch(0.9688 0.0028 128)",
+    "color": "oklch(0.28 0.021 229)"
+  },
+  "_fonts": [
+    "Noto Sans Hebrew 100 900 normal"
+  ]
+}

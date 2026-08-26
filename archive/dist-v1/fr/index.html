@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InPlace · chaque shekel passe un écran avant de sortir</title>
+<meta name="description" content="Un système de contrôle des achats, des factures et des paiements. Faites défiler et suivez un paiement sur tout son parcours, du tarif fournisseur au rapprochement bancaire.">
+<meta property="og:title" content="InPlace · chaque shekel passe un écran avant de sortir">
+<meta property="og:description" content="Un système de contrôle des achats, des factures et des paiements. Faites défiler et suivez un paiement sur tout son parcours, du tarif fournisseur au rapprochement bancaire.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a171d">
+<link rel="alternate" hreflang="he" href="https://inplace.digital/">
+<link rel="alternate" hreflang="en" href="https://inplace.digital/en/">
+<link rel="alternate" hreflang="fr" href="https://inplace.digital/fr/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a171d'/><path d='M9 9h6v6H9zM17 17h6v6h-6zM17 9h6v3h-6zM9 17h3v6H9z' fill='%23f4f5f3'/></svg>">
+<link rel="preload" href="../assets/fonts/NotoSansHebrew-Hebrew.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../engine/scrollcraft.css">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#top">Aller au contenu</a>
+
+<nav class="rail" aria-label="Navigation par étapes">
+  <a class="rail__mark" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+  <rect width="32" height="32" rx="7" fill="currentColor"/>
+  <path d="M9 9h6v6H9zM17 17h6v6h-6zM17 9h6v3h-6zM9 17h3v6H9z" fill="var(--canvas)"/>
+</svg><span>InPlace</span></a>
+  <p class="rail__head">Étapes</p>
+  <div class="rail__track" data-track>
+    <span class="rail__line" aria-hidden="true"></span>
+    
+    <a class="rail__stop" href="#pricelist" data-stop="pricelist" data-index="0">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Tarif</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#order" data-stop="order" data-index="1">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Commande</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#receiving" data-stop="receiving" data-index="2">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Réception</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#invoice" data-stop="invoice" data-index="3">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Facture</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#decision" data-stop="decision" data-index="4">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Décision</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#request" data-stop="request" data-index="5">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Demande</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#payment" data-stop="payment" data-index="6">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Paiement</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <a class="rail__stop" href="#bank" data-stop="bank" data-index="7">
+      <span class="rail__dot" aria-hidden="true"></span>
+      <span>Banque</span>
+      <span class="rail__skip">sautée</span>
+    </a>
+    <span class="token" data-token aria-hidden="true">
+      <span class="token__glyph">₪</span><span data-token-amount>—</span>
+    </span>
+  </div>
+</nav>
+<main class="page">
+
+<section class="act" id="top" data-sc-act="pin" data-sc-span="1.5" data-station="pricelist">
+  <div class="stagehold" data-sc-stage>
+    <div class="wrap">
+      <div class="open__grid">
+        <article class="card">
+          <div class="card__head">
+            <h1 class="card__title">À traiter</h1>
+            <span class="card__meta">Trois éléments attendent votre décision</span>
+          </div>
+          <ul class="open__rows">
+            
+            <li data-sc-cue="0 1 0 0">
+              <span class="open__ref">INV-2311 · Boulangerie Gal</span>
+              <span class="open__note">Prix au-dessus de la commande</span>
+              <span class="open__val"><span class="money num money--alert">+1 240 ₪</span></span>
+            </li>
+            <li data-sc-cue="0.16 1 0.22 0">
+              <span class="open__ref">INV-2287 · Emballages du Nord</span>
+              <span class="open__note">Aucune commande rattachée</span>
+              <span class="open__val"><span class="money num money--alert">3 150 ₪</span></span>
+            </li>
+            <li data-sc-cue="0.34 1 0.22 0">
+              <span class="open__ref">Avoir · Ferme Dagan</span>
+              <span class="open__note">Ouvert depuis 18 jours</span>
+              <span class="open__val"><span class="money num">780 ₪</span></span>
+            </li>
+          </ul>
+          <p class="open__foot">Les 41 autres documents du mois sont passés sans intervention humaine.</p>
+        </article>
+
+        <article class="card card--dark">
+          <div class="card__head"><h2 class="card__title">Ce que vous regardez</h2></div>
+          <div class="card__body">
+            <p class="help__body">Ceci n’est pas une capture d’écran. C’est la surface d’InPlace, et c’est votre défilement qui la fait tourner. Chaque shekel qui sort de l’entreprise passe d’abord par cet écran.</p>
+            <div class="help__actions">
+              <a class="btn" href="https://app.inplace.digital/signup">Ouvrir un compte gratuit</a>
+            </div>
+            <p class="ctanote">Sans carte. Le prix est communiqué dans le compte, au moment du passage à une formule payante.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="act act--flow" id="pricelist" data-ground="paper" data-sc-act="flow" data-station="pricelist">
+  <div class="wrap stack">
+    <div class="stack__head" data-sc-in data-sc-stagger="70">
+      <h2 class="h">Le prix se fixe une fois</h2>
+      <p class="lede">Un tarif fournisseur n’est pas un document rangé dans un dossier. C’est la valeur à laquelle chaque commande, chaque réception et chaque facture est comparée. Une fois fixé, il fait référence.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head"><h3 class="card__title">Tarif · Boulangerie Gal</h3></div>
+      <div class="tblwrap">
+        <table class="tbl">
+          <thead><tr><th scope="col">Article</th><th scope="col" class="cell-end">Prix convenu</th><th scope="col">Valable jusqu’au</th><th scope="col">État</th></tr></thead>
+          <tbody>
+            
+            <tr>
+              <td class="cell-key">Tomates cerises · caisse</td>
+              <td class="cell-end"><span class="num">39,90 ₪</span></td>
+              <td><span class="num">31.12</span></td>
+              <td><span class="pill" data-state="done">Actif</span></td>
+            </tr>
+            <tr>
+              <td class="cell-key">Plateau viennoiseries · unité</td>
+              <td class="cell-end"><span class="num">57,00 ₪</span></td>
+              <td><span class="num">31.12</span></td>
+              <td><span class="pill" data-state="done">Actif</span></td>
+            </tr>
+            <tr>
+              <td class="cell-key">Carton d’emballage · lot</td>
+              <td class="cell-end"><span class="num">21,50 ₪</span></td>
+              <td><span class="num">30.09</span></td>
+              <td><span class="pill" data-state="await">À renouveler</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="act act--flow" id="order" data-sc-act="flow" data-station="order">
+  <div class="wrap solo">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">La commande est l’engagement</h2>
+      <p class="lede">Dès que la commande part, il y a un montant. Pas une estimation, pas une fourchette : un seul chiffre auquel l’entreprise s’est engagée, et auquel tout ce qui suit est comparé.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head"><h3 class="card__title">Ligne de commande</h3></div>
+      <div class="calc">
+        <p class="calc__row"><span>160 caisses</span> <span aria-hidden="true">×</span> <b class="num">39,90 ₪</b></p>
+        <hr class="calc__rule">
+        <p class="calc__total">
+          <span>Total de la commande</span>
+          <b class="num" data-sc-count="0 6 384" data-sc-count-at="0.32 0.66">0</b>
+        </p>
+      </div>
+    </article>
+    <p class="note" data-sc-in>Ce montant est désormais suivi sur le rail, à côté de vous. Il vous accompagne jusqu’à la banque.</p>
+  </div>
+</section>
+
+<section class="act act--flow" id="receiving" data-ground="paper" data-sc-act="flow" data-station="receiving">
+  <div class="wrap two">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">Ce qui est arrivé, pas ce qui était écrit</h2>
+      <p class="lede">La réception est le moment où le réel a voix au chapitre. Ici la livraison correspond : 160 caisses commandées, 160 reçues. D’autres fois, non.</p>
+      <p class="note">Quand il y a un écart, il est conservé ici et parvient à la facture comme un fait, pas comme le souvenir de quelqu’un.<br><span class="num">Commande 4131 · plateaux viennoiseries : 20 commandés, 14 reçus, 20 facturés. Un écart de 342 ₪.</span></p>
+    </div>
+    <article class="card">
+      <div class="card__head"><h3 class="card__title">Caisses reçues</h3></div>
+      <div class="match" data-sc-reveal="up" data-sc-reveal-at="0.14 0.5">
+        <div class="match__pair">
+          <span class="match__side">
+            <span class="match__k">Commandé</span>
+            <span class="match__v num">160</span>
+          </span>
+          <span class="match__op" aria-hidden="true">=</span>
+          <span class="match__side">
+            <span class="match__k">Reçu</span>
+            <span class="match__v num">160</span>
+          </span>
+        </div>
+        <p><span class="pill" data-state="done">Correspond</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="act act--flow" id="invoice" data-sc-act="flow" data-station="invoice">
+  <div class="wrap two two--flip">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">La facture a demandé plus</h2>
+      <p class="lede">Même article. Même quantité. Prix différent.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <div class="card__head">
+        <h3 class="card__title">Facture INV-2311</h3>
+        <span class="card__meta">47,65 ₪ l’unité</span>
+      </div>
+      <div class="gap">
+        <div class="gap__two">
+          <p class="gap__cell">
+            <span class="gap__k">Selon la commande</span>
+            <span class="gap__v num">6 384 ₪</span>
+          </p>
+          <p class="gap__cell gap__cell--alert">
+            <span class="gap__k">Selon la facture</span>
+            <span class="gap__v num">7 624 ₪</span>
+          </p>
+        </div>
+        <p class="gap__delta">
+          <span>Écart <span class="num">(19 %)</span></span>
+          <b class="num">+1 240 ₪</b>
+        </p>
+        <p class="hold"><span class="pill" data-state="alert">Arrêtée</span><span>La facture s’est arrêtée. Aucune demande de paiement n’a été créée.</span></p>
+      </div>
+    </article>
+  </div>
+</section>
+<section class="act act--flow act--quiet" data-ground="wash" data-sc-act="flow" data-station="invoice">
+  <!-- The held line is wiped into view rather than faded. A fade is what every
+       other beat on the page does; an uncovering is the quietest way to put one
+       sentence on a screen and still have it read as authored. The reveal sits
+       on a wrapper so the clip cannot eat the type's own descenders. -->
+  <div class="wrap">
+    <div data-sc-reveal="up" data-sc-reveal-at="0.18 0.58">
+      <p class="lede lede--held">Pas une alerte, pas un e-mail, pas un point rouge que quelqu’un verra demain. Un arrêt. L’argent ne continue tout simplement pas.</p>
+    </div>
+  </div>
+</section>
+
+<section class="act act--shell on-shell" id="decision" data-sc-act="pin" data-sc-span="2.9" data-station="decision">
+  <div class="stagehold" data-sc-stage data-sorter>
+    <div class="wrap">
+      <!-- The heading holds through the whole sort. Letting it fade at a third
+           left the reader watching unlabelled cards move for a viewport and a
+           half, which is when a peak stops reading as a point being made. -->
+      <p class="eyebrow" data-sc-cue="0 0.66 0 0.12">Un instant</p>
+      <h2 class="h" data-sc-cue="0 0.7 0 0.12">L’écran se remet en ordre</h2>
+      <p class="lede" data-sc-cue="0.04 0.46 0.06 0.3">Quarante-quatre documents sont arrivés ce mois-ci par messagerie, par e-mail et en photo. Ils ne sont triés ni par fournisseur ni par date. Ils sont triés par ce qu’ils font à l’argent.</p>
+
+      <div class="sorter" data-stage>
+      <article class="doc doc--exception"
+        style="--row:0;--col:0;--sx:-0.077;--sy:-0.078;--sr:-3.0">
+        <span class="doc__ref">INV-2311</span>
+        <span class="doc__kind">Facture</span>
+        <span class="doc__match">Décision requise</span>
+      </article>
+      <article class="doc"
+        style="--row:0;--col:1;--sx:0.162;--sy:0.073;--sr:2.3">
+        <span class="doc__ref">DN-8841</span>
+        <span class="doc__kind">Bon de livraison</span>
+        <span class="doc__match">Commande 4127</span>
+      </article>
+      <article class="doc"
+        style="--row:1;--col:0;--sx:-0.161;--sy:-0.020;--sr:4.5">
+        <span class="doc__ref">INV-2298</span>
+        <span class="doc__kind">Facture</span>
+        <span class="doc__match">Commande 4119</span>
+      </article>
+      <article class="doc"
+        style="--row:1;--col:1;--sx:-0.025;--sy:0.184;--sr:-3.5">
+        <span class="doc__ref">CN-114</span>
+        <span class="doc__kind">Avoir</span>
+        <span class="doc__match">Retour 771</span>
+      </article>
+      <article class="doc"
+        style="--row:2;--col:0;--sx:-0.173;--sy:-0.238;--sr:6.0">
+        <span class="doc__ref">INV-2303</span>
+        <span class="doc__kind">Facture</span>
+        <span class="doc__match">Commande 4123</span>
+      </article>
+      <article class="doc"
+        style="--row:2;--col:1;--sx:-0.124;--sy:-0.071;--sr:-5.0">
+        <span class="doc__ref">DN-8846</span>
+        <span class="doc__kind">Bon de livraison</span>
+        <span class="doc__match">Commande 4131</span>
+      </article>
+      <article class="doc"
+        style="--row:3;--col:0;--sx:0.213;--sy:0.206;--sr:7.2">
+        <span class="doc__ref">INV-2307</span>
+        <span class="doc__kind">Facture</span>
+        <span class="doc__match">Commande 4126</span>
+      </article>
+      <article class="doc"
+        style="--row:3;--col:1;--sx:-0.222;--sy:0.132;--sr:-4.6">
+        <span class="doc__ref">DN-8850</span>
+        <span class="doc__kind">Bon de livraison</span>
+        <span class="doc__match">Commande 4129</span>
+      </article></div>
+
+      <div class="peakfoot" data-sc-cue="0.62 1 0.1 0.02">
+        <span class="peakstat"><b class="num">43</b><span>documents qui se sont clôturés seuls</span></span>
+        <span class="peakstat"><b class="num">1</b><span>il en reste un</span></span>
+        <span class="peakstat"><span class="pill" data-state="alert">Prix au-dessus de la commande · +1 240 ₪</span></span>
+      </div>
+      <p class="note" data-sc-cue="0.72 1 0.08 0.02">C’est tout le produit. Pas un tableau de bord qui vous montre quarante-trois choses en ordre. Un écran qui vous en laisse une.</p>
+    </div>
+  </div>
+</section>
+
+<section class="act act--flow" id="request" data-ground="paper" data-sc-act="flow" data-station="request">
+  <div class="wrap">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">Qui peut toucher à l’argent</h2>
+      <p class="lede">Trois comptes, trois surfaces. Pas des permissions qui masquent un bouton dans l’interface. Des frontières appliquées dans la base de données.</p>
+      <p class="note"><span>La demande sur la table</span> <span class="money num">6 384 ₪</span></p>
+    </div>
+    <div class="roles" data-sc-in data-sc-stagger="60">
+      
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">Dirigeant</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">peut</span><span>Voit l’ensemble, approuve la demande</span></li>
+            <li><span class="role__k" data-k="cannot">ne peut pas</span><span>N’effectue pas le paiement</span></li>
+          </ul>
+        </div>
+      </article>
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">Achats</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">peut</span><span>Construit le parcours : fournisseur, tarif, commande, réception, facture</span></li>
+            <li><span class="role__k" data-k="cannot">ne peut pas</span><span>Ne voit pas la banque et ne déclenche aucun paiement</span></li>
+          </ul>
+        </div>
+      </article>
+      <article class="card" data-sc-tilt="6">
+        <div class="card__body" style="padding-block-start:1.15rem">
+          <h3 class="role__name">Comptable</h3>
+          <ul class="role__list">
+            <li><span class="role__k" data-k="can">peut</span><span>Effectue un paiement approuvé, dépose la référence, rapproche la banque</span></li>
+            <li><span class="role__k" data-k="cannot">ne peut pas</span><span>Ne modifie ni commande, ni article, ni tarif</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+    <p class="note" data-sc-in>La voie d’urgence du dirigeant a été supprimée. Un paiement passe toujours par une demande approuvée, un second facteur, un motif et un enregistrement.</p>
+  </div>
+</section>
+
+<section class="act act--flow" id="payment" data-sc-act="flow" data-station="payment">
+  <div class="wrap stack">
+    <div class="stack__head" data-sc-in data-sc-stagger="70">
+      <h2 class="h">Une seule fois, et avec une référence</h2>
+      <p class="lede">Le paiement part une fois, pour le montant approuvé, depuis le compte défini. Puis il revient de la banque et se rapproche du mouvement.</p>
+    </div>
+    <article class="card" data-sc-in>
+      <ul class="steps">
+        
+        <li>
+          <span class="steps__k">Demande approuvée</span>
+          <span class="money num">6 384 ₪</span>
+          <span class="pill" data-state="done">Terminé</span>
+        </li>
+        <li>
+          <span class="steps__k">Paiement effectué</span>
+          <span class="money num">référence 88214</span>
+          <span class="pill" data-state="done">Terminé</span>
+        </li>
+        <li>
+          <span class="steps__k">Mouvement bancaire</span>
+          <span class="money num">rapproché</span>
+          <span class="pill" data-state="done">Terminé</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- act 7b · what is still open · reveal. The honesty beat: a system that
+     rounded its own corners to look finished would be lying about money. -->
+<section class="act act--flow" id="bank" data-ground="paper" data-sc-act="flow" data-station="bank">
+  <div class="wrap two two--flip">
+    <div data-sc-in data-sc-stagger="70">
+      <h2 class="h">Ce qui reste ouvert</h2>
+      <p class="lede">Le système n’arrondit pas ses propres angles pour paraître terminé.</p>
+    </div>
+    <article class="card" data-sc-reveal="up" data-sc-reveal-at="0.16 0.54">
+      <ul class="steps">
+        
+        <li>
+          <span class="steps__k">Avoirs ouverts · deux fournisseurs</span>
+          <span class="money num">2 180 ₪</span>
+          <span class="pill" data-state="await">Ouvert</span>
+        </li>
+        <li>
+          <span class="steps__k">Mouvements bancaires à rapprocher</span>
+          <span class="money num">9 640 ₪</span>
+          <span class="pill" data-state="await">Ouvert</span>
+        </li>
+        <li>
+          <span class="steps__k">Facture sans commande · INV-2287</span>
+          <span class="money num money--alert">3 150 ₪</span>
+          <span class="pill" data-state="alert">Bloqué</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<section class="act act--shell on-shell" id="close" data-sc-act="pin" data-sc-span="1.3">
+  <div class="stagehold" data-sc-stage>
+    <div class="wrap">
+      <div class="close__grid">
+        <div data-sc-cue="0.04">
+          <h2 class="h">Voilà ce qu’a fait votre défilement</h2>
+          <p class="lede">Un paiement, huit étapes, un journal complet.</p>
+          <ol class="recap" data-recap></ol>
+          <p class="note" data-recap-note>Vous n’avez rien sauté. C’est à cela que cela doit ressembler.</p>
+        </div>
+        <form class="trial" data-sc-cue="0.04" action="https://app.inplace.digital/signup" method="get">
+          <h3 class="h--sm" style="color:var(--shell-ink)">Commencer avec vos propres données</h3>
+          <label class="trial__label" for="trial-email">Adresse e-mail professionnelle</label>
+          <div class="trial__field">
+            <input id="trial-email" name="email" type="email" inputmode="email"
+                   autocomplete="email" placeholder="vous@entreprise.fr" required>
+            <button class="btn" type="submit">Ouvrir un compte gratuit</button>
+          </div>
+          <p class="ctanote">Vous obtenez un compte vide. Vous chargez un tarif, et cela commence à fonctionner.</p>
+          <p class="ctanote">Sans carte. Le prix est communiqué dans le compte, au moment du passage à une formule payante.</p>
+        </form>
+      </div>
+
+      <footer class="foot">
+        <span>InPlace · achats, factures et paiements</span>
+        <a href="https://app.inplace.digital">Se connecter</a>
+        <a href="https://app.inplace.digital/legal/terms">Conditions d’utilisation</a>
+        <a href="https://app.inplace.digital/legal/privacy">Politique de confidentialité</a>
+        <span class="foot__claims">Les montants de cette page constituent un scénario de démonstration fixe portant la sémantique réelle du produit. Aucune donnée client, aucun pourcentage d’économie et aucun engagement de disponibilité n’y figurent.</span>
+      </footer>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="statusbar" role="status" aria-live="polite">
+  <span class="statusbar__group">
+    <span class="statusbar__label">Montant suivi</span>
+    <span class="statusbar__value num" data-status-amount>—</span>
+  </span>
+  <span class="statusbar__sep" aria-hidden="true"></span>
+  <span class="statusbar__group statusbar__hideable">
+    <span class="statusbar__label">Suivi</span>
+    <span class="statusbar__value" data-status-entity>Commande 4127 · Boulangerie Gal</span>
+  </span>
+  <span class="statusbar__sep statusbar__hideable" aria-hidden="true"></span>
+  <span class="statusbar__group statusbar__hideable">
+    <span class="statusbar__label">Rythme</span>
+    <span class="statusbar__value" data-status-velocity>régulier</span>
+  </span>
+  <span class="statusbar__spacer"></span>
+  <span class="chip-demo statusbar__hideable" title="Un scénario de démonstration fixe, avec la sémantique réelle du produit. Chaque montant provient de jeux de données enregistrés.">données de démo</span>
+  <button type="button" class="ledger-toggle" data-ledger-toggle aria-expanded="false" aria-controls="ledger">
+    <span>Ouvrir le journal</span>
+    <span class="ledger-toggle__count num" data-ledger-count>0</span>
+  </button>
+</div>
+
+<aside class="ledger" id="ledger" data-ledger hidden>
+  <h2 class="ledger__title">Journal du parcours</h2>
+  <p class="ledger__empty" data-ledger-empty>Vous n’avez encore franchi aucune étape.</p>
+  <ol class="ledger__list" data-ledger-list></ol>
+</aside>
+<script src="../engine/scrollcraft.js"></script>
+<script src="../surface.js"></script>
+<script>
+  ScrollCraft.mount(document.body);
+  InPlaceSurface.mount({"stations":[{"id":"pricelist","nav":"Tarif","amount":null,"state":"done","ledger":"Prix convenu fixé : 39,90 ₪ l’unité."},{"id":"order","nav":"Commande","amount":6384,"state":"done","ledger":"Commande 4127 ouverte à 6 384 ₪."},{"id":"receiving","nav":"Réception","amount":6384,"state":"done","ledger":"La réception correspond à la commande : 160 sur 160."},{"id":"invoice","nav":"Facture","amount":7624,"state":"alert","ledger":"La facture a demandé 7 624 ₪ : 1 240 ₪ au-dessus de la commande."},{"id":"decision","nav":"Décision","amount":6384,"state":"done","ledger":"L’écart a été refusé. Le montant est revenu à 6 384 ₪, avec un motif au journal."},{"id":"request","nav":"Demande","amount":6384,"state":"done","ledger":"Demande de paiement approuvée à 6 384 ₪."},{"id":"payment","nav":"Paiement","amount":6384,"state":"done","ledger":"Le paiement est parti : 6 384 ₪, avec une référence."},{"id":"bank","nav":"Banque","amount":6384,"state":"done","ledger":"Le mouvement bancaire a été rapproché. Le parcours se referme."}],"strings":{"ledgerOpen":"Ouvrir le journal","ledgerClose":"Fermer le journal","velocityCalm":"régulier","velocityFast":"plus vite que les contrôles","skipLine":"Vous avez sauté {station}. Le contrôle n’a pas été exécuté.","cleanNote":"Vous n’avez rien sauté. C’est à cela que cela doit ressembler.","skippedNote":"Vous avez défilé plus vite que les contrôles. Dans un vrai système, c’est exactement ce qui se passe quand on paie avant de vérifier, sauf que là, on ne peut pas revenir en arrière.","dash":"—"},"locale":"fr-FR","currency":"ILS"});
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+/* ============================================================================
+   InPlace — "the hall"
+   ----------------------------------------------------------------------------
+   A continuous-world page. The engine owns the stage, the legs and the copy
+   windows; everything below is either a token override or markup this page
+   drew itself.
+
+   The product's own palette is Onyx #0a171d, Wheat #fff6e9, Oceanic #003f47 on
+   a #f4f5f3 canvas. Two of those move here and the move is deliberate:
+
+     - the ground is Onyx graded down to #04080b, because the world is a dark
+       hall and the product's own light canvas is what the screens in it emit.
+     - the accent is Oceanic lifted to #38b3c0. #003f47 on a near-black ground
+       is invisible; this is the same hue at the lightness the hall needs, and
+       it is literally the colour the screens spill onto the floor.
+
+   Nothing inside a product screen is recoloured. Every panel in the world is
+   the real capture, ungraded.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Noto Sans Hebrew";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/NotoSansHebrew-Hebrew.woff2") format("woff2");
+  unicode-range: U+0590-05FF, U+FB1D-FB4F, U+20AA, U+200E, U+200F;
+}
+@font-face {
+  font-family: "Noto Sans Hebrew";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("assets/fonts/NotoSansHebrew-Latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074,
+                 U+20AC, U+2122, U+2191-2193, U+2212, U+2215, U+FEFF;
+}
+
+:root {
+  --sc-canvas:     #04080b;
+  --sc-surface:    #0a171d;
+  --sc-ink:        #fbf6ec;
+  --sc-ink-soft:   #9db0b5;
+  --sc-accent:     #38b3c0;
+  --sc-accent-ink: #04141a;
+
+  --ip-wheat:  #fff6e9;
+  --ip-onyx:   #0a171d;
+  --ip-alert:  #ff7d96;
+
+  --sc-font-text:    "Noto Sans Hebrew", Arial, ui-sans-serif, system-ui, sans-serif;
+  --sc-font-display: var(--sc-font-text);
+
+  --sc-shadow-color: 197 60% 2%;
+  --sc-r-sm: 6px; --sc-r-md: 12px; --sc-r-lg: 18px;
+}
+
+/* Hebrew numerals and Latin figures sit on different baselines in a mixed run,
+   and every amount on this page is a mixed run. */
+.ip-num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* ------------------------------------------------------------ type ramp -- */
+.ip-h1 {
+  font-size: clamp(2.5rem, 1.4rem + 5.4vw, 6.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  margin: 0;
+  text-wrap: balance;
+}
+.ip-h2 {
+  font-size: clamp(1.9rem, 1.2rem + 3.2vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  margin: 0;
+  text-wrap: balance;
+}
+.ip-lede {
+  font-size: clamp(1.02rem, 0.95rem + 0.6vw, 1.35rem);
+  line-height: 1.5;
+  color: var(--sc-ink-soft);
+  margin: 0.9rem 0 0;
+  max-width: 34ch;
+}
+.ip-line {
+  font-size: clamp(1.3rem, 1rem + 1.8vw, 2.4rem);
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
+}
+.ip-kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  color: var(--sc-accent);
+  margin: 0 0 0.9rem;
+}
+.ip-alert { color: var(--ip-alert); }
+strong { font-weight: 700; color: var(--sc-ink); }
+
+/* --------------------------------------------------------- copy blocks --
+   A scrim belongs to the copy it protects, not to the frame. Making it a
+   ::before of the block means it arrives and leaves on exactly the same
+   window the engine already drives, and it never darkens a screen the reader
+   is looking at with no text on it. */
+.ip-copy {
+  position: absolute;
+  z-index: 2;
+  max-width: min(34rem, 76vw);
+  padding: clamp(1.05rem, 2.2vw, 1.75rem) clamp(1.25rem, 2.6vw, 2.15rem);
+  border-radius: var(--sc-r-lg);
+  background: color-mix(in oklab, var(--sc-surface) 95%, transparent);
+  box-shadow:
+    0 26px 76px hsl(var(--sc-shadow-color) / 0.6),
+    0 4px 14px hsl(var(--sc-shadow-color) / 0.4),
+    inset 0 1px 0 color-mix(in oklab, var(--sc-ink) 13%, transparent);
+}
+
+.ip-at-start  { inset-inline-start: var(--sc-gutter); bottom: clamp(7rem, 16vh, 12rem); }
+.ip-at-end    { inset-inline-end:   var(--sc-gutter); bottom: clamp(7rem, 16vh, 12rem); text-align: end; }
+.ip-at-middle {
+  left: 50%; bottom: clamp(8rem, 20vh, 14rem);
+  translate: -50% 0;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ the map --
+   The nav for a world is a map, and a map you cannot move around in is a
+   video. This one is the hall seen from above: nine stations on the floor,
+   a marker where the camera is, and every station is a real link. */
+.ip-map {
+  position: fixed;
+  z-index: var(--sc-z-chrome);
+  inset-inline: clamp(1rem, 5vw, 4rem);
+  bottom: clamp(1rem, 2.6vh, 1.9rem);
+  pointer-events: none;
+}
+.ip-map__rule {
+  position: absolute;
+  inset-inline: 0;
+  top: 11px;
+  height: 1px;
+  background: color-mix(in oklab, var(--sc-ink) 16%, transparent);
+}
+/* the stretch of hall already travelled */
+/* transform, never width: a width driven from a per-frame write forces layout
+   on every single frame of the scroll */
+.ip-map__run {
+  position: absolute;
+  inset-inline: 0;
+  top: 11px;
+  height: 1px;
+  background: var(--sc-accent);
+  transform: scaleX(var(--ip-run, 0));
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+[dir="rtl"] .ip-map__run { transform-origin: 100% 50%; }
+.ip-map__list {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  pointer-events: auto;
+}
+.ip-map__stop {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px 0;
+  background: none;
+  border: 0;
+  color: var(--sc-ink-soft);
+  font: inherit;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  text-decoration: none;
+  opacity: 0.55;
+  transition: opacity var(--sc-d-base) var(--sc-ease-out),
+              color var(--sc-d-base) var(--sc-ease-out);
+}
+.ip-map__stop::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--sc-ink) 34%, transparent);
+  transition: background var(--sc-d-base) var(--sc-ease-out),
+              scale var(--sc-d-base) var(--sc-ease-out);
+}
+.ip-map__stop:hover,
+.ip-map__stop:focus-visible { opacity: 1; color: var(--sc-ink); }
+.ip-map__stop[aria-current="true"] { opacity: 1; color: var(--sc-ink); }
+.ip-map__stop[aria-current="true"]::before { background: var(--sc-accent); scale: 1.5; }
+.ip-map__label { white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .ip-map__label { display: none; }
+  .ip-map__stop[aria-current="true"] .ip-map__label {
+    display: block;
+    position: absolute;
+    inset-inline: 0;
+    bottom: 26px;
+    text-align: center;
+    font-size: 0.7rem;
+  }
+  .ip-map { bottom: 0.9rem; }
+}
+
+/* ------------------------------------------------- the twelfth document --
+   Eleven documents fall in leg one and are in the film. This is the twelfth:
+   it is live markup, it drifts after the pointer with mass, it restates itself
+   at every waypoint, and at the close it is the object the CTA sits on. */
+.ip-doc {
+  position: fixed;
+  z-index: calc(var(--sc-z-copy) + 2);
+  inset-inline-end: clamp(1.5rem, 6vw, 6rem);
+  top: 26%;
+  width: clamp(11.5rem, 16vw, 14.5rem);
+  padding: 1.1rem 1.2rem 1.15rem;
+  border-radius: var(--sc-r-md);
+  background: linear-gradient(184deg, #fefcf7 0%, #efe8da 100%);
+  color: var(--ip-onyx);
+  text-align: start;
+  box-shadow: 0 30px 70px hsl(var(--sc-shadow-color) / 0.62),
+              0 6px 18px hsl(var(--sc-shadow-color) / 0.34),
+              0 0 0 1px rgba(10, 23, 29, 0.22),
+              0 2px 0 0 rgba(255, 255, 255, 0.5) inset;
+  transform: translate3d(var(--ip-dx, 0px), var(--ip-dy, 0px), 0)
+             rotate(var(--ip-rot, -2deg)) scale(var(--ip-scale, 1));
+  opacity: var(--ip-doc-op, 0);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.ip-doc__kind {
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  color: #7d8b90;
+}
+.ip-doc__sup { font-size: 1.06rem; font-weight: 700; line-height: 1.2; margin-top: 0.35rem; }
+.ip-doc__amt { font-size: 1.6rem; font-weight: 800; margin-top: 0.5rem; color: #06323a; }
+.ip-doc__rule { height: 1px; background: #d8cfc0; margin: 0.8rem 0 0.6rem; }
+.ip-doc__state {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-size: 0.78rem; font-weight: 600; color: #4c5f66;
+}
+.ip-doc__state::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: #b9a889;
+  transition: background var(--sc-d-slow) var(--sc-ease-out);
+}
+.ip-doc[data-tone="done"]  .ip-doc__state::before { background: #1f7a52; }
+.ip-doc[data-tone="alert"] .ip-doc__state::before { background: #b3123c; }
+.ip-doc[data-tone="alert"] .ip-doc__state { color: #b3123c; }
+
+/* the close: the same card, opened out, carrying the ask */
+.ip-doc__ask { display: none; margin-top: 0.9rem; }
+.ip-doc.is-open { width: min(28rem, 86vw); pointer-events: auto; }
+.ip-doc.is-open .ip-doc__ask { display: block; }
+.ip-doc.is-open .ip-doc__amt { font-size: 1.9rem; }
+
+.ip-btn {
+  display: block;
+  width: 100%;
+  padding: 0.85rem 1.2rem;
+  border-radius: var(--sc-r-sm);
+  font-weight: 700;
+  font-size: 0.98rem;
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--sc-d-fast) var(--sc-ease-out),
+              color var(--sc-d-fast) var(--sc-ease-out);
+}
+.ip-btn--primary { background: #003f47; color: var(--ip-wheat); }
+.ip-btn--primary:hover { background: #05555f; }
+.ip-btn--ghost {
+  margin-top: 0.5rem;
+  background: transparent;
+  color: #274852;
+  box-shadow: inset 0 0 0 1px #bcae98;
+}
+.ip-btn--ghost:hover { background: #e7ddca; }
+.ip-fineprint { margin: 0.7rem 0 0; font-size: 0.74rem; color: #6d7c82; }
+
+/* --------------------------------------------------------------- misc -- */
+.ip-brand {
+  position: fixed;
+  z-index: var(--sc-z-chrome);
+  inset-inline-start: var(--sc-gutter);
+  top: clamp(1rem, 3vh, 2rem);
+  display: flex; align-items: center; gap: 0.6rem;
+  font-weight: 700; letter-spacing: -0.01em;
+  color: var(--sc-ink);
+  text-decoration: none;
+  opacity: var(--ip-chrome, 1);
+  pointer-events: var(--ip-chrome-pe, auto);
+}
+.ip-brand svg { width: 20px; height: 20px; }
+
+.ip-langs {
+  position: fixed;
+  z-index: var(--sc-z-chrome);
+  inset-inline-end: var(--sc-gutter);
+  top: clamp(1rem, 3vh, 2rem);
+  display: flex; gap: 0.75rem;
+  font-size: 0.76rem; letter-spacing: 0.08em;
+  opacity: var(--ip-chrome, 1);
+  pointer-events: var(--ip-chrome-pe, auto);
+}
+.ip-langs a { color: var(--sc-ink-soft); text-decoration: none; opacity: 0.8; }
+.ip-langs a[aria-current="true"] { color: var(--sc-ink); opacity: 1; }
+.ip-langs a:hover { color: var(--sc-ink); }
+
+.ip-skip {
+  position: absolute; left: -9999px; top: 0;
+  z-index: 200; padding: 0.75rem 1rem;
+  background: var(--sc-ink); color: var(--sc-canvas);
+}
+.ip-skip:focus { left: var(--sc-gutter); top: 0.75rem; }
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--sc-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Without JS the engine never sizes the spacer, so the page would be a fixed
+   stage with nothing behind it. Show the first frame and let the copy stack. */
+.ip-nojs {
+  padding: var(--sc-gutter);
+  padding-block: 22vh 12vh;
+  display: grid;
+  gap: 2.5rem;
+  max-width: 46rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ip-doc { transition: none; }
+}
+
+@media (max-width: 860px) {
+  .ip-copy { max-width: none; inset-inline: var(--sc-gutter); bottom: clamp(6.5rem, 22vh, 13rem); }
+  .ip-at-end { text-align: start; }
+  .ip-at-middle { left: auto; translate: none; text-align: start; }
+  .ip-doc {
+    inset-inline-end: auto;
+    inset-inline-start: var(--sc-gutter);
+    top: auto; bottom: clamp(4.5rem, 14vh, 8rem);
+    width: min(15rem, 62vw);
+    padding: 0.85rem 0.95rem 0.9rem;
+  }
+  .ip-doc.is-open { width: min(22rem, 88vw); }
+  .ip-doc__amt { font-size: 1.35rem; }
+}
+
+/* the close sits above the card, which opens in the middle of the frame */
+.ip-at-crown {
+  left: 50%;
+  top: clamp(11vh, 17vh, 22vh);
+  bottom: auto;
+  translate: -50% 0;
+  text-align: center;
+}
+.ip-at-crown .ip-lede { margin-inline: auto; }
+
+.ip-doc.is-open {
+  inset-inline-end: auto;
+  inset-inline-start: 50%;
+  top: auto;
+  bottom: clamp(6rem, 16vh, 11rem);
+  margin-inline-start: calc(min(28rem, 86vw) / -2);
+}
+
+@media (max-width: 860px) {
+  .ip-at-crown { left: auto; translate: none; text-align: start; top: clamp(9vh, 13vh, 16vh); }
+  .ip-at-crown .ip-lede { margin-inline: 0; }
+  .ip-doc.is-open {
+    inset-inline-start: var(--sc-gutter);
+    margin-inline-start: 0;
+    bottom: clamp(4.5rem, 13vh, 8rem);
+  }
+}
+
+/* Every copy block is now a plate, so the close only needs its own width. */
+.ip-at-crown { max-width: min(30rem, 84vw); }
+
+
+/* The page's own wordmark and language links sit exactly where the product's
+   screenshots carry their own logo and search bar, so they read as duplication
+   the moment the world lights up. They belong to the dark: present before the
+   flight starts, gone while the hall is lit, back at the close where the ask
+   is. --ip-chrome is written from surface.js against the track. */
+.ip-langs--close {
+  position: static;
+  justify-content: center;
+  margin-top: 0.9rem;
+  opacity: 1;
+  pointer-events: auto;
+}
+.ip-langs--close a { font-size: 0.72rem; }
+
+
+/* The card and the copy must never share a corner. The copy alternates sides
+   leg by leg, so the card alternates with it, always to the other side. */
+.ip-doc--start { inset-inline-start: clamp(1.5rem, 6vw, 6rem); inset-inline-end: auto; }
+.ip-doc--end   { inset-inline-end:   clamp(1.5rem, 6vw, 6rem); inset-inline-start: auto; }
+
+/* ------------------------------------------------------------- phone --
+   A phone has no room for the desktop arrangement: the card and the copy
+   cannot alternate around a 390px frame, they can only collide. So the axis
+   changes rather than the sizes — the document sits at the top of the frame,
+   the copy at the bottom, and the side-alternation is switched off. This block
+   is last in the file on purpose: it has to win over the .ip-doc--start /
+   .ip-doc--end classes the page writes at runtime. */
+@media (max-width: 860px) {
+  .ip-doc,
+  .ip-doc--start,
+  .ip-doc--end {
+    inset-inline-start: var(--sc-gutter);
+    inset-inline-end: auto;
+    top: clamp(4.25rem, 11vh, 7rem);
+    bottom: auto;
+    width: min(11rem, 46vw);
+    padding: 0.7rem 0.8rem 0.75rem;
+  }
+  .ip-doc__sup { font-size: 0.92rem; }
+  .ip-doc__amt { font-size: 1.2rem; margin-top: 0.35rem; }
+  .ip-doc__rule { margin: 0.55rem 0 0.45rem; }
+  .ip-doc__state { font-size: 0.7rem; }
+
+  .ip-doc.is-open,
+  .ip-doc--start.is-open,
+  .ip-doc--end.is-open {
+    inset-inline-start: var(--sc-gutter);
+    inset-inline-end: var(--sc-gutter);
+    top: auto;
+    bottom: clamp(3.5rem, 11vh, 6rem);
+    width: auto;
+    padding: 1rem 1.1rem 1.1rem;
+  }
+
+  .ip-copy { bottom: clamp(6rem, 20vh, 11rem); }
+  .ip-at-crown { top: clamp(6.5rem, 15vh, 10rem); }
+}
+
+
+/* Opacity alone leaves the faded chrome in the tab order, so focus lands on a
+   control nobody can see. visibility takes it out of the sequence too. The
+   language links inside the card are a different element and must stay. */
+.ip-chrome-off .ip-brand,
+.ip-chrome-off .ip-langs:not(.ip-langs--close) { visibility: hidden; }
+
+/* The engine pushes the poster in (scale 1.03 → 1.17) so a still does not sit
+   dead while the page scrolls. That is right when a poster is on screen for a
+   while — and wrong here, because the poster IS the clip's first frame, so the
+   moment the clip paints the frame jumps from scaled to unscaled. Every leg
+   pops once, on arrival, which is exactly when the reader is looking.
+   Holding the poster at scale 1 makes the swap invisible; surface.js warms the
+   clips ahead of time so a motionless poster is barely seen at all. */
+.sc-world__poster { transform: none !important; }

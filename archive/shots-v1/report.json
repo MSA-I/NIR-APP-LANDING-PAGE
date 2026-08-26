@@ -1,0 +1,2413 @@
+{
+  "doc": {
+    "height": 11106,
+    "vh": 900,
+    "acts": [
+      "pin",
+      "flow",
+      "flow",
+      "flow",
+      "flow",
+      "flow",
+      "pin",
+      "flow",
+      "flow",
+      "flow",
+      "pin"
+    ],
+    "world": null
+  },
+  "report": [
+    {
+      "i": 0,
+      "y": 9,
+      "pct": 0,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        0,
+        4995,
+        9927
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 1,
+      "y": 95,
+      "pct": 1,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 0.19
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        0,
+        4909,
+        9841
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 2,
+      "y": 182,
+      "pct": 2,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מק",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 1
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "o": 0.42
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        0,
+        4822,
+        9754
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 3,
+      "y": 268,
+      "pct": 3,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מק",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 1
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        0,
+        4736,
+        9668
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 4,
+      "y": 355,
+      "pct": 3,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מק",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 1
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        0,
+        4649,
+        9581
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 5,
+      "y": 441,
+      "pct": 4,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מק",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 1
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        0,
+        4563,
+        9495
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 6,
+      "y": 483,
+      "pct": 5,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מק",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 1
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -33,
+        4521,
+        9453
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 7,
+      "y": 805,
+      "pct": 8,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1",
+          "dir": "dark-on-light",
+          "worst": 14.08,
+          "mean": 14.2
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מק",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.19
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "dir": "dark-on-light",
+          "worst": 13.96,
+          "mean": 14.2
+        }
+      ],
+      "cues": [
+        {
+          "t": "INV-2311 · מאפיית גל מחיר מעל ההזמנה ‎+1,240 ₪",
+          "o": 1
+        },
+        {
+          "t": "INV-2287 · אריזות הצפון אין הזמנת רכש מקושרת ‎",
+          "o": 1
+        },
+        {
+          "t": "זיכוי · משק דגן פתוח 18 ימים ‎780 ₪",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -355,
+        4199,
+        9131
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 8,
+      "y": 1126,
+      "pct": 11,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -676,
+        3878,
+        8810
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 9,
+      "y": 1257,
+      "pct": 12,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -807,
+        3747,
+        8679
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 10,
+      "y": 1448,
+      "pct": 14,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -998,
+        3556,
+        8488
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 11,
+      "y": 1579,
+      "pct": 15,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1129,
+        3425,
+        8357
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 12,
+      "y": 1769,
+      "pct": 17,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "none",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1319,
+        3235,
+        8167
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 13,
+      "y": 1900,
+      "pct": 19,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 100%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1450,
+        3104,
+        8036
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 14,
+      "y": 2031,
+      "pct": 20,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 100%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1581,
+        2973,
+        7905
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 15,
+      "y": 2091,
+      "pct": 20,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 100%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1641,
+        2913,
+        7845
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 16,
+      "y": 2222,
+      "pct": 22,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 100%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1772,
+        2782,
+        7714
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 17,
+      "y": 2353,
+      "pct": 23,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 89.58%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -1903,
+        2651,
+        7583
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 18,
+      "y": 2543,
+      "pct": 25,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 47.68%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2093,
+        2461,
+        7393
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 19,
+      "y": 2674,
+      "pct": 26,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 17.6%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2224,
+        2330,
+        7262
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 20,
+      "y": 2805,
+      "pct": 27,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0.72%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2355,
+        2199,
+        7131
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 21,
+      "y": 2865,
+      "pct": 28,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2415,
+        2139,
+        7071
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 22,
+      "y": 2996,
+      "pct": 29,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2546,
+        2008,
+        6940
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 23,
+      "y": 3127,
+      "pct": 31,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2677,
+        1877,
+        6809
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 24,
+      "y": 3317,
+      "pct": 33,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "none",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2867,
+        1687,
+        6619
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 25,
+      "y": 3448,
+      "pct": 34,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -2998,
+        1556,
+        6488
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 26,
+      "y": 3575,
+      "pct": 35,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3125,
+        1429,
+        6361
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 27,
+      "y": 3639,
+      "pct": 36,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3189,
+        1365,
+        6297
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 28,
+      "y": 3770,
+      "pct": 37,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3320,
+        1234,
+        6166
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 29,
+      "y": 3855,
+      "pct": 38,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 98.19%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3405,
+        1149,
+        6081
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 30,
+      "y": 4091,
+      "pct": 40,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 52.32%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3641,
+        913,
+        5845
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 31,
+      "y": 4135,
+      "pct": 41,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 41.05%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3685,
+        869,
+        5801
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 32,
+      "y": 4413,
+      "pct": 43,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3963,
+        591,
+        5523
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 33,
+      "y": 4415,
+      "pct": 43,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -3965,
+        589,
+        5521
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 34,
+      "y": 4695,
+      "pct": 46,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -4245,
+        309,
+        5241
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 35,
+      "y": 4975,
+      "pct": 49,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -4525,
+        29,
+        4961
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 36,
+      "y": 5038,
+      "pct": 49,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -4588,
+        0,
+        4898
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 37,
+      "y": 5367,
+      "pct": 53,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        },
+        {
+          "t": "ארבעים וארבעה מסמכים הגיעו החודש בוואטסא",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        },
+        {
+          "t": "ארבעים וארבעה מסמכים הגיעו החודש בוואטסאפ, במי",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -4917,
+        0,
+        4569
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 38,
+      "y": 5695,
+      "pct": 56,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 1
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        },
+        {
+          "t": "ארבעים וארבעה מסמכים הגיעו החודש בוואטסאפ, במי",
+          "o": 0.42
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -5245,
+        0,
+        4241
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 39,
+      "y": 6023,
+      "pct": 59,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "רגע אחד",
+          "dir": "light-on-dark",
+          "worst": 10.74,
+          "mean": 10.74
+        },
+        {
+          "t": "המסך מסתדר",
+          "dir": "light-on-dark",
+          "worst": 16.93,
+          "mean": 16.93
+        }
+      ],
+      "cues": [
+        {
+          "t": "רגע אחד",
+          "o": 0.91
+        },
+        {
+          "t": "המסך מסתדר",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -5573,
+        0,
+        3913
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 40,
+      "y": 6351,
+      "pct": 62,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "43מסמכים שנסגרו לבד 1נשאר אחד מחיר מעל ה",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "זה כל המוצר. לא לוח מחוונים שמראה לכם אר",
+          "dir": "light-on-dark",
+          "worst": 7.62,
+          "mean": 7.62
+        }
+      ],
+      "cues": [
+        {
+          "t": "43מסמכים שנסגרו לבד 1נשאר אחד מחיר מעל הזמנה ·",
+          "o": 1
+        },
+        {
+          "t": "זה כל המוצר. לא לוח מחוונים שמראה לכם ארבעים ו",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -5901,
+        0,
+        3585
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 41,
+      "y": 6680,
+      "pct": 65,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "43מסמכים שנסגרו לבד 1נשאר אחד מחיר מעל ה",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "זה כל המוצר. לא לוח מחוונים שמראה לכם אר",
+          "dir": "light-on-dark",
+          "worst": 7.62,
+          "mean": 7.62
+        }
+      ],
+      "cues": [
+        {
+          "t": "43מסמכים שנסגרו לבד 1נשאר אחד מחיר מעל הזמנה ·",
+          "o": 1
+        },
+        {
+          "t": "זה כל המוצר. לא לוח מחוונים שמראה לכם ארבעים ו",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -6230,
+        0,
+        3256
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 42,
+      "y": 6747,
+      "pct": 66,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -6297,
+        -33,
+        3189
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 43,
+      "y": 7069,
+      "pct": 69,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "pin",
+      "stages": [
+        -6619,
+        -355,
+        2867
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 44,
+      "y": 7390,
+      "pct": 72,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -6940,
+        -676,
+        2546
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 45,
+      "y": 7521,
+      "pct": 74,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -7071,
+        -807,
+        2415
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 46,
+      "y": 7712,
+      "pct": 76,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -7262,
+        -998,
+        2224
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 47,
+      "y": 7843,
+      "pct": 77,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -7393,
+        -1129,
+        2093
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 48,
+      "y": 8033,
+      "pct": 79,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "none"
+      ],
+      "act": "flow",
+      "stages": [
+        -7583,
+        -1319,
+        1903
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 49,
+      "y": 8164,
+      "pct": 80,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -7714,
+        -1450,
+        1772
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 50,
+      "y": 8295,
+      "pct": 81,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -7845,
+        -1581,
+        1641
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 51,
+      "y": 8355,
+      "pct": 82,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -7905,
+        -1641,
+        1581
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 52,
+      "y": 8486,
+      "pct": 83,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 100%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -8036,
+        -1772,
+        1450
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 53,
+      "y": 8617,
+      "pct": 84,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 94.88%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -8167,
+        -1903,
+        1319
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 54,
+      "y": 8807,
+      "pct": 86,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 59.59%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -8357,
+        -2093,
+        1129
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 55,
+      "y": 8938,
+      "pct": 88,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 29.32%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -8488,
+        -2224,
+        998
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 56,
+      "y": 9129,
+      "pct": 89,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0.97%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -8679,
+        -2415,
+        807
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 57,
+      "y": 9260,
+      "pct": 91,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "flow",
+      "stages": [
+        -8810,
+        -2546,
+        676
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 58,
+      "y": 9581,
+      "pct": 94,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9131,
+        -2867,
+        355
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 59,
+      "y": 9903,
+      "pct": 97,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9453,
+        -3189,
+        33
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 60,
+      "y": 9941,
+      "pct": 97,
+      "settled": true,
+      "contrast": [],
+      "cues": [],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9491,
+        -3227,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 61,
+      "y": 9993,
+      "pct": 98,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה ת",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבו",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה תחנות, ",
+          "o": 0.99
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבודה פתי",
+          "o": 0.99
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9543,
+        -3279,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 62,
+      "y": 10045,
+      "pct": 98,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה ת",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבו",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה תחנות, ",
+          "o": 1
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבודה פתי",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9595,
+        -3331,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 63,
+      "y": 10097,
+      "pct": 99,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה ת",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבו",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה תחנות, ",
+          "o": 1
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבודה פתי",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9647,
+        -3383,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 64,
+      "y": 10149,
+      "pct": 99,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה ת",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבו",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה תחנות, ",
+          "o": 1
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבודה פתי",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9699,
+        -3435,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 65,
+      "y": 10201,
+      "pct": 100,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה ת",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבו",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה תחנות, ",
+          "o": 1
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבודה פתי",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9751,
+        -3487,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    },
+    {
+      "i": 66,
+      "y": 10206,
+      "pct": 100,
+      "settled": true,
+      "contrast": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה ת",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבו",
+          "dir": "light-on-dark",
+          "worst": 12.7,
+          "mean": 12.7
+        }
+      ],
+      "cues": [
+        {
+          "t": "זה מה שהגלילה שלכם עשתה שקל אחד, שמונה תחנות, ",
+          "o": 1
+        },
+        {
+          "t": "להתחיל עם הנתונים שלכם כתובת אימייל בעבודה פתי",
+          "o": 1
+        }
+      ],
+      "clips": [],
+      "rails": [],
+      "wipes": [
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)",
+        "inset(0px 0px 0%)"
+      ],
+      "act": "pin",
+      "stages": [
+        -9756,
+        -3492,
+        0
+      ],
+      "segs": [],
+      "custom": [],
+      "customHold": false,
+      "seg": null,
+      "segp": null,
+      "bg": "#f4f5f3"
+    }
+  ],
+  "consoleErrors": [],
+  "failed": []
+}

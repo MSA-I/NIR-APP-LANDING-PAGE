@@ -1,0 +1,13 @@
+{
+  "name": "inplace-scroll-landing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs --root dist --port 4500"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.56.0"
+  }
+}
