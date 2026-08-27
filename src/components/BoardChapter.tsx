@@ -79,6 +79,16 @@ export function BoardChapter({
   fineprint: string
   imageAlt: string
 }) {
+  // The control centre is 1800 wide, not the 2000 the five panels in
+  // WhatChapter are, so its widest descriptor says so. A descriptor that lies
+  // about a file's real width is worse than no srcset at all: the browser sizes
+  // its choice off the number, not off the file.
+  const ladder = (ext: 'avif' | 'webp') => {
+    const base = img.replace(/\.webp$/, '')
+    return `/${base}-800.${ext} 800w, /${base}-1440.${ext} 1440w, /${base}.${ext} 1800w`
+  }
+  const SIZES = '(min-width: 1024px) 62rem, 100vw'
+
   return (
     <div className="board py-[clamp(4rem,10vh,7rem)]">
       <div className="wrap">
@@ -106,23 +116,26 @@ export function BoardChapter({
         <Reveal>
           <figure className="board__figure crops relative mx-auto mt-[clamp(2.5rem,6vh,4rem)] mb-0 max-w-[62rem] overflow-clip rounded-[12px] border border-onyx-line bg-onyx-lift">
             <span className="crops__b" aria-hidden="true" />
-            {/* Three rungs. This one is drawn at 990 CSS px on a 1512px
-                desktop and at 356 on a 390px phone; scripts/build-shots.mjs
-                writes the two narrow cuts and explains the widths. */}
-            <img
-              src={`/${img}`}
-              srcSet={`/${img.replace(/\.webp$/, '-800.webp')} 800w, /${img.replace(
-                /\.webp$/,
-                '-1400.webp'
-              )} 1400w, /${img} 1800w`}
-              sizes="(min-width: 1024px) 62rem, 100vw"
-              alt={imageAlt}
-              width={1800}
-              height={1788}
-              loading="lazy"
-              decoding="async"
-              className="w-full"
-            />
+            {/* Two formats, three widths. This one is drawn at 990 CSS px on
+                a 1512px desktop and at 356 on a 390px phone, and unlike the
+                five panels in WhatChapter it is 1800 wide rather than 2000, so
+                its widest descriptor says 1800. scripts/build-shots.mjs writes
+                every cut and carries both measurements. */}
+            <picture>
+              <source type="image/avif" srcSet={ladder('avif')} sizes={SIZES} />
+              <source type="image/webp" srcSet={ladder('webp')} sizes={SIZES} />
+              <img
+                src={`/${img}`}
+                srcSet={ladder('webp')}
+                sizes={SIZES}
+                alt={imageAlt}
+                width={1800}
+                height={1788}
+                loading="lazy"
+                decoding="async"
+                className="w-full"
+              />
+            </picture>
           </figure>
         </Reveal>
         <p className="cap mx-auto max-w-[62rem] pt-3">{cap}</p>

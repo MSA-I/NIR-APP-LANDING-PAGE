@@ -166,6 +166,47 @@ const DATES: Record<string, { published: string; updated: string }> = {
   privacy: { published: '2026-08-27', updated: '2026-08-27' },
 }
 
+/**
+ * The three widths every product screenshot ships in.
+ *
+ * `null` is the original file, which is 2000px on five of the six and 1800px on
+ * the control centre. The numbers and the reasoning behind them live in
+ * scripts/build-shots.mjs, which writes the files; the widest descriptor is read
+ * off the picture itself rather than assumed, because those two are not the same
+ * number and a descriptor that lies about a file's width defeats the whole
+ * mechanism.
+ */
+const RUNGS = [800, 1440] as const
+
+/**
+ * One product screen, as a complete <picture>.
+ *
+ * AVIF first because the browser takes the first type it understands, and AVIF
+ * is 40% smaller than the WebP on this material — measured, not assumed; the
+ * table is in scripts/build-shots.mjs. The <img> at the end carries the WebP
+ * ladder and is what a browser without AVIF gets, which is also what every
+ * crawler reads.
+ *
+ * `sizes` is the reading column: .doc is 44rem wide and the picture fills it.
+ */
+const picture = (image: { src: string; w: number; h: number; alt: string; cap: string }) => {
+  const base = image.src.replace(/\.webp$/, '')
+  const { w, h } = image
+  const set = (ext: string) =>
+    [...RUNGS.map((r) => `/${base}-${r}.${ext} ${r}w`), `/${base}.${ext} ${w}w`].join(', ')
+  const sizes = '(min-width: 46rem) 44rem, 100vw'
+  return `
+        <figure class="doc-shot">
+          <picture>
+            <source type="image/avif" srcset="${set('avif')}" sizes="${sizes}" />
+            <source type="image/webp" srcset="${set('webp')}" sizes="${sizes}" />
+            <img src="/${image.src}" alt="${attr(image.alt)}" width="${w}" height="${h}"
+                 loading="lazy" decoding="async" />
+          </picture>
+          <figcaption class="cap">${escape(image.cap)}</figcaption>
+        </figure>`
+}
+
 const schemaFor = (page: Page, locale: LocaleCode) => {
   const lang = locale === 'he' ? 'he-IL' : 'en'
   const home = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/en/`
@@ -324,6 +365,15 @@ const STYLE = `
         display: grid; gap: 0.6rem; list-style: disc; }
       .doc-list li::marker { color: var(--color-oceanic); }
       .doc-scroll { overflow-x: auto; margin-block-start: 1.25rem; }
+      /* The screen this page is about. Same frame the home page draws round the
+         same six pictures: a light card, because the product's own screens are
+         light and a dark border round them reads as a hole in the page. */
+      .doc-shot { margin: clamp(1.75rem, 4vh, 2.5rem) 0 0; }
+      .doc-shot picture { display: block; overflow: clip; border-radius: 10px;
+        border: 1px solid var(--color-wheat-line); background: #fff;
+        box-shadow: 0 30px 70px -40px rgba(10, 23, 29, 0.55); }
+      .doc-shot img { display: block; inline-size: 100%; block-size: auto; }
+      .doc-shot figcaption { margin-block-start: 0.75rem; }
       .doc-table { border-collapse: collapse; inline-size: 100%; min-inline-size: 28rem; font-size: 0.95rem; }
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
         border-block-end: 1px solid var(--color-onyx-line); }
@@ -461,7 +511,7 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
       <main>
         <p class="eyebrow">${escape(page.eyebrow)}</p>
         <h1>${copy(page.h1)}</h1>
-        <p class="lede">${copy(page.lede)}</p>
+        <p class="lede">${copy(page.lede)}</p>${page.image ? picture(page.image) : ''}
 ${page.sections.map(section).join('\n')}
 
 ${

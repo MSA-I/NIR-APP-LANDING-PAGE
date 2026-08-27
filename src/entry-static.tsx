@@ -48,22 +48,34 @@ export function render(locale: LocaleCode = 'he') {
 const ORIGIN = 'https://inplace.digital'
 
 /**
- * The six screens of the product, at full width.
+ * Every screen of the product this site publishes, at full width.
  *
- * Written out rather than read off the dictionary because `he.ts` gives them as
- * `assets/screen-*.webp` in two separate places — five in the stations, one on
- * the board — and the graph wants one absolute list. The narrow `-1000` cuts
- * that scripts/build-shots.mjs writes are deliberately absent: they are the
- * same six pictures, and offering each twice would describe a product with
- * twelve screens.
+ * Written out rather than read off the dictionaries because they are spread
+ * across four files — five stations and a board in `he.ts`, and one per
+ * supporting page in `pages.ts` — and the graph wants one absolute list.
+ *
+ * The narrow `-800` and `-1440` cuts that scripts/build-shots.mjs writes are
+ * deliberately absent, and so are the AVIF twins of all of them: they are the
+ * same twelve pictures at other sizes and in another format, and offering each
+ * six times over would describe a product with seventy-two screens.
  */
 const SCREENSHOTS = [
+  // The six the home page shows, in the order it shows them.
   'screen-office-orders',
   'screen-office-receiving',
   'screen-office-invoices',
   'screen-owner-exceptions',
   'screen-owner-payment-requests',
   'screen-owner-dashboard',
+  // The six the supporting pages show, added 28.08.2026. They are six OTHER
+  // screens rather than these six again, on the owner's instruction, and
+  // scripts/build-doc-shots.mjs records which page carries which.
+  'screen-office-suppliers',
+  'screen-office-credits',
+  'screen-owner-alerts',
+  'screen-office-prices',
+  'screen-owner-analytics',
+  'screen-accountant-bank',
 ].map((n) => `${ORIGIN}/assets/${n}.webp`)
 
 /**
@@ -206,6 +218,35 @@ export function schema(locale: LocaleCode = 'he') {
         // that is the product.
         screenshot: SCREENSHOTS,
         offers,
+      },
+      // The film, declared.
+      //
+      // The owner's ruling of 28.08.2026, taken with the risk stated: this is a
+      // rendered visualisation of the workflow, with no voice and no narrative,
+      // and marking it up as a video is a claim that a reader clicking through
+      // from a video result gets a video. The page does not hide what it is —
+      // the caption below the film opens with the word "visualisation" in both
+      // editions, and that same sentence is the `description` here, so the
+      // declaration says exactly what the page says.
+      //
+      // `contentUrl` is the desktop cut. The phone cut is the same film at
+      // another size, and offering both would describe two videos.
+      {
+        '@type': 'VideoObject',
+        '@id': `${url}#film`,
+        name: d.film.folio,
+        description: d.film.caption,
+        inLanguage: lang,
+        // The film was rebuilt on this date, at the compression the owner
+        // approved after reviewing it frame by frame. Change it when the film
+        // changes, not when the page does.
+        uploadDate: '2026-08-28',
+        // 34.88 seconds, from ffprobe. ISO 8601 takes whole seconds.
+        duration: 'PT35S',
+        thumbnailUrl: `${ORIGIN}/assets/film.webp`,
+        contentUrl: `${ORIGIN}/assets/film.mp4`,
+        embedUrl: url,
+        publisher: { '@id': `${ORIGIN}/#organization` },
       },
       // The document itself. The other three nodes describe the company, the
       // site and the software; none of them described the page a reader is on,

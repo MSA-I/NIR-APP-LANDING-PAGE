@@ -45,7 +45,14 @@ const ROUTES = {
   ],
   office: [
     ['/suppliers', 'office-suppliers'],
-    ['/price-lists', 'office-price-lists'],
+  // `/price-lists` stood here until 28.08.2026 and had been wrong for some time:
+  // NIR-APP's own route table (src/lib/routePolicy.ts) calls it `/prices`. The
+  // app's router has no such path, so the guard bounced it to the role's home
+  // and this file wrote a SECOND copy of the dashboard under the name
+  // `office-price-lists`. It captured, it reported ok, and the picture was of
+  // another screen entirely. A capture script cannot tell a redirect from an
+  // arrival unless it looks, so this one now does.
+    ['/prices', 'office-prices'],
     ['/orders', 'office-orders'],
     ['/receiving', 'office-receiving'],
     ['/invoices', 'office-invoices'],

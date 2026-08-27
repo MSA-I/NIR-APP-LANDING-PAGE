@@ -452,7 +452,8 @@ entry legitimately names the export it is lazily importing.
     CHECK: node scripts/gates/g23-seo.mjs
     EXPECT: G23 PASS
 
-**MET.** 18 documents checked, 12 image ladders, 18 URLs in `llms.txt`.
+**MET.** 18 documents checked, 12 image ladders, 24 `<picture>` wrappers, 18
+URLs in `llms.txt`, 12 product screens with no page repeating another's.
 
 Four things the site got wrong without breaking anything. None of them showed up
 in a screenshot, none of them failed a gate, and all four are the kind that come
@@ -480,11 +481,31 @@ browser never picks a candidate narrower than it needs, and 1,170 is more than
 1,000, so it stepped straight past the new file to the original. The ladder is
 800 and 1400 now, and both are used:
 
-| viewport | ratio | picked | bytes for the two screens on load |
-|---|---|---|---|
-| 1512 x 900 | 2 | the original | 172KB |
-| 390 x 844 | 3 | `-1400` | 119KB, 31% less |
-| 390 x 844 | 2 | `-800` | 56KB, 67% less |
+| viewport | ratio | picked |
+|---|---|---|
+| 1512 x 900 | 2 | the full-width AVIF |
+| 390 x 844 | 3 | `-1440.avif` |
+| 390 x 844 | 2 | `-800.avif` |
+| the 702px reading column, 1512 x 900 | 2 | `-1440.avif` |
+
+The middle rung is **1440 and not a round 1400**, and the forty pixels are the
+whole point: the supporting pages draw these inside a 702px reading column,
+which is 1,404 device pixels on a ratio-2 desktop. Four pixels over a 1400 rung,
+so the browser skipped it and fetched the 2000px file for a 702px slot — 66KB
+where 20KB would do.
+
+AVIF sits in front of the WebP in a `<picture>`, and it too was measured before
+it was built, because the owner's condition was that it ship only if it paid on
+*this* material — interface screenshots, which are large flat fields and small
+text, the case WebP already handles well. On the largest of the twelve, against
+the WebP that ships: **45% smaller at a structural similarity of 0.997**. Across
+all thirty-six files it is 39% smaller. `yuv444p` rather than the usual 420,
+which was 4KB smaller and smeared the teal figures.
+
+The order of the sources is the feature, so the gate asserts it: the browser
+takes the first type it understands, and a WebP source written above the AVIF
+one means no browser ever reaches the AVIF, with nothing about the page looking
+wrong.
 
 So the gate does not assert "a srcset exists". It asserts that every width named
 is a file in the build, that there is a rung at or below 800w, and that there is
@@ -521,6 +542,68 @@ declare, because the hand-written `public/sitemap.xml` was wrong within the hour
 of being written and was still claiming this was a one-page site on the day it
 was deleted. The gate walks both directions: every built page appears in
 `llms.txt`, and every URL in `llms.txt` is a page that was built.
+
+### The three the owner decided on 28.08.2026
+
+**5. Twelve screens, and no page repeating another's.** The supporting pages had
+no picture at all. The first fix gave them one each out of the six the home page
+already shows, and the owner's objection to that is right in both directions: a
+reader arriving from the home page meets the same picture twice, and image
+search is offered one file claiming to be two subjects.
+
+So there are twelve now. `scripts/capture-app-dated.mjs` took them from the
+running application against the local demo tenant, with its clock set to
+17.07.2026 so the month cards are not empty, and `scripts/build-doc-shots.mjs`
+records which page carries which:
+
+| page | screen | why that screen |
+|---|---|---|
+| `/procurement-software/` | suppliers | where a purchase chain starts |
+| `/supplier-invoices/` | credits | the page's own credits section |
+| `/invoice-matching/` | alerts | the duplicate-invoice catch |
+| `/vs-spreadsheet/` | price lists | exactly the spreadsheet's job |
+| `/vs-erp/` | supplier performance | the question an ERP answers after a project |
+| `/about/` | bank reconciliation | the third role, at work |
+
+The two legal documents carry **none**, and the gate asserts that too, because
+deliberate absence and forgetting look identical in a build: no screen in the
+product depicts a terms of use, and one chosen to fill the space is decoration
+on the page a reader is reading in order to decide something.
+
+Finding these took fixing the capture script, which had been broken for a while
+and did not say so. It asked the app for `/price-lists`; NIR-APP's own route
+table calls it `/prices`, so the router bounced the request to the role's home
+and the script wrote a **second copy of the dashboard** under the name
+`office-price-lists`, reporting `ok`. A capture script cannot tell a redirect
+from an arrival unless it looks.
+
+The gate reads only what a page **draws**. The home page's `SoftwareApplication`
+node lists all twelve, because all twelve are screens of the product; counting
+the graph as well would make every page look like a repeat of every other.
+
+**6. The film is declared.** `VideoObject`, with the risk stated rather than
+waved off: this is a rendered visualisation with no voice and no narrative, and
+marking it up as a video is a claim that somebody arriving from a video result
+gets a video. What makes it honest is that the page says so first — the caption
+under the film opens with the word *visualisation* in both editions — and the
+gate asserts the declaration is **that same sentence**, present in the page's own
+markup, and not a second description written for search. It also opens both
+files the node names, because a `thumbnailUrl` pointing at nothing is a promise
+that 404s.
+
+**7. IndexNow, fired by itself.** Bing, Yandex and Naver take a push
+notification; Google does not participate, so nothing here changes anything in
+Google Search. The protocol proves control of the host with a file whose **name**
+is the key and whose **content** is the same key, which is a pair that can drift
+in silence — so the gate asserts there is exactly one such file and that the two
+halves agree.
+
+`scripts/ping-indexnow.mjs` reads the **live** sitemap rather than the build:
+the point of the call is "these addresses have new content now", and the only
+thing that knows what is being served is the thing serving it. A failure exits
+0. As of 28.08.2026 the domain does not resolve at all, so what the script
+currently prints is `IndexNow not sent: … could not be fetched` — which is the
+correct answer, and the workflow does not fail over it.
 
 ---
 
