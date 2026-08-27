@@ -72,9 +72,12 @@ token table must be non-empty.
     CHECK: node scripts/gates/g3-palette.mjs
     EXPECT: G3 PASS
 
-**MET.** 52 colours defined by the application; the shader uses four of them —
-`#0a171d` color-ink, `#003f47` color-action, `#5d9096` color-action-line,
-`#e8eef1` color-topbar. No `u_cursor`, no `pointermove`, no cursor branch.
+**MET.** 52 colours defined by the application. Since 27.08.2026 the shader
+uses none of them: the owner's reference card carries two colours the product
+does not contain, so all five entries of the ramp sit on the allowlist, dated
+and each stating the mix it is. No `u_cursor`, no `pointermove`, no cursor
+branch. See "Round thirteen" for why the gate survived that rather than being
+deleted.
 
 ## G4 — direction is carried by logical properties only
 
@@ -111,8 +114,15 @@ line planted on the cream plate.
     CHECK: node scripts/gates/g7-contrast.mjs
     EXPECT: G7 PASS
 
-**MET.** 137 text runs across 10 scroll positions; worst 5.06:1. Control
-measured 1.01:1 and was caught.
+**MET.** 166 text runs across 10 scroll positions, in **both themes**: worst
+4.55:1 dark, 4.81:1 light. Control measured 1.43:1 and was caught.
+
+Two changes on 27.08.2026, both because a second theme arrived. It walks the
+page twice, setting `data-theme` the way the page sets it so the shader turns
+over with it; and ink is now **composited over its ground by its own alpha**
+before it is graded. The stylesheet writes most of its secondary type as
+`color-mix(… 52%, transparent)`, and grading that at full strength reported a
+contrast the reader never gets.
 
 *(Found by this gate: the accent that tints the last words of a headline was
 the bright oceanic on both grounds, and on the cream plate it measured 2.34:1.
@@ -1140,3 +1150,84 @@ were for.
 | Hebrew, rendered | new title, controls centred to 0px, left chevron = "הציטוט הבא", ביזנס card to `#contact`, form to support@, 8 questions |
 | English, rendered | new title, controls centred to 0px, left chevron = "Previous", business card to `#contact`, form to support@, 8 questions |
 | Frames | `lab/merge-en/` |
+
+
+---
+
+## Round thirteen — two colours and a switch, 27.08.2026
+
+The owner sent a reference card with two colours printed on it and asked for two
+things: the page in those two colours exactly, and 21st.dev's theme-toggle
+(@ayushmxxn, catalogue id 1216) to move between a dark and a light view.
+
+    Onyx        #020202   CMYK 0, 0, 0, 99    RGB 2, 2, 2
+    Candy Blue  #b2d5e5   CMYK 22, 7, 0, 10   RGB 178, 213, 229
+
+| Asked | Shipped |
+|---|---|
+| 1 | The page in those two colours | Every colour in `src/styles.css` is now one of the two or a stated sRGB mix of them. The teal, the cream, the alert pink and the plan card's deep violet are gone. **No token was renamed and no component was rewritten**: the stylesheet's names already meant "the ground" and "the plate", and only what they resolve to changed |
+| 2 | A light/dark switch, that one | Ported with its geometry intact — 64×32 pill, two 24px circles, a 32px slide, 300ms, lucide's moon and sun at strokeWidth 1.5. Three departures, each written down in `src/components/ThemeToggle.tsx` |
+
+### Why the theme is one attribute
+
+Tailwind v4 compiles every utility to `var(--color-…)`, so `:root[data-theme="light"]`
+redeclaring the same token names moves the authored stylesheet and the utility
+classes together. A theme is therefore which of the two colours is underneath,
+and nothing else. The light side is a true inversion rather than a second
+palette: a plate is Candy Blue on the dark page and Onyx on the light one, so
+every pair keeps its contrast in both.
+
+The shader ground is the one thing that could not follow, because its colours
+are props and not CSS. It reads the same five-step ramp from the other end.
+
+### The catalogue component could not be used as published
+
+Three departures, none of them cosmetic:
+
+- It ships as `<div role="button" tabIndex={0}>` bound to `onClick` only, so
+  Enter and Space do nothing. G13 exists to catch exactly that. It is a
+  `<button>` here, and the verification below presses both keys.
+- Its slide is `translate-x-8`, a physical direction, and a transform is not
+  mirrored by `dir`. On the Hebrew page the knob would have travelled out of the
+  pill. `--knob` carries the sign, +1 in LTR and -1 in RTL.
+- It imports `cn()` from `@/lib/utils`, which this repo does not have and does
+  not need for two branches.
+
+### What the palette change cost, and what caught it
+
+**Eleven runs of copy fell under AA, and G7 only saw them once it was walking
+both themes.** `--color-ink-dim` had inherited 52% from the old palette and
+measured 4.02:1 against a 4.5 floor. It is 68% now, the same number on both
+sides, so neither theme is the readable one.
+
+**Grading ink at full strength had been hiding a second set.** Once G7
+composited alpha, ten more runs in the plan cards and the why cards failed at
+3.0–3.7:1 — they had been passing on a measurement that assumed
+`color-mix(… 46%, transparent)` arrives at the eye as the full token. Those
+alphas are 76–82% now.
+
+**`.footer-wordmark` failed in the other direction, and it was the gate's
+fault.** It declares `color: transparent` and paints through
+`background-clip: text`; read as opaque black it graded 13.54:1 on the light
+page, which is a measurement defect reported as a design defect. Compositing
+fixed it, and a named check now fails any ordinary copy that paints no ink,
+because a ratio can never catch that.
+
+**The theme switch is a fourth control in a folio row that already fit
+exactly.** The chapter label is the smallest flex item there, so the shrink
+algorithm took the space from it first and the English page read "Cov…" at every
+desktop width. It is `shrink-0` now: 42px, and the row still does not overflow at
+1280px.
+
+### Evidence
+
+| | measured |
+|---|---|
+| Full suite | **24 met, 0 unmet** (`npm run gates`) |
+| `tsc --noEmit && vite build` | clean, 8 documents |
+| G7, dark | 166 runs, worst 4.55:1 |
+| G7, light | 166 runs, worst 4.81:1 |
+| G3 | 5 ramp colours, all dated on the allowlist, none a product token |
+| Switch, `/` and `/en/` and `/about/` | click, Enter and Space each toggle; `localStorage`, `color-scheme`, body ground and `theme-color` all follow |
+| No flash | after a reload the attribute is already `light` at document commit, before the first paint |
+| Folio row | label 42px unclipped at 1280, 1366, 1440 and 1536, no overflow, no chip wrapped |

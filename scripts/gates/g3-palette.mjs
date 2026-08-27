@@ -20,16 +20,31 @@
 // colours must NOT resolve to product tokens, the token table must be
 // non-empty, and every allowlist entry must actually be in use.
 
-// The purple approved on 26.08.2026 lasted a day: the owner's note of
-// 27.08.2026 was that no colour was making the ground stand out without
-// ruining the design, and a second brand colour never could. What is
-// allowlisted now is the product's OWN hue with the ramp opened at both ends,
-// which is a smaller departure than a second hue and is why the list is three
-// entries rather than four.
+// THE PALETTE IS NO LONGER THE PRODUCT'S, AND SAYING SO IS THE POINT.
+//
+// The purple approved on 26.08.2026 lasted a day, and the product's own teal
+// that replaced it lasted until the evening of 27.08.2026, when the owner
+// supplied a reference card carrying exactly two colours and asked for the page
+// to be in those two:
+//
+//   Onyx        #020202   CMYK 0, 0, 0, 99    RGB 2, 2, 2
+//   Candy Blue  #b2d5e5   CMYK 22, 7, 0, 10   RGB 178, 213, 229
+//
+// That instruction and this gate's original rule — every shader colour is a
+// colour the running application defines — cannot both hold, because the
+// application contains neither of them. The allowlist is where that is written
+// down rather than hidden, so the whole ramp lives on it now, every entry dated
+// and each one stating the mix it is.
+//
+// The gate has NOT become vacuous. It still fails on a sixth colour, on a
+// colour that is neither a token nor listed here, on a listed colour nobody
+// uses, and on the reference's own palette creeping back in.
 const APPROVED = {
-  '#04080b': 'deeper than the page onyx, so the dark end of the ramp reads as depth (27.08.2026)',
-  '#0d6470': 'color-action-solid opened up, so the middle carries light (27.08.2026)',
-  '#cfe3e6': 'softer than color-topbar, so the light end is not a glare (27.08.2026)',
+  '#020202': "Onyx, the owner's reference card, the page's own ground (27.08.2026)",
+  '#22282b': '18% Candy Blue mixed into Onyx, the dark quarter of the ramp (27.08.2026)',
+  '#5e7078': '52% Candy Blue mixed into Onyx, the middle of the ramp (27.08.2026)',
+  '#819aa5': '72% Candy Blue mixed into Onyx, the light quarter of the ramp (27.08.2026)',
+  '#b2d5e5': "Candy Blue, the owner's reference card, the page's own ink (27.08.2026)",
 }
 
 import { readFile } from 'node:fs/promises'

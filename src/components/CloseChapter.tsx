@@ -33,9 +33,9 @@ export function CloseChapter({
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              'linear-gradient(to bottom, color-mix(in srgb, #0a171d 86%, transparent) 0%,' +
-              ' color-mix(in srgb, #0a171d 52%, transparent) 55%,' +
-              ' color-mix(in srgb, #0a171d 90%, transparent) 100%)',
+              'linear-gradient(to bottom, color-mix(in srgb, var(--color-onyx) 86%, transparent) 0%,' +
+              ' color-mix(in srgb, var(--color-onyx) 52%, transparent) 55%,' +
+              ' color-mix(in srgb, var(--color-onyx) 90%, transparent) 100%)',
           }}
         />
         <span className="crops__b" aria-hidden="true" />

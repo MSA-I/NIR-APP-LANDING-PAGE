@@ -23,6 +23,7 @@ import { ContactChapter } from '@/components/ContactChapter'
 import { CloseChapter } from '@/components/CloseChapter'
 import { SiteFooter } from '@/components/SiteFooter'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 // `locale` is passed in by the static render in src/entry-static.tsx, which
 // runs in Node, where there is no `window` to read a path off. In the browser
@@ -67,6 +68,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         ctaHref={t.ctaPrimaryHref}
         loginLabel={t.footer.cols[0].links[1].t}
         loginHref={t.footer.cols[0].links[1].href}
+        themeControl={<ThemeToggle toLight={x.theme.toLight} toDark={x.theme.toDark} />}
         languageControl={
           <LanguageSwitcher
             current={locale}

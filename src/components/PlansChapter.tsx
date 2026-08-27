@@ -19,11 +19,13 @@
 //   THE LIST    three ticked lines, ragged to the reading edge.
 //   THE FOOT    a barcode.
 //
-// FOUR FACES, also from the image: the recommended plan is cream paper with a
-// badge riding its top edge, one card is deep purple, one is a glossy
-// near-black with a light sweeping across it, and the rest are the page's own
-// onyx. The owner asked for the sweep on ביזנס, which is the top plan, so the
-// glossy card is the top plan and the purple one sits beside it.
+// FOUR FACES, also from the image: the recommended plan is the light plate
+// with a badge riding its top edge, one card is tinted with more of the accent
+// than its neighbours, one is glossy with a light sweeping across it, and the
+// rest are the page's own ground. The owner asked for the sweep on ביזנס,
+// which is the top plan, so the glossy card is the top plan and the tinted one
+// sits beside it. (The tinted face was deep purple until the palette came down
+// to two colours on 27.08.2026; the CSS carries that note.)
 //
 // The billing switch is unchanged — @ruixen.ui/pricing-module's — and
 // `data-plan-price` is still ALWAYS the monthly amount whatever the switch is
@@ -134,7 +136,7 @@ const ICONS = [Sprout, Store, Building2, Building, Landmark]
 const CODES = ['FRE', 'BSC', 'PRO', 'PRN', 'BZN']
 
 /** Which face each card wears. Index 4 is ביזנס, which carries the sweep. */
-const FACE = ['', '', 'plan-card--paper', 'plan-card--violet', 'plan-card--gloss']
+const FACE = ['', '', 'plan-card--paper', 'plan-card--tint', 'plan-card--gloss']
 
 export function PlansChapter({
   folio,

@@ -12,7 +12,16 @@
       name="description"
       content="A procurement-to-payment system that connects purchase orders, goods received and invoices, then stops mismatches before money leaves the business."
     />
-    <meta name="theme-color" content="#0a171d" />
+    <meta name="theme-color" content="#020202" />
+    <!-- The theme, before the first paint. See the note in the Hebrew index.html. -->
+    <script>
+      try {
+        if (localStorage.getItem('inplace.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#b2d5e5')
+        }
+      } catch (e) {}
+    </script>
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
     <!--
@@ -78,10 +87,10 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <p style="padding: 2rem; color: #a7bcc1; font-family: Arial, sans-serif">
+      <p style="padding: 2rem; color: #819aa5; font-family: Arial, sans-serif">
         This page includes a film controlled by scrolling. Without JavaScript
         you can still read what the system does and open an account at
-        <a href="https://app.inplace.digital/signup" style="color: #38b3c0"
+        <a href="https://app.inplace.digital/signup" style="color: #b2d5e5"
           >app.inplace.digital</a
         >.
       </p>

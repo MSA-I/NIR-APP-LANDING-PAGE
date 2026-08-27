@@ -10,12 +10,14 @@
    shader ground, the separate display face, the entrance motion, the buttons
    that answer when you touch them.
 
-   Build 4 adds exactly that surface. The palette is still the product's own:
+   Build 4 adds exactly that surface. The palette, since 27.08.2026, is the two
+   colours off the card the owner supplied, and nothing else:
 
-     Onyx     #0a171d   the dark ground             (reference's #121212)
-     Wheat    #fff6e9   the light ground            (reference's #f1f0e0)
-     Oceanic  #38b3c0 on dark / #00525d on light    (reference's #ff4800)
-     Alert    #ff7d96 on dark / #a3122f on light
+     Onyx        #020202   the dark ground   (reference's #121212)
+     Candy Blue  #b2d5e5   the light ground  (reference's #f1f0e0)
+
+   Both themes are those two colours with their jobs swapped. See the tokens
+   block below for the full table and for every mix in between.
 
    Direction is carried by logical properties only. No `left`, no `right`, no
    `margin-left`, no `text-align: left`. Enforced by scripts/gates/g4-rtl.mjs,
@@ -93,48 +95,65 @@
 }
 
 /* ------------------------------------------------------------------- tokens */
-/* Every colour below is a token read out of the running product, converted
-   from its OKLCH source in data/product-tokens.json. Build 3 and build 4's
-   first cut both used a brighter turquoise (#38b3c0) that the product does not
-   contain; the owner's note on 26.08.2026 was that the page should be in the
-   application's colours, and these are they.
+/* TWO COLOURS, 27.08.2026.
+   ----------------------------------------------------------------------------
+   The owner named a reference card with two colours on it and asked for the
+   page to be in those two, exactly:
 
-     app token            OKLCH                         hex
-     color-shell / ink    oklch(0.196 0.022 229)        #0a171d
-     color-surface        oklch(0.992 0.006 80)         #fffcf8
-     color-surface-sunken oklch(0.954 0.012 80)         #f4efe7
-     color-line           oklch(0.895 0.022 78)         #e5dbcd
-     color-ink-soft       oklch(0.435 0.021 229)        #46545b
-     color-action         oklch(0.3366 0.058 209)       #003f47
-     color-action-solid   oklch(0.39 0.062 208)         #0d4e56
-     color-action-line    oklch(0.62 0.055 205)         #5d9096
-     color-focus          oklch(0.5 0.085 207)          #03707c
-     color-topbar         oklch(0.945 0.008 229)        #e8eef1
-     color-shell-ink      oklch(0.975 0.012 80)         #fbf6ee
-     color-alert-fg       oklch(0.514 0.222 16.9)       #c70036 */
+     Onyx        #020202    CMYK 0, 0, 0, 99      RGB 2, 2, 2
+     Candy Blue  #b2d5e5    CMYK 22, 7, 0, 10     RGB 178, 213, 229
+
+   The teal, the cream and the alert pink that build 4 carried are gone. Every
+   value below is one of those two colours or a straight sRGB mix of the two,
+   and the comment on each names the mix, so a reader can check the arithmetic
+   rather than trust it. Nothing else is allowed in here.
+
+   The names do NOT change. `--color-onyx` still means "the page's ground" and
+   `--color-wheat` still means "the plate that sits on it"; what they resolve to
+   is what changed. That is why this rewrite touches no component: the stylesheet
+   uses these names 250-odd times and Tailwind compiles `bg-onyx` to
+   `background-color: var(--color-onyx)`, so redefining the variable moves the
+   authored CSS and the utility classes together.
+
+   TWO THEMES, ONE PALETTE
+   `@theme` below is the DARK side: black ground, candy-blue ink. The block
+   after it is the light side, and it is a true inversion — the same two
+   colours with their jobs swapped, not a second palette. A plate is therefore
+   candy blue on the dark page and black on the light one, which keeps the
+   contrast of every pair identical in both themes.
+
+   The mixes, once, so the table below can just cite them:
+     dark   n% = n% Candy Blue mixed into Onyx
+     light  n% = n% Onyx mixed into Candy Blue
+
+   The percentages are MEASURED, not chosen. `--color-ink-dim` was the 52% both
+   grounds had inherited from the old palette; G7 walked the page in both themes
+   and reported it at 4.02:1 against a 4.5 floor, on eleven runs of copy. 68% is
+   where it clears, and the two themes use the same number so that neither is
+   the readable one. */
 @theme {
-  --color-onyx: #0a171d;
-  --color-onyx-lift: #12242c;
-  --color-onyx-line: #1e3540;
-  --color-wheat: #fffcf8;
-  --color-wheat-sink: #f4efe7;
-  --color-wheat-line: #e5dbcd;
+  --color-onyx: #020202;      /* the ground */
+  --color-onyx-lift: #101314; /* dark 8%  — a panel lifted off the ground */
+  --color-onyx-line: #22282b; /* dark 18% — a hairline on the ground */
+  --color-wheat: #b2d5e5;     /* the plate */
+  --color-wheat-sink: #a4c4d3;/* light 8%  — a well inside a plate */
+  --color-wheat-line: #92afbc;/* light 18% — a hairline on a plate */
 
-  --color-ink: #fbf6ee;
-  --color-ink-soft: #a2b3b8;
-  --color-ink-dim: #7d8f95;
-  --color-ink-on-light: #0a171d;
-  --color-ink-on-light-soft: #46545b;
+  --color-ink: #b2d5e5;             /* text on the ground */
+  --color-ink-soft: #819aa5;        /* dark 72% */
+  --color-ink-dim: #7a919c;         /* dark 68% */
+  --color-ink-on-light: #020202;    /* text on a plate */
+  --color-ink-on-light-soft: #333d42;/* light 72% */
 
-  /* The accent, both grounds. On dark it is the product's own action-line;
-     on light it is the action colour itself. Neither is invented. */
-  --color-oceanic: #5d9096;
-  --color-oceanic-deep: #003f47;
-  --color-action-solid: #0d4e56;
-  --color-focus-ring: #03707c;
-  --color-topbar: #e8eef1;
-  --color-alert: #ff8ea6;
-  --color-alert-deep: #c70036;
+  /* The accent, both grounds. There is no third colour to be an accent with,
+     so the accent is simply the opposite of whatever it sits on. */
+  --color-oceanic: #b2d5e5;      /* accent on the ground */
+  --color-oceanic-deep: #020202; /* accent on a plate */
+  --color-action-solid: #22282b; /* dark 18% — the accent's solid companion */
+  --color-focus-ring: #b2d5e5;
+  --color-topbar: #a7c8d7;       /* light 6% */
+  --color-alert: #b2d5e5;
+  --color-alert-deep: #020202;
 
   --font-display: "LT Superior", "Noto Sans Hebrew", Arial, sans-serif;
   --font-mono: "Hasubi Mono", "Noto Sans Hebrew", ui-monospace, monospace;
@@ -142,6 +161,34 @@
 
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* The light side. Same names, same two colours, opposite jobs.
+   `:root[data-theme="light"]` outranks the `:root` that Tailwind writes the
+   `@theme` block onto, so no `!important` and no ordering trick is needed. */
+:root[data-theme="light"] {
+  --color-onyx: #b2d5e5;
+  --color-onyx-lift: #a4c4d3; /* light 8% */
+  --color-onyx-line: #92afbc; /* light 18% */
+  --color-wheat: #020202;
+  --color-wheat-sink: #101314;/* dark 8% */
+  --color-wheat-line: #22282b;/* dark 18% */
+
+  --color-ink: #020202;
+  --color-ink-soft: #333d42;        /* light 72% */
+  --color-ink-dim: #3a464b;         /* light 68% */
+  --color-ink-on-light: #b2d5e5;
+  --color-ink-on-light-soft: #819aa5;/* dark 72% */
+
+  --color-oceanic: #020202;
+  --color-oceanic-deep: #b2d5e5;
+  --color-action-solid: #92afbc; /* light 18% */
+  --color-focus-ring: #020202;
+  --color-topbar: #101314;       /* dark 6% */
+  --color-alert: #020202;
+  --color-alert-deep: #b2d5e5;
+
+  color-scheme: light;
 }
 
 :root {
@@ -832,7 +879,11 @@ html:dir(ltr) .flow__arrow { rotate: 180deg; }
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.03em;
-  background: linear-gradient(180deg, var(--color-ink) 0%, #cfd9dc 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-ink) 0%,
+    color-mix(in srgb, var(--color-ink) 78%, var(--color-onyx)) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   /* No 'color: transparent'. The fill override already hides the glyph body
@@ -1318,7 +1369,7 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: color-mix(in srgb, var(--color-ink-dim) 65%, transparent);
+  color: var(--color-ink-dim);
   transition: color 0.4s var(--ease-out-quint);
 }
 .why-card--yes:hover .why-card__n { color: var(--color-oceanic); }
@@ -1696,6 +1747,78 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
 .language-switcher__option svg { opacity: 0; }
 .language-switcher__option svg[data-active='true'] { opacity: 1; }
 
+/* ------------------------------------------------------------- theme control */
+/* 21st.dev's theme-toggle (@ayushmxxn, id 1216). See the note at the top of
+   src/components/ThemeToggle.tsx for what was carried over and what was not.
+   Every number here is the catalogue's: 64x32 pill, 4px padding, two 24px
+   circles, a 32px slide, 300ms.
+
+   The slide runs on `translate`, its own property, not on `transform`: the
+   plan cards learned that lesson already (see .plan-card), and here it also
+   lets `--knob` carry the direction on its own.
+
+   `--knob` is the whole RTL story. The pill's two circles are laid out by
+   `space-between`, which is already logical, so in Hebrew the filled circle
+   starts on the right; sending it to the other end therefore means travelling
+   the other way, and a physical `translateX(2rem)` would push it out of the
+   pill instead. */
+:root { --knob: 1; }
+html[dir='rtl'] { --knob: -1; }
+
+.theme-toggle {
+  display: flex;
+  flex: none;
+  inline-size: 4rem;
+  block-size: 2rem;
+  padding: 0.25rem;
+  border: 1px solid var(--color-onyx-line);
+  border-radius: 999px;
+  background: var(--color-onyx);
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.theme-toggle__track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+}
+
+.theme-toggle__knob,
+.theme-toggle__ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: 999px;
+  transition:
+    translate 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.theme-toggle__knob {
+  background: var(--color-onyx-lift);
+  color: var(--color-ink);
+}
+.theme-toggle__ghost {
+  background: transparent;
+  color: var(--color-ink-dim);
+}
+
+/* Light: the pair swap places. 2rem is 32px, which is one circle plus the gap
+   `space-between` leaves inside a 56px track. */
+.theme-toggle[data-theme-state='light'] .theme-toggle__knob {
+  translate: calc(var(--knob) * 2rem) 0;
+}
+.theme-toggle[data-theme-state='light'] .theme-toggle__ghost {
+  translate: calc(var(--knob) * -2rem) 0;
+}
+
 /* --------------------------------------------------------- the marks, on a rail */
 /* No grayscale filter: scripts/build-logos.py already renders every mark in one
    ink, and a filter over an already-flat mark only costs a compositing layer.
@@ -1859,14 +1982,17 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
    ========================================================================= */
 
 .plans-tray {
-  /* The reference sets the tray a shade darker than the page, which is what
-     makes five dark tickets read as five objects rather than as five holes. */
+  /* The reference sets the tray apart from the page, which is what makes five
+     tickets read as five objects rather than as five holes. It used to do that
+     by going DARKER than the page; with the two-colour palette the page ground
+     is already the darkest thing there is, so the separation runs the other
+     way: the tray lifts a little and the cards lift further. */
   /* Colour and gradient declared separately, here and on every card below.
      The shorthand leaves `background-color` transparent, and anything that
      asks an element what ground it is on reads the COLOUR: graded that way the
-     cream card's dark type was measured against the page's onyx four ancestors
+     paper card's dark type was measured against the page's onyx four ancestors
      up and came back at 1.09:1, for type that is 16:1 on paper. */
-  background-color: color-mix(in srgb, #05070d 82%, var(--color-onyx));
+  background-color: color-mix(in srgb, var(--color-onyx-lift) 45%, var(--color-onyx));
   background-image:
     radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--color-onyx-lift) 55%, transparent), transparent 70%);
   border: 1px solid color-mix(in srgb, var(--color-onyx-line) 70%, transparent);
@@ -1886,8 +2012,12 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   padding-inline: 1.35rem;
   text-align: center;
   color: var(--color-ink);
-  background-color: #0b1820;
-  background-image: linear-gradient(180deg, var(--color-onyx-lift) 0%, #0b1820 100%);
+  background-color: var(--color-onyx-lift);
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-onyx-lift) 70%, var(--color-ink)) 0%,
+    var(--color-onyx-lift) 100%
+  );
   border-radius: 7px;
   /* The lift is on `translate`, not on `transform`.
      Every card is a Motion element and Motion writes `transform` inline for
@@ -1947,27 +2077,40 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink-on-light) 14%, transparent);
 }
 
-/* Deep violet, from the reference. The one place on this page that carries the
-   shader's new purple into a solid surface, so the two do not look unrelated. */
-.plan-card--violet {
-  background-color: #1d1239;
-  background-image: linear-gradient(180deg, #241645 0%, #170e2e 100%);
+/* The tinted face. This card was deep violet, because the shader ground was
+   purple for a day and one solid surface had to carry that purple so the two
+   did not look unrelated. The palette is two colours now and neither is
+   purple, so the face is what it always was underneath: the ground carrying
+   more of the accent than its neighbours, edge and icons included. */
+.plan-card--tint {
+  background-color: var(--color-action-solid);
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-action-solid) 78%, var(--color-ink)) 0%,
+    var(--color-action-solid) 100%
+  );
 }
-.plan-card--violet::before {
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #b9a3ff 26%, transparent);
+.plan-card--tint::before {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 26%, transparent);
 }
-.plan-card--violet .plan-card__icon,
-.plan-card--violet .plan-card__tick {
-  border-color: color-mix(in srgb, #b9a3ff 34%, transparent);
-  background: color-mix(in srgb, #b9a3ff 12%, transparent);
-  color: #b9a3ff;
+.plan-card--tint .plan-card__icon,
+.plan-card--tint .plan-card__tick {
+  border-color: color-mix(in srgb, var(--color-ink) 34%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+  color: var(--color-ink);
 }
-.plan-card--violet .plan-card__code { color: color-mix(in srgb, #b9a3ff 72%, transparent); }
+.plan-card--tint .plan-card__code { color: color-mix(in srgb, var(--color-ink) 82%, transparent); }
 
-/* Glossy near-black, with the light travelling across it. */
+/* Glossy, with the light travelling across it: the page's own ground, pushed
+   past the other cards rather than lifted off it. */
 .plan-card--gloss {
-  background-color: #08080c;
-  background-image: linear-gradient(155deg, #101014 0%, #050508 46%, #0d0d12 100%);
+  background-color: var(--color-onyx);
+  background-image: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-onyx) 88%, var(--color-ink)) 0%,
+    var(--color-onyx) 46%,
+    color-mix(in srgb, var(--color-onyx) 93%, var(--color-ink)) 100%
+  );
 }
 .plan-card--gloss::before {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 16%, transparent);
@@ -2015,10 +2158,10 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   font-size: 0.66rem;
   font-weight: 600;
   letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--color-ink) 46%, transparent);
+  color: color-mix(in srgb, var(--color-ink) 76%, transparent);
 }
 .plan-card--paper .plan-card__code {
-  color: color-mix(in srgb, var(--color-ink-on-light) 48%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-light) 76%, transparent);
 }
 .plan-card__icon {
   display: grid;
@@ -2055,10 +2198,10 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   min-block-size: 3.1em;
   font-size: 0.82rem;
   line-height: 1.5;
-  color: color-mix(in srgb, var(--color-ink) 62%, transparent);
+  color: color-mix(in srgb, var(--color-ink) 78%, transparent);
 }
 .plan-card--paper .plan-card__who {
-  color: color-mix(in srgb, var(--color-ink-on-light) 66%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-light) 78%, transparent);
 }
 
 /* The dotted rules. The reference has three and they are the same rule. */
@@ -2090,10 +2233,10 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   margin: 0;
   font-size: 0.7rem;
   letter-spacing: 0.1em;
-  color: color-mix(in srgb, var(--color-ink) 52%, transparent);
+  color: color-mix(in srgb, var(--color-ink) 76%, transparent);
 }
 .plan-card--paper .plan-card__label {
-  color: color-mix(in srgb, var(--color-ink-on-light) 58%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-light) 76%, transparent);
 }
 .plan-card__label--gap { margin-block-start: 1.15rem; }
 
@@ -2117,7 +2260,7 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   margin-block-start: 0.4rem;
   min-block-size: 1.1em;
   font-size: 0.74rem;
-  color: color-mix(in srgb, var(--color-ink) 52%, transparent);
+  color: color-mix(in srgb, var(--color-ink) 76%, transparent);
 }
 .plan-card--paper .plan-card__term { color: var(--color-oceanic-deep); }
 
@@ -2223,7 +2366,7 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
    it, which is the same move the top plan card makes and half its speed. */
 .announce {
   overflow: hidden;
-  background-color: #fffdfa;
+  background-color: var(--color-wheat);
   background-image: none;
   border-block-end: 1px solid color-mix(in srgb, var(--color-wheat-line) 80%, transparent);
 }

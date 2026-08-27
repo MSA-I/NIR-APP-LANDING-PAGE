@@ -21,9 +21,9 @@
 // THE COLOURS
 // The catalogue recipe is orange, yellow and pink on black, which is the
 // reference's palette and not this product's. See the note on SHADER_PALETTE
-// below for what this one is and why it is not the purple it was for a day.
-// scripts/gates/g3-palette.mjs holds every colour here to being either a
-// product token or a dated, named entry on its allowlist.
+// below for what this one is. scripts/gates/g3-palette.mjs holds every colour
+// here to being either a product token or a dated, named entry on its
+// allowlist.
 //
 // The first entry is the ground the gradient sits on; the rest are what moves
 // across it, darkest to lightest.
@@ -36,6 +36,7 @@
 // brings one back fails rather than shipping.
 
 import { Suspense, lazy, useEffect, useState } from 'react'
+import { useTheme } from '@/lib/theme'
 
 // Loaded on its own, after the page has painted.
 //
@@ -48,39 +49,44 @@ const GrainGradient = lazy(() =>
   import('@paper-design/shaders-react').then((m) => ({ default: m.GrainGradient }))
 )
 
-// The product's own hue, opened up at both ends.
+// The two colours of the page, and the three mixes between them.
 //
-// The purple this ground carried for a day is gone. The owner, 27.08.2026: "I
-// cannot think of colours that make it stand out without ruining the overall
-// design." That is the right instinct and it has a cause: a second brand
-// colour cannot make a page stand out, it can only make it two pages. Every
-// other surface here is teal — the accent, the buttons, the ticket cards, the
-// film's own bars — so a purple ground was one thing arguing with all of them.
+// Until 27.08.2026 this ground was the application's teal with the ramp opened
+// at both ends. The owner then supplied a reference card with exactly two
+// colours on it, Onyx #020202 and Candy Blue #b2d5e5, and asked for the page to
+// be in those two. A five-colour teal ramp is not two colours, so the ramp is
+// now the straight sRGB line between them and nothing else is on it.
 //
-// So the ground stands out by LIGHT rather than by hue. It is the application's
-// own teal with the ramp opened at both ends: the black goes deeper than the
-// page's onyx and the light goes brighter than the product's topbar, which is
-// what gives a gradient presence. Three of the five are not product tokens for
-// that reason, and each is on G3's allowlist by name.
+// The ground still stands out by LIGHT rather than by hue, which was the whole
+// point of the note it answered: the dark end is the page's own ground and the
+// light end is the page's own ink, so the gradient is the page's contrast
+// range, moving.
 //
-//   #04080b  deeper than the page's onyx, so the dark end reads as depth
-//   #003f47  color-action, the product's primary action
-//   #0d6470  color-action-solid, opened up
-//   #5d9096  color-action-line, the line that action draws
-//   #cfe3e6  a softer white than color-topbar, so the light end is not a glare
-export const SHADER_PALETTE = ['#04080b', '#003f47', '#0d6470', '#5d9096', '#cfe3e6']
+//   #020202  the page's ground
+//   #22282b  18% Candy Blue
+//   #5e7078  52% Candy Blue
+//   #819aa5  72% Candy Blue
+//   #b2d5e5  the page's ink
+//
+// Darkest to lightest, and the light theme reads the same five in reverse: see
+// `recipeFor` below.
+export const SHADER_PALETTE = ['#020202', '#22282b', '#5e7078', '#819aa5', '#b2d5e5']
 
 // The catalogue component's numbers, kept: softness 0.76, intensity 0.45,
 // noise 0, shape "corners", speed 1. Two departures, both measured against the
 // title page rather than guessed:
 //   - the lightest colour is weighted down to a quarter of the ramp, because
-//     #e8eef1 at an equal share is a white field behind a display headline;
+//     a full share of it is a white field behind a display headline;
 //   - `noise` stays at the catalogue's 0. The page paints its own grain over
 //     everything (.grain in styles.css), and two grains at different scales
 //     read as a compression artefact rather than as film.
+//
+// The recipe is a function of the theme because these colours are PROPS, not
+// CSS: the token swap in src/styles.css cannot reach inside a WebGL program.
+// The light theme reads the same five colours from the other end, so the
+// ground stays light under a light page instead of becoming a black hole in
+// the middle of it.
 const RECIPE = {
-  colorBack: SHADER_PALETTE[0],
-  colors: [SHADER_PALETTE[1], SHADER_PALETTE[3], SHADER_PALETTE[2], SHADER_PALETTE[4]],
   softness: 0.76,
   intensity: 0.45,
   noise: 0,
@@ -92,7 +98,18 @@ const RECIPE = {
   speed: 1,
 }
 
+function recipeFor(theme: 'dark' | 'light') {
+  const ramp = theme === 'light' ? [...SHADER_PALETTE].reverse() : SHADER_PALETTE
+  return {
+    ...RECIPE,
+    colorBack: ramp[0],
+    colors: [ramp[1], ramp[3], ramp[2], ramp[4]],
+  }
+}
+
 export function ShaderBackground({ className }: { className?: string }) {
+  const [theme] = useTheme()
+
   // `prefers-reduced-motion: reduce` freezes the field rather than removing
   // it: the ground becomes a still pane, which is what the reduced-motion
   // gate asserts and what the hand-written ground did before it.
@@ -136,7 +153,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       {ready ? (
         <Suspense fallback={null}>
           <GrainGradient
-            {...RECIPE}
+            {...recipeFor(theme)}
             speed={calm ? 0 : RECIPE.speed}
             style={{ width: '100%', height: '100%', display: 'block' }}
           />

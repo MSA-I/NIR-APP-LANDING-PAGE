@@ -37,6 +37,7 @@ export function Folio({
   loginLabel,
   loginHref,
   languageControl,
+  themeControl,
 }: {
   /** The strip above the running head. Rendered inside this fixed box so the
       page never has to know how tall two fixed elements are together. */
@@ -51,6 +52,9 @@ export function Folio({
   loginHref: string
   /** Compact browser-style language control, shared by desktop and phone. */
   languageControl: ReactNode
+  /** The light/dark switch, beside the language control for the same reason:
+      both change how the page is read rather than where it goes. */
+  themeControl: ReactNode
 }) {
   const [where, setWhere] = useState(first)
   const [lifted, setLifted] = useState(false)
@@ -110,7 +114,7 @@ export function Folio({
       data-lifted={lifted ? 'true' : 'false'}
       className="fixed inset-x-0 top-0 z-[100] transition-[background-color,backdrop-filter,border-color] duration-500"
       style={{
-        backgroundColor: lifted ? 'color-mix(in srgb, #0a171d 82%, transparent)' : 'transparent',
+        backgroundColor: lifted ? 'color-mix(in srgb, var(--color-onyx) 82%, transparent)' : 'transparent',
         backdropFilter: lifted ? 'blur(14px)' : 'none',
         WebkitBackdropFilter: lifted ? 'blur(14px)' : 'none',
         borderBottom: `1px solid ${lifted ? 'var(--color-onyx-line)' : 'transparent'}`,
@@ -138,13 +142,20 @@ export function Folio({
         </nav>
 
         <p
-          className="me-auto ms-2 hidden truncate text-[0.78rem] tracking-[0.14em] text-ink-dim xl:block"
+          /* `shrink-0`, added with the theme switch on 27.08.2026. This label
+             is the smallest flex item in the row, so when the row ran out of
+             space the shrink algorithm took the space from here first and the
+             English page read "Cov…" at every desktop width. Held at its own
+             width it measures 42px, and the row still does not overflow at
+             1280px, which is where the label appears at all. */
+          className="me-auto ms-2 hidden shrink-0 truncate text-[0.78rem] tracking-[0.14em] text-ink-dim xl:block"
           aria-live="polite"
         >
           {where}
         </p>
 
         <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
+          {themeControl}
           {languageControl}
           <span className="hidden sm:inline-flex">
             <Cta href={loginHref} variant="ghost" size="sm">

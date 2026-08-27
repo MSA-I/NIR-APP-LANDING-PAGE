@@ -11,7 +11,24 @@
       name="description"
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
-    <meta name="theme-color" content="#0a171d" />
+    <meta name="theme-color" content="#020202" />
+    <!--
+      The theme, before the first paint.
+      The page is two colours (see the tokens block in src/styles.css) and which
+      of them is the ground is one attribute on <html>. React sets that
+      attribute too, but a React effect runs AFTER the first frame, so a reader
+      who chose the light page would watch a black one arrive first. This runs
+      in the head, before anything is painted, and there is nothing smaller that
+      does the job.
+    -->
+    <script>
+      try {
+        if (localStorage.getItem('inplace.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#b2d5e5')
+        }
+      } catch (e) {}
+    </script>
     <!--
       One page, one address.
       Without this line the same document is reachable as inplace.digital, as
@@ -83,11 +100,11 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <p style="padding: 2rem; color: #a7bcc1; font-family: Arial, sans-serif">
+      <p style="padding: 2rem; color: #819aa5; font-family: Arial, sans-serif">
         הדף הזה כולל סרטון שנע עם הגלילה. גם בלי JavaScript אפשר לקרוא את כל מה
         שהמערכת עושה, ולפתוח חשבון ב־<a
           href="https://app.inplace.digital/signup"
-          style="color: #38b3c0"
+          style="color: #b2d5e5"
           >app.inplace.digital</a
         >.
       </p>

@@ -105,6 +105,73 @@ const schemaFor = (page: Page) => ({
   ],
 })
 
+/* The theme, before the first paint.
+   The same three lines index.html carries, and for the same reason: which of
+   the two colours is the ground is one attribute on <html>, and a reader who
+   chose the light page must not watch a black one arrive first. These pages
+   have no React, so this script is also all the state they have. */
+const THEME_HEAD = `
+      try {
+        if (localStorage.getItem('inplace.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#b2d5e5')
+        }
+      } catch (e) {}`
+
+/* The switch itself, as markup rather than as a component.
+   Same classes as src/components/ThemeToggle.tsx, so it inherits the whole
+   control out of the shared stylesheet and there is one set of numbers to
+   keep. The difference is that both icons are always in the DOM and the CSS
+   below shows one of each pair; a static page has no render to swap them in. */
+const icon = (name: 'moon' | 'sun', paths: string) =>
+  `<svg class="i-${name}" width="16" height="16" viewBox="0 0 24 24" fill="none" ` +
+  `stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ` +
+  `stroke-linejoin="round" aria-hidden="true">${paths}</svg>`
+
+const MOON = icon('moon', '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>')
+const SUN = icon(
+  'sun',
+  '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>' +
+    '<path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>' +
+    '<path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/>' +
+    '<path d="m19.07 4.93-1.41 1.41"/>'
+)
+
+const TO_LIGHT = 'מעבר לתצוגה בהירה'
+const TO_DARK = 'מעבר לתצוגה כהה'
+
+const THEME_TOGGLE = `<button type="button" class="theme-toggle" data-theme-state="dark"
+          aria-pressed="false" aria-label="${TO_LIGHT}">
+          <span class="theme-toggle__track">
+            <span class="theme-toggle__knob">${MOON}${SUN}</span>
+            <span class="theme-toggle__ghost">${SUN}${MOON}</span>
+          </span>
+        </button>`
+
+/* Bringing the button into step with the attribute the head script set, and
+   keeping it there. Delegated off the document so the listener does not care
+   when in the parse the button appeared. */
+const THEME_BODY = `
+      (function () {
+        var box = document.querySelector('.theme-toggle')
+        if (!box) return
+        var paint = function (t) {
+          document.documentElement.dataset.theme = t
+          box.dataset.themeState = t
+          box.setAttribute('aria-pressed', String(t === 'light'))
+          box.setAttribute('aria-label', t === 'light' ? '${TO_DARK}' : '${TO_LIGHT}')
+          document
+            .querySelector('meta[name="theme-color"]')
+            .setAttribute('content', t === 'light' ? '#b2d5e5' : '#020202')
+        }
+        paint(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark')
+        box.addEventListener('click', function () {
+          var next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'
+          paint(next)
+          try { localStorage.setItem('inplace.theme', next) } catch (e) {}
+        })
+      })()`
+
 /** The page-only layout. Everything else comes from the site's own stylesheet. */
 const STYLE = `
       body { background: var(--color-onyx); color: var(--color-ink-soft); }
@@ -144,6 +211,12 @@ const STYLE = `
         border-block-start: 1px solid var(--color-onyx-line); font-size: 0.85rem; color: var(--color-ink-dim);
         display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
       .doc-foot a { color: var(--color-ink-dim); }
+      .doc-top .theme-toggle { align-self: center; }
+      .theme-toggle .i-moon, .theme-toggle .i-sun { display: none; }
+      .theme-toggle[data-theme-state="dark"] .theme-toggle__knob .i-moon,
+      .theme-toggle[data-theme-state="dark"] .theme-toggle__ghost .i-sun,
+      .theme-toggle[data-theme-state="light"] .theme-toggle__knob .i-sun,
+      .theme-toggle[data-theme-state="light"] .theme-toggle__ghost .i-moon { display: block; }
       :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 3px; }`
 
 /**
@@ -166,7 +239,9 @@ export function pageHtml(page: Page, all: Page[], css: string, cta: { label: str
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>${attr(page.title)}</title>
     <meta name="description" content="${attr(page.description)}" />
-    <meta name="theme-color" content="#0a171d" />
+    <meta name="theme-color" content="#020202" />
+    <script>${THEME_HEAD}
+    </script>
     <link rel="canonical" href="${url}" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
@@ -206,6 +281,7 @@ ${JSON.stringify(schemaFor(page), null, 2).replace(/<\//g, '<\\/')}
           <a href="/#plans">מסלולים</a>
           <a href="/#faq">שאלות</a>
         </nav>
+        ${THEME_TOGGLE}
       </header>
 
       <main>
@@ -238,6 +314,8 @@ ${page.sections.map(section).join('\n')}
         <a href="https://app.inplace.digital/privacy">פרטיות</a>
       </footer>
     </div>
+    <script>${THEME_BODY}
+    </script>
   </body>
 </html>
 `
