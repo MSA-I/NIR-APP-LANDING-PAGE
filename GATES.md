@@ -1846,3 +1846,82 @@ the padding as well, so a correct 254px ticket read as 32px short. Both G16 and
 G23 measure the content box now. It is written down because the fix was to the
 measurement, and a gate quietly relaxed to fit the page is worth less than no
 gate at all.
+
+## Round sixteen, part three — the film was cut, and it was cut by the switch, 28.08.2026
+
+The owner: "תבדוק את הנראות של הסרט במובייל יש שם איזה באג שהסרט נחתך בתצוגה".
+
+### What was measured first, and what it ruled out
+
+The film's box was walked through the whole chapter at 320, 360, 375, 390, 412
+and 430, at six real phone heights, twenty-two scroll positions each. It came
+back clean on every count that would explain a cut: `plateClips=0` at every
+stop, so the frame never clips its own picture; `vpBot=0`, so it is never cut
+off the bottom of the screen; and `crop=0%`, so the box and the picture agree.
+The sticky release was checked against the copy and it lands after the last
+block is read, at `currentTime` 34.8 of 34.8.
+
+So on a page **loaded** at a phone width there is nothing wrong with the film,
+which is why five earlier gate runs and a set of screenshots all passed over it.
+
+### The fault is in the journey, not the width
+
+The film ships two renders: `film.mp4` at 1920x1080 and `film-m.mp4` at
+810x1440, a portrait render made for phones. The stylesheet gives the element a
+16/10 box above 768px and a 9/16 box below it, and the element is
+`object-fit: cover`, so the two have to agree. The wrong cut in the right box is
+not letterboxed. It is cropped to a band out of the middle.
+
+Which cut to use was read **once**, in the mount effect, on the reasoning
+written beside it: swapping the source mid-scroll would reset the playhead the
+scroll drives. So a reader who ARRIVED at a phone width got the right film, and
+a reader who **changed** width afterwards kept the wrong one — a rotation, a
+resized window, or the "desktop site" switch a phone browser offers, which is
+the switch the owner opened this whole round with.
+
+Measured on 28.08.2026, standing 30% into the chapter:
+
+| Journey | In the element | In the box | Thrown away |
+|---|---|---|---|
+| straight to 390 | `film-m.mp4` 810x1440 | 218x388 | **0%** |
+| **1440, then 390** | `film.mp4` 1920x1080 | 218x388 | **68.4%** |
+| **1024, then 390** | `film.mp4` 1920x1080 | 218x388 | **68.4%** |
+| **390, then 1440** | `film-m.mp4` 810x1440 | 795x497 | **64.8%** |
+
+Two thirds of every frame, in both directions. Photographed at 390 after the
+1440 load, the chapter shows two enormous invoices cut off at both edges, with
+the desk and the scene gone.
+
+**This is round eight's fault, arriving through the door round eight did not
+close.** That round found the same crop — "65% of every frame thrown away, the
+desk gone, the stack of paper cut off at both ends" — and fixed it for a fresh
+load by giving each cut its own ratio. Nothing then asked what happens when the
+query changes after mount, and nothing since measured it.
+
+### The reason for reading it once does not hold
+
+Swapping the source does drop the playhead to zero and `duration` to NaN. It
+does not lose the position, because two things already in this effect put it
+back: the scroll subscription re-applies the wanted position on every change,
+and the `loadedmetadata` handler replays it for the case where the clip was
+still opening on arrival. The swap now calls the same scheduler, so the new cut
+opens on the frame the scroll is asking for.
+
+It is guarded on the cut it last applied, so a resize that does not cross 768px
+costs nothing and a rotation never re-downloads a clip it is already playing.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| Negative control | the component set aside with `git stash`, the gate re-run against the unfixed build: **9 assertions failed**, naming `film.mp4 in a 218x388 box` and `68.4% of every frame is cropped away`. The two journeys that do not cross 768px passed, which is what says the gate is measuring the crossing and not the width |
+| After the fix | every journey carries the matching cut. 0% thrown away on all three phone journeys |
+| The wide journey | 10%, which is the desktop composition: a 16/9 cut in a 16/10 box, and has been since the chapter was built. The gate budgets 3% for the phone box and 12% for the wide one — a wrong cut measures 68% and 65%, so neither can hide under either number |
+| Photographed | the same journey, before and after, at 390 |
+| The suite | 25 met, 0 unmet |
+
+### What this does not claim
+
+The scrub itself was not re-timed. The film's own pacing against the copy is
+what G10 and G18 measure and they are unchanged. What was measured here is which
+picture is in the box, and how much of it survives.

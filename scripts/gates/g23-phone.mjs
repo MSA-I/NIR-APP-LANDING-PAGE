@@ -367,4 +367,97 @@ for (const viewport of PHONES) {
   }
 }
 
+// ------------------------------------------------- chapter 01, across a switch
+//
+// The film ships two renders: film.mp4 at 1920x1080 and film-m.mp4 at 810x1440.
+// The stylesheet gives the element a 16/10 box above 768px and a 9/16 box below
+// it, and the element is `object-fit: cover`, so the wrong cut in the right box
+// is not letterboxed — it is cropped to a band out of the middle.
+//
+// Round eight fixed that for a fresh load in August. The query was read once at
+// mount, so it was still broken for every reader who CHANGED width afterwards:
+// a rotation, a resized window, or the "desktop site" switch a phone browser
+// offers. Loading at 1440 and switching to 390 put film.mp4 in a 218x388 box
+// with 68.4% of every frame thrown away; the other direction threw away 64.8%.
+// The owner reported it on 28.08.2026 as the film being cut.
+{
+  const FILM = () => {
+    const v = document.querySelector('.film-video')
+    if (!v) return null
+    const r = v.getBoundingClientRect()
+    const boxRatio = r.width / r.height
+    const vidRatio = v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : null
+    const keep = vidRatio ? (boxRatio > vidRatio ? vidRatio / boxRatio : boxRatio / vidRatio) : null
+    return {
+      src: (v.currentSrc || v.src || '').split('/').pop() || '(none)',
+      poster: (v.poster || '').split('/').pop() || '(none)',
+      natural: v.videoWidth + 'x' + v.videoHeight,
+      box: r.width.toFixed(0) + 'x' + r.height.toFixed(0),
+      // The share of every frame the box throws away. Zero is the two cuts
+      // agreeing; 68 is the fault above.
+      thrownAwayPct: keep == null ? null : +((1 - keep) * 100).toFixed(1),
+      phone: matchMedia('(max-width: 767px)').matches,
+    }
+  }
+
+  const journeys = [
+    { name: 'straight to 390', from: [390, 844], to: null, phone: true },
+    { name: '1440 then 390', from: [1440, 900], to: [390, 844], phone: true },
+    { name: '1024 then 390', from: [1024, 900], to: [390, 844], phone: true },
+    { name: '390 then 1440', from: [390, 844], to: [1440, 900], phone: false },
+    { name: '390 then 360 (no crossing)', from: [390, 844], to: [360, 780], phone: true },
+  ]
+
+  for (const j of journeys) {
+    await withPage(
+      async (page) => {
+        if (j.to) {
+          await page.setViewportSize({ width: j.to[0], height: j.to[1] })
+          await page.waitForTimeout(900)
+        }
+        // Stand in the middle of the chapter, where a reader is when they turn
+        // the phone over, and give the swapped clip time to open.
+        await page.evaluate(() => {
+          const s = document.querySelector('[data-film]')
+          const r = s.getBoundingClientRect()
+          scrollTo(0, r.top + scrollY + r.height * 0.3)
+        })
+        await page.waitForTimeout(1600)
+        const m = await page.evaluate(FILM)
+        const tag = `film, ${j.name}`
+
+        c.ok(Boolean(m), `${tag}: no film element`)
+        if (!m) return
+        c.ok(m.phone === j.phone, `${tag}: the query says phone=${m.phone}, expected ${j.phone}`)
+        c.ok(
+          m.src === (j.phone ? 'film-m.mp4' : 'film.mp4'),
+          `${tag}: the element is playing ${m.src} in a ${m.box} box`
+        )
+        c.ok(
+          m.poster === (j.phone ? 'film-m.webp' : 'film.webp'),
+          `${tag}: the poster is ${m.poster}`
+        )
+        // The measurement that does not care which file it is: how much of the
+        // picture survives the box.
+        //
+        // The two budgets are different because the two compositions are.
+        // The phone box is 9/16 and the phone cut is 810x1440, which IS 9/16,
+        // so anything above a rounding error there means the wrong file is in
+        // the box. The wide box is 16/10 by design and the wide cut is 16/9,
+        // so 10% off the width is the desktop framing and has been since the
+        // chapter was built — measured at 10.0% on 28.08.2026. The budget is
+        // 12% to leave the rounding room and nothing else: a wide cut wrongly
+        // dropped into the phone box measures 68%, and a phone cut in the wide
+        // box measures 65%, so neither can hide under either number.
+        const budget = j.phone ? 3 : 12
+        c.ok(
+          m.thrownAwayPct != null && m.thrownAwayPct <= budget,
+          `${tag}: ${m.thrownAwayPct}% of every frame is cropped away, over a ${budget}% budget (${m.natural} into ${m.box})`
+        )
+      },
+      { viewport: { width: j.from[0], height: j.from[1] } }
+    )
+  }
+}
+
 c.report()
