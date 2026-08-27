@@ -1669,11 +1669,22 @@
 }
 .voice-card--centre .voice-card__by b { color: var(--color-ink); }
 
+/* The pair sat off-centre, by exactly its own width, and it took a second look
+   to see why: `inset-inline-start: 50%` resolves to `right: 50%` on this page,
+   so the cluster's RIGHT edge was on the centre line, and `translate: -50%`
+   then pushed it further left instead of pulling it back. The percentage
+   translate is a physical axis wearing a logical property's clothes, and the
+   sign it needs depends on which way the page runs.
+
+   `inset-inline: 0` with `margin-inline: auto` centres without knowing the
+   direction at all, which is the only version of this that cannot be wrong in
+   one locale and right in the other. */
 .voices-rail__controls {
   position: absolute;
   inset-block-end: 0.5rem;
-  inset-inline-start: 50%;
-  translate: -50% 0;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: fit-content;
   display: flex;
   gap: 0.5rem;
   z-index: 20;

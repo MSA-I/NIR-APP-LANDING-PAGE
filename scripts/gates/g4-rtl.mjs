@@ -10,7 +10,7 @@
 
 import { readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
-import { ROOT, checker } from './lib.mjs'
+import { ROOT, checker, withPage } from './lib.mjs'
 
 const c = checker('G4')
 
@@ -152,5 +152,73 @@ for (const file of sourceFiles) {
   )
 }
 c.note(`${sourceFiles.length} component file(s) scanned`)
+
+// -------------------------------------------------------------- rendered --
+// Both halves above read text, and text is not where this one hid.
+//
+// The quotes carousel centred its two controls with `inset-inline-start: 50%`
+// and `translate: -50% 0`. Every token in that pair is spelled logically and
+// the scanner had nothing to say about it, but a PERCENTAGE TRANSLATE is a
+// physical axis wearing a logical property's clothes: `inset-inline-start`
+// resolved to `right: 50%` here, so the cluster's right edge sat on the centre
+// line and the translate pushed it further left instead of pulling it back.
+// It shipped a full cluster-width off centre, and the owner found it by eye.
+//
+// So this half MEASURES instead of reading, and it asserts the two things a
+// stylesheet cannot promise.
+await withPage(async (page) => {
+  const rail = await page.$('.voices-rail')
+  if (!rail) {
+    c.ok(false, 'the quotes rail is not on the page')
+    return
+  }
+  await page.$eval('.voices-rail', (el) => el.scrollIntoView({ block: 'center' }))
+  await page.waitForTimeout(400)
+
+  const seen = await page.evaluate(() => {
+    const railBox = document.querySelector('.voices-rail').getBoundingClientRect()
+    const cluster = document.querySelector('.voices-rail__controls').getBoundingClientRect()
+    const buttons = [...document.querySelectorAll('.voices-rail__controls button')]
+      .map((b) => ({
+        x: b.getBoundingClientRect().left,
+        icon: b.querySelector('svg')?.getAttribute('class') || '',
+        label: b.getAttribute('aria-label') || '',
+      }))
+      .sort((a, b) => a.x - b.x)
+    return {
+      off: cluster.left + cluster.width / 2 - (railBox.left + railBox.width / 2),
+      buttons,
+    }
+  })
+
+  // Centred, measured rather than declared. A sign error in either direction
+  // moves this by the cluster's own width and cannot round to nothing.
+  c.ok(
+    Math.abs(seen.off) <= 2,
+    `the carousel controls sit ${Math.round(seen.off)}px off the centre of their rail`
+  )
+
+  // The arrows point outward. This is the one statement about them that is true
+  // in BOTH directions: in Hebrew the left chevron is "next" and in English it
+  // is "previous", but either way the control on the left points left and the
+  // control on the right points right. Two arrows aimed at each other is the
+  // shape the bug had, and it is what this refuses.
+  c.ok(seen.buttons.length === 2, `the carousel should have two controls, it has ${seen.buttons.length}`)
+  if (seen.buttons.length === 2) {
+    const [start, end] = seen.buttons
+    c.ok(
+      /chevron-left/.test(start.icon),
+      `the control on the left points the wrong way: ${start.icon} ("${start.label}")`
+    )
+    c.ok(
+      /chevron-right/.test(end.icon),
+      `the control on the right points the wrong way: ${end.icon} ("${end.label}")`
+    )
+  }
+  c.note(
+    `controls centred within ${Math.abs(Math.round(seen.off))}px; ` +
+      seen.buttons.map((b) => `${b.icon.replace(/lucide\s*/g, '')} "${b.label}"`).join(' | ')
+  )
+})
 
 c.report()

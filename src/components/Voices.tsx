@@ -173,14 +173,21 @@ export function Voices({
               />
             )
           })}
+          {/* Leftwards is forwards in Hebrew, so "next" is a LEFT chevron and
+              "previous" is a right one. That part was already right.
+
+              What was wrong is the ORDER. This is a flex row inside a page that
+              runs right to left, so the first child is laid out on the RIGHT.
+              With next written first, the left chevron landed on the right and
+              the right chevron on the left, and the two arrows pointed at each
+              other. An arrow has to point the way it takes you, so previous
+              goes first and next follows it. */}
           <div className="voices-rail__controls">
-            {/* Leftwards is forwards in Hebrew, so the arrows are swapped
-                against the catalogue's and the labels go with them. */}
-            <button type="button" onClick={() => move(1)} aria-label="הציטוט הבא">
-              <ChevronLeft aria-hidden="true" />
-            </button>
             <button type="button" onClick={() => move(-1)} aria-label="הציטוט הקודם">
               <ChevronRight aria-hidden="true" />
+            </button>
+            <button type="button" onClick={() => move(1)} aria-label="הציטוט הבא">
+              <ChevronLeft aria-hidden="true" />
             </button>
           </div>
         </div>

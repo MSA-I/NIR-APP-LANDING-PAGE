@@ -727,3 +727,78 @@ evening building an English locale, a language switcher, new display faces, an
 OG image, a sitemap and five gates of its own, in the shared tree. Both lines of
 work touch `index.html`, `src/App.tsx` and `src/content/extra.ts`, and neither
 has seen the other.
+
+---
+
+## Round twelve, part three — two arrows pointing at each other, 27.08.2026
+
+The owner: „החיצים של הפתקים לא מסודרים בצורה טובה". Two defects in one control,
+and the second was hiding behind the first.
+
+### The arrows
+
+The chevrons were already the right way round for Hebrew: leftwards is forwards,
+so "next" is a left chevron. What was wrong is the ORDER they were written in.
+The controls are a flex row on a page that runs right to left, so the FIRST
+child lands on the RIGHT. With next written first, the left chevron rendered on
+the right and the right chevron on the left, and the two arrows pointed at each
+other.
+
+Previous is written first now. An arrow has to point the way it takes you.
+
+### The centring, which nothing had noticed
+
+```css
+inset-inline-start: 50%;
+translate: -50% 0;
+```
+
+Every token there is spelled logically, which is exactly why G4's scanner had
+nothing to say about it: it reads text, and the text is clean. But a PERCENTAGE
+TRANSLATE is a physical axis wearing a logical property's clothes. On this page
+`inset-inline-start` resolves to `right: 50%`, so the cluster's right edge sat
+on the centre line, and the translate then pushed it further left instead of
+pulling it back.
+
+Measured after the fix was reverted to prove the point: **117px off centre,
+which is the cluster's own width.** It shipped that way and was found by eye.
+
+`inset-inline: 0` with `margin-inline: auto` centres without knowing the
+direction at all. That matters more than usual this week: a second session is
+adding an English locale, and a sign-flipped translate is the kind of repair
+that is correct in one direction and wrong in the other.
+
+### G4 grew a rendered half
+
+The gate was two text scanners. It now also opens the page, because the bug it
+missed was not in any text. Two assertions:
+
+1. The controls are centred on their rail, within 2px. A sign error moves this
+   by the cluster's own width and cannot round to nothing.
+2. The arrows point OUTWARD: the control on the left shows a left chevron, the
+   one on the right shows a right chevron. This is the only statement about them
+   that is true in both directions. In Hebrew the left chevron is "next"; in
+   English it will be "previous"; in neither should the two point at each other.
+
+Both were verified the way this repository verifies a negative: the bugs were
+put back, the page rebuilt, and the gate run.
+
+```
+FAIL  the carousel controls sit -117px off the centre of their rail
+FAIL  the control on the left points the wrong way: lucide-chevron-right ("הציטוט הקודם")
+FAIL  the control on the right points the wrong way: lucide-chevron-left ("הציטוט הבא")
+```
+
+Then both were restored and the suite run again: 13 met, 0 unmet.
+
+### What this cost, and what it says
+
+G4 went from 0.9s to about 10s, because it now serves the page. That is the
+price of the gate measuring its own claim rather than reading a stylesheet and
+believing it.
+
+The honest note: `translate: -50%` for centring appears twice more in this
+stylesheet (lines 667 and 2067 at the time of writing). Neither is on an element
+positioned from an inline edge, so neither has this fault today. Nothing checks
+that, and if one of them is ever moved onto a logical inset it will break in
+exactly the same silent way.
