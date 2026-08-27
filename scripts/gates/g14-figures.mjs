@@ -102,34 +102,40 @@ await withPage(async (page) => {
     `data-plan-price moved with the switch; it must stay the monthly catalogue: ${stillMonthly.join(', ')}`
   )
 
-  await page.click('#plans [role="switch"]')
-
-  // Both branches hit this the same evening and both wrote a wait for it. The
-  // other one polled until every wanted price appeared SOMEWHERE in the cards
-  // and swallowed its own timeout with `.catch(() => {})`, which means a slow
-  // machine falls through to the scan mid-roll and the flake comes back wearing
-  // a fix. This one asserts the arrival exactly and is allowed to throw.
+  // The prices COUNT to the yearly figure over 520ms rather than cutting to
+  // it, so for half a second after the click the page shows amounts that are
+  // in no catalogue. A fixed wait races that animation: this gate failed about
+  // one run in three, with a different set of amounts every time ("275, 993,
+  // 1,790", then "502, 1,814, 3,270", then "129, 466, 840"), each of them the
+  // same fraction of the three yearly prices. That reads like a pricing bug and
+  // is a stopwatch bug.
   //
-  // The prices COUNT from one catalogue to the other, over 520ms of
-  // requestAnimationFrame. A fixed 700ms wait here was a bet on how busy the
-  // machine is, and during a full thirteen-gate run on 27.08.2026 it lost: the
-  // scan below reported 237, 856 and 1,543 as unrecognised amounts on the page.
-  // They are not amounts. They are one rolling digit photographed mid-roll, and
-  // the gate was reading a frame rather than a price.
+  // Read the amounts with the animation switched off at the source.
   //
-  // Sampling the text twice and calling it settled when the two agree is not
-  // enough either: under a starved requestAnimationFrame the digit can sit
-  // still across two polls and then carry on. So wait for the ARRIVAL instead,
-  // by name: every priced card reads its monthly figure and nothing else.
-  await page.waitForFunction(
-    (want) => {
-      const shown = [...document.querySelectorAll('#plans .plan-card__price')]
-        .map((e) => (e.textContent || '').replace(/\s+/g, ' ').trim())
-        .filter((t) => /\d/.test(t))
-      return JSON.stringify(shown) === JSON.stringify(want)
+  // Three attempts to wait it out all failed about one run in five, each time
+  // reporting a different set of amounts that were the same fraction of the
+  // three yearly prices ("275, 993, 1,790" ... "661, 2,386, 4,302"). The last
+  // of those waited for two identical readings in a row and STILL caught a
+  // moving number, because the count runs on requestAnimationFrame and under
+  // headless SwiftShader a frame can be later than the poll.
+  //
+  // `Amount` in PlansChapter already has an exact answer for this: under
+  // `prefers-reduced-motion` it sets the figure outright instead of counting.
+  // So the catalogue is read in a second context with reduced motion on, where
+  // there is no animation to race. Nothing about the published figures depends
+  // on how they arrive.
+  const amounts = await withPage(
+    async (calm) => {
+      await calm.evaluate(() => document.querySelector('#plans').scrollIntoView())
+      await calm.click('#plans [role="switch"]')
+      await calm.waitForTimeout(300)
+      return calm.evaluate(() => [
+        ...new Set(
+          [...document.body.innerText.matchAll(/([\d][\d,]*\.?\d*)\s*₪/g)].map((m) => m[1])
+        ),
+      ])
     },
-    WANT_MONTHLY,
-    { timeout: 15000 }
+    { reducedMotion: 'reduce' }
   )
 
   // No other amount anywhere on the page. Everything with a shekel sign is
@@ -139,12 +145,9 @@ await withPage(async (page) => {
     '2,884.50', '4,720.00', '2,832.00', '17,825', // quoted off the captures
     '69', '249', '449', '690', '2,490', '4,490', // the catalogue
   ])
-  const amounts = await page.evaluate(() =>
-    [...document.body.innerText.matchAll(/([\d][\d,]*\.?\d*)\s*₪/g)].map((m) => m[1])
-  )
-  const strays = [...new Set(amounts)].filter((a) => !KNOWN.has(a))
+  const strays = amounts.filter((a) => !KNOWN.has(a))
   c.ok(strays.length === 0, `unrecognised amount(s) on the page: ${strays.join(', ')}`)
-  c.note(`${new Set(amounts).size} distinct amounts, all accounted for`)
+  c.note(`${amounts.length} distinct amounts, all accounted for`)
 
   // A plan that carries no figure has no self-serve path, and must not offer
   // one. Until 27.08.2026 every card took the page's primary call, so the

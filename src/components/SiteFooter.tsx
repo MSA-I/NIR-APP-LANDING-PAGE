@@ -31,6 +31,7 @@ export function SiteFooter({
   tagline,
   rights,
   cols,
+  more,
   marquee,
   topLabel,
 }: {
@@ -38,6 +39,15 @@ export function SiteFooter({
   tagline: string
   rights: string
   cols: Col[]
+  /**
+   * The supporting pages.
+   *
+   * Passed in rather than read from he.ts, which g2 freezes at build 3's
+   * wording. They live here because this is the only place on the home page
+   * that can link them: without a link from the page that has the authority,
+   * six documents in the sitemap are six documents nobody arrives at.
+   */
+  more?: Col
   /** Short phrases for the diagonal strip. The chapter titles, so it says what the page said. */
   marquee: string[]
   /** Accessible name for the return-to-top control: the title page's own folio. */
@@ -85,7 +95,7 @@ export function SiteFooter({
           <p className="footer-tagline">{tagline}</p>
 
           <nav aria-label={cols[0].h} className="footer-nav">
-            {cols.map((c) => (
+            {[...cols, ...(more ? [more] : [])].map((c) => (
               <div key={c.h} className="footer-nav__group">
                 <p className="footer-nav__label">{c.h}</p>
                 <ul className="footer-pills">

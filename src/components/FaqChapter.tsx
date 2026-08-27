@@ -10,9 +10,8 @@
 // state at all. Everything the owner asked for here is paint, and paint does
 // not need the component underneath it to change.
 
-import { useReducedMotion } from 'motion/react'
 import type { MouseEvent } from 'react'
-import { Html, Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
+import { Html, Reveal, RevealGroup, RevealItem, SplitHeading, useCalm } from '@/lib/motion'
 
 type Item = { q: string; a: string }
 
@@ -27,7 +26,7 @@ export function FaqChapter({
   lede: string
   items: Item[]
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
 
   const trackGlow = (event: MouseEvent<HTMLDivElement>) => {
     if (calm) return

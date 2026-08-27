@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs && node scripts/build-sitemap.mjs",
     "preview": "vite preview --port 4500",
     "serve": "vite preview --port 4500",
-    "gates": "node scripts/gates/all.mjs"
+    "gates": "node scripts/gates/all.mjs",
+    "og": "node scripts/build-og.mjs",
+    "faststart": "node scripts/faststart.mjs"
   },
   "dependencies": {
     "@paper-design/shaders-react": "^0.0.80",

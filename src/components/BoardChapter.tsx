@@ -7,15 +7,15 @@
 // first thing the owner sees in the product itself.
 
 import { useEffect, useRef, useState } from 'react'
-import { useInView, useReducedMotion } from 'motion/react'
+import { useInView } from 'motion/react'
 import { Cta } from './Cta'
-import { Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
+import { Reveal, RevealGroup, RevealItem, SplitHeading, useCalm } from '@/lib/motion'
 
 type Stat = { v: string; l: string }
 
 /** Counts the leading integer of a figure up, and leaves the rest alone. */
 function Figure({ value }: { value: string }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const ref = useRef<HTMLParagraphElement>(null)
   const seen = useInView(ref, { once: true, amount: 0.6 })
   const [shown, setShown] = useState(calm ? value : null)

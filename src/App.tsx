@@ -6,7 +6,8 @@
 // thing this rebuild was not allowed to change is what the page says.
 
 import { useEffect } from 'react'
-import { contentByLocale, extraByLocale, localeFromPath } from '@/content/locales'
+import { contentByLocale, extraByLocale, localeFromPath, type LocaleCode } from '@/content/locales'
+import site from '@/content/pages'
 import { Announcement } from '@/components/Announcement'
 import { Folio } from '@/components/Folio'
 import { TitlePage } from '@/components/TitlePage'
@@ -23,8 +24,11 @@ import { CloseChapter } from '@/components/CloseChapter'
 import { SiteFooter } from '@/components/SiteFooter'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
-export default function App() {
-  const locale = localeFromPath(window.location.pathname)
+// `locale` is passed in by the static render in src/entry-static.tsx, which
+// runs in Node, where there is no `window` to read a path off. In the browser
+// nobody passes it and the path decides, exactly as before.
+export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
+  const locale = given ?? localeFromPath(window.location.pathname)
   const t = contentByLocale[locale]
   const x = extraByLocale[locale]
   const direction = t.dir as 'rtl' | 'ltr'
@@ -198,6 +202,10 @@ export default function App() {
         tagline={t.footer.tagline}
         rights={t.footer.rights}
         cols={t.footer.cols}
+        more={{
+          h: 'להעמיק',
+          links: site.pages.map((p) => ({ t: p.eyebrow, href: `/${p.slug}/` })),
+        }}
         marquee={t.title_page.index.map((c) => c.t)}
         topLabel={t.title_page.folio}
       />

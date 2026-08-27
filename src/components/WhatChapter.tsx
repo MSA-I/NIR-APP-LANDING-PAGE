@@ -13,9 +13,9 @@
 // lands mirrored, which is what the first cut of build 3 did.
 
 import { useId, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import NAV from '@/data/demo-nav.json'
-import { Html, Reveal, SplitHeading } from '@/lib/motion'
+import { Html, Reveal, SplitHeading, useCalm } from '@/lib/motion'
 
 type Step = { k: string; t: string; p: string; img: string; cap: string }
 type Hot = { label: string; x: number; y: number; w: number; h: number }
@@ -52,12 +52,8 @@ export function WhatChapter({
   screenAltSuffix: string
 }) {
   const [at, setAt] = useState(0)
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const uid = useId()
-  const step = steps[at]
-  const hots = ((NAV as Record<string, Hot[]>)[navKey(step.img)] || []).filter(
-    (n) => n.label in NAV_STEP,
-  )
 
   return (
     <section id="what" data-folio={folio} className="pt-[clamp(2rem,6vh,4rem)]">
@@ -125,60 +121,82 @@ export function WhatChapter({
           </Reveal>
           <p className="cap mt-3">{demoHint}</p>
 
-          <div className="mt-[clamp(2rem,4vh,3rem)]">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={at}
-                id={`${uid}-panel-${at}`}
-                role="tabpanel"
-                aria-labelledby={`${uid}-tab-${at}`}
-                initial={calm ? false : { opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={calm ? undefined : { opacity: 0, y: -10 }}
-                transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-                className="grid gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-12"
-              >
-                <div className="self-center">
-                  <h3 className="h-step mb-3">{step.t.replace(/&nbsp;/g, ' ')}</h3>
-                  <Html html={step.p} className="body max-w-[46ch]" />
-                </div>
+          {/* All five panels are in the document; the four that are not
+              selected carry `hidden`.
 
-                <figure className="m-0">
-                  <div className="relative overflow-clip rounded-[10px] border border-wheat-line bg-white shadow-[0_30px_70px_-40px_rgba(10,23,29,0.55)]">
-                    <img
-                      src={`/${step.img}`}
-                      alt={`${step.t.replace(/&nbsp;/g, ' ')}. ${screenAltSuffix}`}
-                      width={2000}
-                      height={1334}
-                      loading={at === 0 ? 'eager' : 'lazy'}
-                      decoding="async"
-                      className="w-full"
-                    />
-                    <div aria-hidden="true">
-                      {hots.map((n) => (
-                        <button
-                          key={n.label}
-                          type="button"
-                          tabIndex={-1}
-                          title={n.label}
-                          onClick={() => setAt(NAV_STEP[n.label])}
-                          className="absolute rounded-[4px] border border-transparent transition-[background-color,border-color] duration-300 hover:border-oceanic-deep hover:bg-[color-mix(in_srgb,var(--color-oceanic)_22%,transparent)]"
-                          style={{
-                            insetInlineStart: `${(
-                              dir === 'rtl' ? 100 - (n.x + n.w) * 100 : n.x * 100
-                            ).toFixed(3)}%`,
-                            insetBlockStart: `${(n.y * 100).toFixed(3)}%`,
-                            inlineSize: `${(n.w * 100).toFixed(3)}%`,
-                            blockSize: `${(n.h * 100).toFixed(3)}%`,
-                          }}
-                        />
-                      ))}
-                    </div>
+              Until 27.08.2026 this was an AnimatePresence keyed on the active
+              index, so exactly ONE panel existed at a time and the others were
+              a src swap on a single <img>. The SEO audit measured the result:
+              clicking through every station never raised the image count on the
+              page above two. Five real screenshots of the product, with five
+              written alt texts, existed for nobody, and for a crawler that does
+              not execute JavaScript the chapter had one picture in it.
+
+              Rendering all five costs nothing to load: `hidden` is display:none,
+              and a lazy image inside display:none is never fetched. It also
+              happens to be the correct tabs pattern, where the panels exist and
+              the inactive ones are hidden rather than destroyed. */}
+          <div className="mt-[clamp(2rem,4vh,3rem)]">
+            {steps.map((s, i) => {
+              const on = i === at
+              const panelHots = ((NAV as Record<string, Hot[]>)[navKey(s.img)] || []).filter(
+                (n) => n.label in NAV_STEP,
+              )
+              const title = s.t.replace(/&nbsp;/g, ' ')
+              return (
+                <motion.div
+                  key={s.k}
+                  id={`${uid}-panel-${i}`}
+                  role="tabpanel"
+                  aria-labelledby={`${uid}-tab-${i}`}
+                  hidden={!on}
+                  initial={false}
+                  animate={calm ? false : on ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
+                  transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                  className="grid gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-12"
+                >
+                  <div className="self-center">
+                    <h3 className="h-step mb-3">{title}</h3>
+                    <Html html={s.p} className="body max-w-[46ch]" />
                   </div>
-                  <Html html={step.cap} className="cap pt-3" />
-                </figure>
-              </motion.div>
-            </AnimatePresence>
+
+                  <figure className="m-0">
+                    <div className="relative overflow-clip rounded-[10px] border border-wheat-line bg-white shadow-[0_30px_70px_-40px_rgba(10,23,29,0.55)]">
+                      <img
+                        src={`/${s.img}`}
+                        alt={`${title}. ${screenAltSuffix}`}
+                        width={2000}
+                        height={1334}
+                        loading={i === 0 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        className="w-full"
+                      />
+                      <div aria-hidden="true">
+                        {panelHots.map((n) => (
+                          <button
+                            key={n.label}
+                            type="button"
+                            tabIndex={-1}
+                            title={n.label}
+                            onClick={() => setAt(NAV_STEP[n.label])}
+                            className="absolute rounded-[4px] border border-transparent transition-[background-color,border-color] duration-300 hover:border-oceanic-deep hover:bg-[color-mix(in_srgb,var(--color-oceanic)_22%,transparent)]"
+                            style={{
+                              insetInlineStart: `${(
+                                dir === 'rtl' ? 100 - (n.x + n.w) * 100 : n.x * 100
+                              ).toFixed(3)}%`,
+                              insetBlockStart: `${(n.y * 100).toFixed(3)}%`,
+                              inlineSize: `${(n.w * 100).toFixed(3)}%`,
+                              blockSize: `${(n.h * 100).toFixed(3)}%`,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <Html html={s.cap} className="cap pt-3" />
+                  </figure>
+                </motion.div>
+              )
+            })}
           </div>
         </div>
       </div>

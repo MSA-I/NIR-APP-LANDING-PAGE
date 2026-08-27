@@ -23,9 +23,9 @@
 // somebody else's.
 
 import { Minus, Plus } from 'lucide-react'
-import { useReducedMotion } from 'motion/react'
+
 import type { MouseEvent } from 'react'
-import { Reveal, RevealGroup, RevealItem, Say, SplitHeading } from '@/lib/motion'
+import { Reveal, RevealGroup, RevealItem, Say, SplitHeading, useCalm } from '@/lib/motion'
 
 type Row = { t: string; p: string }
 
@@ -104,7 +104,7 @@ export function WhyChapter({
   noLabel: string
   no: Row[]
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
 
   const trackGlow = (event: MouseEvent<HTMLElement>) => {
     if (calm) return

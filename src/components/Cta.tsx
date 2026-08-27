@@ -19,8 +19,9 @@
 // interaction rather than a second one competing with the flow.
 
 import { ArrowLeft } from 'lucide-react'
-import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
+import { motion, useMotionValue, useSpring } from 'motion/react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCalm } from '@/lib/motion'
 
 const SPRING = { damping: 26, stiffness: 340, mass: 0.6 }
 
@@ -33,7 +34,7 @@ export function Magnetic({
   pull?: number
   className?: string
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const ref = useRef<HTMLDivElement>(null)
   const [armed, setArmed] = useState(false)
   const x = useMotionValue(0)

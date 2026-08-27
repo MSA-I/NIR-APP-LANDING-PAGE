@@ -36,8 +36,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useReducedMotion } from 'motion/react'
-import { Reveal, SplitHeading } from '@/lib/motion'
+
+import { Reveal, SplitHeading, useCalm } from '@/lib/motion'
 
 type Voice = { q: string; who: string; of: string }
 
@@ -116,7 +116,7 @@ export function Voices({
   nextLabel: string
   previousLabel: string
 }) {
-  const calm = !!useReducedMotion()
+  const calm = useCalm()
   const [size, setSize] = useState(340)
   const [order, setOrder] = useState(() => items.map((v, i) => ({ ...v, key: i })))
   // Every rotation mints a new key so React re-mounts the card at its new

@@ -11,10 +11,10 @@
 // second action is not a new ask, it is the page's own first section link, so
 // a reader who is not ready to open an account still has somewhere to go.
 
-import { motion, useReducedMotion } from 'motion/react'
+import { motion } from 'motion/react'
 import { ShaderBackground } from './ShaderBackground'
 import { Cta } from './Cta'
-import { Html, Reveal, RevealGroup, RevealItem, Say, SplitHeading } from '@/lib/motion'
+import { Html, Reveal, RevealGroup, RevealItem, Say, SplitHeading, useCalm } from '@/lib/motion'
 
 type Index = { n: string; t: string; d: string }
 
@@ -43,7 +43,7 @@ export function TitlePage({
   fineprint: string
   dir: 'rtl' | 'ltr'
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
 
   return (
     <section

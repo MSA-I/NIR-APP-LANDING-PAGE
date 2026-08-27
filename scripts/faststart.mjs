@@ -101,6 +101,7 @@ const same = (a, b) =>
   a.codec === b.codec &&
   Math.abs(a.duration - b.duration) < 0.01
 
+function main() {
 let changed = 0
 let failed = 0
 
@@ -149,3 +150,11 @@ for (const rel of FILMS) {
 
 console.log(`\n${changed} remuxed, ${failed} refused, of ${FILMS.length}`)
 process.exitCode = failed ? 1 : 0
+}
+
+// Only when run as a command. scripts/gates/g18-film.mjs imports `atomOrder`
+// and `isFaststart` from here to read the layout of the shipped files, and a
+// gate that remuxed the thing it was measuring would be worthless.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main()
+}
