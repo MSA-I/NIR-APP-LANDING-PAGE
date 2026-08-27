@@ -54,26 +54,34 @@ export default {
     placeholder: true,
     folioless: true,
     eyebrow: 'איך זה נשמע כשזה עובד',
-    h2: 'שלוש דוגמאות למה שהמערכת&nbsp;משנה',
+    h2: 'חמש דוגמאות למה שהמערכת&nbsp;משנה',
     disclosure:
       'הציטוטים כאן הם דוגמאות ניסוח שנכתבו על ידינו, לא לקוחות. כל אחד מהם מתאר התנהגות שקיימת במערכת היום. הם יוחלפו בהמלצות אמיתיות אחרי ההשקה.',
-    // Round twelve, 27.08.2026. Five became three, and the three were rewritten.
+    // Round twelve, 27.08.2026. All five were rewritten; the section moved below
+    // the prices. It briefly went down to three and the owner put it back to
+    // five the same day, so the count here is his and the writing is the work.
     //
-    // The old five were the problem a disclosure cannot fix: every one of them
-    // was a clean, complete, on-message sentence, which is the one thing people
-    // do not sound like. A written example that reads as marketing copy makes
-    // the disclosure above it look like an excuse.
+    // What was wrong with the old five is the problem a disclosure cannot fix:
+    // every one of them was a clean, complete, on-message sentence, which is the
+    // one thing people do not sound like. A written example that reads as
+    // marketing copy makes the disclosure above it look like an excuse.
     //
     // What changed in the writing, and nothing else did: each one now carries a
     // detail that serves no argument (the driver still standing there, the note
-    // remembered on Thursday), and the first admits that the thing it praises is
-    // annoying in the moment. No new capability is claimed in any of them; every
+    // remembered on Thursday, the ten minutes of scrolling that found nothing),
+    // and two of them admit that the thing they praise was irritating before it
+    // was reassuring. No new capability is claimed in any of them; every
     // behaviour described is on this page already.
     items: [
       {
         q: 'פעם הייתי מגלה את הפער בסוף החודש, כשכבר שילמתי. עכשיו החשבונית נתקעת לי לפני התשלום ואני צריך להחליט מה עושים איתה. ברגע הראשון זה מעצבן. אחר כך זה בדיוק מה שרציתי.',
         who: 'בעלים',
         of: 'מסעדה עם שני סניפים',
+      },
+      {
+        q: 'כל הזמנה יוצאת עם מספר ועם מחירון. פעם הייתי גולל בוואטסאפ עשר דקות כדי להיזכר מה בדיוק סוכם, ובחצי מהפעמים גם לא מצאתי.',
+        who: 'מנהל רכש',
+        of: 'רשת בתי קפה',
       },
       {
         q: 'אני מסמנת מה הגיע מהטלפון, ליד דלת הקבלה, כשהנהג עוד עומד שם. פעם זה היה פתק בכיס שנזכרתי בו ביום חמישי.',
@@ -84,6 +92,11 @@ export default {
         q: 'מגיעות אליי רק חשבוניות שאושרו. אני משלם, מעלה אסמכתה, וזהו. מה שלא אושר לא מגיע אליי בכלל, וזה חסך לי בעיקר טלפונים.',
         who: 'רואה חשבון',
         of: 'משרד חיצוני',
+      },
+      {
+        q: 'מה שהכי שינה זה שאני מאשר ומישהו אחר מעביר. בהתחלה הרגיז אותי שאין דרך לעקוף כשדחוף. היום זה הדבר שאני הכי סומך עליו.',
+        who: 'בעלים',
+        of: 'עסק מזון',
       },
     ],
   },
@@ -165,16 +178,16 @@ export default {
   // is built on shadcn primitives this project does not have and should not
   // acquire for one form.
   //
-  // ENDPOINT: `action` is where a submission actually goes. It is the one thing
-  // on this page that cannot be verified from the repository, and it is set to
-  // the address below on the owner's domain. If that mailbox does not exist,
-  // this form silently drops enquiries, which is worse than the button it
-  // replaced. See COPY-PLAN.md.
+  // ENDPOINT: `action` is where a submission actually goes, and it is the one
+  // thing on this page that cannot be verified from the repository. The owner
+  // named the support mailbox on 27.08.2026. If it ever stops being monitored,
+  // this form drops enquiries in silence, which is worse than the button it
+  // replaced, so it is worth a look whenever the address changes.
   contact: {
     eyebrow: 'מסלול ביזנס',
     h2: 'ארגון עם מכסות והסדר&nbsp;משלו',
     lede: 'המסלול הזה נבנה מול העסק ולא נרכש מהמדף. השאירו פרטים ונחזור אליכם עם הצעה שמתאימה לכמות המסמכים ולמבנה ההרשאות שלכם.',
-    action: 'mailto:hello@inplace.digital',
+    action: 'mailto:support@inplace.digital',
     fields: {
       name: 'שם מלא',
       business: 'שם העסק',

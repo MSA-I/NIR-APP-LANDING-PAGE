@@ -651,7 +651,7 @@ the first document**).
 |---|---|---|
 | 1 | The ביזנס card asked for a free signup over a price of "בשיחה" | Each card now picks its ask from its own PRICE, not its index. `#contact` for the one with no figure, "להתחיל במסלול הזה" for the three with one, "להתחיל חינם" for the free tier |
 | 2 | The plans chapter was headed with the word "מסלולים" | `מתחילים בחינם. משלמים לפי כמות המסמכים.` — the one thing that separates the plans, said in the heading rather than only in the lede beneath it |
-| 3 | Five written-example quotes, above the prices | Three, below the prices, rewritten. The logo wall, which is real, now carries the proof before the ask |
+| 3 | Five written-example quotes, above the prices | Five, below the prices, all five rewritten. They went to three first and the owner put them back to five the same day; the move and the rewriting are what the finding was actually about. The logo wall, which is real, now carries the proof before the ask |
 | 4 | The search title promised the previous headline | `InPlace: בדיקת חשבוניות מול הזמנות, לפני התשלום`, in `index.html` and og:title |
 | 5 | No answer to how long onboarding takes | An eighth question, in `extra.ts` because `he.ts` fails G2 on an ADDED key rather than allowing it |
 | 6 | Every paid card asked for a free signup | Folded into 1 |
@@ -674,9 +674,10 @@ with the bundle blocked and it is keyboard and screen-reader operable without
 anything written here.
 
 **Its endpoint is the one claim in this repository that the repository cannot
-check.** `x.contact.action` is `mailto:hello@inplace.digital`. If that mailbox
-does not exist, the form drops enquiries silently, which is worse than the
-button it replaced.
+check.** `x.contact.action` is `mailto:support@inplace.digital`, named by the
+owner on 27.08.2026. Nothing here can tell whether that mailbox is monitored, so
+a form that stops being answered fails in silence, which is worse than the
+button it replaced. Worth a look whenever the address changes.
 
 ### Three gates stopped counting on their fingers
 
@@ -718,5 +719,11 @@ failing one run in three.
 
 ### Still open
 
-The contact form's endpoint, above. Nothing else from COPY-SUGGESTIONS.md
-remains.
+Nothing from COPY-SUGGESTIONS.md. The last open item was the contact form's
+destination, and the owner named it: `support@inplace.digital`.
+
+What is NOT closed by this branch is the merge. A second session spent the same
+evening building an English locale, a language switcher, new display faces, an
+OG image, a sitemap and five gates of its own, in the shared tree. Both lines of
+work touch `index.html`, `src/App.tsx` and `src/content/extra.ts`, and neither
+has seen the other.
