@@ -56,6 +56,16 @@ const APPROVED = [
     was: 'המסך שהסרט נגמר&nbsp;עליו, במלואו',
     now: 'ומרכז הבקרה שמעליה,&nbsp;במלואו',
   },
+  // The capability ladder of 28.08.2026. NIR-APP's 0213 migration reverses
+  // decision #196 — capabilities ARE gated by plan now — so the two leaves that
+  // told a reader the opposite had to move. No claim is added here: the ladder
+  // itself arrives as new copy in extra.ts, and these two only stop denying it.
+  {
+    at: 'plans.lede',
+    why: 'it promised that every capability is open on every plan, which NIR-APP 0213 (#274) reversed (28.08.2026)',
+    was: 'ההבדל בין המסלולים הוא כמה מסמכים המערכת קולטת בחודש. כל שאר היכולות פתוחות בכל מסלול.',
+    now: 'המסלולים נבדלים בכמות המסמכים בחודש, במספר האנשים שעובדים במערכת וביכולות שנפתחות. הטבלה שמתחת לכרטיסים מראה בדיוק מה כלול בכל אחד.',
+  },
   {
     at: 'plans.priceNote',
     why: 'the billing switch shows the yearly catalogue now; the note repeated it (26.08.2026)',
@@ -111,9 +121,9 @@ const APPROVED = [
   },
   {
     at: 'plans.h2',
-    why: 'the only heading on the page that was a label rather than a sentence, on the chapter that decides whether anybody pays. It now says the one thing that actually separates the plans, which its own lede already says underneath (27.08.2026)',
+    why: 'the only heading on the page that was a label rather than a sentence, on the chapter that decides whether anybody pays (27.08.2026). Moved again on 28.08.2026: it promised the price follows the document count alone, and NIR-APP 0213 (#274) turned the boolean entitlements into a ladder, so the count is no longer the only thing separating the plans',
     was: 'מסלולים',
-    now: 'מתחילים בחינם. משלמים לפי כמות&nbsp;המסמכים.',
+    now: 'מתחילים בחינם. עולים מסלול כשצריך&nbsp;יותר.',
   },
   {
     at: 'title',

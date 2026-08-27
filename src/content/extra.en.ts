@@ -74,6 +74,9 @@ const extraEn = {
       'A record of every sensitive financial action',
     ],
     yearly: ['No charge', '$200', '$790', '$1,490', 'Contact us'],
+    saveLabel: 'Two months free',
+    billedMonthly: 'Billed monthly',
+    billedYearly: 'Billed yearly, twelve months for ten',
   },
 
   // Each card asks for what it can actually give. The plan with no figure has
@@ -83,6 +86,130 @@ const extraEn = {
     paid: 'Start on this plan',
     contact: 'Talk to us',
     contactHref: '#contact',
+  },
+
+  // The ladder, translated. Its source is NIR-APP's 0213 migration and the two
+  // read models a browser may call; see extra.ts for what is published and what
+  // deliberately is not. The Hebrew labels there are the migration’s own public
+  // labels, so these are translations of those labels rather than new copy.
+  ladder: {
+    compareLabel: 'What every plan includes',
+    featuresHeader: 'Features',
+    included: 'Included',
+    absent: 'Not included',
+    contract: 'Per contract',
+    unlimited: 'Unlimited',
+    intro: '30-day introduction',
+    introNote: 'On the free plan the five marked capabilities are open for 30 days from email verification. After that they continue on Basic and above.',
+
+    cards: [
+      [
+        '20 documents per month',
+        'One user',
+        'Full chain: supplier, order, receipt, invoice and payment',
+        'Three roles with separation of duties',
+        'A 30-day introduction to the Basic capabilities',
+      ],
+      [
+        '40 documents per month',
+        'Up to 5 users',
+        'Automatic document reading',
+        'Full history',
+        'Excel exports and accountant reports',
+        'Email alerts and automations',
+      ],
+      [
+        '150 documents per month',
+        'Up to 15 users',
+        'Everything in Basic',
+        'Bank reconciliation',
+        'Accountant payment queue',
+        'Consolidated invoices',
+      ],
+      [
+        '375 documents per month',
+        'Up to 30 users',
+        'Up to 10 locations',
+        'Everything in Pro',
+        'Integrations with other systems',
+        'Extended support',
+      ],
+      [
+        'Document volume per contract',
+        'Unlimited users and locations',
+        'Every capability open',
+        'Your own permission structure',
+        'Extended support',
+      ],
+    ],
+
+    rows: [
+      {
+        icon: 'documents',
+        label: 'Documents per month',
+        cells: ['20', '40', '150', '375', 'Per contract'],
+      },
+      {
+        icon: 'users',
+        label: 'Active users',
+        cells: ['1', '5', '15', '30', 'Unlimited'],
+      },
+      {
+        icon: 'branches',
+        label: 'Locations',
+        cells: ['1', '1', '1', '10', 'Unlimited'],
+      },
+      {
+        icon: 'automation',
+        label: 'Automatic document reading',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'history',
+        label: 'Full history',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'export',
+        label: 'Excel exports and accountant reports',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'reports',
+        label: 'Supplier performance board',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'mail',
+        label: 'Email alerts and automations',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'bank',
+        label: 'Bank reconciliation',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'payments',
+        label: 'Accountant payment queue',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'invoices',
+        label: 'Consolidated invoices',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'api',
+        label: 'Integrations with other systems',
+        cells: [false, false, false, true, true],
+      },
+      {
+        icon: 'support',
+        label: 'Extended support',
+        cells: [false, false, false, true, true],
+      },
+    ],
   },
 
   // The eighth question. It lives here rather than in the frozen dictionary,

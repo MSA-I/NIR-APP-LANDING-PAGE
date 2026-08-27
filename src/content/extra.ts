@@ -136,6 +136,13 @@ export default {
     // and Business carries no figure, by decisions #201 and the free tier's
     // own wording.
     yearly: ['ללא עלות', '690 ₪', '2,490 ₪', '4,490 ₪', 'בשיחה'],
+    // The reference image of 28.08.2026 puts a saving badge on the billing
+    // control. Ours does not say a percentage: the yearly row in NIR-APP 0184 is
+    // TEN months of the monthly one by construction, so "two months free" is what
+    // the catalogue actually is rather than a rounded figure derived from it.
+    saveLabel: 'חודשיים חינם',
+    billedMonthly: 'חיוב חודשי',
+    billedYearly: 'חיוב שנתי, 12 חודשים במחיר 10',
   },
 
   // ------------------------------------------------- the plan cards' own asks
@@ -152,6 +159,161 @@ export default {
     paid: 'להתחיל במסלול הזה',
     contact: 'לדבר איתנו',
     contactHref: '#contact',
+  },
+
+  // ------------------------------------------------- what each plan actually is
+  // Round thirteen, 28.08.2026. Until now this page said the plans differ only in
+  // the document count and that every capability is open on every one of them.
+  // That was true of the catalogue as 0184 shipped it, and NIR-APP's 0213
+  // migration reversed it: OPEN-DECISIONS #274 turned the boolean entitlements
+  // into a ladder, and #276 gave a new Free organisation the Basic capability set
+  // for its first thirty days.
+  //
+  // EVERY LINE BELOW IS READ OFF THAT MIGRATION, and off the two read models it
+  // exposes to a browser rather than off the tables behind them:
+  //
+  //   get_public_plan_quotas()   documents.monthly, users.max, branches.max, and
+  //                              nothing else. `storage.bytes` is an internal
+  //                              safety ceiling (#200) and the OCR page dial
+  //                              stopped being a number anyone is sold (0208,
+  //                              #266), so neither is on this page.
+  //   get_public_plan_features() the eleven published capability rows, in the
+  //                              display order and with the public labels the
+  //                              migration itself carries. The wording here is
+  //                              those labels, not a paraphrase of them.
+  //
+  // `assistant_runs.monthly` is decided (0202: 20/40/100/250) and is deliberately
+  // absent: 0210 has the assistant panel switched on by a pre-launch demo grant
+  // that expires, and the provider gate is a DPA decision made outside the plan.
+  // A quota for a feature whose availability is a window is not a plan promise.
+  ladder: {
+    compareLabel: 'מה כלול בכל מסלול',
+    featuresHeader: 'יכולות',
+    // The value a cell carries when the capability is not on that plan, and the
+    // one Business carries where a number would be.
+    included: 'כלול',
+    absent: 'לא כלול',
+    contract: 'לפי חוזה',
+    unlimited: 'ללא הגבלה',
+    // Free does hold the five Basic capabilities, for thirty days from the first
+    // email verification (#276). A cell that said only "not included" would be
+    // wrong for a month, and one that said "included" would be wrong afterwards.
+    intro: '30 ימי היכרות',
+    introNote: 'במסלול החינמי חמש היכולות המסומנות פתוחות במשך 30 יום מרגע אימות המייל. אחריהן הן ממשיכות במסלול בסיס ומעלה.',
+
+    // What the card itself prints. Five or six lines, the way the reference image
+    // has them, and each one is a row of the table below rather than a new claim.
+    cards: [
+      [
+        '20 מסמכים בחודש',
+        'משתמש אחד',
+        'שרשרת מלאה: ספק, הזמנה, קבלה, חשבונית, תשלום',
+        'שלושה תפקידים והפרדת סמכויות',
+        '30 ימי היכרות עם יכולות בסיס',
+      ],
+      [
+        '40 מסמכים בחודש',
+        'עד 5 משתמשים',
+        'קריאה אוטומטית של מסמכים',
+        'היסטוריה מלאה',
+        'ייצוא Excel ודוחות לרו״ח',
+        'התראות ואוטומציות במייל',
+      ],
+      [
+        '150 מסמכים בחודש',
+        'עד 15 משתמשים',
+        'כל היכולות של בסיס',
+        'התאמות בנק',
+        'תור תשלומים לרואה החשבון',
+        'חשבוניות מרכזות',
+      ],
+      [
+        '375 מסמכים בחודש',
+        'עד 30 משתמשים',
+        'עד 10 סניפים',
+        'כל היכולות של פרו',
+        'חיבור למערכות אחרות',
+        'תמיכה מורחבת',
+      ],
+      [
+        'מכסת מסמכים לפי חוזה',
+        'משתמשים וסניפים ללא הגבלה',
+        'כל היכולות פתוחות',
+        'הסדר הרשאות משלכם',
+        'תמיכה מורחבת',
+      ],
+    ],
+
+    // The comparison table. `icon` is a key into the map in PlansChapter.tsx; a
+    // cell is either a string, `true` for included, or `false` for not included,
+    // and 'intro' for the five Free holds for thirty days.
+    rows: [
+      {
+        icon: 'documents',
+        label: 'מסמכים בחודש',
+        cells: ['20', '40', '150', '375', 'לפי חוזה'],
+      },
+      {
+        icon: 'users',
+        label: 'משתמשים פעילים',
+        cells: ['1', '5', '15', '30', 'ללא הגבלה'],
+      },
+      {
+        icon: 'branches',
+        label: 'סניפים',
+        cells: ['1', '1', '1', '10', 'ללא הגבלה'],
+      },
+      {
+        icon: 'automation',
+        label: 'קריאה אוטומטית של מסמכים',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'history',
+        label: 'היסטוריה מלאה',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'export',
+        label: 'ייצוא Excel ודוחות לרו״ח',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'reports',
+        label: 'לוח ביצועי ספקים',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'mail',
+        label: 'התראות ואוטומציות במייל',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'bank',
+        label: 'התאמות בנק',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'payments',
+        label: 'תור תשלומים לרואה החשבון',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'invoices',
+        label: 'חשבוניות מרכזות',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'api',
+        label: 'חיבור למערכות אחרות',
+        cells: [false, false, false, true, true],
+      },
+      {
+        icon: 'support',
+        label: 'תמיכה מורחבת',
+        cells: [false, false, false, true, true],
+      },
+    ],
   },
 
   // -------------------------------------------------------------- the eighth
