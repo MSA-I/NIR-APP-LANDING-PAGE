@@ -1057,6 +1057,10 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
   margin: 0;
   padding: 0;
   list-style: none;
+  /* The duration is overridden inline by LogoCloud, which is the only place
+     that knows how long the strip is. 42s is the value from before the strip
+     was made long enough to cover the viewport, kept as the fallback for a
+     render that somehow arrives without the inline style. */
   animation: logos-run 42s linear infinite;
 }
 /* The catalogue's `speedOnHover` is NOT carried over.

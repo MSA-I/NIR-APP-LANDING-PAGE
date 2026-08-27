@@ -95,9 +95,11 @@ c.note(
 
 // ---- the timing, reported ---------------------------------------------------
 const srv = await serve()
-// The same binary every other gate measures on. `channel: 'chromium'` asked for
-// Playwright's own download, which is not installed on this machine, and the
-// gate died at the reporting step after its budget checks had already passed.
+// `channel: 'chromium'` asks for Playwright's OWN download, which this machine
+// does not have: `playwright-core` is the dependency here precisely because the
+// browser is not vendored. Every other gate launches the installed Chrome
+// through lib.mjs's CHROME, and this one now does too, so the suite has one
+// answer to "which browser" instead of two.
 const browser = await chromium.launch({ executablePath: CHROME })
 try {
   const measure = async (viewport, cpu) => {

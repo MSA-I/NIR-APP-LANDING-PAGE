@@ -79,7 +79,6 @@ const extraEn = {
   // Each card asks for what it can actually give. The plan with no figure has
   // no self-serve path, so it does not offer a signup button. See extra.ts.
   plansCta: {
-    freeWords: 'No charge',
     free: 'Start free',
     paid: 'Start on this plan',
     contact: 'Talk to us',

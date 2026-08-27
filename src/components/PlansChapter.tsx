@@ -165,7 +165,7 @@ export function PlansChapter({
   priceNote: string
   note: string
   ctaHref: string
-  plansCta: { freeWords: string; free: string; paid: string; contact: string; contactHref: string }
+  plansCta: { free: string; paid: string; contact: string; contactHref: string }
   billing: Billing
   recommendedLabel: string
   everywhereLabel: string
@@ -220,7 +220,20 @@ export function PlansChapter({
             // `r.price` and not `shown`, so flipping the billing switch cannot
             // change what a card asks for. A plan with no self-serve path must
             // never end up offering the signup button again.
-            const contactOnly = !/\d/.test(r.price) && r.price !== plansCta.freeWords
+            // The discriminator is the DOCUMENT COUNT, not the price text.
+            //
+            // This was `r.price !== 'ללא עלות'` until 27.08.2026, which is a
+            // Hebrew string literal inside a component that now renders two
+            // languages: on /en/ the free plan reads "No charge", failed the
+            // comparison, and offered "Talk to us" over a plan anybody can open
+            // themselves. G14 never saw it because G14 only ever loaded the
+            // Hebrew page.
+            //
+            // Every self-serve plan carries a NUMBER of documents (20, 40, 150,
+            // 375) and the one that does not is the one sold in a conversation
+            // ("חוזי" / "Custom"). That holds in any locale, because it is a
+            // fact about the catalogue rather than about the wording.
+            const contactOnly = !/\d/.test(r.price) && !/\d/.test(r.docs)
             const ask = hasAmount
               ? { label: plansCta.paid, href: ctaHref }
               : contactOnly
