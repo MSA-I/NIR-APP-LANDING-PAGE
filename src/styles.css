@@ -305,6 +305,17 @@
   color-scheme: light;
 }
 
+/* The switch is instant, and everything on the page has to agree.
+   `applyTheme` in src/lib/theme.ts raises this flag for two frames around the
+   attribute change, because the controls in the folio transition their own
+   colour while the bar behind them does not: without it the labels stayed
+   cream over a bar that had already gone light. */
+:root[data-theme-swap] *,
+:root[data-theme-swap] *::before,
+:root[data-theme-swap] *::after {
+  transition: none !important;
+}
+
 :root {
   --page: 1265px;
   --plate-inset: 10px;
@@ -1898,6 +1909,11 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
 html[dir='rtl'] { --knob: -1; }
 
 .theme-toggle {
+  /* One circle plus the gap `space-between` leaves beside it. Named rather
+     than written into the two translate rules below, because the compact pill
+     the narrowest folio uses (see the 359px block) changes all three numbers
+     together and a travel written as a literal would be left behind. */
+  --toggle-travel: 2rem;
   display: flex;
   flex: none;
   inline-size: 4rem;
@@ -1942,13 +1958,12 @@ html[dir='rtl'] { --knob: -1; }
   color: var(--color-ink-dim);
 }
 
-/* Light: the pair swap places. 2rem is 32px, which is one circle plus the gap
-   `space-between` leaves inside a 56px track. */
+/* Light: the pair swap places, by exactly one circle plus the gap. */
 .theme-toggle[data-theme-state='light'] .theme-toggle__knob {
-  translate: calc(var(--knob) * 2rem) 0;
+  translate: calc(var(--knob) * var(--toggle-travel)) 0;
 }
 .theme-toggle[data-theme-state='light'] .theme-toggle__ghost {
-  translate: calc(var(--knob) * -2rem) 0;
+  translate: calc(var(--knob) * -1 * var(--toggle-travel)) 0;
 }
 
 /* --------------------------------------------------------- the marks, on a rail */
@@ -1963,6 +1978,19 @@ html[dir='rtl'] { --knob: -1; }
   transition: opacity 0.4s var(--ease-out-quint);
 }
 .logos__viewport:hover .logos__mark { opacity: 1; }
+
+/* The light view had an empty strip where the customers are.
+   scripts/build-logos.py bakes every mark into ONE ink — `TINT = (251, 246,
+   238)`, the colophon's cream — because that is the only treatment under which
+   a gold seal, a blue wordmark and a red serif sit in a row without one of
+   them winning. That ink is the dark view's, and on the light view the wall
+   was cream on cream: six marks, none of them visible.
+   `invert` rather than a second set of files: the marks are flat, so inverting
+   is exact rather than approximate — #fbf6ee comes back as #040911, a shade
+   off the light view's own ink — and it needs neither a rebuild nor the source
+   folder, which does not travel with the repository. The badge and the name
+   beside each mark are already tokens and turned over on their own. */
+:root[data-theme='light'] .logos__mark { filter: invert(1); }
 
 /* --------------------------------------------------------------- the voices */
 /* 21st.dev's stagger-testimonials, on the page's cream plate. */
@@ -2926,12 +2954,30 @@ html[dir='rtl'] { --knob: -1; }
   .footer-tagline { font-size: 1.75rem; }
   .footer-nav { gap: 1.35rem; }
   .footer-pills .flow--sm { min-block-size: 2.75rem; }
+
+  /* Every other control in the folio is 44px tall on a touch screen — the
+     brand chip, the language trigger and the action all are. The theme switch
+     was built at 32px, which is the desktop rhythm, and next to them it read
+     as a smaller thing as well as a harder one to hit. Only the block size
+     moves: the knob's travel is measured off the 4rem track and stays. */
+  .theme-toggle { block-size: 2.75rem; }
   .footer-bar { padding-block-start: 1rem; }
 
-  /* Three controls share the narrowest folio after the language control was
-     added. Keep the brand's marked icon and accessible name, and let the CTA
-     stay on one line instead of shrinking into a two-line chip. */
-  @media (max-width: 349px) {
+  /* FOUR controls share the narrowest folio, and for a while the stylesheet
+     still thought there were three.
+     This block was written when the row was the brand, the language control
+     and the one action. The theme switch of 27.08.2026 made it four and the
+     breakpoint was not moved, so between 350px and 449px nothing compacted at
+     all and the action was squeezed to 31px of a 112px label: a circle with
+     the word spilling out of it. Below 350px the block did fire and was no
+     longer enough on its own.
+     Two things give, and they are the two whose meaning survives losing their
+     words: the brand keeps its mark (the wordmark is the first thing the page
+     itself says underneath), and the language control keeps its flag, which is
+     the label as much as the name is. Both keep their accessible names — the
+     brand its `aria-label`, the trigger the one it already carried. The action
+     never gives: it is the only thing in this bar a reader came to press. */
+  @media (max-width: 479px) {
     .brandchip {
       inline-size: 2.75rem;
       justify-content: center;
@@ -2942,9 +2988,65 @@ html[dir='rtl'] { --knob: -1; }
       gap: 0.25rem;
       padding-inline: 0.5rem;
     }
+    .language-switcher__name { display: none; }
+    .folio__row,
+    .folio__actions { gap: 0.375rem; }
     .folio__actions .flow--sm {
       padding-inline: 0.7rem;
       white-space: nowrap;
+    }
+  }
+
+  /* The narrowest phone still in the wild is 320px, and four controls plus a
+     five-word action do not fit there on the ordinary rhythm. The last of the
+     spacing goes here rather than in the block above, so the 360px-and-up
+     phones that make up nearly all of them keep the roomier one.
+     The label gives here as well, and it is the English one that needs it:
+     "Open a free account" is half again the width of the Hebrew. A notch of
+     type size and a shorter hover offset — the label is translated by
+     `--flow-shift` so the arrow can swap places with it, and that offset is
+     width the pill has to hold — are enough, and neither is visible next to a
+     label that fits. */
+  @media (max-width: 359px) {
+    .folio__row,
+    .folio__actions { gap: 0.25rem; }
+    .folio__actions .flow--sm {
+      /* The shift is the room the label makes for the arrow to swap into, and
+         the arrow is gone below. Zero here buys back the padding that keeps
+         "Open a free account" off the pill's own curve. */
+      --flow-shift: 0;
+      padding-inline: 0.6rem;
+      font-size: 0.75rem;
+    }
+    /* The arrow is absolutely placed 0.7rem in from the pill's edge, which is
+       further in than the padding now is: at this width it stopped sitting
+       beside the label and started sitting ON it. It is `aria-hidden`
+       decoration that repeats what the label says, and the hover swap it
+       belongs to is a pointer gesture no phone makes. */
+    .folio__actions .flow__arrow { display: none; }
+    /* And the chevron beside the flag. The flag is the whole control at this
+       width — it is what a reader looks for and what the trigger's own
+       `aria-label` says — and the caret next to it costs fourteen pixels that
+       the English label needs to finish its last letter. */
+    .language-switcher__chevron { display: none; }
+    /* A flag on its own is 38px wide, and the row's controls are 44. G16 asks
+       for the touch target, the eye asks for the rhythm, and both want the
+       same number. */
+    .language-switcher__trigger { min-inline-size: 2.75rem; }
+    /* The widest thing up here for the least it says. Ten pixels off the
+       switch is the difference between the English label fitting and not, and
+       all three numbers move together: a 54.4px pill on 3.2px padding leaves
+       48px of track, two 22.4px circles leave 3.2px between them, and the
+       travel is one circle plus that gap. */
+    .theme-toggle {
+      --toggle-travel: 1.6rem;
+      inline-size: 3.4rem;
+      padding: 0.2rem;
+    }
+    .theme-toggle__knob,
+    .theme-toggle__ghost {
+      inline-size: 1.4rem;
+      block-size: 1.4rem;
     }
   }
 

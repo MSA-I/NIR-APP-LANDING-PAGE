@@ -42,6 +42,21 @@ export function readTheme(): Theme {
 
 export function applyTheme(theme: Theme) {
   const root = document.documentElement
+
+  // A theme swap is not an animation, and for a moment it was being played as
+  // one. Nearly every control up in the folio transitions its own `color` and
+  // `border-color` (see `.flow` in src/styles.css), and the bar behind them
+  // does not transition its ground, so for the length of that transition the
+  // page had already turned and the labels had not: cream type on the cream
+  // bar, unreadable, for a third of a second on every press of the switch.
+  //
+  // The flag below suppresses every transition on the page while the attribute
+  // changes, and comes off two frames later — long enough for the new colours
+  // to be painted, short enough that no hover or focus a reader starts in that
+  // window loses its own motion. `delete` rather than `= ''`, because an empty
+  // data attribute is still present and would leave the page permanently
+  // still.
+  root.dataset.themeSwap = ''
   root.dataset.theme = theme
   document
     .querySelector<HTMLMetaElement>('meta[name="theme-color"]')
@@ -52,6 +67,11 @@ export function applyTheme(theme: Theme) {
     // The choice still holds for this page; only the memory of it is lost.
   }
   window.dispatchEvent(new CustomEvent(EVENT, { detail: theme }))
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      delete root.dataset.themeSwap
+    })
+  })
 }
 
 /**
