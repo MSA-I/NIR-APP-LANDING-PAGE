@@ -50,12 +50,14 @@ function VoiceCard({
   onMove,
   size,
   calm,
+  dir,
 }: {
   position: number
   voice: Voice
   onMove: (steps: number) => void
   size: number
   calm: boolean
+  dir: 'rtl' | 'ltr'
 }) {
   const centre = position === 0
   return (
@@ -75,7 +77,7 @@ function VoiceCard({
         ['--voice-size' as string]: `${size}px`,
         clipPath:
           'polygon(50px 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, calc(100% - 50px) 100%, 50px 100%, 0 100%, 0 0)',
-        transform: `translateX(${(-size / 1.5) * position}px) translateY(${
+        transform: `translateX(${(dir === 'rtl' ? -1 : 1) * (size / 1.5) * position}px) translateY(${
           centre ? -58 : position % 2 ? 14 : -14
         }px) rotate(${centre ? 0 : position % 2 ? 2.5 : -2.5}deg)`,
         transitionDuration: calm ? '0ms' : undefined,
@@ -102,11 +104,17 @@ export function Voices({
   h2,
   disclosure,
   items,
+  dir,
+  nextLabel,
+  previousLabel,
 }: {
   eyebrow: string
   h2: string
   disclosure: string
   items: Voice[]
+  dir: 'rtl' | 'ltr'
+  nextLabel: string
+  previousLabel: string
 }) {
   const calm = !!useReducedMotion()
   const [size, setSize] = useState(340)
@@ -170,17 +178,32 @@ export function Voices({
                 onMove={move}
                 size={size}
                 calm={calm}
+                dir={dir}
               />
             )
           })}
           <div className="voices-rail__controls">
-            {/* Leftwards is forwards in Hebrew, so the arrows are swapped
-                against the catalogue's and the labels go with them. */}
-            <button type="button" onClick={() => move(1)} aria-label="הציטוט הבא">
-              <ChevronLeft aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => move(dir === 'rtl' ? 1 : -1)}
+              aria-label={nextLabel}
+            >
+              {dir === 'rtl' ? (
+                <ChevronLeft aria-hidden="true" />
+              ) : (
+                <ChevronRight aria-hidden="true" />
+              )}
             </button>
-            <button type="button" onClick={() => move(-1)} aria-label="הציטוט הקודם">
-              <ChevronRight aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => move(dir === 'rtl' ? -1 : 1)}
+              aria-label={previousLabel}
+            >
+              {dir === 'rtl' ? (
+                <ChevronRight aria-hidden="true" />
+              ) : (
+                <ChevronLeft aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>

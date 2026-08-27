@@ -97,6 +97,12 @@ const APPROVED = [
     was: 'היום העבודה מפוצלת בין גיליון אקסל, קבוצת וואטסאפ, רואה החשבון ומערכת ההזמנות של הספק. InPlace היא החלופה לפיצול הזה: מסע אחד, מקור אמת אחד, ובעלות ברורה על כל שלב.',
     now: 'היום העבודה מפוצלת בין גיליון אקסל, קבוצת וואטסאפ, רואה החשבון ומערכת ההזמנות של הספק. InPlace היא החלופה לפיצול הזה: מסע אחד, מקור אמת אחד, ולכל שלב יש מי שאחראי עליו.',
   },
+  {
+    at: 'plans.h2',
+    why: 'the only heading on the page that was a label rather than a sentence, on the chapter that decides whether anybody pays. It now says the one thing that actually separates the plans, which its own lede already says underneath (27.08.2026)',
+    was: 'מסלולים',
+    now: 'מתחילים בחינם. משלמים לפי כמות&nbsp;המסמכים.',
+  },
 ]
 
 import { readFile } from 'node:fs/promises'

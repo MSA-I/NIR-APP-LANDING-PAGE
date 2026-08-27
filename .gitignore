@@ -3,3 +3,4 @@ lab/
 dist/
 cad_mcp.log
 *.log
+.unlazy/

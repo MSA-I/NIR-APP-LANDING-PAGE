@@ -103,7 +103,18 @@ await withPage(async (page) => {
   )
 
   await page.click('#plans [role="switch"]')
-  await page.waitForTimeout(700)
+  await page
+    .waitForFunction(
+      (want) =>
+        want.every((price) =>
+          [...document.querySelectorAll('#plans [data-plan-name]')].some((el) =>
+            el.textContent.includes(price)
+          )
+        ),
+      WANT_MONTHLY,
+      { timeout: 15000 }
+    )
+    .catch(() => {})
 
   // No other amount anywhere on the page. Everything with a shekel sign is
   // either a plan price, the yearly note, or one of the product figures the

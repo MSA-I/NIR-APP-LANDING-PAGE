@@ -1,0 +1,17 @@
+# InPlace, https://inplace.digital
+#
+# Everything is open, on purpose. The audit of 27.08.2026 found the page had no
+# robots.txt at all, which meant a crawler asking for one got the SPA fallback:
+# HTTP 200 with an HTML document. Google tolerates that by ignoring the
+# unparsable lines; it is still the wrong answer to a question about crawling.
+#
+# The AI crawlers are NOT blocked, by the owner's decision of 27.08.2026. This
+# page wants to be quoted by them, and a Disallow here is the one thing that
+# would guarantee it is not. g17-crawl asserts that no Disallow appears in this
+# file, so a future copy-paste of somebody else's robots.txt fails the build
+# rather than quietly closing the door.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://inplace.digital/sitemap.xml

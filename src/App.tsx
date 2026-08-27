@@ -5,8 +5,8 @@
 // against archive/build3/i18n/he.js and fails on any drift, because the one
 // thing this rebuild was not allowed to change is what the page says.
 
-import t from '@/content/he'
-import x from '@/content/extra'
+import { useEffect } from 'react'
+import { contentByLocale, extraByLocale, localeFromPath } from '@/content/locales'
 import { Announcement } from '@/components/Announcement'
 import { Folio } from '@/components/Folio'
 import { TitlePage } from '@/components/TitlePage'
@@ -20,8 +20,26 @@ import { Voices } from '@/components/Voices'
 import { FaqChapter } from '@/components/FaqChapter'
 import { CloseChapter } from '@/components/CloseChapter'
 import { SiteFooter } from '@/components/SiteFooter'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export default function App() {
+  const locale = localeFromPath(window.location.pathname)
+  const t = contentByLocale[locale]
+  const x = extraByLocale[locale]
+  const direction = t.dir as 'rtl' | 'ltr'
+
+  useEffect(() => {
+    document.documentElement.lang = t.htmlLang
+    document.documentElement.dir = direction
+    document.documentElement.dataset.locale = locale
+    document.title = t.title
+    document.querySelector<HTMLMetaElement>('meta[name="description"]')?.setAttribute('content', t.description)
+    document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.setAttribute('content', t.title)
+    document
+      .querySelector<HTMLMetaElement>('meta[property="og:description"]')
+      ?.setAttribute('content', t.description)
+  }, [direction, locale, t.description, t.htmlLang, t.title])
+
   return (
     <>
       <a className="skip" href="#what">
@@ -44,6 +62,15 @@ export default function App() {
         ctaHref={t.ctaPrimaryHref}
         loginLabel={t.footer.cols[0].links[1].t}
         loginHref={t.footer.cols[0].links[1].href}
+        languageControl={
+          <LanguageSwitcher
+            current={locale}
+            label={x.languages.label}
+            menuLabel={x.languages.menuLabel}
+            currentLabel={x.languages.currentLabel}
+            options={x.languages.options}
+          />
+        }
       />
 
       <main className="relative z-10 bg-onyx">
@@ -58,6 +85,7 @@ export default function App() {
           ctaHref={t.ctaPrimaryHref}
           secondLabel={t.footer.cols[1].links[0].t}
           fineprint={t.fineprint}
+          dir={direction}
         />
 
         <LogoCloud eyebrow={x.logos.eyebrow} h2={x.logos.h2} items={x.logos.items} />
@@ -72,6 +100,8 @@ export default function App() {
           stepsLabel={t.what.stepsLabel}
           demoHint={t.what.demoHint}
           steps={t.what.steps}
+          dir={direction}
+          screenAltSuffix={x.accessibility.screenAltSuffix}
         />
 
         <BoardChapter
@@ -84,6 +114,7 @@ export default function App() {
           ctaLabel={t.ctaPrimary}
           ctaHref={t.ctaPrimaryHref}
           fineprint={t.fineprint}
+          imageAlt={x.accessibility.dashboardAlt}
         />
 
         <WhyChapter
@@ -101,6 +132,9 @@ export default function App() {
           h2={x.testimonials.h2}
           disclosure={x.testimonials.disclosure}
           items={x.testimonials.items}
+          dir={direction}
+          nextLabel={x.accessibility.nextTestimonial}
+          previousLabel={x.accessibility.previousTestimonial}
         />
 
         <PlansChapter
