@@ -37,6 +37,7 @@ export function Folio({
   loginLabel,
   loginHref,
   languageControl,
+  themeControl,
 }: {
   /** The strip above the running head. Rendered inside this fixed box so the
       page never has to know how tall two fixed elements are together. */
@@ -50,6 +51,9 @@ export function Folio({
   loginHref: string
   /** Compact browser-style language control, shared by desktop and phone. */
   languageControl: ReactNode
+  /** The light/dark switch, beside the language control for the same reason:
+      both change how the page is read rather than where it goes. */
+  themeControl: ReactNode
 }) {
   const [lifted, setLifted] = useState(false)
   const boxRef = useRef<HTMLElement>(null)
@@ -87,7 +91,7 @@ export function Folio({
       data-lifted={lifted ? 'true' : 'false'}
       className="fixed inset-x-0 top-0 z-[100] transition-[background-color,backdrop-filter,border-color] duration-500"
       style={{
-        backgroundColor: lifted ? 'color-mix(in srgb, #0a171d 82%, transparent)' : 'transparent',
+        backgroundColor: lifted ? 'color-mix(in srgb, var(--color-onyx) 82%, transparent)' : 'transparent',
         backdropFilter: lifted ? 'blur(14px)' : 'none',
         WebkitBackdropFilter: lifted ? 'blur(14px)' : 'none',
         borderBottom: `1px solid ${lifted ? 'var(--color-onyx-line)' : 'transparent'}`,
@@ -121,6 +125,7 @@ export function Folio({
         <span className="me-auto" aria-hidden="true" />
 
         <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
+          {themeControl}
           {languageControl}
           <span className="hidden sm:inline-flex">
             <Cta href={loginHref} variant="ghost" size="sm">

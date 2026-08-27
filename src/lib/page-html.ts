@@ -26,6 +26,8 @@ const CHROME = {
     dir: 'rtl',
     ogLocale: 'he_IL',
     navLabel: 'ניווט ראשי',
+    toLight: 'מעבר לתצוגה בהירה',
+    toDark: 'מעבר לתצוגה כהה',
     nav: [
       ['/#what', 'מה המערכת עושה'],
       ['/#why', 'למה דווקא זה'],
@@ -47,6 +49,8 @@ const CHROME = {
     dir: 'ltr',
     ogLocale: 'en',
     navLabel: 'Main navigation',
+    toLight: 'Switch to the light view',
+    toDark: 'Switch to the dark view',
     nav: [
       ['/en/#what', 'What the system does'],
       ['/en/#why', 'Why this approach'],
@@ -182,6 +186,71 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
   }
 }
 
+/* The view, before the first paint.
+   The same lines index.html carries, and for the same reason: which of the
+   page's two grounds is underneath is one attribute on <html>, and a reader who
+   chose the light view must not watch a dark page arrive first. These documents
+   ship no JavaScript at all, so this and THEME_BODY below are the only script
+   on them, and between them they are the whole of their state. */
+const THEME_HEAD = `
+      try {
+        if (localStorage.getItem('inplace.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fffcf8')
+        }
+      } catch (e) {}`
+
+/* The switch itself, as markup rather than as a component.
+   Same class names as src/components/ThemeToggle.tsx, so it inherits the whole
+   control out of the shared stylesheet and there is one set of numbers to keep.
+   The one difference is that both icons are always in the DOM and the CSS below
+   shows one of each pair: a static page has no render to swap them in. */
+const themeIcon = (name: 'moon' | 'sun', paths: string) =>
+  `<svg class="i-${name}" width="16" height="16" viewBox="0 0 24 24" fill="none" ` +
+  `stroke="currentColor" stroke-width="1.5" stroke-linecap="round" ` +
+  `stroke-linejoin="round" aria-hidden="true">${paths}</svg>`
+
+const MOON = themeIcon('moon', '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>')
+const SUN = themeIcon(
+  'sun',
+  '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>' +
+    '<path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>' +
+    '<path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/>' +
+    '<path d="m19.07 4.93-1.41 1.41"/>'
+)
+
+const themeToggle = (toLight: string) =>
+  `<button type="button" class="theme-toggle" data-theme-state="dark"
+          aria-pressed="false" aria-label="${attr(toLight)}">
+          <span class="theme-toggle__track">
+            <span class="theme-toggle__knob">${MOON}${SUN}</span>
+            <span class="theme-toggle__ghost">${SUN}${MOON}</span>
+          </span>
+        </button>`
+
+/* Bringing the button into step with the attribute the head script set, and
+   keeping it there. */
+const themeBody = (toLight: string, toDark: string) => `
+      (function () {
+        var box = document.querySelector('.theme-toggle')
+        if (!box) return
+        var paint = function (t) {
+          document.documentElement.dataset.theme = t
+          box.dataset.themeState = t
+          box.setAttribute('aria-pressed', String(t === 'light'))
+          box.setAttribute('aria-label', t === 'light' ? ${JSON.stringify(toDark)} : ${JSON.stringify(toLight)})
+          document
+            .querySelector('meta[name="theme-color"]')
+            .setAttribute('content', t === 'light' ? '#fffcf8' : '#0a171d')
+        }
+        paint(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark')
+        box.addEventListener('click', function () {
+          var next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'
+          paint(next)
+          try { localStorage.setItem('inplace.theme', next) } catch (e) {}
+        })
+      })()`
+
 /** The page-only layout. Everything else comes from the site's own stylesheet. */
 const STYLE = `
       /* The ground the home page paints with a shader, painted with two
@@ -227,6 +296,12 @@ const STYLE = `
       .doc-rail { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 0.9rem; }
       .doc-operator { display: grid; gap: 0.6rem; }
       .doc-foot .eyebrow { color: var(--color-ink-dim); }
+      .doc-top .theme-toggle { margin-inline-start: 0.5rem; }
+      .theme-toggle .i-moon, .theme-toggle .i-sun { display: none; }
+      .theme-toggle[data-theme-state="dark"] .theme-toggle__knob .i-moon,
+      .theme-toggle[data-theme-state="dark"] .theme-toggle__ghost .i-sun,
+      .theme-toggle[data-theme-state="light"] .theme-toggle__knob .i-sun,
+      .theme-toggle[data-theme-state="light"] .theme-toggle__ghost .i-moon { display: block; }
       :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 3px; }
 
       /* The reveal the home page runs on Motion, run by the browser instead.
@@ -282,6 +357,8 @@ export function pageHtml(
     <title>${attr(page.title)}</title>
     <meta name="description" content="${attr(page.description)}" />
     <meta name="theme-color" content="#0a171d" />
+    <script>${THEME_HEAD}
+    </script>
     <link rel="canonical" href="${url}" />${alternates}
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
@@ -325,6 +402,7 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
         <nav aria-label="${attr(t.navLabel)}">
           ${t.nav.map(([href, label]) => pill(href, escape(label))).join('\n          ')}
         </nav>
+        ${themeToggle(t.toLight)}
       </div>
     </header>
 
@@ -370,6 +448,8 @@ ${
       </footer>
     </div>
     <div class="grain" aria-hidden="true"></div>
+    <script>${themeBody(t.toLight, t.toDark)}
+    </script>
   </body>
 </html>
 `

@@ -61,9 +61,9 @@ export function TitlePage({
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              'linear-gradient(to bottom, color-mix(in srgb, #0a171d 68%, transparent) 0%,' +
-              ' color-mix(in srgb, #0a171d 16%, transparent) 48%,' +
-              ' color-mix(in srgb, #0a171d 84%, transparent) 100%)',
+              'linear-gradient(to bottom, color-mix(in srgb, var(--color-onyx) 68%, transparent) 0%,' +
+              ' color-mix(in srgb, var(--color-onyx) 16%, transparent) 48%,' +
+              ' color-mix(in srgb, var(--color-onyx) 84%, transparent) 100%)',
           }}
         />
         <span className="crops__b" aria-hidden="true" />

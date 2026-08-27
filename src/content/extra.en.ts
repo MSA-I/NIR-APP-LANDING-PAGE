@@ -133,6 +133,11 @@ const extraEn = {
     },
   },
 
+  theme: {
+    toLight: 'Switch to the light view',
+    toDark: 'Switch to the dark view',
+  },
+
   accessibility: {
     screenAltSuffix: 'InPlace product screen',
     dashboardAlt: 'The full InPlace control centre screen',

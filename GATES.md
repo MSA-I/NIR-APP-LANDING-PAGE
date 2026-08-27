@@ -111,8 +111,16 @@ line planted on the cream plate.
     CHECK: node scripts/gates/g7-contrast.mjs
     EXPECT: G7 PASS
 
-**MET.** 137 text runs across 10 scroll positions; worst 5.06:1. Control
-measured 1.01:1 and was caught.
+**MET.** 161 text runs across 10 scroll positions, in **both views**: worst
+5.05:1 dark, 4.48:1 light. Control measured 1.06:1 and was caught.
+
+Two changes on 27.08.2026, both because the page gained a light view. It walks
+the page twice, setting `data-theme` the way the page sets it so the shader
+turns over with it; and an ink that is fully transparent is graded as its own
+ground rather than as the black that `rgba(0, 0, 0, 0)` parses to. A named check
+now fails ordinary copy that paints no ink, which is the case that reading
+cost the gate: `.footer-wordmark` paints through `background-clip: text` and
+graded 1.01:1 on the dark ground by luck and 13.54:1 on the light one.
 
 *(Found by this gate: the accent that tints the last words of a headline was
 the bright oceanic on both grounds, and on the cream plate it measured 2.34:1.
@@ -1527,3 +1535,78 @@ unread string costs nothing on the wire.
 
 Screenshots of `/procurement-software/`, `/en/terms/` and the title page's
 restored kicker in `lab/shots/`.
+
+
+---
+
+## Round fourteen — a switch between the two views, 27.08.2026
+
+The owner asked for a light/dark switch, and named the component: 21st.dev's
+theme-toggle (@ayushmxxn, catalogue id 1216).
+
+| Asked | Shipped |
+|---|---|
+| 1 | That switch | Ported with its geometry intact: a 64×32 pill, 4px of padding, two 24px circles, a 32px slide, 300ms, lucide's moon and sun at strokeWidth 1.5. Three departures, each written down in `src/components/ThemeToggle.tsx` |
+| 2 | Something for it to switch | A light view that introduces **no new colour**. The page was already built on two grounds, the onyx it sits on and the wheat plate that rides on it, and every token already had a counterpart for the other one. The light view is those pairs trading places |
+
+### Why the light view is twenty lines and not a second stylesheet
+
+Tailwind v4 compiles every utility to `var(--color-…)`, so
+`:root[data-theme="light"]` redeclaring the same token names moves the authored
+stylesheet and the utility classes together. `--color-ink` was already "type on
+the onyx" and `--color-ink-on-light` was already "type on the plate": the light
+view swaps them, and the same for the ground pair, the line pair and the accent
+pair. Nothing was renamed and no component was rewritten.
+
+A view is therefore one attribute on `<html>`, and `src/lib/theme.ts` does three
+small things: read the stored choice, write the attribute, and let the two
+components that need to KNOW the view hear about a change.
+
+### The catalogue component could not be used as published
+
+Three departures, none of them cosmetic:
+
+- It ships as `<div role="button" tabIndex={0}>` bound to `onClick` only, so
+  Enter and Space do nothing. **G13 exists to catch exactly that.** It is a
+  `<button>` here, and both keys are pressed in the verification below.
+- Its slide is `translate-x-8`, a physical direction, and a transform is not
+  mirrored by `dir`. On the Hebrew page the knob would have travelled out of the
+  pill. `--knob` carries the sign, +1 in LTR and −1 in RTL.
+- It imports `cn()` from `@/lib/utils`, which this repo does not have and does
+  not need for two branches.
+
+### What the light view cost, and what caught it
+
+**Four surfaces painted a colour instead of naming one, and would have stayed
+dark on a light page**: the folio's lifted bar, the title page's and the close's
+scrims, the plans tray, the plan card ground, the announcement strip and the
+footer wordmark's gradient. All of them read a token now.
+
+**Two objects keep their own ground on purpose, and pinning it means pinning
+their type.** The deep violet ticket and the glossy near-black one were read off
+the owner's reference image; a violet card that turned cream in the light view
+would not be that card. They pin `--color-ink` as a token rather than a `color`,
+so the label, the code, the term, the ring and the ticks all follow.
+
+**`--color-action-solid` must not invert, and G7 is what said so.** Inverted, it
+made the recommended badge and the contact form's submit measure 3.13:1 in the
+light view, because the fill went light while the ink on it went dark. It is the
+product's own solid action colour — a dark teal carrying light type on a light
+surface — so it stays #0d4e56 in both views, and the two controls that fill with
+it pin their type.
+
+**`--color-ink-dim` had no counterpart to swap with**, because the dark view's
+dim is a third step below its soft and the light view had only two. #63737a is
+that third step, and it is measured against the 4.5:1 floor rather than chosen.
+
+### Evidence
+
+| | measured |
+|---|---|
+| Full suite | **24 met, 0 unmet** (`npm run gates`) |
+| `tsc --noEmit && vite build` | clean, 18 documents |
+| G7, dark | 161 runs, worst 5.05:1 |
+| G7, light | 161 runs, worst 4.48:1 |
+| Switch, `/`, `/en/`, `/about/`, `/en/about/` | click, Enter and Space each toggle; `localStorage`, `color-scheme`, body ground and `theme-color` all follow, with the right label per edition |
+| No flash | after a reload the attribute is already `light` at document commit, before the first paint |
+| Direction | knob travels to the inline end in both editions; `--knob` is the only thing that differs |
