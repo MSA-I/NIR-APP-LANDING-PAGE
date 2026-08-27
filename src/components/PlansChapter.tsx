@@ -87,7 +87,6 @@ type Ladder = {
   absent: string
   contract: string
   unlimited: string
-  intro: string
   introNote: string
   cardRows: string[][]
   rows: { icon: string; label: string; cells: Cell[] }[]
@@ -432,6 +431,14 @@ export function PlansChapter({
                         </th>
                         {row.cells.map((cell, i) => (
                           <td key={rows[i]?.name ?? i} className={`is-${FACE[i].slice(11)}`}>
+                            {/* `'intro'` DRAWS AS ABSENT, like `false`. Owner,
+                                28.08.2026: the free column should say what the
+                                free plan gets, and five cells reading "30-day
+                                introduction" is not that. The fact is kept in
+                                the data, because it is true and the next reader
+                                needs it, and it is stated once in words in the
+                                note under this table, where it names the five
+                                capabilities outright. */}
                             {cell === true ? (
                               <>
                                 <span className="plans-compare__yes">
@@ -439,15 +446,13 @@ export function PlansChapter({
                                 </span>
                                 <span className="sr-only">{ladder.included}</span>
                               </>
-                            ) : cell === false ? (
+                            ) : cell === false || cell === 'intro' ? (
                               <>
                                 <span className="plans-compare__no" aria-hidden="true">
                                   <Minus className="size-3.5" strokeWidth={2.5} />
                                 </span>
                                 <span className="sr-only">{ladder.absent}</span>
                               </>
-                            ) : cell === 'intro' ? (
-                              <span className="plans-compare__intro">{ladder.intro}</span>
                             ) : (
                               <span className="plans-compare__num">{cell}</span>
                             )}

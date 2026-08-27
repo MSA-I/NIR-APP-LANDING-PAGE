@@ -210,8 +210,7 @@ export default {
     // Free does hold the five Basic capabilities, for thirty days from the first
     // email verification (#276). A cell that said only "not included" would be
     // wrong for a month, and one that said "included" would be wrong afterwards.
-    intro: '30 ימי היכרות',
-    introNote: 'במסלול החינמי חמש היכולות המסומנות פתוחות במשך 30 יום מרגע אימות המייל. אחריהן הן ממשיכות במסלול בסיס ומעלה.',
+    introNote: 'המסלול החינמי כולל 20 מסמכים בחודש, משתמש אחד וסניף אחד, את השרשרת המלאה מרכש עד תשלום ואת שלושת התפקידים עם הפרדת סמכויות. בנוסף, ב־30 הימים הראשונים מרגע אימות המייל פתוחות בו גם חמש היכולות של מסלול בסיס: קריאה אוטומטית של מסמכים, היסטוריה מלאה, ייצוא Excel ודוחות לרו״ח, לוח ביצועי ספקים והתראות ואוטומציות במייל.',
 
     // WHICH ROWS EACH CARD PRINTS, by row key, in the order below.
     //

@@ -2634,17 +2634,6 @@ html[dir='rtl'] { --knob: -1; }
   border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
   color: var(--color-ink-dim);
 }
-.plans-compare__intro {
-  display: inline-block;
-  white-space: nowrap;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--color-oceanic) 40%, transparent);
-  background: color-mix(in srgb, var(--color-oceanic) 10%, transparent);
-  padding: 0.18rem 0.6rem;
-  font-size: 0.72rem;
-  font-weight: 650;
-  color: var(--color-ink);
-}
 
 /* -------------------------------------------------- the announcement, brighter */
 /* "Make it almost white, and give it an animation so a difference is seen."

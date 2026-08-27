@@ -99,8 +99,7 @@ const extraEn = {
     absent: 'Not included',
     contract: 'Per contract',
     unlimited: 'Unlimited',
-    intro: '30-day introduction',
-    introNote: 'On the free plan the five marked capabilities are open for 30 days from email verification. After that they continue on Basic and above.',
+    introNote: 'The free plan includes 20 documents a month, one user and one location, the full chain from purchase to payment, and the three roles with separation of duties. For the first 30 days from email verification it also opens the five Basic capabilities: automatic document reading, full history, Excel exports and accountant reports, the supplier performance board, and email alerts and automations.',
 
     // Which rows each card prints. Row keys, so the decision is made once; see
     // extra.ts for the two rules that pick them.
