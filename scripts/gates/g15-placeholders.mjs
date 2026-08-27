@@ -82,7 +82,14 @@ await withPage(async (page) => {
   const attributions = await page.$$eval('#voices .voice-card__by', (els) =>
     els.map((e) => e.innerText.replace(/\s+/g, ' ').trim())
   )
-  c.ok(attributions.length === 5, `expected five quotes, found ${attributions.length}`)
+  // The count is read off the dictionary, not written down here. Five became
+  // three on 27.08.2026, and what this gate exists to catch is a quote reaching
+  // the page WITHOUT its disclosure, not a particular number of them.
+  const expected = extra.testimonials.items.length
+  c.ok(
+    attributions.length === expected,
+    `expected ${expected} quotes, found ${attributions.length}`
+  )
   // Anything that reads as a proper name: a quoted company, a Ltd, or two
   // capitalised Latin words. The attributions are all role + kind of business.
   const named = attributions.filter((a) => /בע"מ|בע״מ|"[^"]+"|[A-Z][a-z]+\s+[A-Z]/.test(a))
@@ -90,7 +97,7 @@ await withPage(async (page) => {
     named.length === 0,
     `a quote is attributed to a named party, which this page cannot support: ${named.join(' | ')}`
   )
-  c.note(`five quotes, attributed by role and trade only: ${attributions.join(' | ')}`)
+  c.note(`${attributions.length} quotes, attributed by role and trade only: ${attributions.join(' | ')}`)
 
   // And the disclosure has to be readable, not a 3% grey under the fold.
   const readable = await page.$eval('#voices .voices__note', (el) => {

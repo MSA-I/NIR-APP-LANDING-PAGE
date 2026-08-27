@@ -103,7 +103,28 @@ await withPage(async (page) => {
   )
 
   await page.click('#plans [role="switch"]')
-  await page.waitForTimeout(700)
+
+  // The prices COUNT from one catalogue to the other, over 520ms of
+  // requestAnimationFrame. A fixed 700ms wait here was a bet on how busy the
+  // machine is, and during a full thirteen-gate run on 27.08.2026 it lost: the
+  // scan below reported 237, 856 and 1,543 as unrecognised amounts on the page.
+  // They are not amounts. They are one rolling digit photographed mid-roll, and
+  // the gate was reading a frame rather than a price.
+  //
+  // Sampling the text twice and calling it settled when the two agree is not
+  // enough either: under a starved requestAnimationFrame the digit can sit
+  // still across two polls and then carry on. So wait for the ARRIVAL instead,
+  // by name: every priced card reads its monthly figure and nothing else.
+  await page.waitForFunction(
+    (want) => {
+      const shown = [...document.querySelectorAll('#plans .plan-card__price')]
+        .map((e) => (e.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter((t) => /\d/.test(t))
+      return JSON.stringify(shown) === JSON.stringify(want)
+    },
+    WANT_MONTHLY,
+    { timeout: 8000 }
+  )
 
   // No other amount anywhere on the page. Everything with a shekel sign is
   // either a plan price, the yearly note, or one of the product figures the
@@ -118,6 +139,42 @@ await withPage(async (page) => {
   const strays = [...new Set(amounts)].filter((a) => !KNOWN.has(a))
   c.ok(strays.length === 0, `unrecognised amount(s) on the page: ${strays.join(', ')}`)
   c.note(`${new Set(amounts).size} distinct amounts, all accounted for`)
+
+  // A plan that carries no figure has no self-serve path, and must not offer
+  // one. Until 27.08.2026 every card took the page's primary call, so the
+  // ביזנס card said "פתיחת חשבון חינם" over a price of "בשיחה" and pointed at
+  // /signup. That is a promise the card itself contradicts one line above.
+  //
+  // The assertion is written against the PRICE rather than the plan's name, so
+  // renaming a plan cannot slip past it, and a future plan added without a
+  // figure inherits the rule instead of the bug.
+  const asks = await page.$$eval('#plans .plan-card', (cards) =>
+    cards.map((card) => ({
+      name: card.querySelector('[data-plan-name]')?.getAttribute('data-plan-name') || '?',
+      price: card.querySelector('[data-plan-name]')?.getAttribute('data-plan-price') || '',
+      href: card.querySelector('.plan-card__action a')?.getAttribute('href') || '',
+      label: (card.querySelector('.plan-card__action a')?.textContent || '').trim(),
+    }))
+  )
+  c.ok(asks.length === 5, `there should be five plan cards with an ask, there are ${asks.length}`)
+  for (const a of asks) {
+    if (/\d/.test(a.price) || a.price === 'ללא עלות') {
+      c.ok(
+        /signup/.test(a.href),
+        `the "${a.name}" plan is self-serve at "${a.price}" but its ask goes to ${a.href}`
+      )
+    } else {
+      c.ok(
+        !/signup/.test(a.href),
+        `the "${a.name}" plan is priced "${a.price}" and cannot be opened from a form, yet its ask goes to ${a.href}`
+      )
+      c.ok(
+        a.href.startsWith('#') || /^(mailto:|https?:|tel:)/.test(a.href),
+        `the "${a.name}" plan's ask points nowhere: "${a.href}"`
+      )
+    }
+  }
+  c.note(asks.map((a) => `${a.name}: ${a.label} -> ${a.href}`).join(' | '))
 
   // Legal links live on the app host.
   const legal = await page.$$eval('footer a', (els) =>

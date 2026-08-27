@@ -2100,3 +2100,99 @@
 }
 .announce__link { position: relative; z-index: 1; }
 .announce__close { position: relative; z-index: 1; }
+
+/* ----------------------------------------------------------------- contact */
+/* The ביזנס card's destination. Anatomy from 21st.dev's contact form
+   (@meschacirung, Tailark), painted here rather than imported: a labelled pair
+   of columns, one wide row under them, and a submit that is the page's own
+   action colour rather than a second button language.
+
+   Everything is logical (inline-start / inline-end, padding-inline), because
+   G4 fails the build on a physical direction in the CSS or in a class name. */
+.cform {
+  margin: 0;
+}
+.cform__grid {
+  display: grid;
+  gap: 1.1rem;
+}
+@media (min-width: 40rem) {
+  .cform__grid { grid-template-columns: 1fr 1fr; }
+  .cform__row--wide { grid-column: 1 / -1; }
+}
+.cform__row {
+  display: grid;
+  gap: 0.5rem;
+}
+.cform__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+.cform__optional {
+  font-size: 0.76rem;
+  font-weight: 400;
+  color: var(--color-ink-dim);
+}
+.cform__input {
+  inline-size: 100%;
+  padding-block: 0.72rem;
+  padding-inline: 0.9rem;
+  border: 1px solid var(--color-onyx-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-onyx) 62%, transparent);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.98rem;
+  transition:
+    border-color 0.3s var(--ease-out-quint),
+    background 0.3s var(--ease-out-quint);
+}
+.cform__input::placeholder { color: var(--color-ink-dim); }
+.cform__input:hover { border-color: color-mix(in srgb, var(--color-oceanic) 55%, transparent); }
+.cform__input:focus {
+  border-color: var(--color-oceanic);
+  background: color-mix(in srgb, var(--color-onyx) 84%, transparent);
+}
+.cform__input--area {
+  resize: vertical;
+  min-block-size: 6.5rem;
+  line-height: 1.6;
+}
+/* The browser's own "required" bubble is the only validation on this form, and
+   an untouched field must not be painted as an error before anybody typed. */
+.cform__input:user-invalid { border-color: var(--color-alert); }
+
+.cform__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.2rem;
+  margin-block-start: 1.4rem;
+}
+.cform__submit {
+  padding-block: 0.78rem;
+  padding-inline: 1.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-action-solid);
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.32s var(--ease-out-quint),
+    translate 0.32s var(--ease-out-quint);
+}
+.cform__submit:hover {
+  background: var(--color-oceanic-deep);
+  translate: 0 -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cform__input,
+  .cform__submit { transition: none; }
+  .cform__submit:hover { translate: none; }
+}

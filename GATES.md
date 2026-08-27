@@ -628,3 +628,95 @@ worse way round: a green ledger next to a picture of yesterday.
 What it costs to know: one `curl` of the served `index.html` and a comparison of
 the bundle hash against `dist/`. That is the check that caught it, and it is
 cheaper than looking at the frame twice.
+
+---
+
+## Round twelve, part two — the six findings, 27.08.2026
+
+Worktree `LANDING-PAGE-NIR-copy`, branch `copy/selling-pass-work`. Cut into its
+own tree because a second session was rewriting `index.html`, `App.tsx`,
+`extra.ts` and `Voices.tsx` in the shared one, at the same minute, and had
+already staged 38 file renames into the index. Two agents editing one working
+tree is not a merge, it is a race.
+
+The owner answered the three blocking questions on 27.08.2026:
+where the ביזנס card should lead (**a contact form**), what to do with the five
+written-example quotes (**cut to three, move below the prices, and rewrite them
+so they sound like people**), and how long onboarding takes (**immediately, from
+the first document**).
+
+### What shipped
+
+| # | Finding | What was done |
+|---|---|---|
+| 1 | The ביזנס card asked for a free signup over a price of "בשיחה" | Each card now picks its ask from its own PRICE, not its index. `#contact` for the one with no figure, "להתחיל במסלול הזה" for the three with one, "להתחיל חינם" for the free tier |
+| 2 | The plans chapter was headed with the word "מסלולים" | `מתחילים בחינם. משלמים לפי כמות המסמכים.` — the one thing that separates the plans, said in the heading rather than only in the lede beneath it |
+| 3 | Five written-example quotes, above the prices | Three, below the prices, rewritten. The logo wall, which is real, now carries the proof before the ask |
+| 4 | The search title promised the previous headline | `InPlace: בדיקת חשבוניות מול הזמנות, לפני התשלום`, in `index.html` and og:title |
+| 5 | No answer to how long onboarding takes | An eighth question, in `extra.ts` because `he.ts` fails G2 on an ADDED key rather than allowing it |
+| 6 | Every paid card asked for a free signup | Folded into 1 |
+
+### The contact form
+
+Anatomy from 21st.dev's contact form (@meschacirung, Tailark), painted on this
+page's own vocabulary rather than imported. The catalogue version is built on
+shadcn's Card / Input / Textarea / Select / Label / Button and this project has
+none of those; acquiring a component kit to ask four questions is the trade the
+flow button, the plan cards, the FAQ panels and the colophon all refused before
+it.
+
+There is no MCP for 21st.dev on this machine and the registry has none to
+install, so the component was read off the site the same way build 4's other
+five were.
+
+It is a native `<form>`: native validation, native submit, no state. It works
+with the bundle blocked and it is keyboard and screen-reader operable without
+anything written here.
+
+**Its endpoint is the one claim in this repository that the repository cannot
+check.** `x.contact.action` is `mailto:hello@inplace.digital`. If that mailbox
+does not exist, the form drops enquiries silently, which is worse than the
+button it replaced.
+
+### Three gates stopped counting on their fingers
+
+G8, G13 and G15 each held a numeral: seven questions, seven questions, five
+quotes. All three were correct yesterday and all three failed today on changes
+the owner had approved, which is a gate reporting its own staleness as a defect.
+
+They now read the count off the dictionaries. What G15 exists to catch is a
+quote reaching the page without its disclosure, not a particular number of them.
+
+### G14 was flaky and nobody had noticed
+
+`unrecognised amount(s) on the page: 237, 856, 1,543` — and on the next run
+`209, 755, 1,363`. They are not amounts. The plan prices COUNT from one
+catalogue to the other over 520ms of `requestAnimationFrame`, and the gate
+waited a flat 700ms before scanning the page for stray figures. Under a full
+thirteen-gate run that wait lost, and the scan photographed a rolling digit.
+
+The first repair was wrong in an instructive way: sample the prices twice, 120ms
+apart, and call them settled when the two agree. Under a starved rAF the digit
+sits still across two polls and then carries on, so that check passed mid-roll
+and the gate failed again on different numbers.
+
+It now waits for the ARRIVAL rather than for stillness: every priced card reads
+its monthly figure and nothing else. A state, not a duration.
+
+The bug was pre-existing. Moving the quotes below the prices changed the timing
+enough to surface it, which is the only reason it is fixed rather than still
+failing one run in three.
+
+### Evidence
+
+| | measured |
+|---|---|
+| Full suite | 13 met, 0 unmet, twice: once alone and once under the full run that produced the flake |
+| `tsc --noEmit && vite build` | clean |
+| Plan asks | G14 now asserts them: a card with no figure must not link to signup, and a card with one must |
+| Frames | `lab/round12/p0660.png` (the five asks), `p0740.png` (three quotes, below the prices), `p0910.png` (the form) |
+
+### Still open
+
+The contact form's endpoint, above. Nothing else from COPY-SUGGESTIONS.md
+remains.

@@ -11,9 +11,24 @@
 // gate asserts that too, because a stray tabindex there would be a regression
 // nobody would notice by looking.
 
-import { withPage, checker } from './lib.mjs'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { ROOT, withPage, checker } from './lib.mjs'
 
 const c = checker('G13')
+
+const dict = async (file) =>
+  (
+    await import(
+      'data:text/javascript;base64,' +
+        Buffer.from(await readFile(path.join(ROOT, 'src', 'content', file), 'utf8'), 'utf8').toString(
+          'base64'
+        )
+    )
+  ).default
+
+const [he, extra] = await Promise.all([dict('he.ts'), dict('extra.ts')])
+const QUESTIONS = he.faq.items.length + (extra.faqExtra?.items.length ?? 0)
 
 await withPage(async (page) => {
   const stops = []
@@ -59,8 +74,14 @@ await withPage(async (page) => {
   const tabs = stops.filter((s) => s.role === 'tab').length
   c.note(`chain stops on the path: ${tabs} (one, by design: the others are arrow keys)`)
 
+  // Counted off the dictionaries rather than written down here, for the reason
+  // in g8-structure.mjs: an eighth question was added on 27.08.2026 and a
+  // hard-coded numeral turns that into a gate edit instead of a measurement.
   const summaries = stops.filter((s) => s.tag === 'summary').length
-  c.ok(summaries === 7, `all seven FAQ questions should be focusable, ${summaries} were`)
+  c.ok(
+    summaries === QUESTIONS,
+    `all ${QUESTIONS} FAQ questions should be focusable, ${summaries} were`
+  )
 
   // Every stop shows a ring. Measured on the focused element itself, so a rule
   // that exists but does not apply fails here.

@@ -18,6 +18,7 @@ import { LogoCloud } from '@/components/LogoCloud'
 import { PlansChapter } from '@/components/PlansChapter'
 import { Voices } from '@/components/Voices'
 import { FaqChapter } from '@/components/FaqChapter'
+import { ContactChapter } from '@/components/ContactChapter'
 import { CloseChapter } from '@/components/CloseChapter'
 import { SiteFooter } from '@/components/SiteFooter'
 
@@ -96,13 +97,6 @@ export default function App() {
           no={t.why.no}
         />
 
-        <Voices
-          eyebrow={x.testimonials.eyebrow}
-          h2={x.testimonials.h2}
-          disclosure={x.testimonials.disclosure}
-          items={x.testimonials.items}
-        />
-
         <PlansChapter
           folio={t.plans.folio}
           h2={t.plans.h2}
@@ -112,15 +106,47 @@ export default function App() {
           rows={t.plans.rows}
           priceNote={t.plans.priceNote}
           note={t.plans.note}
-          ctaLabel={t.ctaPrimary}
           ctaHref={t.ctaPrimaryHref}
+          plansCta={x.plansCta}
           billing={x.billing}
           recommendedLabel={x.billing.recommendedLabel}
           everywhereLabel={x.billing.everywhereLabel}
           everywhere={x.billing.everywhere}
         />
 
-        <FaqChapter folio={t.faq.folio} h2={t.faq.h2} lede={t.faq.lede} items={t.faq.items} />
+        {/* Round twelve, 27.08.2026, on the owner's decision. The quotes used
+            to stand between chapter 03 and the prices, which is the place a
+            reader is looking for reassurance, and five sentences declaring
+            themselves written examples is the weakest thing to hand them
+            there. Below the prices they illustrate a decision instead of
+            trying to make one, and the logo wall, which is real, is what now
+            carries the proof before the ask. */}
+        <Voices
+          eyebrow={x.testimonials.eyebrow}
+          h2={x.testimonials.h2}
+          disclosure={x.testimonials.disclosure}
+          items={x.testimonials.items}
+        />
+
+        {/* The eighth question comes from extra.ts: he.ts is frozen leaf by
+            leaf and a new key there fails G2 outright. */}
+        <FaqChapter
+          folio={t.faq.folio}
+          h2={t.faq.h2}
+          lede={t.faq.lede}
+          items={[...t.faq.items, ...x.faqExtra.items]}
+        />
+
+        <ContactChapter
+          eyebrow={x.contact.eyebrow}
+          h2={x.contact.h2}
+          lede={x.contact.lede}
+          action={x.contact.action}
+          fields={x.contact.fields}
+          submit={x.contact.submit}
+          fineprint={x.contact.fineprint}
+          optional={x.contact.optional}
+        />
 
         <CloseChapter
           folio={t.close.folio}

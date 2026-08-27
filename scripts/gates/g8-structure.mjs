@@ -4,9 +4,29 @@
 // is still the same document: a title page, six chapters in the printed order,
 // the closing spread inside chapter 02, and a colophon.
 
-import { withPage, checker } from './lib.mjs'
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { ROOT, withPage, checker } from './lib.mjs'
 
 const c = checker('G8')
+
+// The question count is READ, not written down. Round twelve added an eighth
+// question, and a gate whose only record of "how many" is a numeral in its own
+// source has to be edited every time the page gains one, which is the moment
+// somebody edits it without checking whether the page actually still renders
+// them all. Both dictionaries are plain modules with no imports, so both load.
+const dict = async (file) =>
+  (
+    await import(
+      'data:text/javascript;base64,' +
+        Buffer.from(await readFile(path.join(ROOT, 'src', 'content', file), 'utf8'), 'utf8').toString(
+          'base64'
+        )
+    )
+  ).default
+
+const [he, extra] = await Promise.all([dict('he.ts'), dict('extra.ts')])
+const QUESTIONS = he.faq.items.length + (extra.faqExtra?.items.length ?? 0)
 
 const FOLIOS = [
   'שער',
@@ -49,8 +69,8 @@ await withPage(async (page) => {
   // easy to drop while the section still looks correct in a screenshot.
   const named = await page.$$eval('#faq details', (els) => els.map((d) => d.getAttribute('name')))
   c.ok(
-    named.length === 7 && named.every((n) => n && n === named[0]),
-    `the seven questions should share one name attribute, they have: ${named.join(', ')}`
+    named.length === QUESTIONS && named.every((n) => n && n === named[0]),
+    `the ${QUESTIONS} questions should share one name attribute, they have: ${named.join(', ')}`
   )
   const exclusive = await page.evaluate(async () => {
     const summaries = [...document.querySelectorAll('#faq summary')]

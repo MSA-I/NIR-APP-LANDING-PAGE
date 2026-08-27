@@ -145,8 +145,8 @@ export function PlansChapter({
   rows,
   priceNote,
   note,
-  ctaLabel,
   ctaHref,
+  plansCta,
   billing,
   recommendedLabel,
   everywhereLabel,
@@ -160,8 +160,8 @@ export function PlansChapter({
   rows: Row[]
   priceNote: string
   note: string
-  ctaLabel: string
   ctaHref: string
+  plansCta: { free: string; paid: string; contact: string; contactHref: string }
   billing: Billing
   recommendedLabel: string
   everywhereLabel: string
@@ -212,6 +212,16 @@ export function PlansChapter({
             const featured = i === RECOMMENDED
             const shown = yearly ? (billing.yearly[i] ?? r.price) : r.price
             const hasAmount = /\d/.test(shown)
+            // The card's ask comes from its own PRICE, not from its position.
+            // `r.price` and not `shown`, so flipping the billing switch cannot
+            // change what a card asks for. A plan with no self-serve path must
+            // never end up offering the signup button again.
+            const contactOnly = !/\d/.test(r.price) && r.price !== 'ללא עלות'
+            const ask = hasAmount
+              ? { label: plansCta.paid, href: ctaHref }
+              : contactOnly
+                ? { label: plansCta.contact, href: plansCta.contactHref }
+                : { label: plansCta.free, href: ctaHref }
             return (
               <RevealItem
                 key={r.name}
@@ -252,8 +262,8 @@ export function PlansChapter({
                 </p>
 
                 <div className="plan-card__action">
-                  <Cta href={ctaHref} variant={featured ? 'primary' : 'ghost'} size="sm" block>
-                    {ctaLabel}
+                  <Cta href={ask.href} variant={featured ? 'primary' : 'ghost'} size="sm" block>
+                    {ask.label}
                   </Cta>
                 </div>
 

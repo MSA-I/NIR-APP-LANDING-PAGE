@@ -54,34 +54,36 @@ export default {
     placeholder: true,
     folioless: true,
     eyebrow: 'איך זה נשמע כשזה עובד',
-    h2: 'חמש דוגמאות למה שהמערכת&nbsp;משנה',
+    h2: 'שלוש דוגמאות למה שהמערכת&nbsp;משנה',
     disclosure:
       'הציטוטים כאן הם דוגמאות ניסוח שנכתבו על ידינו, לא לקוחות. כל אחד מהם מתאר התנהגות שקיימת במערכת היום. הם יוחלפו בהמלצות אמיתיות אחרי ההשקה.',
+    // Round twelve, 27.08.2026. Five became three, and the three were rewritten.
+    //
+    // The old five were the problem a disclosure cannot fix: every one of them
+    // was a clean, complete, on-message sentence, which is the one thing people
+    // do not sound like. A written example that reads as marketing copy makes
+    // the disclosure above it look like an excuse.
+    //
+    // What changed in the writing, and nothing else did: each one now carries a
+    // detail that serves no argument (the driver still standing there, the note
+    // remembered on Thursday), and the first admits that the thing it praises is
+    // annoying in the moment. No new capability is claimed in any of them; every
+    // behaviour described is on this page already.
     items: [
       {
-        q: 'פעם גיליתי את הפער בסוף החודש, כשכבר שילמתי. עכשיו החשבונית נעצרת לפני התשלום, ואני מחליט מה קורה איתה.',
+        q: 'פעם הייתי מגלה את הפער בסוף החודש, כשכבר שילמתי. עכשיו החשבונית נתקעת לי לפני התשלום ואני צריך להחליט מה עושים איתה. ברגע הראשון זה מעצבן. אחר כך זה בדיוק מה שרציתי.',
         who: 'בעלים',
         of: 'מסעדה עם שני סניפים',
       },
       {
-        q: 'כל הזמנה יוצאת עם מספר ועם מחירון. אין יותר לגלול אחורה בוואטסאפ כדי לזכור מה בדיוק סוכם.',
-        who: 'מנהל רכש',
-        of: 'רשת בתי קפה',
-      },
-      {
-        q: 'קבלת הסחורה נעשית מהטלפון, ליד דלת הקבלה. מה שחסר מסומן שם ולא שבוע אחרי.',
+        q: 'אני מסמנת מה הגיע מהטלפון, ליד דלת הקבלה, כשהנהג עוד עומד שם. פעם זה היה פתק בכיס שנזכרתי בו ביום חמישי.',
         who: 'מנהלת תפעול',
         of: 'מטבח מרכזי',
       },
       {
-        q: 'אני רואה רק חשבוניות מאושרות, מבצע את התשלום ומעלה אסמכתה. מה שלא אושר פשוט לא מגיע אליי.',
+        q: 'מגיעות אליי רק חשבוניות שאושרו. אני משלם, מעלה אסמכתה, וזהו. מה שלא אושר לא מגיע אליי בכלל, וזה חסך לי בעיקר טלפונים.',
         who: 'רואה חשבון',
         of: 'משרד חיצוני',
-      },
-      {
-        q: 'הדבר שהכי שינה זה הפרדת הסמכויות. אני מאשר, מישהו אחר מעביר. אין מסלול עוקף גם כשדחוף.',
-        who: 'בעלים',
-        of: 'עסק מזון',
       },
     ],
   },
@@ -116,5 +118,73 @@ export default {
     // and Business carries no figure, by decisions #201 and the free tier's
     // own wording.
     yearly: ['ללא עלות', '690 ₪', '2,490 ₪', '4,490 ₪', 'בשיחה'],
+  },
+
+  // ------------------------------------------------- the plan cards' own asks
+  // Round twelve, 27.08.2026. Until now every card carried `t.ctaPrimary`,
+  // which meant the card priced "בשיחה" offered "פתיחת חשבון חינם" and pointed
+  // at /signup. The largest customer on the page was the one whose button did
+  // not do what it said.
+  //
+  // The card picks its ask from its own PRICE, not from its index, so a change
+  // to the catalogue cannot quietly put the signup button back on a plan that
+  // has no self-serve path.
+  plansCta: {
+    free: 'להתחיל חינם',
+    paid: 'להתחיל במסלול הזה',
+    contact: 'לדבר איתנו',
+    contactHref: '#contact',
+  },
+
+  // -------------------------------------------------------------- the eighth
+  // The seven questions in he.ts are frozen by G2, and a NEW leaf in that file
+  // fails the gate outright rather than being allowlistable. So the eighth
+  // question lives here.
+  //
+  // It is the onboarding objection, which is the most common one in B2B and the
+  // only one the seven did not answer. The answer is the owner's, given
+  // 27.08.2026: it works immediately, from the first document. Both halves of
+  // it are already claimed elsewhere on this page (the close chapter's "המערכת
+  // רצה על הנתונים שלך מהמסמך הראשון שתעלה" and the fineprint's "אפשר להתחיל
+  // מספק אחד"), so nothing new is promised here.
+  faqExtra: {
+    items: [
+      {
+        q: 'כמה זמן לוקח עד שהמערכת עובדת על העסק שלי?',
+        a: 'מיד. אין שלב הקמה שצריך לעבור לפניו: פותחים חשבון, מעלים את המסמך הראשון, והמערכת עובדת עליו. אפשר להתחיל מספק אחד ולהוסיף את השאר תוך כדי עבודה.',
+      },
+    ],
+  },
+
+  // ------------------------------------------------------------------ contact
+  // The destination of the ביזנס card. Anatomy from 21st.dev's contact form
+  // (@meschacirung, Tailark): a labelled two-column top row, a full-width
+  // subject line, a message area, one submit. Repainted on this page's own
+  // vocabulary rather than imported, exactly as the flow button, the plan
+  // cards, the FAQ panels and the colophon were, because the catalogue version
+  // is built on shadcn primitives this project does not have and should not
+  // acquire for one form.
+  //
+  // ENDPOINT: `action` is where a submission actually goes. It is the one thing
+  // on this page that cannot be verified from the repository, and it is set to
+  // the address below on the owner's domain. If that mailbox does not exist,
+  // this form silently drops enquiries, which is worse than the button it
+  // replaced. See COPY-PLAN.md.
+  contact: {
+    eyebrow: 'מסלול ביזנס',
+    h2: 'ארגון עם מכסות והסדר&nbsp;משלו',
+    lede: 'המסלול הזה נבנה מול העסק ולא נרכש מהמדף. השאירו פרטים ונחזור אליכם עם הצעה שמתאימה לכמות המסמכים ולמבנה ההרשאות שלכם.',
+    action: 'mailto:hello@inplace.digital',
+    fields: {
+      name: 'שם מלא',
+      business: 'שם העסק',
+      email: 'אימייל',
+      phone: 'טלפון',
+      message: 'מה חשוב שנדע לפני השיחה?',
+      messageHint: 'כמה סניפים, כמה ספקים קבועים, ומי אמור לעבוד במערכת.',
+    },
+    submit: 'שליחה',
+    fineprint: 'הפרטים משמשים אותנו רק כדי לחזור אליכם. אין כאן רשימת דיוור.',
+    optional: 'לא חובה',
   },
 }

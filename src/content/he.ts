@@ -191,7 +191,7 @@ export default {
   //                 both DECIDED / NOT_IMPLEMENTED, so neither is advertised.
   plans: {
     folio: 'פרק 04: מסלולים',
-    h2: 'מסלולים',
+    h2: 'מתחילים בחינם. משלמים לפי כמות&nbsp;המסמכים.',
     lede: 'ההבדל בין המסלולים הוא כמה מסמכים המערכת קולטת בחודש. כל שאר היכולות פתוחות בכל מסלול.',
     tableLabel: 'השוואת מסלולים',
     headers: { plan: 'מסלול', who: 'למי זה מתאים', docs: 'מסמכים בחודש', price: 'מחיר' },
