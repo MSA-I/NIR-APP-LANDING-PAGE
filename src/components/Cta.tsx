@@ -82,6 +82,8 @@ export function Cta({
   variant = 'primary',
   size,
   block = false,
+  label,
+  className,
 }: {
   href: string
   children: ReactNode
@@ -89,18 +91,26 @@ export function Cta({
   size?: 'sm'
   /** Fill the width of its container, the way a card's action does. */
   block?: boolean
+  /** An accessible name that survives the label being hidden by CSS.
+      The folio's action is an arrow and nothing else on a phone — the owner's
+      decision of 28.08.2026 — and a bare arrow has no name of its own. It is
+      the same string the label carries, so on the widths where the label is
+      drawn it says nothing new. */
+  label?: string
+  className?: string
 }) {
   const cls = [
     'flow',
     variant === 'primary' ? 'flow--primary' : 'flow--ghost',
     size === 'sm' ? 'flow--sm' : '',
     block ? 'flow--block' : '',
+    className || '',
   ]
     .filter(Boolean)
     .join(' ')
 
   return (
-    <a className={cls} href={href}>
+    <a className={cls} href={href} aria-label={label}>
       <span className="flow__fill" aria-hidden="true" />
       <ArrowLeft className="flow__arrow flow__arrow--lead" aria-hidden="true" strokeWidth={2} />
       <span className="flow__label">{children}</span>

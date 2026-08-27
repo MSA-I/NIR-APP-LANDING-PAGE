@@ -85,6 +85,17 @@ const pill = (href: string, label: string, kind: 'primary' | 'ghost' = 'ghost', 
   `<span class="flow__fill" aria-hidden="true"></span>${arrow('lead')}` +
   `<span class="flow__label">${label}</span>${arrow('trail')}</a>`
 
+/* The mark, as `src/components/Folio.tsx` draws it.
+   These documents shared the app's `.brandchip`, and that rule hides the
+   wordmark below 480px because the app's chip has this mark underneath it.
+   The static markup had no mark, so on every phone the brand of all twelve
+   supporting pages was an empty 44px circle. */
+const MARK =
+  '<svg class="brandchip__mark" viewBox="1659.81 677.84 156.29 156.29" aria-hidden="true" fill="currentColor">' +
+  '<path d="M 1669.44 755.823 L 1710.28 755.879 C 1708.61 767.232 1707.38 778.645 1706.59 790.092 L 1736.02 790.07 C 1736.92 781.041 1737.62 771.993 1738.13 762.934 L 1760.32 763.051 C 1759.51 774.972 1758.47 786.875 1757.2 798.755 L 1754.87 825.177 L 1663.53 825.087 L 1669.44 755.823 z" />' +
+  '<path d="M 1720.4 686.812 L 1812.38 686.801 C 1811.2 709.917 1808.06 732.974 1806.67 756.062 L 1771.75 756.048 C 1770.71 756.05 1767.89 756.114 1767.79 755.436 C 1766.97 749.628 1769.92 723.931 1770.27 718.871 L 1740.77 718.879 C 1739.68 728.796 1739.03 738.754 1737.95 748.673 C 1729.48 748.622 1723.1 748.384 1714.61 749.043 C 1716.84 728.328 1718.77 707.582 1720.4 686.812 z" />' +
+  '</svg>'
+
 /** Where a page lives, in the edition it belongs to. */
 const pathOf = (slug: string, locale: LocaleCode) =>
   locale === 'he' ? `/${slug}/` : `/en/${slug}/`
@@ -320,6 +331,71 @@ const STYLE = `
       @keyframes doc-rise {
         from { opacity: 0; translate: 0 1.1rem; }
         to { opacity: 1; translate: 0 0; }
+      }
+
+      /* ================================================== THE PHONE EDITION
+         28.08.2026. These twelve documents were never measured on a phone.
+         Three faults, all of them in this bar and this table:
+
+         The running head was 223px tall in Hebrew and 274px in English on an
+         844px screen, because four nav pills wrapped over two and three rows
+         inside a flex box that was still laid out for a desktop. It is sticky,
+         so that was a third of the reading area, permanently, on every one of
+         the twelve. It is a two-row grid here — the brand and the switch on
+         one line, the chapters on a rail that scrolls sideways on the other —
+         and it measures under 120px.
+
+         The comparison table declared a 28rem minimum, which is
+         448px, and sat in a 288px column: 160px of it off the side of a 320px
+         phone, with no scrollbar drawn to say so, and the second column cut
+         mid-word. The minimum goes below 640px and the cells wrap instead.
+
+         The two columns stay two columns. Every one of these tables is a
+         comparison — the spreadsheet against InPlace, the order against the
+         invoice — and a comparison read one side at a time is not one. The
+         header row stays drawn for the same reason: it is the pair of words
+         that says which side is which. */
+      @media (max-width: 767px) {
+        .doc-top__in {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          grid-template-areas: "brand switch" "nav nav";
+          align-items: center;
+          gap: 0.5rem;
+          padding-block: 0.55rem;
+        }
+        .doc-top .brandchip { grid-area: brand; }
+        .doc-top .theme-toggle { grid-area: switch; justify-self: end; margin-inline-start: 0; }
+        /* One row that scrolls, bleeding to both screen edges so the pill at
+           each end is not cut by the reading column's own margin. */
+        .doc-top nav {
+          grid-area: nav;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          overscroll-behavior-x: contain;
+          scrollbar-width: none;
+          margin-inline: -1rem;
+          padding-inline: 1rem;
+          margin-block-end: -0.35rem;
+          padding-block-end: 0.35rem;
+          /* The four pills are 484px of content in 390px of screen, so one of
+             them is always cut by the edge. Cut, it reads as a fault; faded,
+             it reads as the rest of the row, which is what it is. */
+          mask-image: linear-gradient(to right, transparent 0, #000 1.25rem, #000 calc(100% - 1.25rem), transparent 100%);
+        }
+        .doc-top nav::-webkit-scrollbar { display: none; }
+        .doc-top nav > * { flex: none; }
+      }
+
+      @media (max-width: 639px) {
+        .doc-scroll { position: relative; }
+        .doc-table { min-inline-size: 0; font-size: 0.92rem; }
+        .doc-table th, .doc-table td {
+          padding: 0.6rem 0.55rem;
+          overflow-wrap: anywhere;
+        }
+        .doc-table th:first-child, .doc-table td:first-child { padding-inline-start: 0; }
+        .doc-table th:last-child, .doc-table td:last-child { padding-inline-end: 0; }
       }`
 
 /**
@@ -395,8 +471,9 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
   <body>
     <header class="doc-top">
       <div class="wrap doc-top__in">
-        <a class="brandchip" href="${locale === 'he' ? '/' : '/en/'}">
+        <a class="brandchip" href="${locale === 'he' ? '/' : '/en/'}" aria-label="InPlace">
           <span class="brandchip__fill" aria-hidden="true"></span>
+          ${MARK}
           <span>InPlace</span>
         </a>
         <nav aria-label="${attr(t.navLabel)}">

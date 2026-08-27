@@ -138,11 +138,19 @@ const extraEn = {
     toDark: 'Switch to the dark view',
   },
 
+  folioMenu: {
+    open: 'Menu',
+    close: 'Close the menu',
+    label: 'Chapters',
+  },
+
   accessibility: {
     screenAltSuffix: 'InPlace product screen',
     dashboardAlt: 'The full InPlace control centre screen',
     nextTestimonial: 'Next example statement',
     previousTestimonial: 'Previous example statement',
+    zoomScreen: 'Open the screen full size',
+    closeScreen: 'Close the screen',
   },
 } satisfies typeof extraHe
 

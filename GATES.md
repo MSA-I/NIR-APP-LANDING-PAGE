@@ -1628,3 +1628,141 @@ that third step, and it is measured against the 4.5:1 floor rather than chosen.
 | Switch, `/`, `/en/`, `/about/`, `/en/about/` | click, Enter and Space each toggle; `localStorage`, `color-scheme`, body ground and `theme-color` all follow, with the right label per edition |
 | No flash | after a reload the attribute is already `light` at document commit, before the first paint |
 | Direction | knob travels to the inline end in both editions; `--knob` is the only thing that differs |
+
+## Round sixteen — the phone edition of the whole site, 28.08.2026
+
+The owner, on a phone: "כשאני מחליף ממצב של אתר רגיל לתצוגת מובייל במובייל יש
+המון באגים". He asked for every menu and every control to be walked and fixed,
+and named one example of the kind of economy he wanted — the account button
+shrunk to a press with no word on it.
+
+### The first thing measured was the sentence itself, and it was not the fault
+
+"When I switch" reads like a switching fault, so that is what was measured
+first: the page loaded at 1440 and resized to 390, at 390 straight, at 980 and
+then 390, and scrolled to the middle before resizing. The resized runs came back
+with a 114px running head against 104, a 370px plate against 378, a 1693px film
+chapter against 1331, and six words of the headline hanging over the edge.
+
+It reproduced, and then it stopped reproducing, in the same script, on the same
+build. What made the difference was a line added for a different reason: reading
+`matchMedia('(max-width: 767px)')` before taking the measurements. That read
+forces a style recalculation, and with it every run came back identical to a
+clean 390px load.
+
+**So the switch is not the fault. It is headless Chrome under CDP viewport
+emulation handing out stale computed styles**, and every number above was the
+harness measuring itself. It is written down because it looked exactly like the
+reported bug for about an hour, and the next person to measure a resize on this
+machine should force the recalculation before believing what comes back.
+
+What the owner is seeing is simpler and worse: the phone layout is wrong in
+places, at every width, whether he switched to it or loaded straight into it.
+
+### G16 passes, and eleven faults were on the phone anyway
+
+`scripts/gates/g16-mobile-experience.mjs` measures three widths, touch targets,
+overflow at seven scroll positions and the conversion path, and it passed
+throughout. It passed because of what it never opens: it measures the React home
+page only, never focuses a field, and never asks whether a chapter is reachable
+once the desktop nav is hidden. Twelve supporting pages had never been measured
+on a phone at all.
+
+`scripts/gates/g23-phone.mjs` is the gate that was missing. It failed on 50
+assertions when it was written, before anything was changed.
+
+| | Measured | Fixed by |
+|---|---|---|
+| 1 | The twelve supporting pages' running head was **223px tall in Hebrew and 274px in English** on an 844px screen, sticky: a third of the reading area spent on four nav pills wrapping over two and three rows | A two-row grid — brand and switch on one line, the chapters on a rail that scrolls sideways on the other. Under 120px |
+| 2 | Their brand chip was an **empty 44px circle**. `.brandchip > span:last-child` is hidden below 480px because the app's chip has a mark underneath it, and the static markup had no mark | The mark, in `page-html.ts`, sized by a rule both editions can reach |
+| 3 | Their comparison table declared a 28rem minimum — **448px in a 288px column**, 160px of it off the side of a 320px phone, with no scrollbar drawn to say so and the second column cut mid-word | The minimum goes below 640px and the cells wrap. Two columns stay two columns: a comparison read one side at a time is not one |
+| 4 | Every contact field computed to **15.68px. iOS Safari zooms the page in on focus under 16px**, so tapping "שם מלא" on an iPhone magnified the page and left the reader to pinch back out | One number |
+| 5 | The hero fineprint's top and the second action's bottom were **the same number** at 320, 360, 390 and 430: zero gap, and it read as text that had slipped inside the button | 0.9rem above it |
+| 6 | The colophon's wordmark link was **85 × 26.5px** against a 44px minimum — the last control on the page still built to be clicked | 44px |
+| 7 | **Nine pieces of type under 12px**: two plan codes at 10.56, the recommended badge at 10.56, four plan labels at 11.2, the billing cycle at 11.84, and the four headings the colophon's link groups stand under at 11.2 | 12px and up |
+
+The last row is what a second pass is for. The first cut of the gate skipped
+anything under eight characters, which in Hebrew is most of a label, so it
+reported four faults where there were nine. The threshold is four characters
+now, and the English edition is what exposed it: `per month` is nine characters
+and `לחודש` is five.
+
+### The owner's four decisions, 28.08.2026
+
+**The chapters are reachable.** Below 1024px the four chapter links were not in
+the running head and were nowhere else either: on a phone there was no way to
+jump to a chapter at all. A trigger opens a panel with the four of them, closing
+on Escape, on a press outside, on a chapter being chosen, and on the window
+growing past the width where the row carries them itself.
+
+**The way back in is reachable.** "כניסה למערכת" was a labelled pill from 640px
+up and nothing below it, so on every phone a reader who already had an account
+had no door in the running head. It is an icon there now, with the same name.
+
+**A product screen can be read.** Chapter 02's five screens are 2000px wide and
+a phone drew them at 344, which puts the product's own interface type under
+three pixels: five pieces of real evidence, as five grey smears. A press opens
+the screen at 900px in a `<dialog>` — `showModal`, so the top layer, the
+inertness, Escape and the backdrop are the browser's and not ours. The hotspot
+layer goes on touch, because it is a hover affordance and a finger landing on
+one would jump the reader to a different station than the one they pressed.
+
+**The action is an arrow.** The owner asked for it twice. He was told, before it
+was built, that the label appeared to fit — 121px at 320 and 131px at 390 in the
+row as it stood — and that the measurement would follow. It followed, on the row
+as it now stands, and it says the opposite.
+
+The row is five controls now where it was four, and the fifth is what changes
+the arithmetic. With the label-hiding rules lifted at runtime and nothing else
+touched, the action is flex-shrunk below the width its own string needs at every
+phone width but the widest:
+
+| | Hebrew | English |
+|---|---|---|
+| 320px | label squashed by **66.7px** | by **85.7px** |
+| 360px | by **40.8px** | by **59.2px** |
+| 390px | by **14.9px** | by **32.7px** |
+| 430px | fits | fits |
+
+A squashed label inside a pill with `overflow: hidden` is the fault round
+fifteen wrote down as "a circle with the word spilling out of it". **Below 430px
+the label does not fit beside four other controls, and the arrow is not a
+preference — it is the only thing that does.** The word stays as the anchor's
+`aria-label`, so the control still announces itself, and the filled action
+colour is what separates it from the four hairline controls beside it.
+
+What the arrow bought is measurable the other way too: five icons are 248px of
+the 288px a 320px phone gives, four gaps included, and the block of arithmetic
+that used to buy that room — a notch off the type, padding off the pill, the
+hover offset to zero, and below 360px the arrow hidden outright, which left a
+blank circle — is deleted. The switch moving into the panel is what pays for the
+fifth control; it is the widest thing in the row for the least it says.
+
+### One thing this round nearly shipped
+
+The panel was a translucent sheet over a `backdrop-filter`, matching the rest of
+the fixed chrome. Photographed, the hero's headline came through it clearly
+enough to compete with the four chapter names — and would have come through on
+every engine without `backdrop-filter`, which no screenshot on this machine
+would have shown either way, since SwiftShader does not draw it. It is opaque.
+The rest of the chrome is translucent because it rides over the page and is
+meant to. A menu is read.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| G23, before | **FAILED, 50 assertions**, on `/`, `/en/` and three supporting pages at 320 and 390 |
+| G23, after | **PASS** |
+| Positive control | three assertions inverted by hand — the dialog's size, the focus return, and Enter on the trigger — and all twelve instances failed. The oracle runs and can fail |
+| The other 24 gates | **25 met, 0 unmet, of 25 runnable gates**, G16 included |
+| Photographed | `/` and `/en/` at 320 and 390, the panel open, the dialog open, and the supporting pages in both editions |
+| The opened screen | 900px against 344px in the page at 390, and against 274px at 320 |
+| Escape | closes the panel, returns focus to the trigger, and sets `aria-expanded` back to false |
+| Resize | measured, and not the fault. See the top of this round |
+
+### Still not measured
+
+The film chapter's scrub was not re-timed on a phone this round; G10 and G18
+cover it at the widths they always have. Nothing here touched it, and nothing
+here claims it was checked.

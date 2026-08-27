@@ -9,7 +9,8 @@
 // page's calls to action use, so the header answers a pointer the same way the
 // rest of the page does rather than in a dialect of its own.
 
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { LogIn, Menu, X } from 'lucide-react'
 import { Cta } from './Cta'
 
 export function Mark({ className }: { className?: string }) {
@@ -38,6 +39,7 @@ export function Folio({
   loginHref,
   languageControl,
   themeControl,
+  menuLabels,
 }: {
   /** The strip above the running head. Rendered inside this fixed box so the
       page never has to know how tall two fixed elements are together. */
@@ -54,9 +56,14 @@ export function Folio({
   /** The light/dark switch, beside the language control for the same reason:
       both change how the page is read rather than where it goes. */
   themeControl: ReactNode
+  /** The phone menu's three names: the trigger's two states, and the panel's
+      own. Below 1024px the chapter list is not in the row. */
+  menuLabels: { open: string; close: string; label: string }
 }) {
   const [lifted, setLifted] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const boxRef = useRef<HTMLElement>(null)
+  const menuId = useId()
 
   // The folio publishes its own height.
   //
@@ -84,6 +91,34 @@ export function Folio({
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // The phone menu closes the three ways a reader expects it to: Escape, a
+  // press outside it, and the window growing past the width where the chapter
+  // list is in the row anyway. The last one matters on a tablet turned
+  // sideways: without it the panel stays open over a header that is already
+  // showing the same four links.
+  useEffect(() => {
+    if (!menuOpen) return
+    const box = boxRef.current
+    const onPointer = (event: PointerEvent) => {
+      if (!box?.contains(event.target as Node)) setMenuOpen(false)
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      box?.querySelector<HTMLButtonElement>('[data-folio-menu-trigger]')?.focus()
+    }
+    const wide = window.matchMedia('(min-width: 1024px)')
+    const onWide = () => wide.matches && setMenuOpen(false)
+    document.addEventListener('pointerdown', onPointer)
+    document.addEventListener('keydown', onKey)
+    wide.addEventListener('change', onWide)
+    return () => {
+      document.removeEventListener('pointerdown', onPointer)
+      document.removeEventListener('keydown', onKey)
+      wide.removeEventListener('change', onWide)
+    }
+  }, [menuOpen])
 
   return (
     <header
@@ -125,16 +160,76 @@ export function Folio({
         <span className="me-auto" aria-hidden="true" />
 
         <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
-          {themeControl}
+          {/* The chapter menu, below the width where the row carries the
+              chapters itself. */}
+          <button
+            type="button"
+            data-folio-menu-trigger=""
+            className="folio__icon lg:hidden"
+            aria-label={menuOpen ? menuLabels.close : menuLabels.open}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            onClick={() => setMenuOpen((value) => !value)}
+          >
+            {menuOpen ? (
+              <X className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
+            ) : (
+              <Menu className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
+            )}
+          </button>
+
+          {/* The way back in. It was a labelled pill from 640px up and nothing
+              at all below it, so on every phone a reader who already had an
+              account had no door in the running head. The owner asked for an
+              icon there on 28.08.2026; the pill is unchanged above 640. */}
+          <a
+            data-folio-login=""
+            className="folio__icon sm:hidden"
+            href={loginHref}
+            aria-label={loginLabel}
+          >
+            <LogIn className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
+          </a>
+
+          {/* The switch is the widest control in the row for the least it says,
+              and below 768 the row has four other things to hold. It moves
+              into the panel there, where it has a label beside it. */}
+          <span className="folio__wide-only">{themeControl}</span>
           {languageControl}
           <span className="hidden sm:inline-flex">
             <Cta href={loginHref} variant="ghost" size="sm">
               {loginLabel}
             </Cta>
           </span>
-          <Cta href={ctaHref} size="sm">
+          <Cta href={ctaHref} size="sm" label={ctaLabel}>
             {ctaLabel}
           </Cta>
+        </div>
+
+        {/* Placed against the header rather than inside its flow: the box
+            publishes its own height to --folio-h, and a panel that grew that
+            box would move the whole document down every time it opened. */}
+        <div
+          id={menuId}
+          data-folio-menu=""
+          className="folio__menu lg:hidden"
+          role="menu"
+          aria-label={menuLabels.label}
+          hidden={!menuOpen}
+        >
+          {links.map((l) => (
+            <a
+              key={l.href}
+              role="menuitem"
+              className="folio__menu-item"
+              href={l.href}
+              onClick={() => setMenuOpen(false)}
+            >
+              {l.t}
+            </a>
+          ))}
+          <div className="folio__menu-foot">{themeControl}</div>
         </div>
       </div>
     </header>

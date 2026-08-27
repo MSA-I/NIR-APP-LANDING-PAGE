@@ -68,6 +68,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         ctaHref={t.ctaPrimaryHref}
         loginLabel={t.footer.cols[0].links[1].t}
         loginHref={t.footer.cols[0].links[1].href}
+        menuLabels={x.folioMenu}
         themeControl={<ThemeToggle toLight={x.theme.toLight} toDark={x.theme.toDark} />}
         languageControl={
           <LanguageSwitcher
@@ -109,6 +110,8 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           steps={t.what.steps}
           dir={direction}
           screenAltSuffix={x.accessibility.screenAltSuffix}
+          zoomLabel={x.accessibility.zoomScreen}
+          closeZoomLabel={x.accessibility.closeScreen}
         />
 
         <BoardChapter

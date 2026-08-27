@@ -4,3 +4,5 @@ dist/
 cad_mcp.log
 *.log
 .unlazy/
+.audit/
+.claude/worktrees/
