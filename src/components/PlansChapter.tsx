@@ -10,8 +10,9 @@
 //               rounded-square chip, the plan name under it, then the amount
 //               with the term beside it and the billing line under that, a
 //               hairline rule, a list of ticked lines, and the action last.
-//   THE FACES   the plans climb: two plain, one ringed and lit, then blue into
-//               violet, then violet. The ringed one is the plan pointed at.
+//   THE FACES   the plans climb through three hues: the page's own ground, then
+//               teal with a ring, then blue, then violet. The ringed one is the
+//               plan the vendor points at.
 //   THE TABLE   under the cards, a comparison: one row per capability, one
 //               column per plan, a figure or a tick or a cross in each cell.
 //
@@ -88,6 +89,7 @@ type Ladder = {
   unlimited: string
   intro: string
   introNote: string
+  cardRows: string[][]
   rows: { icon: string; label: string; cells: Cell[] }[]
 }
 
@@ -160,14 +162,16 @@ const ICONS = [Sprout, Store, Building2, Building, Landmark]
  *   LIFT     the basic plan is "a little more colour" than that, and no more.
  *   POINTED  the ring alone. It carried an outer glow and the glow went: what
  *            marks this plan is the border.
- *   VIOLET   a gloss, which is a highlight travelling across the card.
+ *   AZURE    blue, and a gloss travelling across it. It ended in violet
+ *            until 28.08.2026, when the owner said it and the card beside
+ *            it were reading as one colour twice.
  *   DEEP     a shader of its own; see PlanShader.tsx.
  */
 const FACE = [
   'plan-card--plain',
   'plan-card--lift',
   'plan-card--pointed',
-  'plan-card--violet',
+  'plan-card--azure',
   'plan-card--deep',
 ]
 
@@ -302,7 +306,7 @@ export function PlansChapter({
               <RevealItem key={r.name} className={['plan-card', FACE[i]].filter(Boolean).join(' ')}>
                 {/* The gloss: one element, so a card that does not carry it
                     costs nothing, and it sits behind everything the card says. */}
-                {FACE[i] === 'plan-card--violet' && (
+                {FACE[i] === 'plan-card--azure' && (
                   <span className="plan-card__gloss" aria-hidden="true" />
                 )}
                 {FACE[i] === 'plan-card--deep' && <PlanShader className="plan-card__field" />}
@@ -340,42 +344,35 @@ export function PlansChapter({
 
                 <span className="plan-card__rule" aria-hidden="true" />
 
-                {/* Every card prints every row, in one order, so five cards can
-                    be read against each other by running an eye down them. A
-                    plan that does not carry a row gets a rule through the
-                    label rather than losing the line, which is the owner's
-                    instruction of 28.08.2026 and the only way an absence is
-                    visible at all.
+                {/* The card prints the rows its own plan names, and they climb:
+                    five, eight, eleven, thirteen, fifteen. Owner, 28.08.2026 —
+                    Pro, Premium and Business were saying almost the same thing,
+                    because every card printed all fifteen rows and the top three
+                    carry nearly all of them.
 
-                    The five rows the free plan holds only for its first thirty
-                    days are drawn as absent HERE and as the introduction pill
-                    in the table: a card says what a plan is, and "thirty days
-                    of something else" is not what it is. The note under the
-                    table is where that fact belongs, and it is there. */}
+                    Nothing struck through here any more either. A card says what
+                    a plan IS; the table under it is where an absence is stated,
+                    and it states every one of them, the free plan's thirty-day
+                    introduction included. Which rows each card names is in
+                    `ladder.cardRows`, with the two rules that pick them.
+
+                    NO QUANTITY ON A CARD (same day): the row says which
+                    capability, and the table says how many. `data-plan-docs`
+                    rides the document row all the same, because G14 reads the
+                    published quota off the card as an attribute, never as text. */}
                 <ul className="plan-card__list">
-                  {ladder.rows.map((row, n) => {
-                    const cell = row.cells[i]
-                    const has = cell !== false && cell !== 'intro'
+                  {(ladder.cardRows[i] ?? []).map((key) => {
+                    const row = ladder.rows.find((x) => x.icon === key)
+                    if (!row) return null
                     return (
-                      // NO QUANTITY ON A CARD (owner, 28.08.2026): the row says
-                      // which capability, and the table under the cards says how
-                      // many. `data-plan-docs` rides the document row all the
-                      // same, because G14 reads the published quota off the card
-                      // as an attribute and never as text.
                       <li
-                        key={row.label}
-                        className={has ? '' : 'is-absent'}
-                        {...(n === 0 ? { 'data-plan-docs': r.docs } : {})}
+                        key={key}
+                        {...(key === 'documents' ? { 'data-plan-docs': r.docs } : {})}
                       >
                         <span className="plan-card__tick" aria-hidden="true">
-                          {has ? (
-                            <Check className="size-3" strokeWidth={2.5} />
-                          ) : (
-                            <Minus className="size-3" strokeWidth={2.5} />
-                          )}
+                          <Check className="size-3" strokeWidth={2.5} />
                         </span>
                         <span className="plan-card__row">{row.label}</span>
-                        <span className="sr-only">{has ? ladder.included : ladder.absent}</span>
                       </li>
                     )
                   })}

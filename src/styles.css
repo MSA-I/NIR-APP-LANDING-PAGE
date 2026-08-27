@@ -2191,7 +2191,7 @@ html[dir='rtl'] { --knob: -1; }
 }
 
 .plan-card--pointed,
-.plan-card--violet,
+.plan-card--azure,
 .plan-card--deep {
   --color-ink: #fbf6ee;
   --color-ink-soft: #c3d2d6;
@@ -2208,11 +2208,12 @@ html[dir='rtl'] { --knob: -1; }
   box-shadow: inset 0 0 0 1.6px color-mix(in srgb, #5d9096 85%, transparent);
 }
 
-/* The premium plan, blue into violet, with a gloss travelling across it. */
-.plan-card--violet {
-  background-color: #1b3f7d;
-  background-image: linear-gradient(160deg, #1b4fa8 0%, #3b2585 58%, #4a1f86 100%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #c4b5fd 32%, transparent);
+/* The premium plan. BLUE, and blue all the way down: it used to end in violet
+   and the card beside it is violet, so the two read as one colour twice. */
+.plan-card--azure {
+  background-color: #113a7a;
+  background-image: linear-gradient(160deg, #1d4ed8 0%, #163a92 56%, #0e2456 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #93c5fd 34%, transparent);
 }
 
 /* The gloss. A wide diagonal highlight crossing the card and starting again.
@@ -2402,7 +2403,7 @@ html[dir='rtl'] { --knob: -1; }
   color: var(--color-oceanic);
 }
 .plan-card--pointed .plan-card__tick,
-.plan-card--violet .plan-card__tick,
+.plan-card--azure .plan-card__tick,
 .plan-card--deep .plan-card__tick {
   border-color: color-mix(in srgb, var(--color-ink) 36%, transparent);
   background: color-mix(in srgb, var(--color-ink) 15%, transparent);
@@ -2515,16 +2516,16 @@ html[dir='rtl'] { --knob: -1; }
 }
 
 /* Violet: the card's gradient with the card's gloss travelling over it. */
-.plans-compare__table thead th.is-violet .plans-compare__chip {
+.plans-compare__table thead th.is-azure .plans-compare__chip {
   --color-ink: #fbf6ee;
   position: relative;
   overflow: hidden;
   isolation: isolate;
   color: var(--color-ink);
-  background-color: #1b3f7d;
-  background-image: linear-gradient(120deg, #1b4fa8 0%, #3b2585 58%, #4a1f86 100%);
+  background-color: #113a7a;
+  background-image: linear-gradient(120deg, #1d4ed8 0%, #163a92 56%, #0e2456 100%);
 }
-.plans-compare__table thead th.is-violet .plans-compare__chip::before {
+.plans-compare__table thead th.is-azure .plans-compare__chip::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -2625,9 +2626,9 @@ html[dir='rtl'] { --knob: -1; }
    the two violet columns keep their violet in both views the way their cards
    do; the accent columns follow the view, because the accent token does. */
 .plans-compare__table td { --mark: var(--color-oceanic); }
-.plans-compare__table td.is-violet,
+.plans-compare__table td.is-azure { --mark: #93c5fd; }
 .plans-compare__table td.is-deep { --mark: #a78bfa; }
-:root[data-theme='light'] .plans-compare__table td.is-violet,
+:root[data-theme='light'] .plans-compare__table td.is-azure { --mark: #1d4ed8; }
 :root[data-theme='light'] .plans-compare__table td.is-deep { --mark: #6d28d9; }
 .plans-compare__no {
   border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);

@@ -102,6 +102,10 @@ const extraEn = {
     intro: '30-day introduction',
     introNote: 'On the free plan the five marked capabilities are open for 30 days from email verification. After that they continue on Basic and above.',
 
+    // Which rows each card prints. Row keys, so the decision is made once; see
+    // extra.ts for the two rules that pick them.
+    cardRows: extraHe.ladder.cardRows,
+
     // Every card prints THESE rows, all of them, in this order, with a rule
     // through the ones its plan does not carry. See extra.ts for why.
 

@@ -213,6 +213,52 @@ export default {
     intro: '30 ימי היכרות',
     introNote: 'במסלול החינמי חמש היכולות המסומנות פתוחות במשך 30 יום מרגע אימות המייל. אחריהן הן ממשיכות במסלול בסיס ומעלה.',
 
+    // WHICH ROWS EACH CARD PRINTS, by row key, in the order below.
+    //
+    // Owner, 28.08.2026: Pro, Premium and Business were saying almost the same
+    // thing. They were: every card printed all fifteen rows, and the top three
+    // carry between thirteen and fifteen of them, so three cards stood side by
+    // side with the same fifteen lines and almost the same fifteen ticks.
+    //
+    // So the lists climb now, 5 / 8 / 11 / 13 / 15, and a card prints only what
+    // its plan actually carries. Two rules decide what is dropped rather than a
+    // pair of scissors:
+    //
+    //   NOTHING A PLAN DOES NOT CARRY. The struck-through lines are gone from
+    //   the cards. A card says what a plan IS; the table under it is where an
+    //   absence is stated, and it states every one of them.
+    //
+    //   NEVER ITS OWN RUNG. What a plan is bought FOR always prints. Pro keeps
+    //   the bank, the accountant queue and the consolidated invoices; Premium
+    //   keeps the integrations and the extended support; Business keeps
+    //   everything, because "everything" is what Business is. What gives way in
+    //   the middle of the ladder is the tier below it, which the card above has
+    //   already shown and the table repeats in full.
+    //
+    // The keys are the row keys, so they are the same in every language and the
+    // English dictionary reads this array rather than restating it.
+    cardRows: [
+      ['documents', 'users', 'branches', 'chain', 'roles'],
+      ['documents', 'users', 'branches', 'chain', 'roles', 'automation', 'history', 'export'],
+      [
+        'documents', 'users', 'branches', 'chain', 'roles',
+        'automation', 'history', 'export',
+        'bank', 'payments', 'invoices',
+      ],
+      [
+        'documents', 'users', 'branches', 'chain', 'roles',
+        'automation', 'history', 'export',
+        'bank', 'payments', 'invoices',
+        'api', 'support',
+      ],
+      [
+        'documents', 'users', 'branches', 'chain', 'roles',
+        'automation', 'history', 'export', 'reports', 'mail',
+        'bank', 'payments', 'invoices',
+        'api', 'support',
+      ],
+    ],
+
     // Every card prints THESE rows, all of them, in this order, with a rule
     // through the ones its plan does not carry (owner, 28.08.2026). One list
     // and one order for the cards and for the table under them: a card that
