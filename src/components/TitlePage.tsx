@@ -53,7 +53,9 @@ export function TitlePage({
       // Folio.tsx for what the constant that used to be here cost.
       style={{ paddingBlockStart: 'calc(var(--folio-h, 58px) + 0.5rem)' }}
     >
-      <div className="plate crops border border-onyx-line/70 text-ink">
+      {/* The plate runs against the theme switch: see `[data-theme-flip]`
+          in src/styles.css and the note over recipeFor in ShaderBackground. */}
+      <div data-theme-flip className="plate crops border border-onyx-line/70 text-ink">
         <div className="absolute inset-0 -z-10">
           <ShaderBackground className="h-full w-full" />
         </div>

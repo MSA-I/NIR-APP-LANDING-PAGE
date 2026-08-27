@@ -93,13 +93,22 @@ const RECIPE = {
 
 /* The ramp, and which end of it is underneath.
    These colours are PROPS, not CSS, so the token swap that turns the page over
-   in the light view (see `:root[data-theme="light"]` in src/styles.css) cannot
-   reach inside a WebGL program. The light view therefore reads the same five
-   colours from the other end: the ground the gradient sits on becomes #cfe3e6
-   rather than #04080b, and the ramp runs down to the deep teal instead of up
-   to it. One ramp, two directions, no second palette to keep in step. */
-function recipeFor(theme: 'dark' | 'light') {
-  const ramp = theme === 'light' ? [...SHADER_PALETTE].reverse() : SHADER_PALETTE
+   in the light view cannot reach inside a WebGL program: the ground has to be
+   told which way it is facing.
+
+   It faces the OTHER way to the page. The owner, 27.08.2026: the two plates the
+   ground sits under are to run against the switch rather than with it, so the
+   light page carries the dark ground the design was drawn on and the dark page
+   carries the light one. That is the whole of the branch below, and the plates
+   themselves follow it in CSS (`[data-theme-flip]` in src/styles.css) so the
+   type on them stays on the readable side of the ground.
+
+   One ramp either way, read from one end or the other: the ground the gradient
+   sits on is #04080b for the dark ground and #cfe3e6 for the light one, with
+   the ramp running up to the light end or down to the deep teal. No second
+   palette to keep in step. */
+function recipeFor(pageTheme: 'dark' | 'light') {
+  const ramp = pageTheme === 'light' ? SHADER_PALETTE : [...SHADER_PALETTE].reverse()
   return {
     ...RECIPE,
     colorBack: ramp[0],

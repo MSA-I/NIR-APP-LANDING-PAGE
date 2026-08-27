@@ -112,7 +112,7 @@ line planted on the cream plate.
     EXPECT: G7 PASS
 
 **MET.** 161 text runs across 10 scroll positions, in **both views**: worst
-5.05:1 dark, 4.48:1 light. Control measured 1.06:1 and was caught.
+4.82:1 dark, 4.48:1 light. Control measured 1.06:1 and was caught.
 
 Two changes on 27.08.2026, both because the page gained a light view. It walks
 the page twice, setting `data-theme` the way the page sets it so the shader
@@ -125,6 +125,18 @@ graded 1.01:1 on the dark ground by luck and 13.54:1 on the light one.
 *(Found by this gate: the accent that tints the last words of a headline was
 the bright oceanic on both grounds, and on the cream plate it measured 2.34:1.
 The tint is now a role, `--tint`, and the light ground gets the deep oceanic.)*
+
+*(Found by this gate again on 27.08.2026, when the owner asked for the two
+shader plates to run AGAINST the switch — a light page carrying the dark ground
+and the other way round. The gate grades against the nearest ancestor that
+paints an opaque fill, and those plates painted none: their type was measured
+against the page's ground while it sat on the plate's, and eighteen runs came
+back at 1.00:1. The plates now declare the ground they actually have. Two things
+the fix needed, both of which the page told us before the gate did: `isolation`,
+because the shader is a `z-index: -10` child and a negative child paints under
+its parent's own background — the first attempt covered the ground with a flat
+sheet of onyx; and `color`, because the close chapter's plate had never set an
+ink of its own and, flipped, set its headline cream on cream.)*
 
 ## G8 — every chapter is present, in order
 
@@ -181,6 +193,12 @@ with motion allowed, where the shader must move.
 
 **MET.** Shader frames a second apart identical; playhead 0s through the whole
 act; 0 long transitions; every heading, paragraph and list item still visible.
+
+*(Found by this gate: the control went blind the moment the two shader plates
+were given a ground of their own. Painted without a stacking context, the fill
+covered the canvas, and two frames of a covered canvas are identical for the
+one reason this gate must never accept. `isolation: isolate` on the plate puts
+the ground back over the fill and the frames apart again.)*
 
 ## G13 — the keyboard path is unbroken
 

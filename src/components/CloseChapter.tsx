@@ -25,7 +25,9 @@ export function CloseChapter({
 }) {
   return (
     <section data-folio={folio} className="pb-[clamp(2rem,5vh,3.5rem)]">
-      <div className="plate crops border border-onyx-line/70">
+      {/* Runs against the theme switch, like the title page: see
+          `[data-theme-flip]` in src/styles.css. */}
+      <div data-theme-flip className="plate crops border border-onyx-line/70">
         <div className="absolute inset-0 -z-10">
           <ShaderBackground className="h-full w-full" />
         </div>

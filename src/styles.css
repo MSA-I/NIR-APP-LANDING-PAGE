@@ -203,6 +203,108 @@
   color-scheme: light;
 }
 
+/* -------------------------------------------------- the two plates that turn back
+   The title page and the close sit on a WebGL ground (see ShaderBackground.tsx).
+   The owner asked on 27.08.2026 that the switch run the OTHER way inside those
+   two plates: a light page carries the dark ground it was designed on, and a
+   dark page carries the light one. The switch is still one switch — it just
+   moves these two plates against the rest of the page rather than with it.
+
+   The ground itself takes the flip in ShaderBackground, because its colours are
+   props and no stylesheet can reach inside a WebGL program. Everything else on
+   the plate takes it here: the scrim over the ground, the headline, the sub and
+   the crop marks all resolve tokens, and if they followed <html> the light
+   view's dark type would land on the dark ground unreadable.
+
+   Neither list below is a new palette. The first is the @theme block copied and
+   the second is the light view's copied, so both plates land on values the two
+   views were already measured at. A declaration on the element beats the one
+   inherited from <html> whatever its specificity, so the flip stops at the
+   plate edge.
+
+   Both blocks end with `background: var(--color-onyx)` — the flipped ground,
+   declared rather than merely composited. The plate never painted a fill of its
+   own before: the shader sat behind it and the scrim over the shader washed
+   toward whatever `--color-onyx` was, which was the page's. Now the plate's
+   ground and the page's are different colours, and a plate that declares
+   nothing tells anything reading the cascade — G7's contrast walk included —
+   that its type sits on the page's ground, which is the one colour it is not
+   on. The fill is behind the shader and changes no pixel; it makes the
+   declaration true. */
+:root[data-theme='light'] [data-theme-flip] {
+  --color-onyx: #0a171d;
+  --color-onyx-lift: #12242c;
+  --color-onyx-line: #1e3540;
+  --color-wheat: #fffcf8;
+  --color-wheat-sink: #f4efe7;
+  --color-wheat-line: #e5dbcd;
+
+  --color-ink: #fbf6ee;
+  --color-ink-soft: #a2b3b8;
+  --color-ink-dim: #7d8f95;
+  --color-ink-on-light: #0a171d;
+  --color-ink-on-light-soft: #46545b;
+
+  --color-oceanic: #5d9096;
+  --color-oceanic-deep: #003f47;
+  --color-focus-ring: #03707c;
+  --color-topbar: #e8eef1;
+  --color-alert: #ff8ea6;
+  --color-alert-deep: #c70036;
+
+  /* `--tint` substitutes where it is DECLARED, not where it is used, so a
+     plate that only swaps `--color-oceanic` still inherits the accent the
+     root resolved. Both are redeclared here for that reason; `.on-light`
+     re-resolves on its own because it declares --tint itself. */
+  --tint: var(--color-oceanic);
+
+  background: var(--color-onyx);
+  /* And the ink to go on it. The close chapter's plate never set a colour
+     of its own — it inherited the page's, which was the right one for as
+     long as the plate turned with the page. Flipped and left inheriting,
+     its headline came out cream on a cream ground. A plate with its own
+     ground needs its own ink. */
+  color: var(--color-ink);
+  /* `isolation` is load-bearing, not tidiness. The ground and the scrim
+     over it are `z-index: -10` children, and a negative child paints
+     UNDER its parent's own background unless the parent opens a stacking
+     context. Painting the fill without this line put a flat sheet of
+     onyx over the shader and the plate lost its ground entirely. With
+     the context open the order is: this fill, then the ground, then the
+     type. */
+  isolation: isolate;
+  color-scheme: dark;
+}
+
+:root:not([data-theme='light']) [data-theme-flip] {
+  --color-onyx: #fffcf8;
+  --color-onyx-lift: #f4efe7;
+  --color-onyx-line: #e5dbcd;
+  --color-wheat: #0a171d;
+  --color-wheat-sink: #12242c;
+  --color-wheat-line: #1e3540;
+
+  --color-ink: #0a171d;
+  --color-ink-soft: #46545b;
+  --color-ink-dim: #63737a;
+  --color-ink-on-light: #fbf6ee;
+  --color-ink-on-light-soft: #a2b3b8;
+
+  --color-oceanic: #003f47;
+  --color-oceanic-deep: #5d9096;
+  --color-focus-ring: #003f47;
+  --color-topbar: #12242c;
+  --color-alert: #c70036;
+  --color-alert-deep: #ff8ea6;
+
+  --tint: var(--color-oceanic);
+
+  background: var(--color-onyx);
+  color: var(--color-ink);
+  isolation: isolate; /* both as above */
+  color-scheme: light;
+}
+
 :root {
   --page: 1265px;
   --plate-inset: 10px;
