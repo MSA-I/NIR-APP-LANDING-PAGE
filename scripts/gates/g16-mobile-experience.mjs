@@ -113,6 +113,15 @@ for (const viewport of VIEWPORTS) {
           planSnap: plansStyle?.scrollSnapType || '',
           planScrollWidth: plans?.scrollWidth || 0,
           planClientWidth: plans?.clientWidth || 0,
+          // The tray's CONTENT box. `clientWidth` includes its 1rem of padding,
+          // and a ticket filling the line fills the content box, not the
+          // padding as well: measured against `clientWidth` a correct 254px
+          // ticket read as 32px short.
+          planContentWidth: plans
+            ? plans.clientWidth -
+              parseFloat(plansStyle?.paddingLeft || '0') -
+              parseFloat(plansStyle?.paddingRight || '0')
+            : 0,
           planCardWidth: plans?.querySelector('.plan-card')?.getBoundingClientRect().width || 0,
           targets,
           escapedText,
@@ -143,21 +152,37 @@ for (const viewport of VIEWPORTS) {
         base.h1Size >= 38 && base.h1LineHeight >= 38,
         `${viewport.width}px: hero type is too small or cramped (${base.h1Size}px / ${base.h1LineHeight}px)`
       )
+      /* THE PRICING TICKETS, RE-DECIDED 28.08.2026.
+         These four assertions used to require the opposite of what they
+         require now: `overflow-x: auto`, more than 40px of horizontal travel,
+         a mandatory inline snap, and a ticket between 70% and 78% of the
+         viewport. That is the rail pattern, it is what a phone usually wants,
+         and it was measured and green from the day it was written.
+
+         The owner reversed it on 28.08.2026, and the reason is this chapter
+         rather than the pattern: a rail shows one plan and a slice of the
+         next, and a reader comparing five prices has to hold the one that
+         scrolled away in their head to compare it with the one on screen. Read
+         down the page all five are present.
+
+         A gate is not evidence if it keeps passing whichever way the page is
+         built, so these do not become notes. They now measure the column, and
+         they fail on the rail exactly as the old four failed on the column. */
       c.ok(
-        base.planOverflow === 'auto' || base.planOverflow === 'scroll',
-        `${viewport.width}px: pricing rail is not touch-scrollable (${base.planOverflow})`
+        base.planOverflow !== 'auto' && base.planOverflow !== 'scroll',
+        `${viewport.width}px: pricing tickets are still a sideways rail (overflow-x: ${base.planOverflow})`
       )
       c.ok(
-        base.planScrollWidth > base.planClientWidth + 40,
-        `${viewport.width}px: pricing rail has no horizontal travel (${base.planClientWidth}/${base.planScrollWidth})`
+        base.planScrollWidth <= base.planClientWidth + 1,
+        `${viewport.width}px: pricing tickets have ${base.planScrollWidth - base.planClientWidth}px of horizontal travel`
       )
       c.ok(
-        base.planSnap.includes('mandatory'),
-        `${viewport.width}px: pricing rail does not snap (${base.planSnap})`
+        !base.planSnap.includes('mandatory'),
+        `${viewport.width}px: pricing tickets still snap (${base.planSnap})`
       )
       c.ok(
-        base.planCardWidth >= viewport.width * 0.7 && base.planCardWidth <= viewport.width * 0.78,
-        `${viewport.width}px: pricing ticket width is ${base.planCardWidth.toFixed(1)}px (${base.planColumns})`
+        base.planCardWidth >= base.planContentWidth - 1,
+        `${viewport.width}px: pricing ticket is ${base.planCardWidth.toFixed(1)}px of an available ${base.planContentWidth}px (${base.planColumns})`
       )
 
       const shortTargets = base.targets.filter((x) => x.width < 44 || x.height < 44)

@@ -1766,3 +1766,83 @@ meant to. A menu is read.
 The film chapter's scrub was not re-timed on a phone this round; G10 and G18
 cover it at the widths they always have. Nothing here touched it, and nothing
 here claims it was checked.
+
+## Round sixteen, part two — the owner's row and the owner's prices, 28.08.2026
+
+Three instructions, arriving while the first part was being verified: the plans
+in a column rather than a sideways scroll, the menu at the reading start, and
+the mark in the middle. The first draft of the second instruction said left and
+was corrected to right in the same breath; on a right-to-left page those are the
+same instruction, and everything below is written with logical properties, so
+the English edition mirrors it without a second rule.
+
+### The tickets are a column now, and G16 had to be turned round to say so
+
+The rail was the deliberate thing: 72vw tickets, `overflow-x: auto`, a mandatory
+inline snap, `scroll-snap-stop: always`. It is the pattern a phone usually wants
+and four of G16's assertions were written to require it.
+
+The owner's argument is about this chapter rather than the pattern, and it is
+the better one: **a rail shows one plan and a slice of the next, and the chapter
+is a comparison of five prices.** A reader on a rail has to hold the plan that
+scrolled away in their head in order to compare it with the one on the screen.
+Read down the page all five are there.
+
+So four assertions in G16 now require the opposite of what they required
+yesterday: no `overflow-x`, no travel, no mandatory snap, and a ticket that
+fills the line rather than 72% of it. They were not softened into notes. A gate
+that passes whichever way the page is built is not evidence, and these fail on a
+rail exactly as the old four failed on a column.
+
+### What the centred mark cost, and the control that paid
+
+"In the middle" is not the middle of what is left between two groups. The row
+holds one control at the start and three at the end, so a grid track would have
+centred the mark against the leftover space and put it about fifty pixels off
+the row's own centre at 320px — and moved it again the next time a control was
+added. It is taken out of flow instead and centred against the row, with
+`inset-inline: 0` and `margin-inline: auto`, which needs no signed translate and
+therefore holds in both reading directions.
+
+Out of flow, it stopped taking the 44px width the icon-only chip is given below
+480px: `fit-content` on the more specific selector won, and **the mark became an
+18px touch target. G16 measured it, in the same run.** It carries a minimum now.
+
+The three actions then would not fit beside a centred mark. Measured at 320px:
+the actions began 136px in and the mark's own box ran to 166, so the flag sat on
+the mark. The arithmetic says three fit from about 372px up. **The language
+control moved into the panel below 480px**, beside the switch, on the switch's
+own argument — both change how the page is read rather than where it goes — and
+it draws its full name in there, which the row never had room for.
+
+### One press, two menus, and the bug that made
+
+The language control lives inside the panel now, and both listen for Escape on
+`document`. One press closed the language menu **and** the panel around it, and
+the reader was two steps back from where they meant to be. The folio's handler
+stands down while a language menu inside it is open: the innermost open thing
+takes the press, the next one takes the next press.
+
+G20 walks that control by keyboard at 390px and is what found it. It opens the
+panel first now, because that is what a reader does, and every locator in it is
+`:visible`, because two instances of the control exist in the markup and exactly
+one of them is ever drawn.
+
+### What the existing gates caught, which is the point of having them
+
+Nothing in this part was found by looking at it. The run after the change came
+back with six failures in G16 and one in G20:
+
+| Gate | Said |
+|---|---|
+| G16 | `undersized touch targets: InPlace 18x44`, at all three widths |
+| G16 | `pricing ticket is 254.0px of an available 286px`, at all three widths |
+| G20 | `strict mode violation: locator('[data-language-trigger]') resolved to 2 elements` |
+
+The first is the real fault above. The third is the real move above. **The second
+was the gate being wrong, not the page**: `clientWidth` includes the tray's own
+1rem of padding, and a ticket that fills the line fills the content box and not
+the padding as well, so a correct 254px ticket read as 32px short. Both G16 and
+G23 measure the content box now. It is written down because the fix was to the
+measurement, and a gate quietly relaxed to fit the page is worth less than no
+gate at all.

@@ -105,6 +105,12 @@ export function Folio({
     }
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      // The language control lives inside this panel below 480px, and it
+      // listens for Escape too. Both handlers are on `document`, so one press
+      // closed the language menu AND the panel around it, and the reader was
+      // two steps back from where they meant to be. The innermost open thing
+      // takes the press; the next one takes the next press.
+      if (box?.querySelector('[data-language-trigger][aria-expanded="true"]')) return
       setMenuOpen(false)
       box?.querySelector<HTMLButtonElement>('[data-folio-menu-trigger]')?.focus()
     }
@@ -135,6 +141,28 @@ export function Folio({
       {announcement}
 
       <div className="folio__row wrap flex items-center gap-2 py-3">
+        {/* The chapter menu, at the reading start of the row and outside the
+            actions group: the owner's placement of 28.08.2026, which is where
+            a phone's menu is looked for. Below 1024px the brand beside it is
+            taken out of flow and centred, so the row reads menu, mark, actions
+            rather than mark, gap, four controls. */}
+        <button
+          type="button"
+          data-folio-menu-trigger=""
+          className="folio__icon lg:hidden"
+          aria-label={menuOpen ? menuLabels.close : menuLabels.open}
+          aria-haspopup="menu"
+          aria-expanded={menuOpen}
+          aria-controls={menuId}
+          onClick={() => setMenuOpen((value) => !value)}
+        >
+          {menuOpen ? (
+            <X className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
+          ) : (
+            <Menu className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
+          )}
+        </button>
+
         {/* The same chip as every other control up here, minus the arrows a
             wordmark does not take. It used to be a hand-rolled anchor with a
             thinner border, a different radius and a hover of its own, sitting
@@ -160,25 +188,6 @@ export function Folio({
         <span className="me-auto" aria-hidden="true" />
 
         <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
-          {/* The chapter menu, below the width where the row carries the
-              chapters itself. */}
-          <button
-            type="button"
-            data-folio-menu-trigger=""
-            className="folio__icon lg:hidden"
-            aria-label={menuOpen ? menuLabels.close : menuLabels.open}
-            aria-haspopup="menu"
-            aria-expanded={menuOpen}
-            aria-controls={menuId}
-            onClick={() => setMenuOpen((value) => !value)}
-          >
-            {menuOpen ? (
-              <X className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
-            ) : (
-              <Menu className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
-            )}
-          </button>
-
           {/* The way back in. It was a labelled pill from 640px up and nothing
               at all below it, so on every phone a reader who already had an
               account had no door in the running head. The owner asked for an
@@ -229,7 +238,10 @@ export function Folio({
               {l.t}
             </a>
           ))}
-          <div className="folio__menu-foot">{themeControl}</div>
+          <div className="folio__menu-foot">
+            <span className="folio__menu-langs">{languageControl}</span>
+            {themeControl}
+          </div>
         </div>
       </div>
     </header>

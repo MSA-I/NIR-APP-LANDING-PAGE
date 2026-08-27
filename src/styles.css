@@ -1863,17 +1863,55 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
 }
 .folio__menu-foot {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   padding-block-start: 0.45rem;
   margin-block-start: 0.15rem;
   border-block-start: 1px solid var(--color-onyx-line);
 }
+/* Only below 480px, where the row gives the language control up. Above it the
+   control is in the row and this copy must not be a second one. */
+.folio__menu-langs { display: none; }
+/* The panel has the room the row never did, so the language name is drawn in
+   here even though the row's copy hides it. */
+.folio__menu-langs .language-switcher__name { display: inline; }
 /* The switch is in the row from 768 up and in the panel below it, so exactly
    one of the two instances is ever drawn. */
 .folio__menu-foot { display: none; }
 @media (max-width: 767px) {
   .folio__menu-foot { display: flex; }
   .folio__wide-only { display: none; }
+}
+
+/* The mark in the middle, below the width where the chapters are in the row.
+   The owner's placement of 28.08.2026: menu at the reading start, mark in the
+   centre, the actions at the end.
+
+   It is taken out of flow to get there. Centring it with a grid track would
+   have put it at the middle of what is LEFT after the two groups, and the two
+   groups are not the same width — one control at the start and three at the
+   end — so the mark would have sat about fifty pixels off centre on a 320px
+   phone and moved every time a control was added. Out of flow it is centred
+   against the row itself, which is what "in the middle" means, and
+   `inset-inline: 0` with `margin-inline: auto` gets there without a signed
+   translate, so the same two lines hold in both reading directions. */
+@media (max-width: 1023px) {
+  .folio__row { position: relative; }
+  .folio__row > .brandchip {
+    position: absolute;
+    inset-inline: 0;
+    inset-block: 0;
+    margin: auto;
+    /* `fit-content` because an absolutely placed box with both inline insets
+       at 0 stretches to fill them otherwise. The minimum is here because
+       `fit-content` also OVERRIDES the 44px the icon-only chip is given below
+       480px, and this selector is the more specific of the two: without it the
+       mark became an 18px target, which is what G16 measured. */
+    inline-size: fit-content;
+    min-inline-size: 2.75rem;
+    block-size: fit-content;
+  }
 }
 
 /* ------------------------------------------------ chapter 02's screens, big
@@ -3102,23 +3140,26 @@ html[dir='rtl'] { --knob: -1; }
   .plans-switch__track[aria-checked='true'] .plans-switch__thumb {
     margin-inline-start: 1.5rem;
   }
+  /* The five tickets, one under the next.
+     Until 28.08.2026 they were a rail: 72vw tickets on a mandatory inline snap,
+     which is the pattern a phone usually wants and which G16 was written to
+     require. The owner asked for the column on 28.08.2026, and he is right
+     about this page — a rail shows one plan and a slice of the next, and asks
+     the reader to remember the one that scrolled away in order to compare it
+     with the one on screen. The whole chapter is a comparison of five prices.
+     Read down the page they are all still there. */
   .plans-tray {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: min(72vw, 19rem);
-    grid-template-columns: none;
-    justify-content: start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-inline: contain;
-    scroll-padding-inline: 1rem;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: thin;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    overflow-x: visible;
+    scroll-snap-type: none;
     padding: 1rem;
   }
   .plan-card {
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
+    scroll-snap-align: none;
     padding-inline: 1.4rem;
   }
   .plan-card:hover { translate: 0 0; }
@@ -3215,6 +3256,20 @@ html[dir='rtl'] { --knob: -1; }
       padding-inline: 0.5rem;
     }
     .language-switcher__name { display: none; }
+
+    /* The language control joins the switch in the panel below 480px.
+       Measured, on the row the owner asked for on 28.08.2026: with the mark
+       centred against the row rather than packed against the start, the
+       actions have to begin after the mark ends, and three of them do not.
+       At 320px they start 136px in and the mark's own box runs to 166, so the
+       flag sat ON the mark. The arithmetic says the three fit from about
+       372px up; below that one has to go, and the language control is the one
+       whose home is already the panel — it changes how the page is read, not
+       where it goes, which is the switch's argument as well. Both keep their
+       full names in there, which the row never had room to draw. */
+    .folio__actions .language-switcher { display: none; }
+    .folio__menu-langs { display: flex; }
+
     .folio__row,
     .folio__actions { gap: 0.375rem; }
     /* The action is the 44px circle declared above. This keeps every OTHER

@@ -90,6 +90,65 @@ for (const viewport of PHONES) {
                 }
               : null,
             screens: screens.length,
+            // The owner's row, 28.08.2026: menu at the reading start, mark in
+            // the middle of the ROW, actions at the end. Measured as offsets
+            // from the row's start edge so one set of numbers holds in both
+            // reading directions.
+            row: (() => {
+              const row = document.querySelector('.folio__row')
+              const brandEl = document.querySelector('.folio__row > .brandchip')
+              const acts = document.querySelector('.folio__actions')
+              if (!row || !brandEl || !acts || !menu) return null
+              const rtl = getComputedStyle(document.documentElement).direction === 'rtl'
+              const r = row.getBoundingClientRect()
+              // Distance from the row's START edge, whichever side that is.
+              const from = (el) => {
+                const b = el.getBoundingClientRect()
+                return rtl ? r.right - b.right : b.left - r.left
+              }
+              const mid = (el) => {
+                const b = el.getBoundingClientRect()
+                return rtl ? r.right - (b.left + b.width / 2) : b.left + b.width / 2 - r.left
+              }
+              return {
+                menuFromStart: +from(menu).toFixed(1),
+                actionsFromStart: +from(acts).toFixed(1),
+                brandCentreOffset: +(mid(brandEl) - r.width / 2).toFixed(1),
+                rowWidth: +r.width.toFixed(1),
+                menuOverlapsBrand: (() => {
+                  const a = menu.getBoundingClientRect(), b = brandEl.getBoundingClientRect()
+                  return Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1
+                })(),
+                actionsOverlapBrand: (() => {
+                  const a = acts.getBoundingClientRect(), b = brandEl.getBoundingClientRect()
+                  return Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1
+                })(),
+              }
+            })(),
+            plans: (() => {
+              const tray = document.querySelector('.plans-tray')
+              if (!tray) return null
+              const cards = [...tray.querySelectorAll('.plan-card')]
+              const s = getComputedStyle(tray)
+              return {
+                count: cards.length,
+                travel: tray.scrollWidth - tray.clientWidth,
+                overflowX: s.overflowX,
+                snap: s.scrollSnapType,
+                // Every ticket on its own line: no two share a top edge.
+                tops: [...new Set(cards.map((el) => Math.round(el.getBoundingClientRect().top)))].length,
+                narrowest: cards.length
+                  ? +Math.min(...cards.map((el) => el.getBoundingClientRect().width)).toFixed(1)
+                  : 0,
+                // The tray's CONTENT box: it carries 1rem of padding, and a
+                // ticket filling the line fills that, not the padding too.
+                available: +(
+                  tray.clientWidth -
+                  parseFloat(s.paddingLeft) -
+                  parseFloat(s.paddingRight)
+                ).toFixed(1),
+              }
+            })(),
           }
         })
 
@@ -141,6 +200,46 @@ for (const viewport of PHONES) {
         c.ok(Boolean(m.cta) && m.cta.label.length > 0, `${tag}: folio action has no accessible name`)
         c.ok(Boolean(m.cta) && m.cta.arrows >= 1, `${tag}: folio action draws nothing at all — no label and no arrow`)
         c.ok(m.screens === 5, `${tag}: ${m.screens} of 5 product screens open to full size`)
+
+        // The row the owner asked for on 28.08.2026.
+        c.ok(Boolean(m.row), `${tag}: the folio row could not be measured`)
+        if (m.row) {
+          c.ok(
+            m.row.menuFromStart <= 1,
+            `${tag}: the menu is ${m.row.menuFromStart}px from the row's start edge, not at it`
+          )
+          c.ok(
+            m.row.actionsFromStart > m.row.rowWidth / 2,
+            `${tag}: the actions start ${m.row.actionsFromStart}px in, on the near half of a ${m.row.rowWidth}px row`
+          )
+          // Centred against the ROW, which is what "in the middle" means, and
+          // not against whatever is left between two groups of unequal width.
+          c.ok(
+            Math.abs(m.row.brandCentreOffset) <= 2,
+            `${tag}: the mark's centre is ${m.row.brandCentreOffset}px off the row's centre`
+          )
+          c.ok(!m.row.menuOverlapsBrand, `${tag}: the menu overlaps the mark`)
+          c.ok(!m.row.actionsOverlapBrand, `${tag}: the actions overlap the mark`)
+        }
+
+        // The five tickets, one under the next.
+        c.ok(Boolean(m.plans), `${tag}: the pricing tray could not be measured`)
+        if (m.plans) {
+          c.ok(m.plans.count === 5, `${tag}: ${m.plans.count} pricing tickets, not 5`)
+          c.ok(m.plans.tops === 5, `${tag}: the 5 tickets sit on ${m.plans.tops} rows, not 5`)
+          c.ok(
+            m.plans.travel <= 1,
+            `${tag}: the pricing tray still travels ${m.plans.travel}px sideways`
+          )
+          c.ok(
+            !m.plans.snap.includes('mandatory'),
+            `${tag}: the pricing tray still snaps (${m.plans.snap})`
+          )
+          c.ok(
+            m.plans.narrowest >= m.plans.available - 1,
+            `${tag}: the narrowest ticket is ${m.plans.narrowest}px of an available ${m.plans.available}px`
+          )
+        }
 
         // the menu actually opens and holds the four chapters
         if (m.menu) {
