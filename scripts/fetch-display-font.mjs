@@ -12,7 +12,11 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
 const url = 'https://fonts.googleapis.com/css2?family=Heebo:wght@400..900&display=swap'
 const css = await (await fetch(url, { headers: { 'User-Agent': UA } })).text()
 
-const WANT = new Set(['hebrew', 'latin'])
+// Hebrew only. The latin subset was fetched too and then referenced by nothing:
+// the display face is used on the share card and in the supporting pages, both
+// of which set Hebrew, and g19-payload failed on the 29KB file shipping for no
+// reader. Add 'latin' back the day something asks for it.
+const WANT = new Set(['hebrew'])
 const pairs = [...css.matchAll(/\/\*\s*([a-z0-9-]+)\s*\*\/\s*(@font-face\s*\{[^}]*\})/g)]
 mkdirSync('public/assets/fonts', { recursive: true })
 const out = []

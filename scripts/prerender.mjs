@@ -16,9 +16,10 @@
 //   node scripts/prerender.mjs
 //
 // Two documents come out of one SSR build: the Hebrew page at dist/index.html
-// and the English one at dist/en/index.html. Only the Hebrew page carries the
-// structured data and the supporting pages, because both are generated from
-// src/content/he.ts and there is no English catalogue behind them yet.
+// and the English one at dist/en/index.html. Each carries its own structured
+// data, generated from its own dictionary. The six supporting pages are written
+// once, beside the Hebrew document, because src/content/pages.ts is Hebrew and
+// there is no English edition of them yet.
 
 // Vite's own API rather than a shell out to `vite build --ssr`: spawning
 // `npx.cmd` from Node 24 on Windows fails with EINVAL unless a shell is
@@ -73,14 +74,17 @@ for (const { locale, html, extras } of PAGES) {
   // from the same dictionary the markup is. `</` inside a JSON string would end
   // the script element early, so it is escaped; nothing else here can.
   //
-  // Hebrew only. schema() reads src/content/he.ts; an English document carrying
-  // it would publish a Hebrew catalogue under an English page.
-  const graph = extras ? schema()['@graph'] || [] : []
-  const json = extras ? JSON.stringify(schema(), null, 2).replace(/<\//g, '<\\/') : null
-  const ld = json ? `<script type="application/ld+json">\n${json}\n</script>\n  </head>` : null
+  // Per locale: schema(locale) reads that locale's dictionary, so each document
+  // declares the plan names printed in its own markup.
+  const doc$ = schema(locale)
+  const graph = doc$['@graph'] || []
+  const json = JSON.stringify(doc$, null, 2).replace(/<\//g, '<\\/')
+  const ld = `<script type="application/ld+json">\n${json}\n</script>\n  </head>`
 
-  const rendered = doc.replace(EMPTY_ROOT, `<div id="root">${markup}</div>`)
-  writeFileSync(file, ld ? rendered.replace('</head>', ld) : rendered)
+  writeFileSync(
+    file,
+    doc.replace(EMPTY_ROOT, `<div id="root">${markup}</div>`).replace('</head>', ld)
+  )
 
   const text = markup
     .replace(/<[^>]+>/g, ' ')

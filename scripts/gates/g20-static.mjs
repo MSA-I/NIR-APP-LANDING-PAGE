@@ -42,18 +42,40 @@ const readable = (html) =>
 
 // Floors, not targets, and there are two kinds of page here.
 //
-// The home page is the React application rendered to a string; it carries about
-// 8,800 characters. The supporting pages are documents with no JavaScript at
-// all, about 2,300 characters each. A single floor would either wave the home
-// page through when the static render broke, or call every supporting page thin.
+// The application pages are the React app rendered to a string; each carries
+// about 9,000 characters. The supporting pages are documents with no JavaScript
+// at all, about 2,300 characters each. A single floor would either wave an
+// application page through when the static render broke, or call every
+// supporting page thin.
 const FLOOR_HOME = 5000
 const FLOOR_PAGE = 1800
+
+// The application pages, by URL, with the lines that must be readable in the
+// shipped file before anything runs. Listed per locale rather than inferred:
+// the point of the assertion is that THESE sentences arrive, and a locale added
+// without its own lines would otherwise be checked against nothing.
+const APP = {
+  '/': [
+    'כשההזמנה והחשבונית לא מסכימות, זה נעצר כאן.',
+    'מה InPlace עושה בפועל',
+    'למה לא גיליון, ולמה לא ERP',
+    'מסלולים',
+    'שאלות שנשאלות לפני שמתחילים',
+  ],
+  '/en/': [
+    'When the order and invoice do not agree, it stops here.',
+    'What InPlace does in practice',
+    'Why not a spreadsheet, and why not an ERP',
+    'Plans',
+    'Questions asked before getting started',
+  ],
+}
 
 for (const { url, file } of pages()) {
   const html = readFileSync(file, 'utf8')
   const text = readable(html)
   const at = (what) => `${url} ${what}`
-  const home = url === '/'
+  const home = url in APP
   const floor = home ? FLOOR_HOME : FLOOR_PAGE
 
   c.ok(
@@ -94,14 +116,7 @@ for (const { url, file } of pages()) {
   )
 
   // The headline and one line from every chapter, in the raw file.
-  const MUST_READ = [
-    'כשההזמנה והחשבונית לא מסכימות, זה נעצר כאן.',
-    'מה InPlace עושה בפועל',
-    'למה לא גיליון, ולמה לא ERP',
-    'מסלולים',
-    'שאלות שנשאלות לפני שמתחילים',
-  ]
-  for (const line of MUST_READ) {
+  for (const line of APP[url]) {
     c.ok(text.includes(line), at(`does not contain "${line}" before JavaScript runs`))
   }
 

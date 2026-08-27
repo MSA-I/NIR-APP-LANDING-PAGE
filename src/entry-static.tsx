@@ -29,8 +29,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MotionConfig } from 'motion/react'
 import App from './App'
-import type { LocaleCode } from './content/locales'
-import t from './content/he'
+import { contentByLocale, type LocaleCode } from './content/locales'
 import site from './content/pages'
 import { pageHtml } from './lib/page-html'
 
@@ -64,27 +63,43 @@ const ORIGIN = 'https://inplace.digital'
  *   turn an honest disclosure into a structured-data violation.
  * - `address` and `telephone` on the Organization. Nobody has supplied them,
  *   and an Organization with an invented address is worse than one without.
+ *
+ * WHY IT TAKES A LOCALE
+ * Each document describes itself in its own language, out of its own dictionary.
+ * The English page prints English plan names, and g21 compares every offer in
+ * the graph against the names printed in the markup beside it: one Hebrew graph
+ * shipped under /en/ would fail that comparison, and deserve to.
+ *
+ * The prices are the same catalogue in both, in ILS. Only the words differ.
  */
-export function schema() {
+export function schema(locale: LocaleCode = 'he') {
+  const d = contentByLocale[locale]
+  const url = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/${locale}/`
+  const lang = locale === 'he' ? 'he-IL' : 'en'
+
   const price = (raw: string) => {
     const digits = raw.replace(/[^\d.]/g, '')
     if (raw.includes('ללא עלות')) return '0'
     return digits.length ? digits : null
   }
 
-  const offers = t.plans.rows
+  // "בשיחה" / "Contact us" carries no figure, and neither does the free plan's
+  // "No charge": the English page prints no digit there, so it declares no
+  // offer there. An offer without a price is not an offer.
+  const offers = d.plans.rows
     .map((row) => {
       const amount = price(row.price)
-      // "בשיחה" carries no figure, so it gets no Offer. An offer without a
-      // price is not an offer.
       if (amount === null) return null
       return {
         '@type': 'Offer',
         name: row.name,
         price: amount,
         priceCurrency: 'ILS',
-        description: `${row.docs} מסמכים בחודש. ${row.who}`,
-        url: `${ORIGIN}/#plans`,
+        description:
+          locale === 'he'
+            ? `${row.docs} מסמכים בחודש. ${row.who}`
+            : `${row.docs} documents a month. ${row.who}`,
+        url: `${url}#plans`,
         availability: 'https://schema.org/InStock',
       }
     })
@@ -96,31 +111,31 @@ export function schema() {
       {
         '@type': 'Organization',
         '@id': `${ORIGIN}/#organization`,
-        name: t.brand,
+        name: d.brand,
         url: ORIGIN,
         logo: `${ORIGIN}/assets/logo.svg`,
-        inLanguage: 'he-IL',
+        inLanguage: lang,
       },
       {
         '@type': 'WebSite',
-        '@id': `${ORIGIN}/#website`,
-        name: t.brand,
-        url: ORIGIN,
-        inLanguage: 'he-IL',
+        '@id': `${url}#website`,
+        name: d.brand,
+        url,
+        inLanguage: lang,
         publisher: { '@id': `${ORIGIN}/#organization` },
       },
       {
         '@type': 'SoftwareApplication',
-        '@id': `${ORIGIN}/#software`,
-        name: t.brand,
+        '@id': `${url}#software`,
+        name: d.brand,
         applicationCategory: 'BusinessApplication',
         applicationSubCategory: 'Procurement',
         operatingSystem: 'Web',
-        url: ORIGIN,
-        inLanguage: 'he-IL',
+        url,
+        inLanguage: lang,
         // The title page's lede is two paragraphs; the first is the sentence
         // that says what the product does, which is what a description is for.
-        description: t.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
+        description: d.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
         publisher: { '@id': `${ORIGIN}/#organization` },
         offers,
       },
