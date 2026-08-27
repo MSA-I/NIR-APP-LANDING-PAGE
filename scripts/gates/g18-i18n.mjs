@@ -45,6 +45,12 @@ async function readEdition(pathname) {
         indexItems: document.querySelectorAll('.title-index li').length,
         plans: document.querySelectorAll('.plan-card').length,
         faqs: document.querySelectorAll('.faq-card').length,
+        // Every card's ask, so the two editions can be held to the same one.
+        asks: [...document.querySelectorAll('.plan-card')].map((card) => ({
+          docs: card.querySelector('[data-plan-docs]')?.getAttribute('data-plan-docs') || '',
+          price: card.querySelector('[data-plan-name]')?.getAttribute('data-plan-price') || '',
+          href: card.querySelector('.plan-card__action a')?.getAttribute('href') || '',
+        })),
       }))
       edition.errors = errors
       return edition
@@ -89,6 +95,30 @@ for (const [name, edition] of [['Hebrew', he], ['English', en]]) {
   c.ok(edition.errors.length === 0, `${name} page emitted browser errors: ${edition.errors.join(' | ')}`)
 }
 c.ok(he.faqs > 0, 'the Hebrew edition renders no questions at all')
+
+// The two editions must offer the SAME thing on the same plan. G14 asserts the
+// asks, but only ever loads the Hebrew page, and on 27.08.2026 that blind spot
+// shipped: the card picked its button by comparing the price against the string
+// 'ללא עלות', so on /en/ the free plan read "No charge", failed the comparison,
+// and offered "Talk to us" over a plan anybody can open themselves.
+//
+// A plan with a NUMBER of documents is self-serve in any language. The one sold
+// in a conversation is the one whose quota is a word.
+for (const [name, edition] of [['Hebrew', he], ['English', en]]) {
+  for (const ask of edition.asks) {
+    const selfServe = /\d/.test(ask.docs)
+    c.ok(
+      selfServe === /signup/.test(ask.href),
+      `${name}: a plan with ${selfServe ? 'a document count' : 'a negotiated quota'} ` +
+        `("${ask.docs}", "${ask.price}") points at ${ask.href || 'nothing'}`
+    )
+  }
+}
+c.ok(
+  JSON.stringify(he.asks.map((a) => a.href)) === JSON.stringify(en.asks.map((a) => a.href)),
+  `the editions disagree on where the plans lead: ${he.asks.map((a) => a.href).join(' ')} / ${en.asks.map((a) => a.href).join(' ')}`
+)
+c.note(`plan asks agree across editions: ${he.asks.map((a) => a.href).join(' | ')}`)
 
 c.note(`same structure: ${he.folios} folios, 6 index items, 5 plans, ${he.faqs} FAQs`)
 c.report()
