@@ -40,7 +40,7 @@ export function LogoCloud({
         <SplitHeading
           text={h2}
           delay={0.06}
-          className="logos__h mx-auto mt-3 max-w-[26ch] text-center font-display text-[clamp(1.15rem,2.4vw,1.75rem)] leading-[1.25] font-bold tracking-[-0.02em] text-ink-soft"
+          className="logos__h mx-auto mt-3 max-w-[26ch] text-center font-display text-[clamp(1.15rem,2.4vw,1.75rem)] leading-[1.25] font-medium tracking-[-0.02em] text-ink-soft"
         />
 
         <div className="logos__rule mx-auto mt-8 max-w-sm" aria-hidden="true" />

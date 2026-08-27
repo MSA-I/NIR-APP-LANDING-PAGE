@@ -12,7 +12,7 @@
 // so they are converted: 100 - (x + w). Copied straight across, every hotspot
 // lands mirrored, which is what the first cut of build 3 did.
 
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import NAV from '@/data/demo-nav.json'
 import { Html, Reveal, SplitHeading } from '@/lib/motion'
@@ -38,6 +38,8 @@ export function WhatChapter({
   stepsLabel,
   demoHint,
   steps,
+  dir,
+  screenAltSuffix,
 }: {
   folio: string
   eyebrow: string
@@ -46,14 +48,24 @@ export function WhatChapter({
   stepsLabel: string
   demoHint: string
   steps: Step[]
+  dir: 'rtl' | 'ltr'
+  screenAltSuffix: string
 }) {
   const [at, setAt] = useState(0)
   const calm = useReducedMotion()
   const uid = useId()
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const pendingFocus = useRef<number | null>(null)
   const step = steps[at]
   const hots = ((NAV as Record<string, Hot[]>)[navKey(step.img)] || []).filter(
     (n) => n.label in NAV_STEP,
   )
+
+  useEffect(() => {
+    if (pendingFocus.current !== at) return
+    tabRefs.current[at]?.focus()
+    pendingFocus.current = null
+  }, [at])
 
   return (
     <section id="what" data-folio={folio} className="pt-[clamp(2rem,6vh,4rem)]">
@@ -84,6 +96,9 @@ export function WhatChapter({
                 return (
                   <button
                     key={s.k}
+                    ref={(element) => {
+                      tabRefs.current[i] = element
+                    }}
                     type="button"
                     role="tab"
                     id={`${uid}-tab-${i}`}
@@ -92,8 +107,17 @@ export function WhatChapter({
                     tabIndex={on ? 0 : -1}
                     onClick={() => setAt(i)}
                     onKeyDown={(e) => {
-                      if (e.key === 'ArrowLeft') setAt((i + 1) % steps.length)
-                      if (e.key === 'ArrowRight') setAt((i - 1 + steps.length) % steps.length)
+                      const forward = dir === 'rtl' ? 'ArrowLeft' : 'ArrowRight'
+                      const backward = dir === 'rtl' ? 'ArrowRight' : 'ArrowLeft'
+                      let next: number | null = null
+                      if (e.key === forward) next = (i + 1) % steps.length
+                      if (e.key === backward) next = (i - 1 + steps.length) % steps.length
+                      if (e.key === 'Home') next = 0
+                      if (e.key === 'End') next = steps.length - 1
+                      if (next === null) return
+                      e.preventDefault()
+                      pendingFocus.current = next
+                      setAt(next)
                     }}
                     className={[
                       'group relative flex items-center gap-2 rounded-[8px] border px-3.5 py-2.5',
@@ -141,7 +165,7 @@ export function WhatChapter({
                   <div className="relative overflow-clip rounded-[10px] border border-wheat-line bg-white shadow-[0_30px_70px_-40px_rgba(10,23,29,0.55)]">
                     <img
                       src={`/${step.img}`}
-                      alt={`${step.t.replace(/&nbsp;/g, ' ')}. מסך מתוך InPlace`}
+                      alt={`${step.t.replace(/&nbsp;/g, ' ')}. ${screenAltSuffix}`}
                       width={2000}
                       height={1334}
                       loading={at === 0 ? 'eager' : 'lazy'}
@@ -158,7 +182,9 @@ export function WhatChapter({
                           onClick={() => setAt(NAV_STEP[n.label])}
                           className="absolute rounded-[4px] border border-transparent transition-[background-color,border-color] duration-300 hover:border-oceanic-deep hover:bg-[color-mix(in_srgb,var(--color-oceanic)_22%,transparent)]"
                           style={{
-                            insetInlineStart: `${(100 - (n.x + n.w) * 100).toFixed(3)}%`,
+                            insetInlineStart: `${(
+                              dir === 'rtl' ? 100 - (n.x + n.w) * 100 : n.x * 100
+                            ).toFixed(3)}%`,
                             insetBlockStart: `${(n.y * 100).toFixed(3)}%`,
                             inlineSize: `${(n.w * 100).toFixed(3)}%`,
                             blockSize: `${(n.h * 100).toFixed(3)}%`,

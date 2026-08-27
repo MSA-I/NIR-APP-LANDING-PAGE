@@ -49,7 +49,7 @@ function Figure({ value }: { value: string }) {
   return (
     <p
       ref={ref}
-      className="ip-fig font-display text-[clamp(2.2rem,4.4vw,3.4rem)] leading-none font-extrabold tracking-[-0.03em] text-ink"
+      className="ip-fig text-[clamp(2.2rem,4.4vw,3.4rem)] leading-none font-semibold tracking-[-0.03em] text-ink"
     >
       {shown ?? ' '}
     </p>
@@ -66,6 +66,7 @@ export function BoardChapter({
   ctaLabel,
   ctaHref,
   fineprint,
+  imageAlt,
 }: {
   h2: string
   p: string
@@ -76,6 +77,7 @@ export function BoardChapter({
   ctaLabel: string
   ctaHref: string
   fineprint: string
+  imageAlt: string
 }) {
   return (
     <div className="py-[clamp(4rem,10vh,7rem)]">
@@ -106,7 +108,7 @@ export function BoardChapter({
             <span className="crops__b" aria-hidden="true" />
             <img
               src={`/${img}`}
-              alt="מרכז הבקרה של InPlace, מסך מלא מתוך המערכת"
+              alt={imageAlt}
               width={1800}
               height={1788}
               loading="lazy"
@@ -120,7 +122,7 @@ export function BoardChapter({
 
       <Reveal>
         <div className="wrap mt-[clamp(3rem,8vh,5rem)] flex flex-col items-start gap-5 border-t border-onyx-line pt-[clamp(2rem,5vh,3rem)] md:flex-row md:items-center md:justify-between">
-          <p className="max-w-[40ch] font-display text-[clamp(1.15rem,2.2vw,1.6rem)] leading-[1.2] font-bold tracking-[-0.02em] text-ink">
+          <p className="max-w-[40ch] font-display text-[clamp(1.15rem,2.2vw,1.6rem)] leading-[1.2] font-medium tracking-[-0.02em] text-ink">
             {midLine}
           </p>
           <div className="flex flex-col items-start gap-2">

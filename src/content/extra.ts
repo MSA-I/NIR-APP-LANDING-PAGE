@@ -117,4 +117,21 @@ export default {
     // own wording.
     yearly: ['ללא עלות', '690 ₪', '2,490 ₪', '4,490 ₪', 'בשיחה'],
   },
+
+  languages: {
+    label: 'שפה',
+    menuLabel: 'תרגום העמוד',
+    currentLabel: 'השפה הנוכחית',
+    options: {
+      he: { label: 'עברית', short: 'HE', href: '/', dir: 'rtl' },
+      en: { label: 'English', short: 'EN', href: '/en/', dir: 'ltr' },
+    },
+  },
+
+  accessibility: {
+    screenAltSuffix: 'מסך מתוך InPlace',
+    dashboardAlt: 'מרכז הבקרה של InPlace, מסך מלא מתוך המערכת',
+    nextTestimonial: 'הציטוט הבא',
+    previousTestimonial: 'הציטוט הקודם',
+  },
 }

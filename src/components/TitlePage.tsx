@@ -29,6 +29,7 @@ export function TitlePage({
   ctaHref,
   secondLabel,
   fineprint,
+  dir,
 }: {
   folio: string
   eyebrow: string
@@ -40,6 +41,7 @@ export function TitlePage({
   ctaHref: string
   secondLabel: string
   fineprint: string
+  dir: 'rtl' | 'ltr'
 }) {
   const calm = useReducedMotion()
 
@@ -113,13 +115,13 @@ export function TitlePage({
             <RevealItem as="li" key={c.n} className="border-b border-onyx-line">
               <motion.div
                 className="grid grid-cols-[2.6rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 py-4 sm:grid-cols-[3.2rem_minmax(0,14rem)_minmax(0,1fr)]"
-                whileHover={calm ? undefined : { x: -8 }}
+                whileHover={calm ? undefined : { x: dir === 'rtl' ? -8 : 8 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 <span className="ip-num text-[0.82rem] font-semibold tracking-[0.08em] text-oceanic">
                   {c.n}
                 </span>
-                <span className="font-display text-[1.06rem] font-bold tracking-[-0.02em] text-ink">
+                <span className="font-display text-[1.06rem] font-medium tracking-[-0.02em] text-ink">
                   {c.t}
                 </span>
                 <span className="col-span-2 text-[0.92rem] text-ink-dim sm:col-span-1">

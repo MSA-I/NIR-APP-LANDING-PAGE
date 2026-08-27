@@ -36,6 +36,7 @@ export function Folio({
   ctaHref,
   loginLabel,
   loginHref,
+  languageControl,
 }: {
   /** The strip above the running head. Rendered inside this fixed box so the
       page never has to know how tall two fixed elements are together. */
@@ -48,6 +49,8 @@ export function Folio({
   /** The way in for somebody who already has an account. */
   loginLabel: string
   loginHref: string
+  /** Compact browser-style language control, shared by desktop and phone. */
+  languageControl: ReactNode
 }) {
   const [where, setWhere] = useState(first)
   const [lifted, setLifted] = useState(false)
@@ -141,6 +144,7 @@ export function Folio({
         </p>
 
         <div className="ms-auto flex items-center gap-2 lg:ms-0">
+          {languageControl}
           <span className="hidden sm:inline-flex">
             <Cta href={loginHref} variant="ghost" size="sm">
               {loginLabel}

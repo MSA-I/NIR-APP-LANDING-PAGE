@@ -68,7 +68,7 @@ function Column({
                 </span>
                 <div>
                   <b
-                    className={`block font-display text-[1.08rem] leading-[1.3] font-bold tracking-[-0.02em] ${
+                    className={`block font-display text-[1.08rem] leading-[1.3] font-medium tracking-[-0.02em] ${
                       tone === 'yes' ? 'text-ink' : 'text-ink-soft'
                     }`}
                   >

@@ -103,7 +103,21 @@ await withPage(async (page) => {
   )
 
   await page.click('#plans [role="switch"]')
-  await page.waitForTimeout(700)
+  const monthlySettled = await page
+    .waitForFunction(
+      (want) =>
+        want.every((monthly) =>
+          [...document.querySelectorAll('#plans [data-plan-name]')].some((element) =>
+            element.textContent.includes(monthly)
+          )
+        ),
+      WANT_MONTHLY,
+      { timeout: 15000 }
+    )
+    .then(() => true, () => false)
+  c.ok(monthlySettled, 'monthly prices did not settle after switching back from yearly')
+  const unchecked = await page.$eval('#plans [role="switch"]', (el) => el.getAttribute('aria-checked'))
+  c.ok(unchecked === 'false', `billing switch did not return to monthly; aria-checked is "${unchecked}"`)
 
   // No other amount anywhere on the page. Everything with a shekel sign is
   // either a plan price, the yearly note, or one of the product figures the
