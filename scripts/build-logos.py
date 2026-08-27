@@ -1,10 +1,10 @@
 # Build the logo wall's marks from the sources the owner supplied.
 #
-# The six files in ../לוגואים are what real brand assets look like when they
-# come out of six different design studios: three sit on a light card, two sit
-# on a black one, one is a wide banner with a black bar across the top. Dropped
-# onto the colophon's onyx ground as-is, four of them would draw their own
-# rectangle and the wall would read as six screenshots rather than six marks.
+# The files in the לוגואים folder are what real brand assets look like when they
+# come out of as many different design studios: some sit on a light card, some
+# sit on a black one, one is a wide banner with a black bar across the top.
+# Dropped onto the colophon's onyx ground as-is, most of them would draw their
+# own rectangle and the wall would read as screenshots rather than marks.
 #
 # So the background is not "removed", it is keyed, and every mark comes out in
 # ONE tint. That is what a logo wall on a dark ground does — the catalogue
@@ -33,12 +33,15 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-# The sources live beside the repository, not in it: they are the owner's brand
-# assets, not this page's.
+# The sources are the owner's brand assets, not this page's, so they are not
+# committed. Where they SIT is the owner's business: beside the repository, or
+# inside it and untracked, which is where they were found on 27.08.2026. The
+# probe checks each folder from the repository root upwards, so both spellings
+# of "beside" work and neither has to be argued about again.
 SRC = None
 probe = ROOT
 for _ in range(8):
-    cand = os.path.join(probe, '..', 'לוגואים')
+    cand = os.path.join(probe, 'לוגואים')
     if os.path.isdir(cand):
         SRC = os.path.abspath(cand)
         break
@@ -47,7 +50,7 @@ for _ in range(8):
         break
     probe = up
 if SRC is None:
-    sys.exit('logo sources not found: expected a "לוגואים" folder beside the repository')
+    sys.exit('logo sources not found: expected a "לוגואים" folder in or beside the repository')
 
 OUT = os.path.join(ROOT, 'public', 'assets', 'logos')
 os.makedirs(OUT, exist_ok=True)
@@ -74,13 +77,18 @@ os.makedirs(OUT, exist_ok=True)
 # banner is a WHITE house sitting on a dark red badge sitting on a black bar,
 # and at 0.06 the badge keys to a quarter opacity and the mark arrives wearing
 # a plate none of the other five wear.
+#
+# Xel Extreme Linen came off the wall on 27.08.2026 and Spring Footwear went on
+# the same day, both by the owner. Xel's source stays in that folder and is
+# simply not built any more, so a rebuild cannot put a mark back on a wall it
+# was taken off. Spring is white type on a flat mid-grey card: the `dark` path.
 LOGOS = [
     ('falafel',   'LOGO1.png',                                  'light', 'פלאפל בתחנה',       1.34, 0.06),
-    ('xel',       'Xel.png',                                    'light', 'Xel Extreme Linen', 1.0,  0.06),
     ('adir',      'adir_contracting_group_signslandscape.webp', 'dark',  'Adir Contracting',  1.0,  0.12),
     ('gamos',     'לוגו מרכזי.png',                              'dark',  'GAMOS אירועים',     1.24, 0.10),
     ('nir',       'ניר-נדלן-לוגו.png',                           'light', 'NIR Estate',        1.0,  0.06),
     ('priscilla', 'פרסיליה לוגו_2.png',                          'light', 'פרסיליה',           1.0,  0.06),
+    ('spring',    'spring.png',                                 'dark',  'Spring Footwear',   1.0,  0.06),
 ]
 
 # The colophon's ink. One tint for all six.

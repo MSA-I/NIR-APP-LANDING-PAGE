@@ -33,19 +33,24 @@ export default {
   },
 
   // ----------------------------------------------------------------- logo wall
-  // The placeholders are gone: these are the six marks the owner supplied on
-  // 26.08.2026, keyed and tinted by scripts/build-logos.py. The sources are
-  // their own brand assets and live beside the repository, not in it.
+  // The placeholders are gone: these are the marks the owner supplied, keyed
+  // and tinted by scripts/build-logos.py. The sources are their own brand
+  // assets and are not committed here.
+  //
+  // Six on 26.08.2026, and six again after 27.08.2026, when the owner took Xel
+  // Extreme Linen off the wall and put Spring Footwear on it. The `w` and `h`
+  // are the built file's own pixels, printed by the build script; they are what
+  // reserves the box before the picture arrives.
   logos: {
     eyebrow: 'עובדים איתנו',
     h2: 'עסקים שמריצים את הרכש&nbsp;שלהם כאן.',
     items: [
       { src: 'assets/logos/falafel.webp', name: 'פלאפל בתחנה', w: 80, h: 80 },
-      { src: 'assets/logos/xel.webp', name: 'Xel Extreme Linen', w: 195, h: 60 },
       { src: 'assets/logos/adir.webp', name: 'Adir Contracting', w: 283, h: 60 },
       { src: 'assets/logos/gamos.webp', name: 'GAMOS אירועים', w: 68, h: 74 },
       { src: 'assets/logos/nir.webp', name: 'NIR Estate', w: 177, h: 60 },
       { src: 'assets/logos/priscilla.webp', name: 'פרסיליה', w: 145, h: 60 },
+      { src: 'assets/logos/spring.webp', name: 'Spring Footwear', w: 191, h: 60 },
     ],
   },
 
