@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+      The share card, at exactly 1200x630. Rendered by scripts/build-og.mjs,
+      which inlines the two faces as data URIs before it takes the picture, so
+      this file has no network dependency of any kind.
+
+      The ground is the shader's own ramp, flattened. ShaderBackground paints a
+      GrainGradient across #04080b -> #003f47 -> #0d6470 -> #5d9096 -> #cfe3e6,
+      and those five are what the radials below use. A share card cannot run
+      WebGL, but it can be made of the same colours, which is the part a reader
+      recognises.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Heebo';
+        src: url('__HEEBO__') format('woff2');
+        font-weight: 800;
+      }
+      @font-face {
+        font-family: 'Noto Sans Hebrew';
+        src: url('__NOTO__') format('woff2');
+        font-weight: 400;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body { inline-size: 1200px; block-size: 630px; }
+      body {
+        position: relative;
+        overflow: hidden;
+        background: #04080b;
+        font-family: 'Noto Sans Hebrew', Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* The ramp, opened at both ends the way the shader opens it. */
+      .ground {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(105% 90% at 12% -22%, #cfe3e6 0%, rgba(207, 227, 230, 0) 40%),
+          radial-gradient(90% 85% at 20% 4%, #5d9096 0%, rgba(93, 144, 150, 0) 52%),
+          radial-gradient(120% 130% at 36% -12%, #0d6470 0%, rgba(13, 100, 112, 0) 60%),
+          radial-gradient(150% 150% at 78% 112%, #003f47 0%, rgba(0, 63, 71, 0) 72%),
+          #04080b;
+      }
+
+      /* The page paints grain over everything; so does the card. */
+      .grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.16;
+        background-image: url('__GRAIN__');
+        background-size: 180px 180px;
+        mix-blend-mode: overlay;
+      }
+
+      .plate {
+        position: relative;
+        block-size: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 68px 74px 60px;
+      }
+
+      .mark {
+        font-family: 'Heebo', Arial, sans-serif;
+        font-weight: 800;
+        font-size: 25px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #cfe3e6;
+      }
+
+      h1 {
+        font-family: 'Heebo', Arial, sans-serif;
+        font-weight: 800;
+        font-size: 70px;
+        line-height: 1.14;
+        letter-spacing: -0.015em;
+        color: #fbf6ee;
+        max-inline-size: 17ch;
+        text-wrap: balance;
+        text-shadow: 0 2px 40px rgba(4, 8, 11, 0.45);
+      }
+      h1 .tint { color: #9fd0d4; }
+
+      .foot {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+      }
+
+      .chain {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 25px;
+        color: #dce9ea;
+      }
+      .chain b { font-weight: 400; }
+      .chain i {
+        font-style: normal;
+        color: #9fd0d4;
+        font-size: 20px;
+        transform: translateY(-1px);
+      }
+
+      .host {
+        font-family: 'Heebo', Arial, sans-serif;
+        font-weight: 800;
+        font-size: 26px;
+        color: #cfe3e6;
+        direction: ltr;
+        padding: 12px 22px;
+        border: 2px solid rgba(207, 227, 230, 0.4);
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ground"></div>
+    <div class="grain"></div>
+    <div class="plate">
+      <p class="mark">InPlace</p>
+
+      <h1>כל מה שקורה בין ההזמנה לכסף, <span class="tint">במקום אחד.</span></h1>
+
+      <div class="foot">
+        <p class="chain">
+          <b>ספק</b> <i>◂</i> <b>הזמנה</b> <i>◂</i> <b>קבלה</b> <i>◂</i>
+          <b>חשבונית</b> <i>◂</i> <b>תשלום</b>
+        </p>
+        <p class="host">inplace.digital</p>
+      </div>
+    </div>
+  </body>
+</html>

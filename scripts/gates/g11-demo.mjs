@@ -27,18 +27,22 @@ await withPage(async (page) => {
   const clickTab = (i) =>
     page.evaluate((n) => document.querySelectorAll('[role="tab"]')[n].click(), i)
 
-  // The panel cross-fades: the outgoing one animates away before the incoming
-  // one mounts, so for about half a second the only tabpanel in the document is
-  // the screen the reader is LEAVING. Counting panels does not distinguish the
-  // two, and waiting a fixed number of milliseconds races the transition. The
-  // panel names the tab it belongs to, so that is what is waited for.
+  // Every panel is in the document since 27.08.2026, and the four that are not
+  // selected carry `hidden`. Before that only one existed at a time, so this
+  // gate could say `[role="tabpanel"]` and mean "the visible one"; now it has
+  // to say so. That change is the point of the SELECTOR constant: if the page
+  // ever goes back to destroying panels, this gate keeps working, and if it
+  // ever leaves two visible at once, the wait below fails.
+  const SELECTOR = '[role="tabpanel"]:not([hidden])'
+
   const settleOn = (i) =>
     page.waitForFunction(
-      (n) => {
-        const panel = document.querySelector('[role="tabpanel"]')
-        return Boolean(panel) && panel.getAttribute('aria-labelledby').endsWith('-tab-' + n)
+      ({ n, sel }) => {
+        const panels = document.querySelectorAll(sel)
+        if (panels.length !== 1) return false
+        return panels[0].getAttribute('aria-labelledby').endsWith('-tab-' + n)
       },
-      i,
+      { n: i, sel: SELECTOR },
       { timeout: 5000 }
     )
 
@@ -50,11 +54,11 @@ await withPage(async (page) => {
     await settleOn(i)
     await page.waitForTimeout(180)
 
-    const state = await page.evaluate(() => {
-      const img = document.querySelector('[role="tabpanel"] img')
-      const heading = document.querySelector('[role="tabpanel"] h3')
+    const state = await page.evaluate((sel) => {
+      const img = document.querySelector(sel + ' img')
+      const heading = document.querySelector(sel + ' h3')
       const box = img.getBoundingClientRect()
-      const hots = [...document.querySelectorAll('[role="tabpanel"] button[tabindex="-1"]')].map(
+      const hots = [...document.querySelectorAll(sel + ' button[tabindex="-1"]')].map(
         (b) => {
           const r = b.getBoundingClientRect()
           return {
@@ -67,7 +71,7 @@ await withPage(async (page) => {
         }
       )
       return { src: img.getAttribute('src'), heading: heading.textContent.trim(), hots }
-    })
+    }, SELECTOR)
 
     seenPanels.add(state.src)
     totalHots += state.hots.length
@@ -101,20 +105,25 @@ await withPage(async (page) => {
   await clickTab(0)
   await settleOn(0)
   await page.waitForTimeout(180)
-  const before = await page.$eval('[role="tabpanel"] img', (el) => el.getAttribute('src'))
-  const clicked = await page.evaluate(() => {
-    // The hotspot that opens a different station than the one on screen.
-    const hots = [...document.querySelectorAll('[role="tabpanel"] button[tabindex="-1"]')]
+  const before = await page.$eval(SELECTOR + ' img', (el) => el.getAttribute('src'))
+  const clicked = await page.evaluate((sel) => {
+    // The hotspot that opens a different station than the one on screen, and
+    // it has to come from the panel the reader can actually see. Every panel
+    // carries its own copy of the boxes now, so an unqualified query returns
+    // the hidden ones too: the first cut of this line clicked a button inside
+    // `hidden`, which fires and sets the same station that was already open,
+    // and the gate then reported that hotspots do not work.
+    const hots = [...document.querySelectorAll(sel + ' button[tabindex="-1"]')]
     const target = hots.find((b) => b.getAttribute('title') === 'חשבוניות') || hots[1]
     if (!target) return null
     target.click()
     return target.getAttribute('title')
-  })
+  }, SELECTOR)
   c.ok(Boolean(clicked), 'no hotspot to click')
   if (clicked) {
     await settleOn(2)
     await page.waitForTimeout(180)
-    const after = await page.$eval('[role="tabpanel"] img', (el) => el.getAttribute('src'))
+    const after = await page.$eval(SELECTOR + ' img', (el) => el.getAttribute('src'))
     c.ok(before !== after, `clicking the "${clicked}" hotspot did not change the panel`)
     c.note(`hotspot "${clicked}": ${before.split('screen-').pop()} -> ${after.split('screen-').pop()}`)
   }

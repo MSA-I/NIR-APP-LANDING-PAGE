@@ -35,8 +35,18 @@
 // old catalogue component's cursor branch used, so a future re-pull that
 // brings one back fails rather than shipping.
 
-import { useEffect, useState } from 'react'
-import { GrainGradient } from '@paper-design/shaders-react'
+import { Suspense, lazy, useEffect, useState } from 'react'
+
+// Loaded on its own, after the page has painted.
+//
+// `@paper-design/shaders-react` compiles a WebGL program on mount, and the SEO
+// audit of 27.08.2026 measured 834ms of blocked main thread on arrival with it
+// in the entry bundle. The ground is decorative and `aria-hidden`: there is no
+// reason for it to be in the way of the first thing a reader sees, and every
+// reason for the headline above it to arrive first.
+const GrainGradient = lazy(() =>
+  import('@paper-design/shaders-react').then((m) => ({ default: m.GrainGradient }))
+)
 
 // The product's own hue, opened up at both ends.
 //
@@ -95,13 +105,43 @@ export function ShaderBackground({ className }: { className?: string }) {
     return () => mq.removeEventListener('change', sync)
   }, [])
 
+  // The ground arrives when the browser has nothing more urgent to do. Until
+  // then the pane is the page's own onyx, which is the colour the ground
+  // settles to anyway, so the wait reads as depth rather than as a gap.
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const idle =
+      window.requestIdleCallback ?? ((fn: () => void) => window.setTimeout(fn, 200))
+    const cancel = window.cancelIdleCallback ?? window.clearTimeout
+    const handle = idle(() => setReady(true), { timeout: 2000 })
+    return () => cancel(handle as number)
+  }, [])
+
+  // On the server there is no GL context and nothing to paint into, so the
+  // static pass (src/entry-static.tsx) emits the empty pane and the client
+  // fills it on mount. The ground is decorative and `aria-hidden` either way,
+  // so nothing a crawler reads depends on this branch.
+  if (typeof window === 'undefined') {
+    return (
+      <div
+        className={className}
+        aria-hidden="true"
+        style={{ inlineSize: '100%', blockSize: '100%' }}
+      />
+    )
+  }
+
   return (
     <div className={className} aria-hidden="true" style={{ inlineSize: '100%', blockSize: '100%' }}>
-      <GrainGradient
-        {...RECIPE}
-        speed={calm ? 0 : RECIPE.speed}
-        style={{ width: '100%', height: '100%', display: 'block' }}
-      />
+      {ready ? (
+        <Suspense fallback={null}>
+          <GrainGradient
+            {...RECIPE}
+            speed={calm ? 0 : RECIPE.speed}
+            style={{ width: '100%', height: '100%', display: 'block' }}
+          />
+        </Suspense>
+      ) : null}
     </div>
   )
 }

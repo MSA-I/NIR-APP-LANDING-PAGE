@@ -22,6 +22,13 @@ const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
+  // robots.txt and sitemap.xml are served by their extension like anything
+  // else. Before these two lines they fell through to octet-stream, and a
+  // gate asserting that robots.txt is served as text would have been
+  // measuring this file rather than the deployment.
+  '.txt': 'text/plain; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
+  '.jpg': 'image/jpeg',
   '.woff2': 'font/woff2',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',

@@ -54,7 +54,7 @@ async function shaderFrames(page) {
 // ---- the control: motion is real when the preference is off ---------------
 await withPage(
   async (page) => {
-    await page.waitForTimeout(600)
+    await waitForGround(page)
     const [a, b] = await shaderFrames(page)
     c.ok(Boolean(a), 'no shader canvas on the title page')
     c.ok(a !== b, 'control: the shader does not move even with motion allowed, so this gate is blind')
@@ -63,10 +63,27 @@ await withPage(
   { reducedMotion: 'no-preference' }
 )
 
+/**
+ * Wait for the ground to arrive.
+ *
+ * Since 27.08.2026 the WebGL ground is a dynamic import that mounts on
+ * `requestIdleCallback`, so that a decorative, aria-hidden background does not
+ * compile a shader program while the headline above it is still arriving. A
+ * fixed 600ms wait was enough when it was in the entry bundle and is not now,
+ * especially here: these gates run Chrome on SwiftShader, where idle takes
+ * longer to come than it ever would on a real machine.
+ */
+async function waitForGround(page) {
+  await page
+    .waitForSelector('canvas', { timeout: 8000 })
+    .catch(() => {})
+  await page.waitForTimeout(400)
+}
+
 // ---- the real measurement -------------------------------------------------
 await withPage(
   async (page) => {
-    await page.waitForTimeout(600)
+    await waitForGround(page)
 
     const [a, b] = await shaderFrames(page)
     c.ok(a === b, 'the shader ground is still advancing under prefers-reduced-motion')

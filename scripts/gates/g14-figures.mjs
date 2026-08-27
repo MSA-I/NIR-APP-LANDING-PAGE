@@ -102,8 +102,41 @@ await withPage(async (page) => {
     `data-plan-price moved with the switch; it must stay the monthly catalogue: ${stillMonthly.join(', ')}`
   )
 
-  await page.click('#plans [role="switch"]')
-  await page.waitForTimeout(700)
+  // The prices COUNT to the yearly figure over 520ms rather than cutting to
+  // it, so for half a second after the click the page shows amounts that are
+  // in no catalogue. A fixed wait races that animation: this gate failed about
+  // one run in three, with a different set of amounts every time ("275, 993,
+  // 1,790", then "502, 1,814, 3,270", then "129, 466, 840"), each of them the
+  // same fraction of the three yearly prices. That reads like a pricing bug and
+  // is a stopwatch bug.
+  //
+  // Read the amounts with the animation switched off at the source.
+  //
+  // Three attempts to wait it out all failed about one run in five, each time
+  // reporting a different set of amounts that were the same fraction of the
+  // three yearly prices ("275, 993, 1,790" ... "661, 2,386, 4,302"). The last
+  // of those waited for two identical readings in a row and STILL caught a
+  // moving number, because the count runs on requestAnimationFrame and under
+  // headless SwiftShader a frame can be later than the poll.
+  //
+  // `Amount` in PlansChapter already has an exact answer for this: under
+  // `prefers-reduced-motion` it sets the figure outright instead of counting.
+  // So the catalogue is read in a second context with reduced motion on, where
+  // there is no animation to race. Nothing about the published figures depends
+  // on how they arrive.
+  const amounts = await withPage(
+    async (calm) => {
+      await calm.evaluate(() => document.querySelector('#plans').scrollIntoView())
+      await calm.click('#plans [role="switch"]')
+      await calm.waitForTimeout(300)
+      return calm.evaluate(() => [
+        ...new Set(
+          [...document.body.innerText.matchAll(/([\d][\d,]*\.?\d*)\s*₪/g)].map((m) => m[1])
+        ),
+      ])
+    },
+    { reducedMotion: 'reduce' }
+  )
 
   // No other amount anywhere on the page. Everything with a shekel sign is
   // either a plan price, the yearly note, or one of the product figures the
@@ -112,12 +145,9 @@ await withPage(async (page) => {
     '2,884.50', '4,720.00', '2,832.00', '17,825', // quoted off the captures
     '69', '249', '449', '690', '2,490', '4,490', // the catalogue
   ])
-  const amounts = await page.evaluate(() =>
-    [...document.body.innerText.matchAll(/([\d][\d,]*\.?\d*)\s*₪/g)].map((m) => m[1])
-  )
-  const strays = [...new Set(amounts)].filter((a) => !KNOWN.has(a))
+  const strays = amounts.filter((a) => !KNOWN.has(a))
   c.ok(strays.length === 0, `unrecognised amount(s) on the page: ${strays.join(', ')}`)
-  c.note(`${new Set(amounts).size} distinct amounts, all accounted for`)
+  c.note(`${amounts.length} distinct amounts, all accounted for`)
 
   // Legal links live on the app host.
   const legal = await page.$$eval('footer a', (els) =>

@@ -1,0 +1,31 @@
+# Cloudflare Pages reads this file from the root of the published output.
+#
+# No Content-Security-Policy yet, and that is a decision rather than an
+# oversight: motion writes inline styles on every animated element, so a strict
+# style-src would stop the page from animating without stopping the page from
+# loading, which is the worst kind of failure to notice. CSP arrives in stage 4
+# as Content-Security-Policy-Report-Only first, and is only enforced once the
+# reports are empty.
+#
+# HSTS carries no `preload` token. Preloading is close to irreversible and it
+# covers every subdomain including app.inplace.digital, so it is the owner's
+# call to make deliberately, not a side effect of a landing page deploy.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  X-Frame-Options: SAMEORIGIN
+
+# Vite hashes every filename under /assets, so these can never go stale.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# These three are addressed by name and must be allowed to change.
+/robots.txt
+  Cache-Control: public, max-age=3600
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+/
+  Cache-Control: public, max-age=0, must-revalidate

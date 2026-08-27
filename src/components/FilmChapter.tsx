@@ -15,8 +15,8 @@
 // screen, so the film does not cut at the end, it hands over.
 
 import { useEffect, useRef } from 'react'
-import { useInView, useReducedMotion, useScroll } from 'motion/react'
-import { Html, SplitHeading } from '@/lib/motion'
+import { useInView, useScroll } from 'motion/react'
+import { Html, SplitHeading, useCalm } from '@/lib/motion'
 
 type Block = { h: string; p: string }
 
@@ -29,7 +29,7 @@ export function FilmChapter({
   caption: string
   blocks: Block[]
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const { scrollYProgress } = useScroll({
@@ -38,18 +38,24 @@ export function FilmChapter({
   })
 
   useEffect(() => {
-    if (calm) return
     const video = videoRef.current
     if (!video) return
 
     // Phones get the smaller cut. Read once: swapping src mid-scroll would
     // reset the playhead the scroll is driving.
     const small = window.matchMedia('(max-width: 767px)').matches
-    video.src = small ? '/assets/film-m.mp4' : '/assets/film.mp4'
-    // The poster has to match the cut. film.webp is 16:9; behind the portrait
-    // phone cut it is the wrong shape and shows for as long as the clip takes
-    // to open, which on a cold 5MB load is the first thing a phone sees.
+
+    // The poster is set whatever the motion preference, and BEFORE the early
+    // return below: under `prefers-reduced-motion` the chapter is a still
+    // frame, and a still frame with no picture is a black rectangle. It is set
+    // here rather than in the markup because only this line knows which cut
+    // applies, and a poster in the markup was downloaded and then replaced,
+    // costing a phone both images.
     video.poster = small ? '/assets/film-m.webp' : '/assets/film.webp'
+
+    if (calm) return
+
+    video.src = small ? '/assets/film-m.mp4' : '/assets/film.mp4'
     video.load()
 
     let raf = 0
@@ -110,10 +116,17 @@ export function FilmChapter({
                 1920x1080 and the phone cut is 810x1440, and a single
                 `aspect-[16/10]` for both is what cropped two thirds of the
                 phone film away. */}
+            {/* No `poster` here, and no `src`.
+                Both are set in the effect below, which is the only place that
+                knows whether this is the desktop cut or the phone cut. A poster
+                declared in the markup was fetched immediately and then replaced
+                by the effect, so a phone downloaded BOTH posters: 110KB of the
+                16:9 image it was never going to show, at the one moment it can
+                least afford it. The element renders nothing until the effect
+                runs either way, because the src arrives there too. */}
             <video
               ref={videoRef}
               className="film-video"
-              poster="/assets/film.webp"
               playsInline
               muted
               preload="metadata"

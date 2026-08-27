@@ -24,9 +24,30 @@ the unit, they hard-cut between grounds, and only one of them carries a scroll.
 | 05 | שאלות | Wheat | Seven answers, as native `<details>` in monochrome panels |
 | 06 | להתחיל | Onyx, live | The one ask, on the ground the page opened on |
 
+### Seven pages, and six of them carry no JavaScript
+
+The home page above is the React application. Beside it sit six documents, each
+answering one search, generated at build time from `src/content/pages.ts` and
+shipped as plain HTML with no bundle at all:
+
+| | Answers |
+|---|---|
+| `/procurement-software/` | תוכנת רכש לעסקים |
+| `/supplier-invoices/` | ניהול חשבוניות ספקים |
+| `/invoice-matching/` | התאמת חשבונית להזמנה ולקבלת הסחורה |
+| `/vs-spreadsheet/` | גיליון אקסל מול מערכת רכש |
+| `/vs-erp/` | ERP מול מערכת רכש ייעודית |
+| `/about/` | מה המערכת, ולפי אילו עקרונות היא נבנתה |
+
+Every claim on them is traceable to a document in the product repository, and
+each page names its sources in `pages.ts`. The home page is also rendered to
+static markup at build time, so the whole site can be read with JavaScript
+switched off, which is how every answer engine that is not Google reads it.
+
 The design intent and the interview it came from are in [BRIEF.md](BRIEF.md);
-the acceptance ledger with its evidence is [GATES.md](GATES.md); the build's
-registry row is [FINGERPRINTS.md](FINGERPRINTS.md).
+the acceptance ledger with its evidence is [GATES.md](GATES.md); what is still
+open, and why, is [DEBT.md](DEBT.md); the build's registry row is
+[FINGERPRINTS.md](FINGERPRINTS.md).
 
 ### Build 4, and what changed
 
@@ -132,7 +153,7 @@ built `dist/` on <http://localhost:4500>. `dist/` is not committed.
 node scripts/gates/all.mjs
 ```
 
-Twelve gates, about ninety seconds, non-zero on any failure.
+Twenty gates, about five minutes, non-zero on any failure.
 
 | Gate | What it measures |
 |---|---|
@@ -148,6 +169,13 @@ Twelve gates, about ninety seconds, non-zero on any failure.
 | G12 | `prefers-reduced-motion` stops the shader, the film and every transition |
 | G13 | The keyboard reaches everything, and every stop shows a ring |
 | G14 | The published figures are the launch catalogue; legal links on the app host |
+| G16 | Every head tag a crawler or a chat client reads, declared exactly once |
+| G17 | `robots.txt`, `sitemap.xml` and the 404 document are files, not the app shell |
+| G18 | The film's index is at the front, and the browser pulls it once |
+| G19 | `dist/` is inside its budget, and nothing ships unreferenced |
+| G20 | Every page can be read with JavaScript switched off |
+| G21 | The structured data agrees with the page, and declares nothing it must not |
+| G22 | The startup bundle is inside its budget, and the WebGL ground is not in it |
 
 One gate by id:
 
@@ -182,4 +210,13 @@ things on this page that nothing measures.
 | `public/assets/` | The film, its poster, the product screens, both typefaces |
 | `world/` | The scene the film is rendered from: the world, its textures, its product captures |
 | `scripts/gates/` | The harness behind [GATES.md](GATES.md) |
+| `src/content/pages.ts` | The six supporting pages, with the product document each claim comes from |
+| `src/lib/page-html.ts` | Those pages as documents: no client JavaScript, the site's own stylesheet |
+| `src/entry-static.tsx` | The build-time entry: the page as a string, the structured data, the supporting pages |
+| `scripts/prerender.mjs` | Writes all of that into `dist/` after `vite build` |
+| `scripts/build-sitemap.mjs` | `sitemap.xml`, derived from the pages that were actually built |
+| `scripts/faststart.mjs` | Moves the MP4 index to the front, and proves nothing else moved |
+| `scripts/build-og.mjs` | The share card, drawn in the browser from `og-template.html` |
+| `public/robots.txt`, `_headers`, `404.html` | What the host and the crawlers ask for |
+| `world/renders/` | The numbered world renders. Kept, reproducible, and out of the build |
 | `archive/build3/` | Build 3 entire, unedited: page, styles, engine, its own ledger |

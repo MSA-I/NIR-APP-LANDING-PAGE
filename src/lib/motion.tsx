@@ -15,6 +15,25 @@ import type { ReactNode } from 'react'
 export const EASE = [0.22, 1, 0.36, 1] as const
 
 /**
+ * "Is this a place where nothing should move?"
+ *
+ * Two cases, and they want the same branch. The reader who asked their system
+ * for less motion is the obvious one. The other is the static render in
+ * scripts/prerender.mjs, which runs in Node: there is no window to ask, no
+ * frame to animate in, and the output is a file.
+ *
+ * That second case matters more than it sounds. `useReducedMotion()` alone
+ * resolves to false on the server, so the first cut of the static build shipped
+ * every headline as words at `opacity: 0` carrying `aria-hidden="true"` —
+ * markup written for an animation that was never going to run, in a file whose
+ * whole purpose is to be read by something that does not animate.
+ */
+export function useCalm() {
+  const preference = useReducedMotion()
+  return typeof window === 'undefined' || !!preference
+}
+
+/**
  * The application's name, wherever it appears in running copy.
  *
  * The owner's note of 26.08.2026: "everywhere the company name is written in
@@ -81,7 +100,7 @@ export function Reveal({
   className?: string
   delay?: number
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   if (calm) return <div className={className}>{children}</div>
   return (
     <motion.div
@@ -120,7 +139,7 @@ export function RevealGroup({
   as?: 'div' | 'ul' | 'tbody'
   'aria-label'?: string
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const props = {
     className,
     initial: 'hidden' as const,
@@ -148,7 +167,7 @@ export function RevealItem({
   className?: string
   as?: 'div' | 'li' | 'tr'
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   if (calm) {
     if (as === 'li') return <li className={className}>{children}</li>
     if (as === 'tr') return <tr className={className}>{children}</tr>
@@ -214,7 +233,7 @@ export function SplitHeading({
   delay?: number
   tint?: number
 }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const plain = decode(text)
   const words = plain.split(' ').filter(Boolean)
   const tintFrom = tint > 0 ? words.length - tint : Infinity

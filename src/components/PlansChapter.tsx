@@ -32,9 +32,9 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { Building, Building2, Check, Landmark, Sprout, Store } from 'lucide-react'
-import { useReducedMotion } from 'motion/react'
+
 import { Cta } from './Cta'
-import { Html, Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
+import { Html, Reveal, RevealGroup, RevealItem, SplitHeading, useCalm } from '@/lib/motion'
 
 type Row = { name: string; who: string; docs: string; price: string }
 
@@ -61,7 +61,7 @@ type Billing = {
  * shape at every step so the width does not jitter.
  */
 function Amount({ value }: { value: string }) {
-  const calm = useReducedMotion()
+  const calm = useCalm()
   const [shown, setShown] = useState(value)
   const from = useRef(value)
 

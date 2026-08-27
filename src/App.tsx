@@ -7,6 +7,7 @@
 
 import t from '@/content/he'
 import x from '@/content/extra'
+import site from '@/content/pages'
 import { Announcement } from '@/components/Announcement'
 import { Folio } from '@/components/Folio'
 import { TitlePage } from '@/components/TitlePage'
@@ -138,6 +139,10 @@ export default function App() {
         tagline={t.footer.tagline}
         rights={t.footer.rights}
         cols={t.footer.cols}
+        more={{
+          h: 'להעמיק',
+          links: site.pages.map((p) => ({ t: p.eyebrow, href: `/${p.slug}/` })),
+        }}
         marquee={t.title_page.index.map((c) => c.t)}
         topLabel={t.title_page.folio}
       />

@@ -212,6 +212,257 @@ the chain and the plan rows; crop marks on every plate.
 
 ---
 
+## G16 — the document says who it is, once
+
+    CHECK: node scripts/gates/g16-head.mjs
+    EXPECT: G16 PASS
+
+**MET.** Read off `dist/`, over every `index.html` in the build, so a second
+locale is covered the day it appears.
+
+The audit of 27.08.2026 found the head missing everything a crawler or a chat
+client reads before it decides anything: no canonical, no `og:url`, no
+`og:image`, no twitter card. A share of the link rendered as a bare URL.
+
+The gate's second half was earned within the hour. Two sessions edited
+`index.html` at the same time and the file came out declaring `canonical`
+twice, `og:url` twice and `og:locale` twice. Identical values, so nothing broke;
+the same thing with different values is a page arguing with itself, and nothing
+in the build would have said so. So every tag is asserted **exactly once**, not
+merely present.
+
+`og:image:width` and `og:image:height` are checked against the JPEG's own SOF
+marker rather than against the numbers beside them, because a promise about a
+file nobody opened is not a measurement. Control: a second `canonical` injected
+into `dist/index.html` fails the gate.
+
+## G17 — the three files a crawler asks for first
+
+    CHECK: node scripts/gates/g17-crawl.mjs
+    EXPECT: G17 PASS
+
+**MET.** Before this, `robots.txt` and `sitemap.xml` did not exist, and the way
+they did not exist is the part worth keeping: the SPA fallback answered **200
+with the homepage HTML**. A crawler asking how it may crawl received a
+marketing page and a success code, which is worse than a 404 because a 404 is
+an answer. So the gate asks the server and reads the status, the content type
+and the first line; a fallback fails all three.
+
+It also asserts that `robots.txt` carries no `Disallow`. The owner's decision of
+27.08.2026 is that GPTBot, PerplexityBot and ClaudeBot are welcome, and a
+copy-pasted robots.txt is exactly what would quietly undo that.
+
+The sitemap is checked in both directions: every page in the build is listed,
+and everything listed is in the build. `hreflang` alternates, when any exist,
+must point at pages that were actually built.
+
+**Not measurable here.** Whether an unknown path returns a 404 *status* is a
+Cloudflare Pages behaviour, and this gate's server is not Cloudflare. The gate
+asserts the 404 document is present, standalone and `noindex`; the status
+itself is on the post-deploy list below.
+
+## G18 — the film is downloaded once
+
+    CHECK: node scripts/gates/g18-film.mjs
+    EXPECT: G18 PASS
+
+**MET.** `moov` sits before `mdat` in both cuts, and the browser pulls 1.05MB on
+arrival for each, in one request.
+
+This is the gate that would have caught the container fault, and the reason it
+did not exist is instructive: every other gate here measures what the page
+LOOKS like or what it SAYS. None measured what it COSTS. The film scrubbed
+correctly, G10 confirmed the playhead followed the scroll, and the index sat at
+the end of the file the whole time, so the browser had to read everything
+before it could address anything.
+
+**Three instruments, two of them wrong**, which is why the working one is
+documented here:
+
+| instrument | verdict on a healthy file | why it lies |
+|---|---|---|
+| sum of `content-length` | 1.93x | an open-ended `bytes=0-` makes the server declare the whole remainder; Chrome hangs up early and the declaration stays in the sum |
+| `request.sizes()` after `requestfinished` | 0.00x | a media stream does not "finish" while it is streaming, so nothing was counted and the gate passed on an empty measurement |
+| CDP `Network.dataReceived` | 0.07x | counts each chunk as it arrives; needs neither the request to end nor the server to be honest |
+
+The first of those is what produced the "28.07MB" figure in the first draft of
+the audit. The true numbers, measured with the third:
+
+| | arrival | full scrub |
+|---|---|---|
+| `moov` at the end | 1.80MB, 3 requests | 15.58MB (1.07x) |
+| `moov` at the front | 1.05MB, 1 request | 13.14MB (0.91x) |
+
+The fix is right and it is smaller than first reported. The gate asserts a
+request was made at all before it asserts a ratio, because a ratio of zero
+requests is a perfect score for a page that never loaded its film.
+
+## G19 — nothing ships that nothing asks for
+
+    CHECK: node scripts/gates/g19-payload.mjs
+    EXPECT: G19 PASS
+
+**MET.** `dist/` is 21.5MB of a 26MB budget, 25 media files, 0 unreferenced.
+
+37MB of video shipped that no line of code referenced: the numbered world
+renders `01`-`09` and `R` with their phone cuts, sitting in `public/assets/`
+because that is where the render scripts write them, and `public/` is copied
+verbatim into `dist/`. They are now in `world/renders/`, kept and reproducible,
+outside the build.
+
+Nothing caught it because nothing was counting. The reference check is crude on
+purpose: every media file in `dist/assets` must have its filename appear
+somewhere in the built HTML, CSS or JS. It can be fooled by a name assembled at
+runtime, which is what the short dated allowlist is for. It cannot be fooled by
+the thing that actually happened, which is a file nobody mentioned anywhere.
+Control: a copied `.webp` with a new name fails the gate.
+
+---
+
+## G20 — the page can be read without running it
+
+    CHECK: node scripts/gates/g20-static.mjs
+    EXPECT: G20 PASS
+
+**MET.** 9,014 readable characters on the home page and about 2,100 on each
+supporting page, all of it in the file, none of it waiting on a bundle.
+
+The audit disabled JavaScript and counted what was left: **121 characters**,
+against 5,474 in a real browser. Google executes JavaScript and saw the whole
+page, which is precisely why nothing looked wrong. GPTBot, PerplexityBot and
+ClaudeBot do not, and for them the entire argument of this page was the
+`<noscript>` paragraph, which additionally claimed that the reader could read
+everything without JavaScript. That sentence is now true, and this gate is what
+keeps it true.
+
+`scripts/prerender.mjs` renders `src/entry-static.tsx` in Vite's SSR
+environment and writes the result into `<div id="root">`. The client still uses
+`createRoot`, not `hydrateRoot`: the browser renders with motion and the build
+rendered without it, so hydration would be a deliberate mismatch. React replaces
+the contents on mount, and the static markup is there for the readers who never
+get that far.
+
+The gate reads the FILE and looks for whole sentences from the copy, not only a
+character count: a count is satisfied by class names and inline styles, and
+none of those are what an answer engine quotes.
+
+**One thing worth keeping.** The first static render came out with every
+headline word at `opacity: 0` and marked `aria-hidden`, because
+`useReducedMotion()` returns false on the server, so every component took its
+animated branch. `useCalm()` in src/lib/motion.tsx now answers for both cases:
+the reader who asked for less motion, and the render that has no window at all.
+
+## G21 — the structured data says what the page says
+
+    CHECK: node scripts/gates/g21-schema.mjs
+    EXPECT: G21 PASS
+
+**MET.** Home: Organization, WebSite, SoftwareApplication with four offers.
+Each supporting page: Organization, WebSite, WebPage, BreadcrumbList.
+
+There were no `application/ld+json` blocks at all. The block is generated in
+`src/entry-static.tsx` from the same dictionary the page renders, so the prices
+cannot drift by themselves; the gate then compares the graph with the markup in
+both directions, which closes the chain from `he.ts` through g14 to what a
+crawler reads.
+
+Offers exist only where prices are printed. A supporting page that discusses the
+product without publishing the catalogue declares no offers, because an Offer on
+a page with no price is a claim with no source.
+
+**What it forbids, and why:**
+
+| type | why not |
+|---|---|
+| `FAQPage` | Google retired FAQ rich results for every site on 07.05.2026 |
+| `Review`, `AggregateRating` | the quotes are `placeholder: true` and the page says so in its own words; marking them up as customer reviews turns an honest disclosure into a violation |
+| `HowTo` | deprecated since 2023 |
+
+`address` and `telephone` are absent from the Organization for the same family
+of reasons: nobody has supplied them, and an invented address is worse than none.
+
+## G22 — how much JavaScript stands between the reader and the page
+
+    CHECK: node scripts/gates/g22-startup.mjs
+    EXPECT: G22 PASS
+
+**MET.** 380KB of startup JavaScript against a 420KB budget, and no chunk
+carrying a WebGL program is loaded at startup.
+
+This gate began as a blocking-time budget and the story of why it is not one any
+more is the useful part.
+
+The audit reported **1,545ms of blocking time on desktop** against a 200ms
+threshold and named it one of the page's real problems. It is not. Measured
+again on a quiet CPU, the same build blocks for **9ms**. That reading and the
+834ms that replaced it were single samples taken while this machine was
+compiling something else in another window.
+
+Three attempts to make a timing assertion stable, in order:
+
+| attempt | outcome |
+|---|---|
+| one sample | failed at random |
+| median of three | failed at random: identical builds gave 40, 47, 56, 273, 392, 508, 640, 722ms |
+| quietest of five | held, then a phone reading swung 830ms to 1,872ms between two runs of one build |
+
+On a shared developer machine, blocking time measures the machine. So the
+assertions are the CAUSE, which is deterministic: the bytes the browser must
+fetch and parse before it can do anything, and whether the decorative WebGL
+ground is inside that or outside it.
+
+The change those budgets protect is real where it costs a reader something.
+Under a 4x CPU throttle, blocking time went from about **1,874ms** with one
+442KB bundle and an eager shader to about **890ms** with the bundle split and
+the ground deferred to `requestIdleCallback`. The timing is still measured and
+printed on every run; it is a note, not a verdict.
+
+**The shader test looks for GLSL, not for a name.** The first cut grepped the
+startup chunks for "GrainGradient" and failed on a correct build, because the
+entry legitimately names the export it is lazily importing.
+
+---
+
+## Three gates that had to change, and why
+
+Phase 2 and 3 changed things the older gates had assumed. Each was corrected at
+the gate rather than worked around in the page.
+
+- **G11** assumed one `[role="tabpanel"]` existed at a time, which was true
+  while the chapter destroyed the panel it was leaving. All five now render with
+  `hidden` on the four that are not selected, so the gate selects
+  `[role="tabpanel"]:not([hidden])`, including when it clicks a hotspot: an
+  unqualified query returned the hidden panels' buttons too, and clicking one
+  re-selected the station that was already open.
+- **G12** waited 600ms for the shader canvas. The ground is now a dynamic
+  import that mounts on idle, and these gates run Chrome on SwiftShader where
+  idle takes longer to arrive than it ever would on a real machine, so it waits
+  for the canvas instead of for the clock.
+- **G14** read the plan prices 700ms after throwing the billing switch, and the
+  prices count up to the yearly figure over 520ms. It failed about one run in
+  three, each time reporting a different set of amounts that were the same
+  fraction of the three yearly prices. It now reads the catalogue in a second
+  context with `prefers-reduced-motion` on, where `Amount` sets the figure
+  outright and there is no animation to race.
+
+---
+
+## Still not measurable on a local server
+
+Three things need a re-check on the live host, and none of them can be asserted
+here:
+
+1. Security headers and the HTTPS redirect. `public/_headers` declares them;
+   only Cloudflare can confirm it read the file.
+2. The 404 **status**, as opposed to the 404 document.
+3. Field speed data (CrUX), as opposed to lab measurements.
+
+These three, and everything else this build left open on purpose, are collected
+in [DEBT.md](DEBT.md) with the reason and with what closes each one. A gate that
+cannot be run is not a gate; it is a line in that file.
+
+---
+
 ## Ledger
 
 | Gate | Status | Evidence |

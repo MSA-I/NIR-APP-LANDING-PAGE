@@ -9,8 +9,22 @@
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
     <meta name="theme-color" content="#0a171d" />
+    <!--
+      One page, one address.
+      Without this line the same document is reachable as inplace.digital, as
+      www.inplace.digital, with a trailing slash and without, and with any query
+      string anybody cares to append. Each of those is a separate page as far as
+      a crawler is concerned, and they compete with each other.
+    -->
+    <link rel="canonical" href="https://inplace.digital/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-    <link rel="icon" sizes="any" href="/assets/favicon.ico" />
+    <!--
+      /favicon.ico rather than /assets/favicon.ico: browsers and several crawlers
+      ask for the root path whether it is declared or not, and before this file
+      existed that request was a 404 on every visit.
+    -->
+    <link rel="icon" sizes="any" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/assets/icon-192.png" />
     <meta property="og:title" content="InPlace: רכש, חשבוניות ותשלומים במקום אחד" />
     <meta
@@ -18,6 +32,29 @@
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://inplace.digital/" />
+    <meta property="og:site_name" content="InPlace" />
+    <meta property="og:locale" content="he_IL" />
+    <!--
+      The share card. Built by scripts/build-og.mjs out of scripts/og-template.html,
+      so the picture that represents this page in a chat window is reviewable and
+      rebuildable rather than a binary somebody exported once.
+    -->
+    <meta property="og:image" content="https://inplace.digital/assets/og-cover.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="InPlace: רכש, חשבוניות ותשלומים במקום אחד" />
+    <meta
+      name="twitter:description"
+      content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
+    />
+    <meta name="twitter:image" content="https://inplace.digital/assets/og-cover.jpg" />
     <link
       rel="preload"
       as="font"
