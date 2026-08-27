@@ -802,3 +802,90 @@ stylesheet (lines 667 and 2067 at the time of writing). Neither is on an element
 positioned from an inline edge, so neither has this fault today. Nothing checks
 that, and if one of them is ever moved onto a logical inset it will break in
 exactly the same silent way.
+
+---
+
+## The merge of 27.08.2026, part two — the copy pass meets the English edition
+
+Two branches, one evening, one working tree between them until this one moved
+into a worktree. `copy/selling-pass-work` carried the selling pass, the six
+findings, the contact form and the arrow fix. `copy/selling-pass-20260827`
+carried a full English edition, a language switcher, two new display faces, an
+OG image, a sitemap, mobile scoping and four gates of its own.
+
+Both start from the same two commits, so the headline and the plan were already
+common ground. Everything after that had to be resolved by hand.
+
+### Six conflicts, and what won
+
+| | resolution |
+|---|---|
+| `index.html` | their canonical and hreflang links, this branch's title |
+| `src/content/extra.ts` | both sets of new blocks; nothing competed, the two additions merely landed adjacent |
+| `src/App.tsx` | the quotes stay BELOW the prices, with their locale props |
+| `src/components/Voices.tsx` | see below |
+| `src/styles.css` | the contact form and the mobile edition, both kept |
+| `scripts/gates/g14-figures.mjs` | this branch's wait, see below |
+
+### The other branch found the same two bugs and fixed one of them wrongly
+
+**The carousel arrows.** They had made the chevrons locale-aware, which is more
+than this branch did, and kept the same ordering fault: "next" written first, so
+in Hebrew the left chevron rendered on the right and the two arrows pointed at
+each other. The merge keeps their `dir`-driven glyphs and this branch's order.
+The invariant now holds in both editions and is measured in G4: the control on
+the left shows a left chevron, the one on the right shows a right chevron, and
+WHICH of them means "next" is what flips with the language.
+
+**The G14 flake.** Both branches hit the rolling-digit race and both wrote a
+wait. Theirs polled until every wanted price appeared somewhere in the cards and
+then swallowed its own timeout with `.catch(() => {})`, which means a slow
+machine falls through to the scan mid-roll and the flake returns wearing a fix.
+This branch's wait asserts the arrival exactly and is allowed to throw. That one
+kept.
+
+### What the merge revealed that neither branch could see alone
+
+**`he.ts.title` came back from the dead.** The SEO fix earlier in the day changed
+the title in `index.html` and deliberately left the dictionary's `title` alone,
+because nothing read it: build 4 never used it. The i18n branch then wired
+`App.tsx` to set `document.title` from the dictionary at runtime. The moment the
+two met, the tab said build 3's wording and the page said this one's. Fixed in
+both dictionaries, with a G2 allowlist entry for the Hebrew.
+
+**The English edition had no entry file under version control.** `en/index.html`
+is what `vite.config.ts` names as the second build input, and it was untracked in
+the shared tree. The build could not resolve it until it was brought in and
+committed here.
+
+**Three new blocks had no English.** `plansCta`, `faqExtra` and `contact` exist
+only in Hebrew on this branch, and `extra.en.ts` is `satisfies typeof extraHe`,
+so TypeScript refused the build until they were written. That check is worth its
+weight: it is the reason the English page cannot quietly ship without the
+contact form the Hebrew one now has.
+
+**The English quotes were faithful translations of copy that had moved.** They
+rendered the five clean, on-message sentences the Hebrew had already been
+rewritten away from. Retranslated, carrying the same details that serve no
+argument and the same two admissions.
+
+### G18 was the fourth gate today to hold a numeral
+
+`unexpected English title` and `page has 8 FAQ items` — a literal title and a
+hard-coded seven. It reads the title off `en.ts` now and asserts the two editions
+match each other on the question count rather than either matching a number.
+
+That is four gates in one day (G8, G13, G15, G18) that failed on approved changes
+rather than on defects. The pattern is worth naming: a gate that writes down a
+count is asserting that the page never changes, which is not what any of them
+were for.
+
+### Evidence
+
+| | measured |
+|---|---|
+| Full suite | **17 met, 0 unmet** — the thirteen of this build plus G16, G18, G19 and G20 from the English one |
+| `tsc --noEmit && vite build` | clean, two entries: `index.html` and `en/index.html` |
+| Hebrew, rendered | new title, controls centred to 0px, left chevron = "הציטוט הבא", ביזנס card to `#contact`, form to support@, 8 questions |
+| English, rendered | new title, controls centred to 0px, left chevron = "Previous", business card to `#contact`, form to support@, 8 questions |
+| Frames | `lab/merge-en/` |

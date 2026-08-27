@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>הדף לא נמצא — InPlace</title>
+    <meta name="theme-color" content="#0a171d" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+    <link rel="icon" sizes="any" href="/favicon.ico" />
+    <!--
+      Cloudflare Pages serves this document, with a real 404 status, for any
+      path that does not resolve to a file. Before it existed the preview
+      server answered 200 with the homepage for every wrong URL, which is the
+      soft-404 pattern the audit of 27.08.2026 flagged: an unbounded set of
+      addresses that all look like valid pages.
+
+      It is deliberately standalone. Pulling in the page's stylesheet would
+      mean a 74KB download to say one sentence, and it would break the day the
+      hashed filename changes.
+    -->
+    <style>
+      @font-face {
+        font-family: 'Heebo';
+        src: url('/assets/fonts/Heebo-hebrew.woff2') format('woff2');
+        font-weight: 800;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Noto Sans Hebrew';
+        src: url('/assets/fonts/NotoSansHebrew-Hebrew.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-block-size: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        background: #0a171d;
+        color: #a2b3b8;
+        font-family: 'Noto Sans Hebrew', Arial, sans-serif;
+        font-size: 1.0625rem;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+      main { max-width: 34rem; }
+      .mark {
+        font-family: 'Heebo', Arial, sans-serif;
+        font-weight: 800;
+        font-size: 0.8125rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5d9096;
+        margin: 0 0 1.75rem;
+      }
+      h1 {
+        font-family: 'Heebo', Arial, sans-serif;
+        font-weight: 800;
+        font-size: clamp(2rem, 7vw, 3.25rem);
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+        color: #fbf6ee;
+        margin: 0 0 1rem;
+        text-wrap: balance;
+      }
+      p { margin: 0 0 2rem; }
+      a.cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.85rem 1.5rem;
+        border-radius: 10px;
+        background: #0d4e56;
+        color: #fbf6ee;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      a.cta:hover { background: #003f47; }
+      a.cta:focus-visible { outline: 2px solid #03707c; outline-offset: 3px; }
+      .also { margin: 1.5rem 0 0; font-size: 0.9375rem; color: #7d8f95; }
+      .also a { color: #5d9096; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="mark">InPlace</p>
+      <h1>הדף הזה לא קיים.</h1>
+      <p>
+        יכול להיות שהקישור שבור, ויכול להיות שהכתובת השתנתה. כל מה שיש לנו לספר
+        על המערכת נמצא בדף אחד.
+      </p>
+      <a class="cta" href="/">חזרה לדף הראשי</a>
+      <p class="also">
+        כבר יש לך חשבון? <a href="https://app.inplace.digital">כניסה למערכת</a>
+      </p>
+    </main>
+  </body>
+</html>

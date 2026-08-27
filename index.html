@@ -3,14 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="canonical" href="https://inplace.digital/" />
+    <link rel="alternate" hreflang="he" href="https://inplace.digital/" />
+    <link rel="alternate" hreflang="en" href="https://inplace.digital/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://inplace.digital/en/" />
     <title>InPlace: בדיקת חשבוניות מול הזמנות, לפני התשלום</title>
     <meta
       name="description"
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
     <meta name="theme-color" content="#0a171d" />
+    <!--
+      One page, one address. Without this line the same document is reachable
+      as inplace.digital, www.inplace.digital, with a trailing slash and
+      without, and with any query string anybody cares to append, and each of
+      those is a separate page as far as a crawler is concerned.
+    -->
+    <link rel="canonical" href="https://inplace.digital/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
-    <link rel="icon" sizes="any" href="/assets/favicon.ico" />
+    <link rel="icon" sizes="any" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/assets/icon-192.png" />
     <meta property="og:title" content="InPlace: בדיקת חשבוניות מול הזמנות, לפני התשלום" />
     <meta
@@ -18,6 +30,26 @@
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://inplace.digital/" />
+    <meta property="og:site_name" content="InPlace" />
+    <meta property="og:locale" content="he_IL" />
+    <!-- Built by scripts/build-og.mjs from scripts/og-template.html. -->
+    <meta property="og:image" content="https://inplace.digital/assets/og-cover.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="InPlace: רכש, חשבוניות ותשלומים במקום אחד" />
+    <meta
+      name="twitter:description"
+      content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
+    />
+    <meta name="twitter:image" content="https://inplace.digital/assets/og-cover.jpg" />
+    <meta property="og:url" content="https://inplace.digital/" />
+    <meta property="og:locale" content="he_IL" />
     <link
       rel="preload"
       as="font"
@@ -30,7 +62,14 @@
       as="font"
       type="font/woff2"
       crossorigin
-      href="/assets/fonts/Heebo-hebrew.woff2"
+      href="/assets/fonts/LTSuperior-ExtraBold.woff2"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/assets/fonts/HasubiMono-Variable.woff2"
     />
   </head>
   <body>

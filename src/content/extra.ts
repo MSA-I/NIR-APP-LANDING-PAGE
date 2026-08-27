@@ -200,4 +200,22 @@ export default {
     fineprint: 'הפרטים משמשים אותנו רק כדי לחזור אליכם. אין כאן רשימת דיוור.',
     optional: 'לא חובה',
   },
+
+  // ---------------------------------------------------------- locale control
+  languages: {
+    label: 'שפה',
+    menuLabel: 'תרגום העמוד',
+    currentLabel: 'השפה הנוכחית',
+    options: {
+      he: { label: 'עברית', short: 'HE', href: '/', dir: 'rtl' },
+      en: { label: 'English', short: 'EN', href: '/en/', dir: 'ltr' },
+    },
+  },
+
+  accessibility: {
+    screenAltSuffix: 'מסך מתוך InPlace',
+    dashboardAlt: 'מרכז הבקרה של InPlace, מסך מלא מתוך המערכת',
+    nextTestimonial: 'הציטוט הבא',
+    previousTestimonial: 'הציטוט הקודם',
+  },
 }

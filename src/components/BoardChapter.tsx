@@ -66,6 +66,7 @@ export function BoardChapter({
   ctaLabel,
   ctaHref,
   fineprint,
+  imageAlt,
 }: {
   h2: string
   p: string
@@ -76,22 +77,23 @@ export function BoardChapter({
   ctaLabel: string
   ctaHref: string
   fineprint: string
+  imageAlt: string
 }) {
   return (
-    <div className="py-[clamp(4rem,10vh,7rem)]">
+    <div className="board py-[clamp(4rem,10vh,7rem)]">
       <div className="wrap">
-        <header className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-end">
+        <header className="board__head grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-end">
           <SplitHeading className="h-big" text={h2} tint={1} />
           <Reveal delay={0.08}>
             <p className="lede">{p}</p>
           </Reveal>
         </header>
 
-        <RevealGroup className="mt-[clamp(2.5rem,6vh,4rem)] grid border-t border-onyx-line sm:grid-cols-3">
+        <RevealGroup className="board__stats mt-[clamp(2.5rem,6vh,4rem)] grid border-t border-onyx-line sm:grid-cols-3">
           {stats.map((s) => (
             <RevealItem
               key={s.l}
-              className="border-b border-onyx-line px-0 py-6 sm:border-b-0 sm:border-s sm:border-s-onyx-line sm:ps-6 sm:first:border-s-0 sm:first:ps-0"
+              className="board__stat border-b border-onyx-line px-0 py-6 sm:border-b-0 sm:border-s sm:border-s-onyx-line sm:ps-6 sm:first:border-s-0 sm:first:ps-0"
             >
               <Figure value={s.v} />
               <p className="mt-2 max-w-[24ch] text-[0.93rem] text-ink-dim">{s.l}</p>
@@ -102,11 +104,11 @@ export function BoardChapter({
 
       <div className="wrap">
         <Reveal>
-          <figure className="crops relative mx-auto mt-[clamp(2.5rem,6vh,4rem)] mb-0 max-w-[62rem] overflow-clip rounded-[12px] border border-onyx-line bg-onyx-lift">
+          <figure className="board__figure crops relative mx-auto mt-[clamp(2.5rem,6vh,4rem)] mb-0 max-w-[62rem] overflow-clip rounded-[12px] border border-onyx-line bg-onyx-lift">
             <span className="crops__b" aria-hidden="true" />
             <img
               src={`/${img}`}
-              alt="מרכז הבקרה של InPlace, מסך מלא מתוך המערכת"
+              alt={imageAlt}
               width={1800}
               height={1788}
               loading="lazy"
@@ -119,11 +121,11 @@ export function BoardChapter({
       </div>
 
       <Reveal>
-        <div className="wrap mt-[clamp(3rem,8vh,5rem)] flex flex-col items-start gap-5 border-t border-onyx-line pt-[clamp(2rem,5vh,3rem)] md:flex-row md:items-center md:justify-between">
+        <div className="board__ask wrap mt-[clamp(3rem,8vh,5rem)] flex flex-col items-start gap-5 border-t border-onyx-line pt-[clamp(2rem,5vh,3rem)] md:flex-row md:items-center md:justify-between">
           <p className="max-w-[40ch] font-display text-[clamp(1.15rem,2.2vw,1.6rem)] leading-[1.2] font-bold tracking-[-0.02em] text-ink">
             {midLine}
           </p>
-          <div className="flex flex-col items-start gap-2">
+          <div className="board__action flex flex-col items-start gap-2">
             <Cta href={ctaHref}>{ctaLabel}</Cta>
             <p className="fineprint">{fineprint}</p>
           </div>

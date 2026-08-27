@@ -25,9 +25,10 @@ await withPage(async (page) => {
       return ctx.measureText(word).width
     }
     return {
-      display: document.fonts.check('800 3rem Heebo'),
+      display: document.fonts.check('800 3rem "LT Superior"'),
+      mono: document.fonts.check('600 1rem "Hasubi Mono"'),
       body: document.fonts.check('400 1rem "Noto Sans Hebrew"'),
-      wDisplay: widthIn('Heebo'),
+      wDisplay: widthIn('"LT Superior"'),
       wBody: widthIn('"Noto Sans Hebrew"'),
       wMissing: widthIn('"Not A Real Face 9x"'),
       families: [...document.fonts].map((f) => f.family).filter((v, i, a) => a.indexOf(v) === i),
@@ -43,9 +44,10 @@ await withPage(async (page) => {
     `the display face and the body face typeset identically (${loaded.wDisplay.toFixed(1)}px), so they are the same face`
   )
   c.note(
-    `measured at 40px: Heebo ${loaded.wDisplay.toFixed(1)}px, Noto ${loaded.wBody.toFixed(1)}px, fallback ${loaded.wMissing.toFixed(1)}px`
+    `measured at 40px: LT Superior ${loaded.wDisplay.toFixed(1)}px, Noto ${loaded.wBody.toFixed(1)}px, fallback ${loaded.wMissing.toFixed(1)}px`
   )
-  c.ok(loaded.display, 'the display face (Heebo) did not load')
+  c.ok(loaded.display, 'the display face (LT Superior) did not load')
+  c.ok(loaded.mono, 'the annotation face (Hasubi Mono) did not load')
   c.ok(loaded.body, 'the body face (Noto Sans Hebrew) did not load')
   c.note(`faces registered: ${loaded.families.join(', ')}`)
 
@@ -62,10 +64,10 @@ await withPage(async (page) => {
     }
   })
 
-  c.ok(/Heebo/.test(used.h1 || ''), `h1 is not set in the display face: ${used.h1}`)
-  c.ok(/Heebo/.test(used.h2 || ''), `h2 is not set in the display face: ${used.h2}`)
+  c.ok(/LT Superior/.test(used.h1 || ''), `h1 is not set in the display face: ${used.h1}`)
+  c.ok(/LT Superior/.test(used.h2 || ''), `h2 is not set in the display face: ${used.h2}`)
   c.ok(
-    /Noto Sans Hebrew/.test(used.body) && !/^Heebo/.test(used.body),
+    /Noto Sans Hebrew/.test(used.body) && !/^LT Superior/.test(used.body),
     `body copy should stay in the reading face, it is ${used.body}`
   )
   c.ok(

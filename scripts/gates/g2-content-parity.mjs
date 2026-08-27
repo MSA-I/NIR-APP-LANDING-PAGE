@@ -103,6 +103,12 @@ const APPROVED = [
     was: 'מסלולים',
     now: 'מתחילים בחינם. משלמים לפי כמות&nbsp;המסמכים.',
   },
+  {
+    at: 'title',
+    why: 'this leaf was DEAD when the SEO title was first changed in index.html: build 4 read nothing from it. The i18n branch then wired App.tsx to set document.title from the dictionary at runtime, which brought it back to life still carrying build 3\'s wording, so the tab and the page were promising different things (27.08.2026)',
+    was: 'InPlace: רכש, חשבוניות ותשלומים במקום אחד',
+    now: 'InPlace: בדיקת חשבוניות מול הזמנות, לפני התשלום',
+  },
 ]
 
 import { readFile } from 'node:fs/promises'

@@ -104,6 +104,12 @@ await withPage(async (page) => {
 
   await page.click('#plans [role="switch"]')
 
+  // Both branches hit this the same evening and both wrote a wait for it. The
+  // other one polled until every wanted price appeared SOMEWHERE in the cards
+  // and swallowed its own timeout with `.catch(() => {})`, which means a slow
+  // machine falls through to the scan mid-roll and the flake comes back wearing
+  // a fix. This one asserts the arrival exactly and is allowed to throw.
+  //
   // The prices COUNT from one catalogue to the other, over 520ms of
   // requestAnimationFrame. A fixed 700ms wait here was a bet on how busy the
   // machine is, and during a full thirteen-gate run on 27.08.2026 it lost: the
@@ -123,7 +129,7 @@ await withPage(async (page) => {
       return JSON.stringify(shown) === JSON.stringify(want)
     },
     WANT_MONTHLY,
-    { timeout: 8000 }
+    { timeout: 15000 }
   )
 
   // No other amount anywhere on the page. Everything with a shekel sign is

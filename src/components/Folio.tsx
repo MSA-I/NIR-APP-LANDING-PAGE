@@ -36,6 +36,7 @@ export function Folio({
   ctaHref,
   loginLabel,
   loginHref,
+  languageControl,
 }: {
   /** The strip above the running head. Rendered inside this fixed box so the
       page never has to know how tall two fixed elements are together. */
@@ -48,6 +49,8 @@ export function Folio({
   /** The way in for somebody who already has an account. */
   loginLabel: string
   loginHref: string
+  /** Compact browser-style language control, shared by desktop and phone. */
+  languageControl: ReactNode
 }) {
   const [where, setWhere] = useState(first)
   const [lifted, setLifted] = useState(false)
@@ -104,6 +107,7 @@ export function Folio({
   return (
     <header
       ref={boxRef}
+      data-lifted={lifted ? 'true' : 'false'}
       className="fixed inset-x-0 top-0 z-[100] transition-[background-color,backdrop-filter,border-color] duration-500"
       style={{
         backgroundColor: lifted ? 'color-mix(in srgb, #0a171d 82%, transparent)' : 'transparent',
@@ -114,12 +118,12 @@ export function Folio({
     >
       {announcement}
 
-      <div className="wrap flex items-center gap-2 py-3">
+      <div className="folio__row wrap flex items-center gap-2 py-3">
         {/* The same chip as every other control up here, minus the arrows a
             wordmark does not take. It used to be a hand-rolled anchor with a
             thinner border, a different radius and a hover of its own, sitting
             first in the row: the fault the owner circled on 26.08.2026. */}
-        <a className="brandchip" href="#top">
+        <a className="brandchip" href="#top" aria-label={brand}>
           <span className="brandchip__fill" aria-hidden="true" />
           <Mark className="size-4" />
           <span>{brand}</span>
@@ -140,7 +144,8 @@ export function Folio({
           {where}
         </p>
 
-        <div className="ms-auto flex items-center gap-2 lg:ms-0">
+        <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
+          {languageControl}
           <span className="hidden sm:inline-flex">
             <Cta href={loginHref} variant="ghost" size="sm">
               {loginLabel}

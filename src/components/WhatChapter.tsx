@@ -38,6 +38,8 @@ export function WhatChapter({
   stepsLabel,
   demoHint,
   steps,
+  dir,
+  screenAltSuffix,
 }: {
   folio: string
   eyebrow: string
@@ -46,6 +48,8 @@ export function WhatChapter({
   stepsLabel: string
   demoHint: string
   steps: Step[]
+  dir: 'rtl' | 'ltr'
+  screenAltSuffix: string
 }) {
   const [at, setAt] = useState(0)
   const calm = useReducedMotion()
@@ -92,8 +96,10 @@ export function WhatChapter({
                     tabIndex={on ? 0 : -1}
                     onClick={() => setAt(i)}
                     onKeyDown={(e) => {
-                      if (e.key === 'ArrowLeft') setAt((i + 1) % steps.length)
-                      if (e.key === 'ArrowRight') setAt((i - 1 + steps.length) % steps.length)
+                      const forward = dir === 'rtl' ? 'ArrowLeft' : 'ArrowRight'
+                      const backward = dir === 'rtl' ? 'ArrowRight' : 'ArrowLeft'
+                      if (e.key === forward) setAt((i + 1) % steps.length)
+                      if (e.key === backward) setAt((i - 1 + steps.length) % steps.length)
                     }}
                     className={[
                       'group relative flex items-center gap-2 rounded-[8px] border px-3.5 py-2.5',
@@ -141,7 +147,7 @@ export function WhatChapter({
                   <div className="relative overflow-clip rounded-[10px] border border-wheat-line bg-white shadow-[0_30px_70px_-40px_rgba(10,23,29,0.55)]">
                     <img
                       src={`/${step.img}`}
-                      alt={`${step.t.replace(/&nbsp;/g, ' ')}. מסך מתוך InPlace`}
+                      alt={`${step.t.replace(/&nbsp;/g, ' ')}. ${screenAltSuffix}`}
                       width={2000}
                       height={1334}
                       loading={at === 0 ? 'eager' : 'lazy'}
@@ -158,7 +164,9 @@ export function WhatChapter({
                           onClick={() => setAt(NAV_STEP[n.label])}
                           className="absolute rounded-[4px] border border-transparent transition-[background-color,border-color] duration-300 hover:border-oceanic-deep hover:bg-[color-mix(in_srgb,var(--color-oceanic)_22%,transparent)]"
                           style={{
-                            insetInlineStart: `${(100 - (n.x + n.w) * 100).toFixed(3)}%`,
+                            insetInlineStart: `${(
+                              dir === 'rtl' ? 100 - (n.x + n.w) * 100 : n.x * 100
+                            ).toFixed(3)}%`,
                             insetBlockStart: `${(n.y * 100).toFixed(3)}%`,
                             inlineSize: `${(n.w * 100).toFixed(3)}%`,
                             blockSize: `${(n.h * 100).toFixed(3)}%`,

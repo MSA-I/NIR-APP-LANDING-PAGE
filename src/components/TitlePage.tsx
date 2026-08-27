@@ -29,6 +29,7 @@ export function TitlePage({
   ctaHref,
   secondLabel,
   fineprint,
+  dir,
 }: {
   folio: string
   eyebrow: string
@@ -40,6 +41,7 @@ export function TitlePage({
   ctaHref: string
   secondLabel: string
   fineprint: string
+  dir: 'rtl' | 'ltr'
 }) {
   const calm = useReducedMotion()
 
@@ -66,8 +68,8 @@ export function TitlePage({
         />
         <span className="crops__b" aria-hidden="true" />
 
-        <div className="wrap flex min-h-[min(82vh,760px)] flex-col justify-between gap-12 py-[clamp(3.5rem,10vh,6.5rem)]">
-          <div>
+        <div className="title-hero wrap flex min-h-[min(82vh,760px)] flex-col justify-between gap-12 py-[clamp(3.5rem,10vh,6.5rem)]">
+          <div className="title-hero__main">
             <Reveal>
               <p className="eyebrow mb-6">{eyebrow}</p>
             </Reveal>
@@ -78,17 +80,17 @@ export function TitlePage({
               tint={2}
             />
             <Reveal delay={0.14}>
-              <div className="mt-9 flex flex-wrap items-center gap-3">
+              <div className="title-hero__actions mt-9 flex flex-wrap items-center gap-3">
                 <Cta href={ctaHref}>{ctaLabel}</Cta>
                 <Cta href="#what" variant="ghost">
                   {secondLabel}
                 </Cta>
               </div>
-              <p className="fineprint mt-4">{fineprint}</p>
+              <p className="title-hero__fineprint fineprint mt-4">{fineprint}</p>
             </Reveal>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 md:gap-12">
+          <div className="title-hero__lede grid gap-6 md:grid-cols-2 md:gap-12">
             {lede.map((p, i) => (
               <Reveal key={i} delay={0.06 * i}>
                 <Html
@@ -105,15 +107,15 @@ export function TitlePage({
           it, and the reference does the same with its own contents strip. */}
       <nav
         aria-label={indexLabel}
-        className="wrap pt-[clamp(3rem,7vh,5rem)] pb-[clamp(1rem,3vh,2rem)]"
+        className="title-index wrap pt-[clamp(3rem,7vh,5rem)] pb-[clamp(1rem,3vh,2rem)]"
       >
         <p className="eyebrow mb-5">{indexLabel}</p>
         <RevealGroup as="ul" className="m-0 list-none border-t border-onyx-line p-0" each={0.05}>
           {index.map((c) => (
             <RevealItem as="li" key={c.n} className="border-b border-onyx-line">
               <motion.div
-                className="grid grid-cols-[2.6rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 py-4 sm:grid-cols-[3.2rem_minmax(0,14rem)_minmax(0,1fr)]"
-                whileHover={calm ? undefined : { x: -8 }}
+                className="title-index__row grid grid-cols-[2.6rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 py-4 sm:grid-cols-[3.2rem_minmax(0,14rem)_minmax(0,1fr)]"
+                whileHover={calm ? undefined : { x: dir === 'rtl' ? -8 : 8 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
                 <span className="ip-num text-[0.82rem] font-semibold tracking-[0.08em] text-oceanic">

@@ -50,12 +50,14 @@ function VoiceCard({
   onMove,
   size,
   calm,
+  dir,
 }: {
   position: number
   voice: Voice
   onMove: (steps: number) => void
   size: number
   calm: boolean
+  dir: 'rtl' | 'ltr'
 }) {
   const centre = position === 0
   return (
@@ -75,7 +77,7 @@ function VoiceCard({
         ['--voice-size' as string]: `${size}px`,
         clipPath:
           'polygon(50px 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, calc(100% - 50px) 100%, 50px 100%, 0 100%, 0 0)',
-        transform: `translateX(${(-size / 1.5) * position}px) translateY(${
+        transform: `translateX(${(dir === 'rtl' ? -1 : 1) * (size / 1.5) * position}px) translateY(${
           centre ? -58 : position % 2 ? 14 : -14
         }px) rotate(${centre ? 0 : position % 2 ? 2.5 : -2.5}deg)`,
         transitionDuration: calm ? '0ms' : undefined,
@@ -102,11 +104,17 @@ export function Voices({
   h2,
   disclosure,
   items,
+  dir,
+  nextLabel,
+  previousLabel,
 }: {
   eyebrow: string
   h2: string
   disclosure: string
   items: Voice[]
+  dir: 'rtl' | 'ltr'
+  nextLabel: string
+  previousLabel: string
 }) {
   const calm = !!useReducedMotion()
   const [size, setSize] = useState(340)
@@ -170,24 +178,44 @@ export function Voices({
                 onMove={move}
                 size={size}
                 calm={calm}
+                dir={dir}
               />
             )
           })}
-          {/* Leftwards is forwards in Hebrew, so "next" is a LEFT chevron and
-              "previous" is a right one. That part was already right.
+          {/* PREVIOUS IS WRITTEN FIRST, and that is the whole fix.
 
-              What was wrong is the ORDER. This is a flex row inside a page that
-              runs right to left, so the first child is laid out on the RIGHT.
-              With next written first, the left chevron landed on the right and
-              the right chevron on the left, and the two arrows pointed at each
-              other. An arrow has to point the way it takes you, so previous
-              goes first and next follows it. */}
+              This is a flex row, so the first child lands on the RIGHT in
+              Hebrew and on the LEFT in English. Written the other way round it
+              put a left chevron on the right and a right chevron on the left,
+              and the two arrows pointed at each other.
+
+              With previous first, the invariant holds in both locales: the
+              control on the left shows a left chevron and the control on the
+              right shows a right chevron. Which of them means "next" flips with
+              the language, which is why the glyph and the step are both chosen
+              from `dir` rather than written down. G4 measures both halves. */}
           <div className="voices-rail__controls">
-            <button type="button" onClick={() => move(-1)} aria-label="הציטוט הקודם">
-              <ChevronRight aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => move(dir === 'rtl' ? -1 : 1)}
+              aria-label={previousLabel}
+            >
+              {dir === 'rtl' ? (
+                <ChevronRight aria-hidden="true" />
+              ) : (
+                <ChevronLeft aria-hidden="true" />
+              )}
             </button>
-            <button type="button" onClick={() => move(1)} aria-label="הציטוט הבא">
-              <ChevronLeft aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => move(dir === 'rtl' ? 1 : -1)}
+              aria-label={nextLabel}
+            >
+              {dir === 'rtl' ? (
+                <ChevronLeft aria-hidden="true" />
+              ) : (
+                <ChevronRight aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
