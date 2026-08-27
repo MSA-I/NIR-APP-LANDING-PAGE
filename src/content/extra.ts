@@ -231,6 +231,14 @@ export default {
     },
   },
 
+  /* The two states of the light/dark switch, written as the ACTION the button
+     performs rather than as the state it is in: a screen reader announces the
+     label on focus, and "dark view" on a dark page tells you nothing. */
+  theme: {
+    toLight: 'מעבר לתצוגה בהירה',
+    toDark: 'מעבר לתצוגה כהה',
+  },
+
   accessibility: {
     screenAltSuffix: 'מסך מתוך InPlace',
     dashboardAlt: 'מרכז הבקרה של InPlace, מסך מלא מתוך המערכת',

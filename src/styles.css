@@ -143,6 +143,66 @@
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
+/* ------------------------------------------------------------- the light view
+   The owner asked on 27.08.2026 for a switch between a dark and a light view.
+   This block is the light one, and it introduces NO new colour: it is the
+   palette above with its two grounds swapped.
+
+   The page was already built on two grounds — the onyx it sits on and the wheat
+   plate that rides on it — and every token below already had a counterpart for
+   the other one. `--color-ink` was "type on the onyx" and `--color-ink-on-light`
+   was "type on the plate"; the light view is those two trading places, and the
+   same for the ground pair, the line pair and the accent pair. That is why this
+   is twenty lines rather than a second stylesheet, and why every contrast the
+   dark view was measured at is preserved rather than re-approved.
+
+   `:root[data-theme="light"]` outranks the `:root` that Tailwind writes the
+   `@theme` block onto, so no `!important` and no ordering trick is needed, and
+   the Tailwind utilities (`bg-onyx`, `text-ink`) follow along with the authored
+   CSS because Tailwind compiles them to `var(--color-…)`.
+
+   Two values below are not a straight swap, and both are named where they are:
+   `--color-ink-dim`, which had no light counterpart to swap with, and
+   `--color-focus-ring`. */
+:root[data-theme='light'] {
+  --color-onyx: #fffcf8;      /* was --color-wheat: the plate becomes the ground */
+  --color-onyx-lift: #f4efe7; /* was --color-wheat-sink */
+  --color-onyx-line: #e5dbcd; /* was --color-wheat-line */
+  --color-wheat: #0a171d;     /* was --color-onyx: the ground becomes the plate */
+  --color-wheat-sink: #12242c;/* was --color-onyx-lift */
+  --color-wheat-line: #1e3540;/* was --color-onyx-line */
+
+  --color-ink: #0a171d;             /* was --color-ink-on-light */
+  --color-ink-soft: #46545b;        /* was --color-ink-on-light-soft */
+  /* The one token with no counterpart to swap with: the dark view's dim is a
+     third step below its soft, and the light view had only two. This is that
+     third step, and it is a measured value, not a chosen one: G7 walks the page
+     in both views and holds it to 4.5:1 on the wheat ground. */
+  --color-ink-dim: #63737a;
+  --color-ink-on-light: #fbf6ee;    /* was --color-ink */
+  --color-ink-on-light-soft: #a2b3b8;/* was --color-ink-soft */
+
+  --color-oceanic: #003f47;      /* was --color-oceanic-deep */
+  --color-oceanic-deep: #5d9096; /* was --color-oceanic */
+  /* `--color-action-solid` is NOT redeclared. It is the product's own solid
+     action colour, and in the application it is a dark teal that carries light
+     type on a light surface — which is what it is here too. Inverting it made
+     the recommended badge and the contact form's submit measure 3.13:1 in the
+     light view, because the fill went light while the ink on it went dark. It
+     stays #0d4e56 in both views, and the two controls that fill with it pin
+     their type; see `.plan-card__badge, .cform__submit` below. */
+  /* The focus ring goes the other way to everything else, because it has to
+     beat the ground rather than match it: #03707c is the product's focus colour
+     against onyx, and against wheat the deeper action colour is the one that
+     shows. */
+  --color-focus-ring: #003f47;
+  --color-topbar: #12242c;
+  --color-alert: #c70036;      /* was --color-alert-deep */
+  --color-alert-deep: #ff8ea6; /* was --color-alert */
+
+  color-scheme: light;
+}
+
 :root {
   --page: 1265px;
   --plate-inset: 10px;
@@ -834,7 +894,11 @@ html:dir(ltr) .flow__arrow { rotate: 180deg; }
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.03em;
-  background: linear-gradient(180deg, var(--color-ink) 0%, #cfd9dc 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-ink) 0%,
+    color-mix(in srgb, var(--color-ink) 78%, var(--color-onyx)) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   /* No 'color: transparent'. The fill override already hides the glyph body
@@ -1704,6 +1768,87 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
 .language-switcher__option svg[data-active] { opacity: 0; }
 .language-switcher__option svg[data-active='true'] { opacity: 1; }
 
+/* A solid action fill is the same object in both views: the product's dark
+   teal, carrying light type. The page's ink turns dark in the light view, so
+   these two pin it rather than follow it. Pinned as a token, not as a `color`,
+   so anything nested inside them follows too. */
+.plan-card__badge,
+.cform__submit {
+  --color-ink: #fbf6ee;
+}
+
+/* ------------------------------------------------------------- theme control */
+/* 21st.dev's theme-toggle (@ayushmxxn, catalogue id 1216), named by the owner
+   on 27.08.2026. See the note at the top of src/components/ThemeToggle.tsx for
+   what was carried over and what was not. Every number here is the catalogue's:
+   a 64x32 pill, 4px of padding, two 24px circles, a 32px slide, 300ms.
+
+   The slide runs on `translate`, its own property, not on `transform`. The plan
+   cards learned that lesson already (see .plan-card), and here it also lets
+   `--knob` carry the direction on its own.
+
+   `--knob` is the whole RTL story. The pill's two circles are laid out by
+   `space-between`, which is already logical, so in Hebrew the filled circle
+   starts on the right; sending it to the other end therefore means travelling
+   the other way, and the catalogue's physical `translate-x-8` would have pushed
+   it out of the pill instead. */
+:root { --knob: 1; }
+html[dir='rtl'] { --knob: -1; }
+
+.theme-toggle {
+  display: flex;
+  flex: none;
+  inline-size: 4rem;
+  block-size: 2rem;
+  padding: 0.25rem;
+  border: 1px solid var(--color-onyx-line);
+  border-radius: 999px;
+  background: var(--color-onyx);
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.theme-toggle__track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  inline-size: 100%;
+}
+
+.theme-toggle__knob,
+.theme-toggle__ghost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: 999px;
+  transition:
+    translate 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.theme-toggle__knob {
+  background: var(--color-onyx-lift);
+  color: var(--color-ink);
+}
+.theme-toggle__ghost {
+  background: transparent;
+  color: var(--color-ink-dim);
+}
+
+/* Light: the pair swap places. 2rem is 32px, which is one circle plus the gap
+   `space-between` leaves inside a 56px track. */
+.theme-toggle[data-theme-state='light'] .theme-toggle__knob {
+  translate: calc(var(--knob) * 2rem) 0;
+}
+.theme-toggle[data-theme-state='light'] .theme-toggle__ghost {
+  translate: calc(var(--knob) * -2rem) 0;
+}
+
 /* --------------------------------------------------------- the marks, on a rail */
 /* No grayscale filter: scripts/build-logos.py already renders every mark in one
    ink, and a filter over an already-flat mark only costs a compositing layer.
@@ -1874,7 +2019,7 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
      asks an element what ground it is on reads the COLOUR: graded that way the
      cream card's dark type was measured against the page's onyx four ancestors
      up and came back at 1.09:1, for type that is 16:1 on paper. */
-  background-color: color-mix(in srgb, #05070d 82%, var(--color-onyx));
+  background-color: color-mix(in srgb, var(--color-ink) 4%, var(--color-onyx));
   background-image:
     radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--color-onyx-lift) 55%, transparent), transparent 70%);
   border: 1px solid color-mix(in srgb, var(--color-onyx-line) 70%, transparent);
@@ -1894,8 +2039,12 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   padding-inline: 1.35rem;
   text-align: center;
   color: var(--color-ink);
-  background-color: #0b1820;
-  background-image: linear-gradient(180deg, var(--color-onyx-lift) 0%, #0b1820 100%);
+  background-color: color-mix(in srgb, var(--color-onyx-lift) 82%, var(--color-onyx));
+  background-image: linear-gradient(
+    180deg,
+    var(--color-onyx-lift) 0%,
+    color-mix(in srgb, var(--color-onyx-lift) 82%, var(--color-onyx)) 100%
+  );
   border-radius: 7px;
   /* The lift is on `translate`, not on `transform`.
      Every card is a Motion element and Motion writes `transform` inline for
@@ -1953,6 +2102,23 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
 }
 .plan-card--paper::before {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink-on-light) 14%, transparent);
+}
+
+/* The two faces that keep their own ground in both views.
+   Everything else on this page swaps when the light view is on, because the
+   page is built on two grounds and the light view trades them. These two are
+   not on either ground: they are objects with a colour of their own, read off
+   the owner's reference image, and a deep violet ticket that turned cream in
+   the light view would not be that ticket any more.
+   Keeping the ground means pinning the type, and pinning it token by token
+   rather than property by property, so every rule inside the card follows: the
+   label, the code, the term, the ring and the ticks all read `--color-ink`. */
+.plan-card--violet,
+.plan-card--gloss {
+  --color-ink: #fbf6ee;
+  --color-ink-soft: #a2b3b8;
+  --color-ink-dim: #7d8f95;
+  color: var(--color-ink);
 }
 
 /* Deep violet, from the reference. The one place on this page that carries the
@@ -2231,7 +2397,7 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
    it, which is the same move the top plan card makes and half its speed. */
 .announce {
   overflow: hidden;
-  background-color: #fffdfa;
+  background-color: var(--color-wheat);
   background-image: none;
   border-block-end: 1px solid color-mix(in srgb, var(--color-wheat-line) 80%, transparent);
 }

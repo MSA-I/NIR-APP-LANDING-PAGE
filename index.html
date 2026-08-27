@@ -13,6 +13,23 @@
     />
     <meta name="theme-color" content="#0a171d" />
     <!--
+      The view, before the first paint.
+      Which of the page's two grounds is underneath is one attribute on <html>
+      (see `:root[data-theme="light"]` in src/styles.css). React sets that
+      attribute too, but a React effect runs AFTER the first frame, so a reader
+      who chose the light view would watch a dark page arrive first. This runs
+      in the head, before anything is painted, and there is nothing smaller that
+      does the job.
+    -->
+    <script>
+      try {
+        if (localStorage.getItem('inplace.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fffcf8')
+        }
+      } catch (e) {}
+    </script>
+    <!--
       One page, one address.
       Without this line the same document is reachable as inplace.digital, as
       www.inplace.digital, with a trailing slash and without, and with any query

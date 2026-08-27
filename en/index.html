@@ -13,6 +13,15 @@
       content="A procurement-to-payment system that connects purchase orders, goods received and invoices, then stops mismatches before money leaves the business."
     />
     <meta name="theme-color" content="#0a171d" />
+    <!-- The view, before the first paint. See the note in the Hebrew index.html. -->
+    <script>
+      try {
+        if (localStorage.getItem('inplace.theme') === 'light') {
+          document.documentElement.dataset.theme = 'light'
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fffcf8')
+        }
+      } catch (e) {}
+    </script>
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
     <!--

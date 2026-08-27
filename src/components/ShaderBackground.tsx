@@ -36,6 +36,7 @@
 // brings one back fails rather than shipping.
 
 import { Suspense, lazy, useEffect, useState } from 'react'
+import { useTheme } from '@/lib/theme'
 
 // Loaded on its own, after the page has painted.
 //
@@ -79,8 +80,6 @@ export const SHADER_PALETTE = ['#04080b', '#003f47', '#0d6470', '#5d9096', '#cfe
 //     everything (.grain in styles.css), and two grains at different scales
 //     read as a compression artefact rather than as film.
 const RECIPE = {
-  colorBack: SHADER_PALETTE[0],
-  colors: [SHADER_PALETTE[1], SHADER_PALETTE[3], SHADER_PALETTE[2], SHADER_PALETTE[4]],
   softness: 0.76,
   intensity: 0.45,
   noise: 0,
@@ -92,7 +91,25 @@ const RECIPE = {
   speed: 1,
 }
 
+/* The ramp, and which end of it is underneath.
+   These colours are PROPS, not CSS, so the token swap that turns the page over
+   in the light view (see `:root[data-theme="light"]` in src/styles.css) cannot
+   reach inside a WebGL program. The light view therefore reads the same five
+   colours from the other end: the ground the gradient sits on becomes #cfe3e6
+   rather than #04080b, and the ramp runs down to the deep teal instead of up
+   to it. One ramp, two directions, no second palette to keep in step. */
+function recipeFor(theme: 'dark' | 'light') {
+  const ramp = theme === 'light' ? [...SHADER_PALETTE].reverse() : SHADER_PALETTE
+  return {
+    ...RECIPE,
+    colorBack: ramp[0],
+    colors: [ramp[1], ramp[3], ramp[2], ramp[4]],
+  }
+}
+
 export function ShaderBackground({ className }: { className?: string }) {
+  const [theme] = useTheme()
+
   // `prefers-reduced-motion: reduce` freezes the field rather than removing
   // it: the ground becomes a still pane, which is what the reduced-motion
   // gate asserts and what the hand-written ground did before it.
@@ -136,7 +153,7 @@ export function ShaderBackground({ className }: { className?: string }) {
       {ready ? (
         <Suspense fallback={null}>
           <GrainGradient
-            {...RECIPE}
+            {...recipeFor(theme)}
             speed={calm ? 0 : RECIPE.speed}
             style={{ width: '100%', height: '100%', display: 'block' }}
           />
