@@ -30,7 +30,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
-import { DIST, serve, checker } from './lib.mjs'
+import { CHROME, DIST, serve, checker } from './lib.mjs'
 
 const c = checker('G22')
 
@@ -95,7 +95,10 @@ c.note(
 
 // ---- the timing, reported ---------------------------------------------------
 const srv = await serve()
-const browser = await chromium.launch({ channel: 'chromium' })
+// The same binary every other gate measures on. `channel: 'chromium'` asked for
+// Playwright's own download, which is not installed on this machine, and the
+// gate died at the reporting step after its budget checks had already passed.
+const browser = await chromium.launch({ executablePath: CHROME })
 try {
   const measure = async (viewport, cpu) => {
     const ctx = await browser.newContext({ viewport, locale: 'he-IL' })

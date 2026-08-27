@@ -90,5 +90,79 @@ for (const [name, edition] of [['Hebrew', he], ['English', en]]) {
 }
 c.ok(he.faqs > 0, 'the Hebrew edition renders no questions at all')
 
+
+// ---- the supporting pages, both editions -----------------------------------
+// Eight pages per edition since 27.08.2026, the two legal documents included.
+// The failure this guards against is not a bad translation: it is a page that
+// quietly exists in one language, which the sitemap then advertises and the
+// other edition's colophon links to nothing.
+const hePages = await readFile(path.join(ROOT, 'src', 'content', 'pages.ts'), 'utf8')
+const enPages = await readFile(path.join(ROOT, 'src', 'content', 'pages.en.ts'), 'utf8')
+
+// Each page's chunk of source, keyed by slug, so the sections inside it can be
+// counted without importing TypeScript into a gate.
+const chunks = (src) => {
+  const parts = src.split("\n    slug: '").slice(1)
+  return new Map(
+    parts.map((part) => [part.slice(0, part.indexOf("'")), part])
+  )
+}
+const heChunks = chunks(hePages)
+const enChunks = chunks(enPages)
+const legal = [...heChunks]
+  .filter(([, part]) => part.includes("\n    legal: true"))
+  .map(([slug]) => slug)
+const heSlugs = [...heChunks.keys()]
+
+c.ok(legal.length === 2, `expected two legal documents, found ${legal.length}`)
+c.ok(
+  JSON.stringify(heSlugs) === JSON.stringify([...enChunks.keys()]),
+  `the editions carry different supporting pages: he ${heSlugs.join(', ')} vs en ${[...enChunks.keys()].join(', ')}`
+)
+
+// A legal page carries no call to action and no further-reading rail, in either
+// language: it is read while somebody decides whether to accept it.
+for (const slug of legal) {
+  for (const file of [path.join(DIST, slug, 'index.html'), path.join(DIST, 'en', slug, 'index.html')]) {
+    const doc = await readFile(file, 'utf8').catch(() => '')
+    c.ok(doc.length > 0, `${file} was not built`)
+    if (!doc) continue
+    c.ok(!doc.includes('class="doc-cta"'), `${slug} carries a call to action`)
+    c.ok(!doc.includes('class="doc-related"'), `${slug} carries a further-reading rail`)
+    c.ok(!/app\.inplace\.digital\/(terms|privacy)/.test(doc), `${slug} still points into the product's own legal pages`)
+    c.ok(!/גרסה:|Version:/.test(doc), `${slug} still prints a version string`)
+  }
+}
+
+for (const slug of heSlugs) {
+  const count = (part) => part.split("\n        h2: ").length - 1
+  const heCount = count(heChunks.get(slug))
+  const enCount = count(enChunks.get(slug) || '')
+  c.ok(heCount > 0, `${slug} has no sections in the Hebrew edition`)
+  c.ok(
+    heCount === enCount,
+    `${slug} has ${heCount} sections in Hebrew and ${enCount} in English`
+  )
+  for (const [name, file] of [
+    ['he', path.join(DIST, slug, 'index.html')],
+    ['en', path.join(DIST, 'en', slug, 'index.html')],
+  ]) {
+    const built = await stat(file).then(() => true, () => false)
+    c.ok(built, `${slug} was not built for the ${name} edition`)
+    if (!built) continue
+    const doc = await readFile(file, 'utf8')
+    c.ok(
+      doc.includes(`hreflang="he" href="https://inplace.digital/${slug}/"`),
+      `${name}/${slug} does not name its Hebrew alternate`
+    )
+    c.ok(
+      doc.includes(`hreflang="en" href="https://inplace.digital/en/${slug}/"`),
+      `${name}/${slug} does not name its English alternate`
+    )
+  }
+}
+
+c.note(`${heSlugs.length} supporting pages in both editions, ${legal.length} of them legal documents`)
+
 c.note(`same structure: ${he.folios} folios, 6 index items, 5 plans, ${he.faqs} FAQs`)
 c.report()

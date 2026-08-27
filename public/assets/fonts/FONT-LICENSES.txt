@@ -1,6 +1,7 @@
-LT Superior
-Copyright (c) 2024, LyonsType (lyonstype4.wixsite.com/lyonstype-beta),
-with Reserved Font Name LT Superior.
+Heebo
+Copyright (c) 2015 The Heebo Project Authors
+(https://github.com/OdedEzer/heebo), Hebrew by Oded Ezer,
+Latin based on Roboto by Christian Robertson.
 
 Hasubi Mono
 Copyright 2022 The Hasubi-Mono Project Authors

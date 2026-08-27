@@ -31,6 +31,7 @@ import { MotionConfig } from 'motion/react'
 import App from './App'
 import { contentByLocale, type LocaleCode } from './content/locales'
 import site from './content/pages'
+import siteEn from './content/pages.en'
 import { pageHtml } from './lib/page-html'
 
 // The locale is an argument rather than a lookup: there is no URL here, and
@@ -61,8 +62,10 @@ const ORIGIN = 'https://inplace.digital'
  *   `placeholder: true` and the page says in its own words that they are
  *   examples written in-house, not customers. Marking them up as reviews would
  *   turn an honest disclosure into a structured-data violation.
- * - `address` and `telephone` on the Organization. Nobody has supplied them,
- *   and an Organization with an invented address is worse than one without.
+ * - `Review` is still absent; see above. The Organization's registered name,
+ *   address and telephone were supplied by the owner on 27.08.2026 and are
+ *   here now. They were withheld until then on purpose: an Organization with
+ *   an invented address is worse than one without.
  *
  * WHY IT TAKES A LOCALE
  * Each document describes itself in its own language, out of its own dictionary.
@@ -70,15 +73,23 @@ const ORIGIN = 'https://inplace.digital'
  * the graph against the names printed in the markup beside it: one Hebrew graph
  * shipped under /en/ would fail that comparison, and deserve to.
  *
- * The prices are the same catalogue in both, in ILS. Only the words differ.
+ * The prices are NOT the same catalogue in both. Israel is billed in shekels
+ * and everywhere else in dollars — two published catalogues in NIR-APP's 0184
+ * migration, not one converted at a rate — so the currency travels with the
+ * dictionary the offer was read from.
  */
 export function schema(locale: LocaleCode = 'he') {
   const d = contentByLocale[locale]
   const url = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/${locale}/`
   const lang = locale === 'he' ? 'he-IL' : 'en'
 
+  const currency = locale === 'he' ? 'ILS' : 'USD'
+
+  // Thousands separators out, currency symbol out, decimal point kept. '$1,490'
+  // is 1490 and '449 ₪' is 449; a free plan says so in words and declares no
+  // digits, so it is read off the word rather than off the string.
   const price = (raw: string) => {
-    const digits = raw.replace(/[^\d.]/g, '')
+    const digits = raw.replace(/,/g, '').replace(/[^\d.]/g, '')
     if (raw.includes('ללא עלות')) return '0'
     return digits.length ? digits : null
   }
@@ -94,7 +105,7 @@ export function schema(locale: LocaleCode = 'he') {
         '@type': 'Offer',
         name: row.name,
         price: amount,
-        priceCurrency: 'ILS',
+        priceCurrency: currency,
         description:
           locale === 'he'
             ? `${row.docs} מסמכים בחודש. ${row.who}`
@@ -112,9 +123,32 @@ export function schema(locale: LocaleCode = 'he') {
         '@type': 'Organization',
         '@id': `${ORIGIN}/#organization`,
         name: d.brand,
+        legalName: 'In Place',
+        vatID: '036689081',
         url: ORIGIN,
         logo: `${ORIGIN}/assets/logo.svg`,
         inLanguage: lang,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'הרותם 14',
+          addressLocality: 'כפר אדומים',
+          addressCountry: 'IL',
+        },
+        telephone: '+972-54-254-7074',
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            telephone: '+972-54-254-7074',
+            contactType: 'sales',
+            availableLanguage: ['he', 'en'],
+          },
+          {
+            '@type': 'ContactPoint',
+            telephone: '+972-52-416-7881',
+            contactType: 'customer support',
+            availableLanguage: ['he', 'en'],
+          },
+        ],
       },
       {
         '@type': 'WebSite',
@@ -155,10 +189,14 @@ export function schema(locale: LocaleCode = 'he') {
  * out of the built home page. That is the only thing these documents need from
  * the application, and it is why they still look like the site.
  */
-export function supportingPages(css: string) {
-  return site.pages.map((page) => ({
-    slug: page.slug,
+export function supportingPages(css: string, locale: LocaleCode = 'he') {
+  const src = locale === 'he' ? site : siteEn
+  return src.pages.map((page) => ({
+    // Where the file goes, relative to dist/. The English edition sits under
+    // /en/ beside its own home page rather than at the root beside the Hebrew
+    // one, so a reader who switched language stays switched.
+    slug: locale === 'he' ? page.slug : `en/${page.slug}`,
     title: page.title,
-    html: pageHtml(page, site.pages, css, site.cta),
+    html: pageHtml(page, src.pages, css, src.cta, locale),
   }))
 }

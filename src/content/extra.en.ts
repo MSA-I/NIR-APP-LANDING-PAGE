@@ -73,12 +73,13 @@ const extraEn = {
       'Three roles with separation of duties',
       'A record of every sensitive financial action',
     ],
-    yearly: ['No charge', '690 ₪', '2,490 ₪', '4,490 ₪', 'Contact us'],
+    yearly: ['No charge', '$200', '$790', '$1,490', 'Contact us'],
   },
 
   // Each card asks for what it can actually give. The plan with no figure has
   // no self-serve path, so it does not offer a signup button. See extra.ts.
   plansCta: {
+    freeWords: 'No charge',
     free: 'Start free',
     paid: 'Start on this plan',
     contact: 'Talk to us',
@@ -114,13 +115,22 @@ const extraEn = {
     optional: 'optional',
   },
 
+  folioNav: [
+    { t: 'What it does', href: '#what' },
+    { t: 'Why this', href: '#why' },
+    { t: 'FAQ', href: '#faq' },
+    { t: 'Plans', href: '#plans' },
+  ],
+
+  moreLabel: 'Read on',
+
   languages: {
     label: 'Language',
     menuLabel: 'Translate this page',
     currentLabel: 'Current language',
     options: {
-      he: { label: 'עברית', short: 'HE', href: '/', dir: 'rtl' },
-      en: { label: 'English', short: 'EN', href: '/en/', dir: 'ltr' },
+      he: { label: 'עברית', href: '/', dir: 'rtl' },
+      en: { label: 'English', href: '/en/', dir: 'ltr' },
     },
   },
 

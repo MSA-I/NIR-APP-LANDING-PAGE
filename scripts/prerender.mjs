@@ -35,8 +35,8 @@ const SSR_OUT = path.join(ROOT, 'dist-ssr')
 
 const SSR_ENTRY = 'src/entry-static.tsx'
 const PAGES = [
-  { locale: 'he', html: 'dist/index.html', extras: true },
-  { locale: 'en', html: 'dist/en/index.html', extras: false },
+  { locale: 'he', html: 'dist/index.html' },
+  { locale: 'en', html: 'dist/en/index.html' },
 ]
 
 // The container the client mounts into, empty, exactly as index.html declares
@@ -58,7 +58,7 @@ if (!existsSync(built)) throw new Error(`the static build produced no ${built}`)
 
 const { render, schema, supportingPages } = await import(pathToFileURL(built).href)
 
-for (const { locale, html, extras } of PAGES) {
+for (const { locale, html } of PAGES) {
   const markup = render(locale)
   if (!markup || markup.length < 5000) {
     throw new Error(`the static render returned ${markup.length} characters, which cannot be right`)
@@ -97,10 +97,6 @@ for (const { locale, html, extras } of PAGES) {
       `${graph.length} structured-data nodes (${graph.map((n) => n['@type']).join(', ')})`
   )
 
-  // The supporting pages are written once, beside the Hebrew document they
-  // belong to, and not a second time for the English one.
-  if (!extras) continue
-
   // ---- the supporting pages ------------------------------------------------
   // Written from the same module, in the same pass, because they need one thing
   // from this build: the hashed stylesheet, which is only knowable after Vite
@@ -108,7 +104,7 @@ for (const { locale, html, extras } of PAGES) {
   const css = (doc.match(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/) || [])[1]
   if (!css) throw new Error(`no stylesheet link found in ${html}`)
 
-  for (const page of supportingPages(css)) {
+  for (const page of supportingPages(css, locale)) {
     const dir = path.join(ROOT, 'dist', page.slug)
     mkdirSync(dir, { recursive: true })
     writeFileSync(path.join(dir, 'index.html'), page.html)

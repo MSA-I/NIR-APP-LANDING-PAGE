@@ -154,12 +154,17 @@ const en = {
     headers: { plan: 'Plan', who: 'Best for', docs: 'Documents per month', price: 'Price' },
     rows: [
       { name: 'Free', who: 'Start and see the system working on your own business', docs: '20', price: 'No charge' },
-      { name: 'Basic', who: 'A business working with several regular suppliers', docs: '40', price: '69 ₪' },
-      { name: 'Pro', who: 'A business whose accountant works inside the system', docs: '150', price: '249 ₪' },
-      { name: 'Premium', who: 'A business operating more than one location', docs: '375', price: '449 ₪' },
+      { name: 'Basic', who: 'A business working with several regular suppliers', docs: '40', price: '$20' },
+      { name: 'Pro', who: 'A business whose accountant works inside the system', docs: '150', price: '$79' },
+      { name: 'Premium', who: 'A business operating more than one location', docs: '375', price: '$149' },
       { name: 'Business', who: 'An organisation requiring custom quotas and terms', docs: 'Custom', price: 'Contact us' },
     ],
-    priceNote: 'All prices exclude VAT.',
+    // The dollar catalogue is not a conversion of the shekel one. Both are
+    // published in NIR-APP's 0184 migration, and which one a business is
+    // charged follows its VERIFIED billing country, not the language it reads
+    // the page in. The note says so, because a reader who switched language is
+    // entitled to know he has not switched price list.
+    priceNote: 'All prices are before tax. Businesses billed in Israel pay the shekel catalogue.',
     note: 'Move between plans at any time. All accumulated data remains available after moving to a lower plan.',
   },
 
@@ -229,8 +234,8 @@ const en = {
       {
         h: 'Legal',
         links: [
-          { t: 'Terms of use', href: 'https://app.inplace.digital/terms' },
-          { t: 'Privacy', href: 'https://app.inplace.digital/privacy' },
+          { t: 'Terms of use', href: '/en/terms/' },
+          { t: 'Privacy policy', href: '/en/privacy/' },
         ],
       },
     ],

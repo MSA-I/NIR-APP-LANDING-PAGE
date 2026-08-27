@@ -27,6 +27,18 @@
 // the only record of what the change was for.
 const APPROVED = [
   {
+    at: 'footer.cols[2].links[0].href',
+    why: 'terms and privacy are pages on this site as of 27.08.2026, carrying the product’s own text and version. The wording did not move; the destination did (27.08.2026)',
+    was: 'https://app.inplace.digital/terms',
+    now: '/terms/',
+  },
+  {
+    at: 'footer.cols[2].links[1].href',
+    why: 'the other half of the same move (27.08.2026)',
+    was: 'https://app.inplace.digital/privacy',
+    now: '/privacy/',
+  },
+  {
     at: 'film.blocks[3].h',
     why: 'the film ends on the three-way check and the mark, not on the dashboard (26.08.2026)',
     was: 'וזה המסך שמחליף&nbsp;אותה',

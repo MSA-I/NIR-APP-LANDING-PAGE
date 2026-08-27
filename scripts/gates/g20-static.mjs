@@ -92,11 +92,19 @@ for (const { url, file } of pages()) {
     c.ok(h1s === 1, at(`has ${h1s} h1 elements, it should have exactly one`))
     c.ok(h2s >= 4, at(`has ${h2s} sections, expected at least 4`))
 
+    // `/en/<slug>/` is one page, not the `en` directory: the locale segment is
+     // part of the address. Counting without it made every English page look
+     // like it linked to a single other page.
     const internal = new Set(
-      [...html.matchAll(/href="\/([a-z-]+)\/"/g)].map((m) => m[1])
+      [...html.matchAll(/href="(\/(?:en\/)?[a-z][a-z-]*\/)"/g)].map((m) => m[1])
     )
     c.ok(internal.size >= 2, at(`links to ${internal.size} other pages, expected at least 2`))
-    c.ok(/href="\/"/.test(html), at('does not link back to the home page'))
+    // Each edition has its own home. An English page linking "/" would send a
+    // reader who switched language back to the Hebrew one.
+    c.ok(
+      /href="\/"|href="\/en\/"/.test(html),
+      at('does not link back to the home page of its own edition')
+    )
 
     // No bundle on a page that has nothing to run.
     c.ok(

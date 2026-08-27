@@ -66,11 +66,15 @@ function Amount({ value }: { value: string }) {
   const from = useRef(value)
 
   useEffect(() => {
+    // The head is whatever sits before the first digit, which in the English
+    // catalogue is the dollar sign. Without it '$20' parsed as no figure at
+    // all: the card printed the price as a word, dropped "per month" under it,
+    // and the count between the two terms never ran.
     const parse = (v: string) => {
-      const m = /^([\d,]+)(.*)$/.exec(v.trim())
+      const m = /^(\D*)([\d,]+)(.*)$/.exec(v.trim())
       if (!m) return null
-      const n = Number(m[1].replace(/,/g, ''))
-      return Number.isFinite(n) ? { n, tail: m[2] } : null
+      const n = Number(m[2].replace(/,/g, ''))
+      return Number.isFinite(n) ? { head: m[1], n, tail: m[3] } : null
     }
     const a = parse(from.current)
     const b = parse(value)
@@ -89,7 +93,7 @@ function Amount({ value }: { value: string }) {
       // The same ease the figures in chapter 02 count on.
       const eased = 1 - Math.pow(1 - t, 3)
       const at = Math.round(a.n + (b.n - a.n) * eased)
-      setShown(at.toLocaleString('en-US') + b.tail)
+      setShown(b.head + at.toLocaleString('en-US') + b.tail)
       if (t < 1) raf = requestAnimationFrame(tick)
       else setShown(value)
     }
@@ -161,7 +165,7 @@ export function PlansChapter({
   priceNote: string
   note: string
   ctaHref: string
-  plansCta: { free: string; paid: string; contact: string; contactHref: string }
+  plansCta: { freeWords: string; free: string; paid: string; contact: string; contactHref: string }
   billing: Billing
   recommendedLabel: string
   everywhereLabel: string
@@ -216,7 +220,7 @@ export function PlansChapter({
             // `r.price` and not `shown`, so flipping the billing switch cannot
             // change what a card asks for. A plan with no self-serve path must
             // never end up offering the signup button again.
-            const contactOnly = !/\d/.test(r.price) && r.price !== 'ללא עלות'
+            const contactOnly = !/\d/.test(r.price) && r.price !== plansCta.freeWords
             const ask = hasAmount
               ? { label: plansCta.paid, href: ctaHref }
               : contactOnly

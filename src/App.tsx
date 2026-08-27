@@ -8,6 +8,7 @@
 import { useEffect } from 'react'
 import { contentByLocale, extraByLocale, localeFromPath, type LocaleCode } from '@/content/locales'
 import site from '@/content/pages'
+import siteEn from '@/content/pages.en'
 import { Announcement } from '@/components/Announcement'
 import { Folio } from '@/components/Folio'
 import { TitlePage } from '@/components/TitlePage'
@@ -61,8 +62,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           />
         }
         brand={t.brand}
-        first={t.title_page.folio}
-        links={t.footer.cols[1].links}
+        links={x.folioNav}
         ctaLabel={t.ctaPrimary}
         ctaHref={t.ctaPrimaryHref}
         loginLabel={t.footer.cols[0].links[1].t}
@@ -202,9 +202,14 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         tagline={t.footer.tagline}
         rights={t.footer.rights}
         cols={t.footer.cols}
+        // Six supporting pages per edition since 27.08.2026. The legal two are
+        // excluded here because the colophon already links them under its own
+        // heading, and they exist in Hebrew only.
         more={{
-          h: 'להעמיק',
-          links: site.pages.map((p) => ({ t: p.eyebrow, href: `/${p.slug}/` })),
+          h: x.moreLabel,
+          links: (locale === 'he' ? site.pages : siteEn.pages)
+            .filter((p) => !p.legal)
+            .map((p) => ({ t: p.nav, href: locale === 'he' ? `/${p.slug}/` : `/en/${p.slug}/` })),
         }}
         marquee={t.title_page.index.map((c) => c.t)}
         topLabel={t.title_page.folio}

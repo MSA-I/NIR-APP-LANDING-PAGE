@@ -13,9 +13,77 @@
 // Rendered by scripts/prerender.mjs, straight into dist/<slug>/index.html.
 
 import type { Page, Section } from '@/content/pages'
+import type { LocaleCode } from '@/content/locales'
 import { emphasiseBrand } from '@/lib/motion'
 
 const ORIGIN = 'https://inplace.digital'
+
+// Everything on a supporting page that is not the page's own copy. Kept here
+// rather than in the dictionaries because it belongs to this template and to
+// nothing else: the home page has its own words for all of it.
+const CHROME = {
+  he: {
+    dir: 'rtl',
+    ogLocale: 'he_IL',
+    navLabel: 'ניווט ראשי',
+    nav: [
+      ['/#what', 'מה המערכת עושה'],
+      ['/#why', 'למה דווקא זה'],
+      ['/#plans', 'מסלולים'],
+      ['/#faq', 'שאלות'],
+    ],
+    readOn: 'להמשך קריאה',
+    readOnLabel: 'עמודים נוספים',
+    ctaLine: 'מתחילים מספק אחד, ורואים את השרשרת עובדת על העסק שלך.',
+    home: 'דף הבית',
+    login: 'כניסה למערכת',
+    terms: 'תנאי שימוש',
+    privacy: 'מדיניות פרטיות',
+    operator: 'מפעילת השירות: In Place, הרותם 14, כפר אדומים. מספר רישום 036689081. טלפון 054-254-7074.',
+    ogAlt: 'InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד',
+    fonts: ['NotoSansHebrew-Hebrew.woff2', 'Heebo-hebrew.woff2'],
+  },
+  en: {
+    dir: 'ltr',
+    ogLocale: 'en',
+    navLabel: 'Main navigation',
+    nav: [
+      ['/en/#what', 'What the system does'],
+      ['/en/#why', 'Why this approach'],
+      ['/en/#plans', 'Plans'],
+      ['/en/#faq', 'Questions'],
+    ],
+    readOn: 'Read on',
+    readOnLabel: 'More pages',
+    ctaLine: 'Start with one supplier, and watch the chain work on your own business.',
+    home: 'Home',
+    login: 'Sign in',
+    terms: 'Terms of use',
+    privacy: 'Privacy policy',
+    operator: 'Operated by In Place, HaRotem 14, Kfar Adumim, Israel. Registration number 036689081. Telephone +972-54-254-7074.',
+    ogAlt: 'InPlace: everything between the order and the money, in one place',
+    fonts: ['NotoSansHebrew-Latin.woff2', 'Heebo-latin.woff2'],
+  },
+} as const
+
+// The same arrow the page's buttons carry, as markup. `Cta` renders lucide's
+// `ArrowLeft`; these documents ship no JavaScript, so the two paths are written
+// out. Leftwards is forwards in Hebrew, and `html:dir(ltr) .flow__arrow` in the
+// stylesheet turns it round for the English edition.
+const arrow = (kind: 'lead' | 'trail') =>
+  `<svg class="flow__arrow flow__arrow--${kind}" viewBox="0 0 24 24" fill="none" ` +
+  `stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ` +
+  `aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>`
+
+/** One of the page's buttons, with the ground that opens out of its own centre. */
+const pill = (href: string, label: string, kind: 'primary' | 'ghost' = 'ghost', small = true) =>
+  `<a class="flow flow--${kind}${small ? ' flow--sm' : ''}" href="${href}">` +
+  `<span class="flow__fill" aria-hidden="true"></span>${arrow('lead')}` +
+  `<span class="flow__label">${label}</span>${arrow('trail')}</a>`
+
+/** Where a page lives, in the edition it belongs to. */
+const pathOf = (slug: string, locale: LocaleCode) =>
+  locale === 'he' ? `/${slug}/` : `/en/${slug}/`
 
 const escape = (s: string) =>
   s.replace(/&(?!(?:[a-zA-Z]+|#\d+);)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -61,60 +129,80 @@ const section = (s: Section) => `
           ${(s.after || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
         </section>`
 
-const schemaFor = (page: Page) => ({
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': `${ORIGIN}/#organization`,
-      name: 'InPlace',
-      url: ORIGIN,
-      logo: `${ORIGIN}/assets/logo.svg`,
-      inLanguage: 'he-IL',
-    },
-    {
-      '@type': 'WebSite',
-      '@id': `${ORIGIN}/#website`,
-      name: 'InPlace',
-      url: ORIGIN,
-      inLanguage: 'he-IL',
-      publisher: { '@id': `${ORIGIN}/#organization` },
-    },
-    {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN}/${page.slug}/#webpage`,
-      url: `${ORIGIN}/${page.slug}/`,
-      name: page.title,
-      description: page.description,
-      inLanguage: 'he-IL',
-      isPartOf: { '@id': `${ORIGIN}/#website` },
-      publisher: { '@id': `${ORIGIN}/#organization` },
-    },
-    {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'InPlace', item: `${ORIGIN}/` },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: page.eyebrow,
-          item: `${ORIGIN}/${page.slug}/`,
+const schemaFor = (page: Page, locale: LocaleCode) => {
+  const lang = locale === 'he' ? 'he-IL' : 'en'
+  const home = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/en/`
+  const url = `${ORIGIN}${pathOf(page.slug, locale)}`
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${ORIGIN}/#organization`,
+        name: 'InPlace',
+        legalName: 'In Place',
+        vatID: '036689081',
+        url: ORIGIN,
+        logo: `${ORIGIN}/assets/logo.svg`,
+        inLanguage: lang,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'הרותם 14',
+          addressLocality: 'כפר אדומים',
+          addressCountry: 'IL',
         },
-      ],
-    },
-  ],
-})
+        telephone: '+972-54-254-7074',
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${home}#website`,
+        name: 'InPlace',
+        url: home,
+        inLanguage: lang,
+        publisher: { '@id': `${ORIGIN}/#organization` },
+      },
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: page.title,
+        description: page.description,
+        inLanguage: lang,
+        isPartOf: { '@id': `${home}#website` },
+        publisher: { '@id': `${ORIGIN}/#organization` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'InPlace', item: home },
+          { '@type': 'ListItem', position: 2, name: page.eyebrow, item: url },
+        ],
+      },
+    ],
+  }
+}
 
 /** The page-only layout. Everything else comes from the site's own stylesheet. */
 const STYLE = `
-      body { background: var(--color-onyx); color: var(--color-ink-soft); }
-      .doc { max-inline-size: 44rem; margin-inline: auto; padding-block: clamp(2.5rem, 7vh, 5rem) clamp(4rem, 10vh, 7rem); }
-      .doc-top { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: baseline;
-        padding-block-end: 1.25rem; border-block-end: 1px solid var(--color-onyx-line); }
-      .doc-top a { color: var(--color-ink); text-decoration: none; font-weight: 700; }
-      .doc-top nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-inline-start: auto; font-size: 0.9rem; }
-      .doc-top nav a { color: var(--color-ink-soft); font-weight: 400; }
-      .doc-top nav a:hover, .doc-top a:hover { color: var(--color-oceanic); }
+      /* The ground the home page paints with a shader, painted with two
+         gradients instead. These documents carry no JavaScript, and a WebGL
+         canvas for a reading column would be the largest thing on the page. */
+      body { background: var(--color-onyx); color: var(--color-ink-soft);
+        background-image:
+          radial-gradient(120% 70% at 80% -10%, color-mix(in srgb, var(--color-oceanic) 16%, transparent), transparent 60%),
+          radial-gradient(90% 50% at 0% 8%, color-mix(in srgb, var(--color-oceanic-deep) 34%, transparent), transparent 65%);
+        background-attachment: fixed; }
+      .doc { max-inline-size: 44rem; margin-inline: auto; padding-block: 0 clamp(4rem, 10vh, 7rem); }
+      /* The bar spans the window and its contents keep the reading column, the
+         way the folio does on the home page. Inside the reading column it
+         blurred a 44rem strip with two hard edges mid-screen. */
+      .doc-top { position: sticky; inset-block-start: 0; z-index: 20;
+        border-block-end: 1px solid var(--color-onyx-line);
+        background: color-mix(in srgb, var(--color-onyx) 82%, transparent);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+      .doc-top__in { max-inline-size: 44rem; display: flex; flex-wrap: wrap;
+        gap: 0.5rem 0.75rem; align-items: center; padding-block: 0.75rem; }
+      .doc-top nav { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-inline-start: auto; }
       .doc h1 { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.01em;
         font-size: clamp(2rem, 5.5vw, 3.1rem); line-height: 1.1; color: var(--color-ink);
         margin-block: clamp(2rem, 5vh, 3rem) 1.25rem; text-wrap: balance; }
@@ -130,21 +218,34 @@ const STYLE = `
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
         border-block-end: 1px solid var(--color-onyx-line); }
       .doc-table th { color: var(--color-ink); font-weight: 700; }
-      .doc-cta { margin-block-start: clamp(2.5rem, 6vh, 3.5rem); padding: clamp(1.5rem, 4vw, 2rem);
-        border: 1px solid var(--color-onyx-line); border-radius: 12px; background: var(--color-onyx-lift); }
-      .doc-cta a.go { display: inline-flex; align-items: center; gap: 0.5rem; margin-block-start: 1rem;
-        padding: 0.8rem 1.4rem; border-radius: 10px; background: var(--color-action-solid);
-        color: var(--color-ink); font-weight: 600; text-decoration: none; }
-      .doc-cta a.go:hover { background: var(--color-oceanic-deep); }
-      .doc-related { margin-block-start: clamp(2.5rem, 6vh, 3.5rem); padding-block-start: 1.5rem;
-        border-block-start: 1px solid var(--color-onyx-line); }
-      .doc-related ul { list-style: none; padding: 0; margin-block-start: 0.75rem; display: grid; gap: 0.5rem; }
-      .doc-related a { color: var(--color-oceanic); }
-      .doc-foot { margin-block-start: clamp(3rem, 7vh, 4.5rem); padding-block-start: 1.25rem;
-        border-block-start: 1px solid var(--color-onyx-line); font-size: 0.85rem; color: var(--color-ink-dim);
-        display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
-      .doc-foot a { color: var(--color-ink-dim); }
-      :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 3px; }`
+      .doc-cta { display: grid; justify-items: start; gap: 1rem;
+        margin-block-start: clamp(2.5rem, 6vh, 3.5rem); padding: clamp(1.5rem, 4vw, 2rem);
+        border: 1px solid var(--color-onyx-line); border-radius: 16px;
+        background: color-mix(in srgb, var(--color-onyx-lift) 82%, transparent); }
+      .doc-related, .doc-operator, .doc-foot { margin-block-start: clamp(2.5rem, 6vh, 3.5rem);
+        padding-block-start: 1.5rem; border-block-start: 1px solid var(--color-onyx-line); }
+      .doc-rail { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 0.9rem; }
+      .doc-operator { display: grid; gap: 0.6rem; }
+      .doc-foot .eyebrow { color: var(--color-ink-dim); }
+      :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 3px; }
+
+      /* The reveal the home page runs on Motion, run by the browser instead.
+         Nothing is hidden without it: an engine with no scroll-driven
+         animations, and a reader who asked for less motion, both get the
+         finished page. */
+      @media (prefers-reduced-motion: no-preference) {
+        @supports (animation-timeline: view()) {
+          .doc-section, .doc-cta, .doc-related, .doc-operator {
+            animation: doc-rise linear both;
+            animation-timeline: view();
+            animation-range: entry 6% cover 24%;
+          }
+        }
+      }
+      @keyframes doc-rise {
+        from { opacity: 0; translate: 0 1.1rem; }
+        to { opacity: 1; translate: 0 0; }
+      }`
 
 /**
  * One complete document.
@@ -153,21 +254,35 @@ const STYLE = `
  * page. Hard-coding it would break on the next build, and shipping a second
  * copy of 74KB of CSS per page would be worse.
  */
-export function pageHtml(page: Page, all: Page[], css: string, cta: { label: string; href: string; note: string }) {
-  const url = `${ORIGIN}/${page.slug}/`
+export function pageHtml(
+  page: Page,
+  all: Page[],
+  css: string,
+  cta: { label: string; href: string; note: string },
+  locale: LocaleCode = 'he'
+) {
+  const t = CHROME[locale]
+  const url = `${ORIGIN}${pathOf(page.slug, locale)}`
   const related = page.related
     .map((slug) => all.find((p) => p.slug === slug))
     .filter((p): p is Page => Boolean(p))
 
+  // Every supporting page exists in both editions as of 27.08.2026, the two
+  // legal documents included, so every one of them names its twin.
+  const alternates = `
+    <link rel="alternate" hreflang="he" href="${ORIGIN}/${page.slug}/" />
+    <link rel="alternate" hreflang="en" href="${ORIGIN}/en/${page.slug}/" />
+    <link rel="alternate" hreflang="x-default" href="${ORIGIN}/${page.slug}/" />`
+
   return `<!doctype html>
-<html lang="he" dir="rtl">
+<html lang="${locale}" dir="${t.dir}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>${attr(page.title)}</title>
     <meta name="description" content="${attr(page.description)}" />
     <meta name="theme-color" content="#0a171d" />
-    <link rel="canonical" href="${url}" />
+    <link rel="canonical" href="${url}" />${alternates}
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
     <link rel="icon" sizes="any" href="/favicon.ico" />
@@ -177,67 +292,84 @@ export function pageHtml(page: Page, all: Page[], css: string, cta: { label: str
     <meta property="og:type" content="article" />
     <meta property="og:url" content="${url}" />
     <meta property="og:site_name" content="InPlace" />
-    <meta property="og:locale" content="he_IL" />
+    <meta property="og:locale" content="${t.ogLocale}" />
     <meta property="og:image" content="${ORIGIN}/assets/og-cover.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד" />
+    <meta property="og:image:alt" content="${attr(t.ogAlt)}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${attr(page.title)}" />
     <meta name="twitter:description" content="${attr(page.description)}" />
     <meta name="twitter:image" content="${ORIGIN}/assets/og-cover.jpg" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/NotoSansHebrew-Hebrew.woff2" />
-    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/Heebo-hebrew.woff2" />
+${t.fonts
+      .map(
+        (f) =>
+          `    <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/${f}" />`
+      )
+      .join('\n')}
     <link rel="stylesheet" href="${css}" />
     <style>${STYLE}
     </style>
     <script type="application/ld+json">
-${JSON.stringify(schemaFor(page), null, 2).replace(/<\//g, '<\\/')}
+${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
     </script>
   </head>
   <body>
-    <div class="wrap doc">
-      <header class="doc-top">
-        <a href="/">InPlace</a>
-        <nav aria-label="ניווט ראשי">
-          <a href="/#what">מה המערכת עושה</a>
-          <a href="/#why">למה דווקא זה</a>
-          <a href="/#plans">מסלולים</a>
-          <a href="/#faq">שאלות</a>
+    <header class="doc-top">
+      <div class="wrap doc-top__in">
+        <a class="brandchip" href="${locale === 'he' ? '/' : '/en/'}">
+          <span class="brandchip__fill" aria-hidden="true"></span>
+          <span>InPlace</span>
+        </a>
+        <nav aria-label="${attr(t.navLabel)}">
+          ${t.nav.map(([href, label]) => pill(href, escape(label))).join('\n          ')}
         </nav>
-      </header>
+      </div>
+    </header>
 
+    <div class="wrap doc">
       <main>
         <p class="eyebrow">${escape(page.eyebrow)}</p>
         <h1>${copy(page.h1)}</h1>
         <p class="lede">${copy(page.lede)}</p>
 ${page.sections.map(section).join('\n')}
 
+${
+          page.legal
+            ? `
+        <div class="doc-operator">
+          <p class="cap">${escape(t.operator)}</p>
+        </div>`
+            : `
         <div class="doc-cta">
-          <p class="body">${copy('מתחילים מספק אחד, ורואים את השרשרת עובדת על העסק שלך.')}</p>
-          <a class="go" href="${cta.href}">${escape(cta.label)}</a>
-          <p class="cap" style="margin-block-start:0.75rem">${escape(cta.note)}</p>
+          <p class="body">${copy(t.ctaLine)}</p>
+          ${pill(cta.href, escape(cta.label), 'primary', false)}
+          <p class="cap">${escape(cta.note)}</p>
         </div>
 
-        <nav class="doc-related" aria-label="עמודים נוספים">
-          <p class="eyebrow">להמשך קריאה</p>
-          <ul>
+        <nav class="doc-related" aria-label="${attr(t.readOnLabel)}">
+          <p class="eyebrow">${escape(t.readOn)}</p>
+          <div class="doc-rail">
             ${related
-              .map((p) => `<li><a href="/${p.slug}/">${escape(p.h1)}</a></li>`)
+              .map((p) => pill(pathOf(p.slug, locale), escape(p.nav)))
               .join('\n            ')}
-          </ul>
-        </nav>
+          </div>
+        </nav>`
+        }
       </main>
 
       <footer class="doc-foot">
-        <span>InPlace</span>
-        <a href="/">דף הבית</a>
-        <a href="https://app.inplace.digital">כניסה למערכת</a>
-        <a href="https://app.inplace.digital/terms">תנאי שימוש</a>
-        <a href="https://app.inplace.digital/privacy">פרטיות</a>
+        <p class="eyebrow">InPlace</p>
+        <div class="doc-rail">
+          ${pill(locale === 'he' ? '/' : '/en/', escape(t.home))}
+          ${pill('https://app.inplace.digital', escape(t.login))}
+          ${pill(pathOf('terms', locale), escape(t.terms))}
+          ${pill(pathOf('privacy', locale), escape(t.privacy))}
+        </div>
       </footer>
     </div>
+    <div class="grain" aria-hidden="true"></div>
   </body>
 </html>
 `

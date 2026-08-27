@@ -68,8 +68,10 @@ await withPage(async (page) => {
   has((s) => s.role === 'tab', 'the five-step chain')
   has((s) => s.tag === 'summary', 'the FAQ')
   has((s) => s.href === 'https://app.inplace.digital/signup', 'the signup action')
-  has((s) => s.href === 'https://app.inplace.digital/terms', 'the terms link')
-  has((s) => s.href === 'https://app.inplace.digital/privacy', 'the privacy link')
+  // Pages on this site since 27.08.2026, so the href is a path rather than a
+  // product URL.
+  has((s) => s.href === '/terms/', 'the terms link')
+  has((s) => s.href === '/privacy/', 'the privacy link')
 
   const tabs = stops.filter((s) => s.role === 'tab').length
   c.note(`chain stops on the path: ${tabs} (one, by design: the others are arrow keys)`)

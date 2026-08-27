@@ -143,6 +143,12 @@ export default {
   // to the catalogue cannot quietly put the signup button back on a plan that
   // has no self-serve path.
   plansCta: {
+    // The exact wording the free plan prints instead of a figure. The card
+    // decides its ask from its own price, and until 27.08.2026 that decision
+    // compared against this string written into the component: on /en/ the free
+    // plan printed 'No charge', matched nothing, and offered "talk to us"
+    // instead of the signup it exists for.
+    freeWords: 'ללא עלות',
     free: 'להתחיל חינם',
     paid: 'להתחיל במסלול הזה',
     contact: 'לדבר איתנו',
@@ -202,13 +208,27 @@ export default {
   },
 
   // ---------------------------------------------------------- locale control
+  // The wording the top bar uses, which is not the wording the footer uses.
+  // A pill in a fixed row has one line; the footer has a column and can afford
+  // a sentence. Hebrew reads short either way, English does not.
+  folioNav: [
+    { t: 'מה המערכת עושה', href: '#what' },
+    { t: 'למה דווקא זה', href: '#why' },
+    { t: 'שאלות נפוצות', href: '#faq' },
+    { t: 'מסלולים', href: '#plans' },
+  ],
+
+  // The heading over the supporting pages in the colophon. Rendered only where
+  // those pages exist in the reader's language; see App.tsx.
+  moreLabel: 'להעמיק',
+
   languages: {
     label: 'שפה',
     menuLabel: 'תרגום העמוד',
     currentLabel: 'השפה הנוכחית',
     options: {
-      he: { label: 'עברית', short: 'HE', href: '/', dir: 'rtl' },
-      en: { label: 'English', short: 'EN', href: '/en/', dir: 'ltr' },
+      he: { label: 'עברית', href: '/', dir: 'rtl' },
+      en: { label: 'English', href: '/en/', dir: 'ltr' },
     },
   },
 

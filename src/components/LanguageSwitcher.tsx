@@ -1,10 +1,10 @@
-import { Check, ChevronDown, Globe2 } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import type { LocaleCode } from '@/content/locales'
+import { Flag } from '@/components/Flag'
 
 type LanguageOption = {
   label: string
-  short: string
   href: string
   dir: string
 }
@@ -68,8 +68,10 @@ export function LanguageSwitcher({
           }
         }}
       >
-        <Globe2 className="size-4" aria-hidden="true" strokeWidth={1.8} />
-        <span className="language-switcher__short">{selected.short}</span>
+        <Flag code={current} />
+        <span className="language-switcher__name" lang={current} dir={selected.dir}>
+          {selected.label}
+        </span>
         <ChevronDown
           className="language-switcher__chevron size-3.5"
           aria-hidden="true"
@@ -85,7 +87,6 @@ export function LanguageSwitcher({
         aria-label={menuLabel}
         hidden={!open}
       >
-        <p className="language-switcher__label">{menuLabel}</p>
         {(Object.entries(options) as [LocaleCode, LanguageOption][]).map(([code, option]) => {
           const active = code === current
           const hash = typeof window === 'undefined' ? '' : window.location.hash
@@ -94,7 +95,6 @@ export function LanguageSwitcher({
               key={code}
               role="menuitem"
               lang={code}
-              dir={option.dir}
               href={`${option.href}${hash}`}
               aria-current={active ? 'page' : undefined}
               aria-label={active ? `${option.label}, ${currentLabel}` : option.label}
@@ -107,8 +107,8 @@ export function LanguageSwitcher({
                 }
               }}
             >
-              <span>{option.label}</span>
-              <span className="language-switcher__option-code">{option.short}</span>
+              <Flag code={code} />
+              <span className="language-switcher__option-name">{option.label}</span>
               <Check className="size-4" aria-hidden="true" data-active={active ? 'true' : 'false'} />
             </a>
           )

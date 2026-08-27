@@ -1,12 +1,57 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 
+/**
+ * The supporting pages, in `npm run dev`.
+ *
+ * They are written by scripts/prerender.mjs at build time, so on the dev server
+ * every one of their addresses fell through to the SPA fallback and answered
+ * 200 with the home page. Clicking "תנאי שימוש" in the colophon reloaded the
+ * home page, which reads exactly like a broken link, and was reported as one on
+ * 27.08.2026.
+ *
+ * This renders them from the same module the build uses, so a page cannot look
+ * right in dev and different in dist. Serve only: the build has its own writer.
+ */
+function supportingPagesInDev(): Plugin {
+  return {
+    name: 'inplace:supporting-pages-in-dev',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const url = (req.url || '').split('?')[0]
+        const match = /^\/(en\/)?([a-z][a-z-]*)\/$/.exec(url)
+        if (!match) return next()
+        const locale = match[1] ? 'en' : 'he'
+        try {
+          const { pageHtml } = await server.ssrLoadModule('/src/lib/page-html.ts')
+          const mod = await server.ssrLoadModule(
+            locale === 'he' ? '/src/content/pages.ts' : '/src/content/pages.en.ts'
+          )
+          const site = mod.default
+          const page = site.pages.find((p: { slug: string }) => p.slug === match[2])
+          if (!page) return next()
+          const html = await server.transformIndexHtml(
+            url,
+            pageHtml(page, site.pages, '/src/styles.css?direct', site.cta, locale)
+          )
+          res.setHeader('Content-Type', 'text/html; charset=utf-8')
+          res.end(html)
+        } catch (error) {
+          server.ssrFixStacktrace(error as Error)
+          next(error)
+        }
+      })
+    },
+  }
+}
+
 export default defineConfig({
   // Absolute, because the page references /assets/... from CSS and from copy.
   base: '/',
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), supportingPagesInDev()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

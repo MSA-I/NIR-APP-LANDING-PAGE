@@ -1,5 +1,6 @@
 // The folio: the running head of a printed feature, and the page's only fixed
-// element. It carries where you are, the way in, and the one ask.
+// element. It carries the way in and the one ask; the chapter indicator it
+// also carried was removed on 27.08.2026 at the owner's request.
 //
 // The reference boxes every nav item in its own hairline rectangle rather than
 // running them as plain links; that is what makes its header read as a control
@@ -30,7 +31,6 @@ type NavLink = { t: string; href: string }
 export function Folio({
   announcement,
   brand,
-  first,
   links,
   ctaLabel,
   ctaHref,
@@ -42,7 +42,6 @@ export function Folio({
       page never has to know how tall two fixed elements are together. */
   announcement?: ReactNode
   brand: string
-  first: string
   links: NavLink[]
   ctaLabel: string
   ctaHref: string
@@ -52,7 +51,6 @@ export function Folio({
   /** Compact browser-style language control, shared by desktop and phone. */
   languageControl: ReactNode
 }) {
-  const [where, setWhere] = useState(first)
   const [lifted, setLifted] = useState(false)
   const boxRef = useRef<HTMLElement>(null)
 
@@ -82,27 +80,6 @@ export function Folio({
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
-  // Which chapter is under the running head. The topmost section whose box
-  // still covers the head wins, so the label changes exactly when the chapter
-  // does rather than when its middle happens to cross the centre line.
-  useEffect(() => {
-    const marks = () => Array.from(document.querySelectorAll<HTMLElement>('[data-folio]'))
-    const pick = () => {
-      let current = first
-      for (const el of marks()) {
-        if (el.getBoundingClientRect().top <= 96) current = el.dataset.folio || current
-      }
-      setWhere(current)
-    }
-    pick()
-    window.addEventListener('scroll', pick, { passive: true })
-    window.addEventListener('resize', pick)
-    return () => {
-      window.removeEventListener('scroll', pick)
-      window.removeEventListener('resize', pick)
-    }
-  }, [first])
 
   return (
     <header
@@ -137,12 +114,11 @@ export function Folio({
           ))}
         </nav>
 
-        <p
-          className="me-auto ms-2 hidden truncate text-[0.78rem] tracking-[0.14em] text-ink-dim xl:block"
-          aria-live="polite"
-        >
-          {where}
-        </p>
+        {/* The gap the chapter indicator used to fill. The indicator went on
+            27.08.2026 and the row closed up behind it, which put the page's
+            navigation and its actions in one undivided run of pills. The space
+            was doing work, so it stays without the text. */}
+        <span className="me-auto" aria-hidden="true" />
 
         <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
           {languageControl}

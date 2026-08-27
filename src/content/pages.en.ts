@@ -1,0 +1,611 @@
+import type { Page } from './pages'
+
+// The English edition of the six supporting pages, published at /en/<slug>/.
+//
+// Written against the Hebrew pages section by section rather than translated
+// phrase by phrase: these documents promise what the product does, and a
+// sentence that survives a literal translation while losing its qualifier is
+// exactly how a promise grows in one language and not the other. Where the
+// Hebrew leans on an idiom, the English says the same thing in its own words.
+//
+// The two legal documents are here as of 27.08.2026, at the owner's
+// instruction. They are the same documents in English, and each says under its
+// title that the Hebrew version is the one a user consents to and the one that
+// governs — because a translation presented as the agreement itself is an
+// agreement nobody signed.
+//
+// The structure is checked, not assumed: scripts/gates/g18-i18n.mjs holds this
+// file to the same slugs and the same section count as pages.ts, so a page
+// cannot quietly exist in one language only.
+
+const CTA_EN = {
+  label: 'Open a free account',
+  href: 'https://app.inplace.digital/signup',
+  note: 'No credit card. Start with one supplier.',
+}
+
+const pagesEn: Page[] = [
+  // ---------------------------------------------------------------- 1 of 6
+  {
+    slug: 'procurement-software',
+    nav: 'Procurement software',
+    title: 'Procurement software for SMBs: from order to payment | InPlace',
+    description:
+      'Procurement software for small and mid-sized businesses: suppliers, orders, goods received, invoices and payments in one chain, with separation of duties.',
+    eyebrow: 'Procurement software',
+    h1: 'Procurement software built around one chain',
+    lede:
+      'Most businesses do not suffer from a shortage of data. They suffer from its scattering. The order is in WhatsApp, the delivery note is in a binder, the invoice is in email, and the accountant receives all of it at month end. InPlace connects that chain into one place.',
+    sections: [
+      {
+        h2: 'What procurement software is supposed to do',
+        paras: [
+          'Procurement software is not a place to file documents. Its job is to make certain that what you ordered, what you received and what you were asked to pay are the same thing, and to stop whatever does not match before the money leaves.',
+          'The full journey through InPlace is one sequence: suppliers, price lists, orders, goods receipt, invoices, credit notes, payment requests, payments, bank reconciliation and reports. Every document that arrives receives a row, a status, and a link to the order it came from.',
+        ],
+      },
+      {
+        h2: 'Three roles, duties kept apart',
+        paras: [
+          'Separation of duties is not a setting somebody has to remember to switch on. It is the structure of the system, and each role sees and does only what belongs to it.',
+        ],
+        table: {
+          headers: ['Role', 'What they do'],
+          rows: [
+            [
+              'Owner',
+              'Manages, approves and reviews. Opens the system to see what needs attention and what may cost money. Does not execute payment.',
+            ],
+            [
+              'Procurement',
+              'Suppliers, price lists, orders, goods receipt and invoices. Can see whether an invoice was paid, but does not run payments and does not touch the bank.',
+            ],
+            [
+              'Accountant',
+              'Sees approved invoices only, executes the approved payment, uploads the confirmation and handles bank reconciliation and credit notes.',
+            ],
+          ],
+        },
+      },
+      {
+        h2: 'Who it is for',
+        list: {
+          label: 'The businesses the system was built for',
+          items: [
+            'Businesses where procurement, goods receipt and accounting pass between several people',
+            'Businesses with more than one location that need to see both in one picture',
+            'Businesses whose accountant is external and has to work inside the same system',
+          ],
+        },
+        after: [
+          'And who it is not for: a business looking only for an expense tool or corporate cards, and an organisation that wants a general ERP for every department.',
+        ],
+      },
+      {
+        h2: 'What happens when something does not match',
+        paras: [
+          'The system compares what you ordered, what you received and what you were asked to pay. When the three disagree, the invoice stops and waits for a decision. It is not deleted, not approved automatically, and not left quietly in a folder until somebody notices it.',
+          'The owner sees the mismatch as something that needs attention, not as a line in a monthly report. That is the difference between a system that manages a process and a system that enables a decision: a screen that only displays data is an operational screen, not a decision screen.',
+        ],
+      },
+      {
+        h2: 'What the overview shows',
+        paras: [
+          'Every screen in the system was built on one principle: that a manager understands within seconds what needs attention, what may cost money, and where the business stands right now. Success is defined plainly — a manager opens the screen and knows within ten seconds what his next three actions are.',
+          'Which is why the system carries no invented static figures. A measure with no data behind it shows a dash, not a zero, because a zero is a claim about reality rather than an absence of information.',
+        ],
+      },
+      {
+        h2: 'What it is not',
+        list: {
+          label: 'Four things the system does not try to be',
+          items: [
+            'Not another metrics screen with no decision on it',
+            'Not an expense product that measures value by how much you spent',
+            'Not a general ERP for every department in the organisation',
+            'Not a loud or colourful SaaS brand. The system handles other people’s money',
+          ],
+        },
+      },
+      {
+        h2: 'How to start',
+        paras: [
+          'You can start with a single supplier. The free plan takes 20 documents a month and every other capability is open on it, because what separates the plans is the number of documents rather than a list of features.',
+          'No credit card is needed to begin, and you can move between plans at any point. Accumulated data stays in full even when moving to a lower plan.',
+        ],
+      },
+    ],
+    related: ['supplier-invoices', 'invoice-matching', 'vs-erp'],
+    source: 'PRODUCT.md (Users, Capability contract, Product Purpose); en.ts (plans)',
+  },
+
+  // ---------------------------------------------------------------- 2 of 6
+  {
+    slug: 'supplier-invoices',
+    nav: 'Supplier invoices',
+    title: 'Supplier invoice management, end to end | InPlace',
+    description:
+      'Supplier invoice management from arrival to bank transfer: linked to its order, checked against goods received, approved, and filed with its confirmation.',
+    eyebrow: 'Supplier invoices',
+    h1: 'Supplier invoices, from arrival to transfer',
+    lede:
+      'An invoice that arrives by email and is saved to a folder is not managed, it is stored. Management begins the moment the invoice is linked to the order it came from and to the goods that actually arrived.',
+    sections: [
+      {
+        h2: 'What happens to an invoice from the moment it arrives',
+        list: {
+          label: 'The path of a single invoice',
+          items: [
+            'The invoice arrives and receives a row, a status and a link to its order',
+            'The system compares what was ordered, what was received and what is being claimed',
+            'Whatever does not match stops and waits for a decision, instead of surfacing at month end',
+            'After approval, a payment request is created',
+            'The accountant executes the approved payment and uploads the confirmation',
+          ],
+        },
+      },
+      {
+        h2: 'Who sees what',
+        paras: [
+          'Procurement sees the amount, the status and whether the invoice was paid, but does not run payments and sees no bank or financial reports. The accountant sees approved invoices only, with the minimum context of their order and receipt.',
+          'This is not a convenience barrier but separation of duties: whoever approves is not whoever transfers, and there is no route around it, however urgent.',
+        ],
+      },
+      {
+        h2: 'Credit notes and bank reconciliation',
+        paras: [
+          'A credit note is not a document filed to one side. It is part of the same chain, and the accountant is the one who processes it and reconciles it against the bank. Procurement sees the credit note’s status in the procurement context only.',
+        ],
+      },
+      {
+        h2: 'What happens to an invoice that does not match',
+        paras: [
+          'It stops. Not deleted, not approved with a caveat, and not waiting quietly. It is marked as a mismatch and waits for a decision from whoever is authorised to take it.',
+          'The difference from ordinary working practice is timing. Without a system, a gap between the order and the invoice surfaces at month end, after the money has gone, and dealing with it means a correspondence with the supplier. With a system it surfaces before payment, and dealing with it is a decision.',
+        ],
+      },
+      {
+        h2: 'Reports and export',
+        paras: [
+          'The owner and the accountant see reports and export them. Procurement sees no financial reports and does not export — not because there is no need, but because that information is not part of the role inside the system.',
+          'The monthly export is part of the accountant’s work, alongside bank reconciliation and credit notes.',
+        ],
+      },
+      {
+        h2: 'The record',
+        paras: [
+          'Every sensitive financial action is recorded, on every plan, the free one included. A confirmation uploaded after payment stays attached to the invoice and to the order everything started from.',
+          'A record is not an addition for the annual audit. It is what makes it possible to answer “who approved this, and why” without searching somebody else’s inbox.',
+        ],
+      },
+    ],
+    related: ['invoice-matching', 'procurement-software', 'vs-spreadsheet'],
+    source: 'PRODUCT.md (Capability contract, Product Purpose); en.ts (chapter 02, why.yes)',
+  },
+
+  // ---------------------------------------------------------------- 3 of 6
+  {
+    slug: 'invoice-matching',
+    nav: 'Invoice matching',
+    title: 'Matching an invoice to its purchase order and goods receipt | InPlace',
+    description:
+      'Automatic comparison of the purchase order, the goods received and the invoice. A gap stops before payment, instead of surfacing after the money has left.',
+    eyebrow: 'Invoice matching',
+    h1: 'Matching the invoice to the order and the goods received',
+    lede:
+      'Three documents describe the same purchase: what was ordered, what arrived, and what you are being asked to pay. When one of them disagrees with the other two, that is precisely the moment a business loses money without knowing it.',
+    sections: [
+      {
+        h2: 'Two numbers, one supplier',
+        paras: [
+          'The purchase order to the supplier said one amount. The invoice from that same supplier asked for another. Without a system, nobody puts the two side by side, and what the invoice says is what gets paid.',
+          'This is not a rare fault. It is the default of work split between a spreadsheet, a WhatsApp group and an email folder.',
+        ],
+      },
+      {
+        h2: 'What the system compares',
+        list: {
+          label: 'The three points of comparison',
+          items: [
+            'What was ordered: the purchase order and the price list it was built from',
+            'What was received: the goods receipt, marked off from a phone at the receiving door',
+            'What is being claimed: the invoice that arrived from the supplier',
+          ],
+        },
+        after: [
+          'Whatever does not match between the three stops and waits for a decision. The owner sees it as something requiring attention, not as a line in a report somebody may read.',
+        ],
+      },
+      {
+        h2: 'Why it stops before payment and not after',
+        paras: [
+          'Payment always goes through an approved request. There is no emergency route around the approval, and no permission that allows an unchecked invoice to be paid. A mismatch discovered after the transfer is no longer a decision, it is a correspondence.',
+        ],
+      },
+      {
+        h2: 'Goods receipt from a phone',
+        paras: [
+          'The goods receipt flow was designed for mobile first, because that is where it happens. What is missing gets marked at the receiving door rather than a week later, and without that marking the comparison runs on a figure nobody checked.',
+          'This is the point at which it is easy to give up. You can assume that what was ordered is what arrived, and then compare two documents instead of three. That assumption is almost always right, and the loss sits precisely in the cases where it is not.',
+        ],
+      },
+      {
+        h2: 'Who decides on a mismatch',
+        paras: [
+          'Not every mismatch is an error. Sometimes the price rose by agreement, sometimes a different quantity arrived by arrangement, and sometimes the supplier is right. The system does not decide for anyone; it puts the gap in front of whoever is authorised to decide, and keeps the decision.',
+          'What it does prevent is a route around it. Payment always goes through an approved request, and no permission allows the approval to be skipped. The separation between whoever approves and whoever transfers holds even when it is urgent.',
+        ],
+      },
+      {
+        h2: 'Why three documents and not two',
+        table: {
+          headers: ['What is compared', 'What it catches'],
+          rows: [
+            ['Order against invoice', 'A price that moved, an item never ordered, a duplicate'],
+            ['Order against receipt', 'What never arrived, what arrived in part, what arrived damaged'],
+            ['Receipt against invoice', 'Payment for goods that were never actually received'],
+          ],
+        },
+        after: [
+          'Two of the three comparisons catch most cases. Three also catch the one that costs the most money: paying in full for a partial delivery.',
+        ],
+      },
+    ],
+    related: ['supplier-invoices', 'procurement-software', 'vs-spreadsheet'],
+    source: 'PRODUCT.md (Product Purpose, Design Principles 5); en.ts (film blocks, chapter 02)',
+  },
+
+  // ---------------------------------------------------------------- 4 of 6
+  {
+    slug: 'vs-spreadsheet',
+    nav: 'InPlace vs a spreadsheet',
+    title: 'InPlace vs a spreadsheet for procurement | InPlace',
+    description:
+      'A spreadsheet manages a list, not a journey. What a procurement system adds: linked documents, separation of duties, and a stop before the payment goes out.',
+    eyebrow: 'Comparison',
+    h1: 'A spreadsheet against a procurement system',
+    lede:
+      'A spreadsheet is a good tool, and that is exactly why it survives long past the point where it stops being enough. It manages a list beautifully. It does not manage a journey.',
+    sections: [
+      {
+        h2: 'What a spreadsheet does well',
+        paras: [
+          'It is available, everybody knows how to use it, and it obliges nobody to learn a system. A business starting out with one supplier and five orders a month needs nothing else.',
+        ],
+      },
+      {
+        h2: 'Where it breaks',
+        list: {
+          label: 'The four breaking points',
+          items: [
+            'No link between documents: the order is in the sheet, the delivery note is in a binder and the invoice is in email, and nobody compares them',
+            'No permissions: whoever can see can also change, and whoever changed is not recorded',
+            'No stop: a spreadsheet cannot hold a payment, because it does not know that something is wrong',
+            'No single source of truth: there are three versions of the same file, and one of them is right',
+          ],
+        },
+      },
+      {
+        h2: 'What a system adds',
+        table: {
+          headers: ['In a spreadsheet', 'In InPlace'],
+          rows: [
+            ['A row somebody typed', 'A document with a status and a link to the order it came from'],
+            ['A manual comparison, if somebody remembers', 'An automatic comparison of order, receipt and invoice'],
+            ['Anyone who has the link', 'Three roles and separation of duties'],
+            ['Partial change history', 'A record of every sensitive financial action'],
+          ],
+        },
+      },
+      {
+        h2: 'What happens as the business grows',
+        paras: [
+          'A spreadsheet does not break in a day. It breaks slowly: a tab is added, a column is added, a second file appears for the second location, and then somebody sends a version over WhatsApp and from that moment there are two truths.',
+          'The clearest sign is not the size of the file but the question “which version are we working from”. Once it is asked, the spreadsheet has already stopped being the source of truth.',
+        ],
+      },
+      {
+        h2: 'What does not transfer from the spreadsheet',
+        paras: [
+          'The habit of “I will remember to check”. A method that rests on one person’s memory works perfectly until the day he is on holiday, and stops working without announcing it.',
+          'InPlace asks nobody to remember. The comparison of order, receipt and invoice runs every time, and an invoice that arrived on a busy day is checked exactly as closely.',
+        ],
+      },
+      {
+        h2: 'When it is worth moving',
+        paras: [
+          'When more than one person touches the same purchase. The moment an order passes between procurement, whoever receives the goods and the accountant, the spreadsheet no longer describes reality but only a part of it.',
+          'You can start with one supplier and leave the spreadsheet open beside the system. Comparing the two after a month is the most honest test available.',
+        ],
+      },
+    ],
+    related: ['vs-erp', 'invoice-matching', 'procurement-software'],
+    source: 'brand/context.md (Alternatives); en.ts (why.yes, why.no, film blocks)',
+  },
+
+  // ---------------------------------------------------------------- 5 of 6
+  {
+    slug: 'vs-erp',
+    nav: 'InPlace vs an ERP',
+    title: 'InPlace vs an ERP for procurement | InPlace',
+    description:
+      'An ERP covers every department. InPlace does one thing: the journey from order to payment. What the difference is, and when each one is the right choice.',
+    eyebrow: 'Comparison',
+    h1: 'An ERP against a dedicated procurement system',
+    lede:
+      'An ERP is not a bad product. It is a different product. It was built to cover every department in an organisation, and that is exactly what makes it heavy for a business that needs one thing: that the money does not leave before somebody has checked.',
+    sections: [
+      {
+        h2: 'What InPlace refuses to be',
+        list: {
+          label: 'Four things, from the positioning document',
+          items: [
+            'Not another dashboard of metrics with no decision on it',
+            'Not an expense product that defines value through spending alone',
+            'Not a heavy general ERP',
+            'Not a loud or colourful SaaS brand',
+          ],
+        },
+      },
+      {
+        h2: 'The practical difference',
+        table: {
+          headers: ['A general ERP', 'InPlace'],
+          rows: [
+            ['Every department in the organisation', 'One journey: from the order to the bank transfer'],
+            ['An implementation project', 'You can start with a single supplier'],
+            ['Permissions defined during implementation', 'Three fixed roles, built into the system'],
+            ['A procurement module inside a large system', 'The whole product is the procurement'],
+          ],
+        },
+      },
+      {
+        h2: 'When an ERP is the right choice',
+        paras: [
+          'When the organisation needs one system for manufacturing, inventory, people, finance and procurement, and when it has the time and the people for an implementation of that size. In that case the ERP’s procurement module works against the same data as the rest of the organisation, and that is worth something.',
+          'The businesses InPlace was built for sit on the other side of that line: they need control over procurement now, not a project.',
+        ],
+      },
+      {
+        h2: 'The cost of implementation, not the cost of the licence',
+        paras: [
+          'The large expense in an enterprise system is not the monthly price but the time of the people who have to learn it, configure it and migrate data into it. An ERP is built on the assumption that this project exists and is budgeted for.',
+          'InPlace was built on the opposite assumption: that you can start with one supplier on a Monday, and that the system has to prove itself before anybody allocates a project to it.',
+        ],
+      },
+      {
+        h2: 'What happens when you need both',
+        paras: [
+          'It happens. An organisation with an ERP running manufacturing and inventory can still suffer from procurement managed over WhatsApp, because the ERP’s procurement module was never implemented to the end.',
+          'In that case the question is not which system wins but where the payment decision is taken. Whichever system holds that decision should also hold the comparison that leads to it.',
+        ],
+      },
+      {
+        h2: 'What they have in common',
+        paras: [
+          'Both require the work to pass through them. A system somebody bypasses over WhatsApp is not a system, whether it cost a hundred thousand or nothing at all.',
+          'The difference is how easy it is to bypass. When the system covers one complete journey and speaks the language of the people working in it, going around it stops being the short way.',
+        ],
+      },
+    ],
+    related: ['vs-spreadsheet', 'procurement-software', 'supplier-invoices'],
+    source: 'brand/positioning.md (what InPlace refuses to be); brand/context.md (Alternatives)',
+  },
+
+  // ---------------------------------------------------------------- 6 of 6
+  {
+    slug: 'about',
+    nav: 'About',
+    title: 'About InPlace: what the system is, and who it serves',
+    description:
+      'InPlace is a procurement-to-payment control system. What the system does, the principles it was built on, and the three roles that work inside it.',
+    eyebrow: 'About',
+    h1: 'About InPlace',
+    lede:
+      'The name says two things. Everything in place: every document, order, invoice and payment has a defined and known place. And in place in the control sense: a mechanism that actually exists and holds.',
+    sections: [
+      {
+        h2: 'What the system does',
+        paras: [
+          'InPlace is a procurement-to-payment system, written in Hebrew and read right to left, with this English edition beside it. It connects the journey from the supplier to the bank transfer into one source of truth, and surfaces what needs action without becoming another crowded screen.',
+        ],
+      },
+      {
+        h2: 'The principles it was built on',
+        list: {
+          label: 'Five principles, from the product documents',
+          items: [
+            'A decision screen, not a display screen: every addition is judged by whether it shortens the path from arrival to decision',
+            'Truth over convenience: no invented figure, and no zero pretending to be data. A measure with no data shows a dash, not a zero',
+            'One semantic language: colour marks meaning and never decoration, and meaning never rests on hue alone',
+            'Earned familiarity: standard components and the same visual vocabulary on every screen',
+            'Hebrew and mobile are first-class citizens, not an adaptation made at the end',
+          ],
+        },
+      },
+      {
+        h2: 'The three roles',
+        paras: [
+          'Owner, procurement and accountant. All three work on the same journey, and none of them sees or does what belongs to another. The accountant is the only one who executes transfers, and payment always passes through an approved request carrying a reason and a record.',
+        ],
+      },
+      {
+        h2: 'What the system refuses to be',
+        list: {
+          label: 'Four refusals, from the positioning document',
+          items: [
+            'Not another metrics screen with no decision on it',
+            'Not an expense product that defines value through spending alone',
+            'Not a heavy general ERP',
+            'Not a loud, colourful or “magical” SaaS brand',
+          ],
+        },
+        after: [
+          'These refusals are not modesty. They are what allows the system to do one thing well instead of four things approximately.',
+        ],
+      },
+      {
+        h2: 'Character',
+        paras: [
+          'Clear, dependable, calm. An interface that handles other people’s money and is therefore never loud, never tries to surprise, and never asks for attention on its own account. The tool disappears into the task.',
+          'In practice that means the system carries no animation that does not signal state, no tiny low-contrast text, and no critical action hidden behind a hover.',
+        ],
+      },
+      {
+        h2: 'Who stands behind the system',
+        paras: [
+          'InPlace is a product of In Place, a business registered in Israel. The details here are the same details that appear in the site’s structured data, so that anyone checking who is asking for access to their financial information gets one answer in both places.',
+        ],
+        table: {
+          headers: ['Detail', 'Value'],
+          rows: [
+            ['Registered name', 'In Place'],
+            ['Registration number', '036689081'],
+            ['Address', 'HaRotem 14, Kfar Adumim, Israel'],
+            ['Telephone', '+972-54-254-7074'],
+            ['Second telephone', '+972-52-416-7881'],
+          ],
+        },
+      },
+      {
+        h2: 'Accessibility',
+        paras: [
+          'The target is WCAG 2.1 level AA: text contrast of at least 4.5 to 1, full keyboard navigation, screen-reader labels, and respect for a system preference to reduce motion. The audience includes non-technical users, so every error is written in plain language rather than as a raw database message.',
+          'Meaning never rests on colour alone. Every status also carries text or a mark, because a reader who does not distinguish a hue still needs to know what requires attention.',
+        ],
+      },
+    ],
+    related: ['procurement-software', 'vs-erp', 'supplier-invoices'],
+    source:
+      'brand/context.md (Name meaning, Values); PRODUCT.md (Design Principles, Accessibility, Users)',
+  },
+
+  // ---------------------------------------------------------------- 7 of 8
+  // The English edition of the two legal documents. The Hebrew text is the one
+  // a user consents to inside the product; this is the same document in
+  // English, and the note under the title says which one governs. A page that
+  // quietly presents a translation as the agreement is the failure to avoid.
+  {
+    slug: 'terms',
+    nav: 'Terms of use',
+    legal: true,
+    title: 'Terms of use | InPlace',
+    description:
+      'The terms of use for InPlace: accounts and permissions, ownership of customer data, automatic document processing, availability, liability and ending the engagement.',
+    eyebrow: 'Legal',
+    h1: 'Terms of use',
+    lede:
+      'The same terms shown inside the system, in English. The Hebrew version is the one a user consents to on joining, and it governs.',
+    sections: [
+      {
+        h2: '1. The service',
+        paras: [
+          'InPlace is a system for managing procurement, invoices and payments for businesses (“the service”), operated by the service operator (“the operator”). Use of the service is intended for businesses and for users invited by a business (“the customer”), and is subject to these terms. Joining the service constitutes agreement to these terms and to the privacy policy.',
+        ],
+      },
+      {
+        h2: '2. Accounts and permissions',
+        paras: [
+          'Every user acts under a personal account and in the role the customer defined for them. The user is responsible for keeping their sign-in details confidential and for every action taken from their account. Sensitive actions are written to an audit log.',
+        ],
+      },
+      {
+        h2: '3. The customer’s data',
+        paras: [
+          'The business data the customer enters or uploads (suppliers, orders, invoices, documents) belongs to the customer. The operator processes it solely in order to provide the service, as set out in the privacy policy, and does not sell it to third parties.',
+        ],
+      },
+      {
+        h2: '4. Automatic document processing',
+        paras: [
+          'The service includes automatic reading and interpretation of documents (OCR and an artificial-intelligence model). The result of that interpretation may be wrong; it is marked as such when confidence is low, and can always be reviewed and reversed by an authorised user. Responsibility for the correctness of the financial records rests ultimately with the customer.',
+        ],
+      },
+      {
+        h2: '5. Availability and liability',
+        paras: [
+          'The operator works towards high availability of the service but does not undertake to provide uninterrupted availability. The service is provided AS-IS. The operator shall not be liable for indirect or consequential damage; its total liability is limited to the amount the customer paid for the service in the twelve months preceding the event. None of the above derogates from liability that cannot be limited by law.',
+        ],
+      },
+      {
+        h2: '6. Ending the engagement',
+        paras: [
+          'The customer may stop using the service at any time. On ending the engagement the customer is entitled to receive a copy of their data in a common format, on request to the operator. The operator may suspend an account for a material breach of these terms, with a reasoned notice.',
+        ],
+      },
+      {
+        h2: '7. Changes to the terms, and governing law',
+        paras: [
+          'A material update to the terms will be accompanied by a notice to users. These terms are governed by Israeli law, and the competent courts in Israel have jurisdiction.',
+        ],
+      },
+    ],
+    related: [],
+    source: 'NIR-APP src/pages/Legal.tsx (TermsOfService), English edition',
+  },
+
+  // ---------------------------------------------------------------- 8 of 8
+  {
+    slug: 'privacy',
+    nav: 'Privacy policy',
+    legal: true,
+    title: 'Privacy policy | InPlace',
+    description:
+      'The InPlace privacy policy: what is collected and why, which sub-processors handle the data, what happens at the AI model provider, and your rights.',
+    eyebrow: 'Legal',
+    h1: 'Privacy policy',
+    lede:
+      'The same policy shown inside the system, in English. Section 3 describes what happens at the model provider in the provider’s own terms, not as an undertaking by the operator. The Hebrew version governs.',
+    sections: [
+      {
+        h2: '1. What is collected, and why',
+        paras: [
+          '<b>Account details:</b> name, email address, telephone (optional) and role — for identification, permissions and sign-in. <b>Business data:</b> suppliers, orders, invoices, payments and documents the customer uploads — in order to provide the service itself. <b>Activity logs:</b> sensitive actions are written to an audit log with the identity of whoever performed them and the reason — for security and accountability. <b>Technical data:</b> sign-in tokens and push notifications on the device — for operation. The legal basis for processing: performance of the engagement with the customer, and the user’s consent on joining.',
+        ],
+      },
+      {
+        h2: '2. Who processes the data',
+        paras: [
+          'The data is stored and processed by the sub-processors the service uses: Supabase (database, authentication and file storage), OpenAI (automatic interpretation of the content of uploaded documents), Cloudflare (application hosting), Resend (operational email) and Sentry (error reporting). The operator does not sell personal information and does not use it for advertising.',
+        ],
+      },
+      {
+        h2: '3. What happens at the model provider',
+        paras: [
+          'When a document is sent for automatic interpretation, its content reaches OpenAI. The details below were checked against the provider’s official terms on 24.08.2026, and they describe what the provider says — not an undertaking given by the operator in its place.',
+          '<b>Training:</b> under the provider’s terms, data sent through the API is not used to train models unless the organisation has explicitly chosen to share it. The operator has not chosen that. <b>Retention:</b> the provider may retain input and output <b>for up to 30 days</b> in order to provide the service and detect abuse, and for longer where the law requires it or where it is needed to protect the service or a third party from harm. <b>Human review:</b> abuse logs may include the text itself, and under the provider’s terms they are accessible to its authorised employees <b>and to third-party contractors</b> bound by confidentiality, for the purpose of abuse review only.',
+          '<b>What the system does, and what carries no promise:</b> on every call the system asks the provider not to store the response for later retrieval (store: false). That is a request in the provider’s interface and not an undertaking by it, and it does <b>not</b> prevent the abuse logs described above. A zero-retention arrangement with the provider requires prior approval and a separate agreement; while no such agreement exists, <b>the operator does not promise zero retention</b>.',
+          '<b>Where processing happens:</b> no regional restriction has been configured with the provider, so processing and temporary storage there may take place outside Israel, including outside the European Union. Israel is not a supported region at the provider. Even on region-restricted plans, system data and metadata may leave the region.',
+        ],
+      },
+      {
+        h2: '4. Customer separation and security',
+        paras: [
+          'Each customer’s data is separated at the database level (row-level security by organisation), access is encrypted (TLS), sensitive actions require a fresh password check, and files are kept in a private bucket whose access is restricted to the organisation alone.',
+        ],
+      },
+      {
+        h2: '5. Retention and deletion',
+        paras: [
+          'Financial records are kept for the duration of the engagement and in accordance with record-keeping obligations under the law. Deletion of a financial record is a “soft delete” that preserves audit traceability. On ending the engagement you may request a copy of the data and deletion of whatever there is no legal obligation to keep.',
+        ],
+      },
+      {
+        h2: '6. Your rights',
+        paras: [
+          'Under the Israeli Protection of Privacy Law, 5741-1981 (as amended by Amendment 13), you have the right to review the information collected about you, to request correction of incorrect information, and to request deletion subject to obligations under the law. To raise a matter — contact the business that invited you, or the service operator.',
+        ],
+      },
+      {
+        h2: '7. Cookies and local storage',
+        paras: [
+          'The service uses browser local storage to manage sign-in and to work offline (receipt drafts and photographs waiting for a connection). No advertising cookies and no third-party tracking are used.',
+        ],
+      },
+    ],
+    related: [],
+    source: 'NIR-APP src/pages/Legal.tsx (PrivacyPolicy), English edition',
+  },
+]
+
+export default { pages: pagesEn, cta: CTA_EN }

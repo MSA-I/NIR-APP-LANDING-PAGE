@@ -1140,3 +1140,390 @@ were for.
 | Hebrew, rendered | new title, controls centred to 0px, left chevron = "הציטוט הבא", ביזנס card to `#contact`, form to support@, 8 questions |
 | English, rendered | new title, controls centred to 0px, left chevron = "Previous", business card to `#contact`, form to support@, 8 questions |
 | Frames | `lab/merge-en/` |
+
+---
+
+## Round thirteen — the language control and the display face, 27.08.2026
+
+Two owner notes, and one gate that had never run on this machine.
+
+### The language control
+
+The owner named a reference: the language-selector dropdown published on
+21st.dev by Sam Siavoshian. Its source is behind a sign-in, so the published
+demo bundle was read instead and the shape ported from what it actually
+renders: a translucent pill carrying flag, language name and chevron, over a
+small blurred sheet where every row is flag, name, and a tick on the current
+language.
+
+Two deliberate departures from the reference:
+
+- **The flags are drawn, not typed.** The reference uses flag emoji. Windows
+  ships no flag glyphs at all and falls back to the two letters of the country
+  code, so on the machines this page is aimed at the reference would have
+  printed "IL" and "US". `src/components/Flag.tsx` draws the two marks the page
+  needs.
+- **The rows do not carry `dir`.** They did, and the flag column jumped sides
+  between the Hebrew row and the English one. The label keeps its `lang`; the
+  sheet keeps the page's direction.
+
+The two-letter code column is gone from the control and from the dictionaries
+with it, so nothing in `extra.ts` describes a column that no longer exists.
+
+G20 holds the contract that mattered here — ArrowDown opens, Escape closes and
+returns focus, the alternate locale is a real link, the target is at least 36px
+— and it passes on all four cases.
+
+### The display face
+
+The owner's verdict on LT Superior was that he does not like it, and his choice
+after seeing ten Hebrew faces set with this page's own headline was **Heebo**.
+
+This is the face `scripts/fetch-display-font.mjs` already fetched and
+`scripts/build-og.mjs` already set the share card in, which is the part worth
+recording: the page preloaded `Heebo-hebrew.woff2` on every route while no
+`@font-face` in the stylesheet mentioned Heebo. Every reader paid for a font
+that nothing could use. That preload is now the display face it always claimed
+to be.
+
+Five static LT Superior weights left; two variable Heebo subsets arrived, split
+on the ranges Google publishes, so an English reader never downloads the Hebrew
+file. The latin subset is fetched again — it was dropped when the display face
+was Hebrew-only, and `/en/` gives it a reader.
+
+G9 measures Heebo at 450.8px against 469.7px for the body face and 363.4px for
+the fallback: loaded, and not the same face as the text under it. G19 checks
+both subsets, both locales, and the OFL attribution, which now names the Heebo
+Project Authors rather than a family that is no longer in the build.
+
+### G22 had never run here
+
+`g22-startup` launched `channel: 'chromium'` — Playwright's own download, which
+is not installed on this machine. The gate's budget checks had already passed;
+it died at the timing report and took the suite's exit code with it. It now
+launches the same binary every other gate measures on.
+
+Worth naming: a gate that cannot start is not a gate that passes, and this one
+had been reported as met.
+
+### Evidence
+
+    npm run build && node scripts/gates/all.mjs
+    24 met, 0 unmet, of 24 runnable gates
+
+    startup JavaScript 11KB of 420KB
+    G9  Heebo 450.8px, Noto 469.7px, fallback 363.4px
+    G19 Hebrew: Heebo 424.8px vs fallback 345.9px; English: 591.2px vs 553.7px
+    G20 he/en × desktop/phone, trigger 36px and 44px, no overflow
+
+Four language-menu screenshots in `lab/i18n-en/`.
+
+
+### Four faults the owner found on the English edition
+
+He sent two screenshots of `/en/` and named four things. All four were real,
+and none of them showed on the Hebrew page, which is why nothing had caught
+them.
+
+**The pills broke across two lines.** `.flow` never declared `white-space`, and
+the top bar reused the footer's product wording. In Hebrew that wording is two
+words; in English it is "Frequently asked questions", and four sentences plus
+five controls do not fit a 1440px row. Two changes: a pill is now one line by
+declaration, and the bar has its own short wording (`folioNav` in `extra.ts`),
+separate from the footer's, which has a column and can afford a sentence.
+
+**Two links, one name.** `vs-spreadsheet` and `vs-erp` both carry the eyebrow
+"השוואה", and the colophon printed it twice, pointing at two different pages.
+Each page now also carries a `nav` name — "InPlace מול אקסל", "InPlace מול ERP"
+— for lists of links. The eyebrow on each page is untouched.
+
+**Hebrew under an English heading.** The six supporting pages exist in Hebrew
+only, and the colophon listed them under every edition. On `/en/` that was a
+Hebrew heading over six Hebrew pills. The column is now rendered for the
+edition that can read it; DEBT item 14 is what removes the condition.
+
+**Terms and privacy are the product's pages.** They point at
+`app.inplace.digital/terms` and `/privacy`, which are routes inside the
+application and carry the application's older design. `g14-figures` fails the
+build if either link moves, so this is a decision and not a fix: it is written
+up in [DEBT.md](DEBT.md) as item 17.
+
+Verified at 1100px and 1440px in both editions, screenshots in `lab/shots/`.
+`scripts/shot.mjs` is the throwaway that takes them: it asserts nothing, and is
+not part of the suite.
+
+    node scripts/gates/all.mjs
+    24 met, 0 unmet, of 24 runnable gates
+
+### Still open
+
+The owner asked why the English edition prices in shekels and shows Hebrew
+product screens. Both are real, neither is a bug, and both are decisions rather
+than fixes. They are written up in [DEBT.md](DEBT.md) as items 15 and 16.
+
+---
+
+## Round fourteen — the owner's identity, two catalogues and two editions, 27.08.2026
+
+Four answers from the owner, and the work each one unblocked.
+
+### The seller has a name now
+
+Registered name, registration number, address and two telephones, supplied on
+27.08.2026. They close DEBT item 3, which had been open since the schema was
+first written and was the reason `Organization` shipped without an address: an
+organisation with an invented address is worse than one without.
+
+They are in two places and the same in both — the `Organization` node in the
+JSON-LD on every page, and a table on `/about/` and `/en/about/`. A buyer who
+checks who is asking for access to his financial data should not get two
+answers.
+
+One thing is deliberately hedged. The number 036689081 begins with a zero, and
+an Israeli company number begins with 51, so the page says "registration
+number" rather than "ח.פ". The owner is asked to confirm which it is.
+
+### Two catalogues, not one converted
+
+The owner asked why the English page prices in shekels. The answer was not a
+conversion: NIR-APP's 0184 migration publishes TWO launch catalogues —
+`launch-il` in shekels and `launch-row` in dollars — and which one a business is
+charged follows its verified billing country, not the language it reads the
+page in.
+
+So `/en/` publishes the dollar catalogue it would actually be charged: $20/$79/
+$149 monthly, $200/$790/$1,490 annually, Business with no figure. A sentence
+under the cards says a business billed in Israel pays the shekel catalogue,
+because a reader who switched language is entitled to know he has not switched
+price list.
+
+Three things this broke, all of them caught:
+
+- **The counter could not read a symbol.** `Amount` parsed `/^([\d,]+)/`, so
+  '$20' was not a figure: the card printed the price as a word, dropped "per
+  month" under it, and never counted between the two terms.
+- **The free plan offered a conversation.** The card decides its ask from its
+  own price, and that decision compared against the Hebrew string 'ללא עלות'
+  written into the component. On `/en/` the free plan printed 'No charge',
+  matched nothing, and offered "talk to us" instead of the signup it exists for.
+  The wording is `plansCta.freeWords` in each dictionary now.
+- **G14 had never read the English page.** It asserted the shekel catalogue on
+  `/` and nothing at all on `/en/`, which published prices unguarded. It runs
+  per edition now, with its own expected set of amounts each.
+
+### Six pages in a second language
+
+`src/content/pages.en.ts`, written section by section against the Hebrew rather
+than phrase by phrase. `pageHtml` takes a locale: it carries the chrome, the
+fonts for the right subset, the breadcrumb, the alternates and the edition's own
+home link, which is `/en/` and not `/`.
+
+`g18-i18n` grew the check that makes this safe. It reads both page files, holds
+them to the same slugs in the same order and the same section count per page,
+requires both editions of every page to have been built, and requires each of
+them to name its twin in `hreflang`. A page that exists in one language only now
+fails rather than appearing quietly in the sitemap.
+
+### Terms and privacy, on this site
+
+Approved by the owner. Both carry the text from NIR-APP `src/pages/Legal.tsx`
+word for word and print `TERMS_VERSION` under the title, because the version is
+what a user's consent is stamped against. A legal page takes no call to action
+and no further-reading rail: a document arguing for the product while the reader
+decides whether to accept it is a different document.
+
+They are Hebrew-only, and the English colophon says so in the link text. A
+translated consent document is a second document that nobody consented to.
+
+G14's legal assertion changed sides: it used to require the links to be on the
+product host, and now requires them to be paths on this site that answer 200.
+
+### Evidence
+
+    npm run build && node scripts/gates/all.mjs
+    24 met, 0 unmet, of 24 runnable gates
+
+    16 pages in the sitemap (2 home, 12 supporting, 2 legal)
+    G14 he: 69/249/449 ₪, en: $20/$79/$149, both catalogues checked
+    G18 6 supporting pages in both editions, 2 legal documents in Hebrew only
+    G21 offers in ILS on /, in USD on /en/
+
+Screenshots of `/en/procurement-software/` and `/terms/` in `lab/shots/`.
+
+
+### The launch blocker, measured rather than assumed
+
+The owner said the quota migration had shipped. It had: `0208`
+(`one_published_usage_metric`, decision #266) brought the ladder down from
+25/50/200/500 to 20/40/150/375, which is what this page has been publishing all
+along.
+
+Worth naming why that could not be checked here before. Every gate in this
+repository compares the page with the dictionary beside it, and the dictionary
+was right; what nobody could see was whether the product still charged what the
+dictionary said. `scripts/check-live-catalogue.mjs` is the check that looks
+outward — the two `anon` read models 0186 published for exactly this, no
+customer, no writes, the publishable key read from the product's own env and
+never printed. It is not a gate: it needs a network and a credential, and a
+gate that cannot run offline is not a gate.
+
+    node scripts/check-live-catalogue.mjs
+    checked against rkftlbctohswhbbiaqin.supabase.co
+    OK  documents a month, Hebrew page    live 20 / 40 / 150 / 375
+    OK  documents a month, English page   live 20 / 40 / 150 / 375
+    OK  monthly price, Hebrew page (ILS)  live 69 / 249 / 449
+    OK  monthly price, English page (USD) live 20 / 79 / 149
+
+The project it read, `rkftlbctohswhbbiaqin`, is the one `app.inplace.digital`
+names in its own bundle, so this is production and not a development copy.
+
+DEBT item 1 is closed. The English catalogue published today was not merely
+copied from a migration file: it is what the live database returns.
+
+
+### The colophon links that "did not work"
+
+The owner circled the legal column and the deep-dive column and reported that
+none of those pills worked. They do — in `dist`. On the **dev server** they did
+not, and the way they failed is the interesting part: `/terms/` answered **200
+with the home page**, because those documents are written by
+`scripts/prerender.mjs` at build time and every unknown path in `vite dev` falls
+through to the SPA. Clicking a pill reloaded the page you were already on, which
+is indistinguishable from a dead link.
+
+Two other explanations were checked and ruled out first. Nothing covers the
+pills: `scripts/hit-test-footer.mjs` reads `elementFromPoint` at the middle of
+every colophon link and all sixteen come back clear. And the live domain is not
+serving anything yet — `inplace.digital` does not resolve at all, so nobody is
+looking at a deployed copy of this.
+
+`vite.config.ts` now renders the supporting pages on the dev server from the
+same `pageHtml` the build uses, so a page cannot look right in one and be
+missing in the other. Verified: `/terms/`, `/privacy/`, `/procurement-software/`
+and `/en/vs-erp/` all answer with their own titles and the real stylesheet
+(106KB of `text/css`), and an address that belongs to no page still falls
+through to the SPA.
+
+Two throwaway scripts came out of this and are kept, because the question they
+answer comes back: `scripts/click-footer.mjs` presses every internal colophon
+link and reports where it landed, and `scripts/hit-test-footer.mjs` says what a
+pointer would actually hit. Neither is a gate; neither asserts anything.
+
+### Still open
+
+The product has no English edition to photograph: its own `index.html` declares
+`lang="he" dir="rtl"`, and the only English in the codebase is the supplier
+approval portal. The owner asked for that to stay on the debt list, and it is
+there as item 16 — where it now also records that NIR-APP's
+`claude/add-english-language-system-f43d1e` has already built the interface
+language choice, and is not merged.
+
+---
+
+## Round fifteen — the supporting pages join the site, 27.08.2026
+
+The owner's note: some of the pages the colophon links are not in English, they
+do not look like the home page, and they talk about machinery a reader has no
+use for.
+
+### The font that laid out Hebrew and painted nothing
+
+The last of those turned into the most serious defect this build has found.
+
+`.eyebrow` is set in Hasubi Mono. The file maps the Hebrew block and carries
+advance widths for it, and **its Hebrew glyphs are empty**. Measured: `אבגדהו`
+at 48px paints 2,104 ink pixels in Hasubi's latin, 2,294 in Noto Sans Hebrew,
+and **0** in Hasubi's Hebrew.
+
+So every eyebrow on the Hebrew site was laid out, measured, and painted as
+nothing — the title page's own kicker included, which is the line that says what
+the product is above the headline. It has been invisible for as long as the face
+has been in the build.
+
+Nothing could see it. `document.fonts.check` answered yes: the font was loaded.
+`getComputedStyle` answered Hasubi Mono: the family resolved. G7 measured the
+contrast of a colour nobody could see, and passed. G9 asserted the eyebrow used
+the annotation face, which is exactly the bug, and passed. The text was in the
+DOM, in the accessibility tree, and in the static render the crawlers read. Only
+the pixels were missing, and no gate had ever asked about pixels.
+
+Two changes. The face is now limited by `unicode-range` to the scripts it can
+actually draw, so Hebrew falls to the reading face; and G9 counts ink. Each
+role's text is drawn with that element's OWN computed font stack and the opaque
+pixels are counted, with a negative control that fails the check if the fallback
+paints nothing either:
+
+    eyebrow  10208 ink px   מערכת רכש, חשבוניות ותשלומים.
+    h1       12740 ink px   כשההזמנה והחשבונית לא מסכימות,
+    lede      8177 ink px   InPlace משווה בעצמה בין מה שהז
+
+The lesson is narrow and worth keeping: every check on this page compared the
+page with an intention. This is the first one that asks what a reader receives.
+
+### The pages stop looking like a different site
+
+They ship no JavaScript, and that is not why they looked plain: almost all of
+the home page's button personality is CSS in the shared stylesheet, and these
+documents simply were not using it. They are now — the brand chip, the flow pill
+with the ground that opens out of its own centre and the arrow that crosses to
+the leading edge, the grain, and a ground painted with two gradients where the
+home page runs a shader.
+
+The sticky bar spans the window with its contents on the reading column, the way
+the folio does. Inside the column it had been blurring a 44rem strip with two
+hard edges mid-screen.
+
+The reveal on scroll is the one move that was JavaScript. It is a scroll-driven
+animation now, behind `@supports (animation-timeline: view())` and
+`prefers-reduced-motion`, so a browser without it and a reader who asked for
+less motion both get the finished page rather than a hidden one.
+
+### Terms and privacy, in both languages and without the machinery
+
+Both documents are published in English as well. Each says under its title that
+the Hebrew version is the one a user consents to and the one that governs, which
+is the honest way to publish a translation of an agreement.
+
+Out: the version string, which said `TERMS_VERSION` to a reader with no use for
+it, and the link back into the product's own older legal pages. G18 now fails if
+either returns.
+
+### What this cost in gates
+
+Three checks were wrong in ways only the English edition or the new markup could
+show:
+
+- **G18** searched the whole document for `doc-cta`, and every page carries that
+  RULE in its stylesheet. It reads the element now.
+- **G20** counted internal links with a pattern that had no room for a locale
+  segment, so every English page looked like it linked to exactly one page.
+- **G14**'s legal assertion expected `/terms/` in both editions. The English
+  colophon points at `/en/terms/`, which is the whole point of having one.
+
+
+### The chapter indicator, and the space it was holding
+
+The running head carried a small label saying which chapter was under it —
+"שער", then "פרק 01" and so on. The owner circled it and asked for it to go, and
+it went, along with the state and the scroll listener that computed it.
+
+The row then closed up behind it, which put the page's navigation and its
+actions in one undivided run of pills. The owner's second note is the useful
+one: **the space was doing work.** An empty flexible span holds it now, so the
+two groups stay apart without a word between them.
+
+`folioLabel` stays in both dictionaries, unused. Removing a leaf from the frozen
+Hebrew dictionary is a G2 approval entry with no `was`/`now` to write, and an
+unread string costs nothing on the wire.
+
+### Evidence
+
+    npm run build && node scripts/gates/all.mjs
+    24 met, 0 unmet, of 24 runnable gates
+
+    18 pages in the sitemap: 2 home, 12 supporting, 4 legal
+    G9  ink counted on eyebrow, h1 and lede, with a negative control
+    G18 8 supporting pages in both editions, 2 of them legal documents
+
+Screenshots of `/procurement-software/`, `/en/terms/` and the title page's
+restored kicker in `lab/shots/`.

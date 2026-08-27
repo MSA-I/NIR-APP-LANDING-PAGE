@@ -107,7 +107,14 @@ for (const { url, file } of pages()) {
       String(offer.price) === printed,
       at(`offers ${offer.name} at ${offer.price} while the page prints ${row.price}`)
     )
-    c.ok(offer.priceCurrency === 'ILS', at(`offers ${offer.name} in ${offer.priceCurrency}, not ILS`))
+    // Israel is billed in shekels and everywhere else in dollars: two published
+    // catalogues in NIR-APP's 0184 migration, not one converted at a rate. The
+    // currency a document declares must be the one its own dictionary prints.
+    const currency = /\/en\//.test(url) ? 'USD' : 'ILS'
+    c.ok(
+      offer.priceCurrency === currency,
+      at(`offers ${offer.name} in ${offer.priceCurrency}, not ${currency}`)
+    )
   }
 
   // A plan with a printed figure and no offer would be a silent omission.

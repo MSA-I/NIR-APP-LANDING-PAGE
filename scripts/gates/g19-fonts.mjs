@@ -8,11 +8,8 @@ const c = checker('G19')
 const fontDir = path.join(ROOT, 'public', 'assets', 'fonts')
 const distFontDir = path.join(DIST, 'assets', 'fonts')
 const files = [
-  'LTSuperior-Medium.woff2',
-  'LTSuperior-SemiBold.woff2',
-  'LTSuperior-Bold.woff2',
-  'LTSuperior-ExtraBold.woff2',
-  'LTSuperior-Black.woff2',
+  'Heebo-hebrew.woff2',
+  'Heebo-latin.woff2',
   'HasubiMono-Variable.woff2',
 ]
 
@@ -29,7 +26,7 @@ for (const file of files) {
 }
 
 const license = await readFile(path.join(fontDir, 'FONT-LICENSES.txt'), 'utf8')
-c.ok(license.includes('Reserved Font Name LT Superior'), 'LT Superior reserved name is missing from the license file')
+c.ok(license.includes('The Heebo Project Authors'), 'the Heebo copyright is missing from the license file')
 c.ok(license.includes('Hasubi-Mono Project Authors'), 'Hasubi Mono copyright is missing from the license file')
 c.ok(license.includes('SIL OPEN FONT LICENSE Version 1.1'), 'SIL OFL 1.1 text is missing')
 
@@ -50,9 +47,9 @@ for (const [name, pathname, sample] of [
           return element ? getComputedStyle(element).fontFamily : ''
         }
         return {
-          displayLoaded: document.fonts.check(`800 42px "LT Superior"`, word),
+          displayLoaded: document.fonts.check(`800 42px "Heebo"`, word),
           monoLoaded: document.fonts.check('600 18px "Hasubi Mono"', word),
-          displayWidth: width('"LT Superior"'),
+          displayWidth: width('"Heebo"'),
           missingWidth: width('"No Such InPlace Face"'),
           h1: family('h1'),
           eyebrow: family('.eyebrow'),
@@ -60,14 +57,14 @@ for (const [name, pathname, sample] of [
           body: getComputedStyle(document.body).fontFamily,
         }
       }, sample)
-      c.ok(measured.displayLoaded, `${name}: LT Superior did not load`)
+      c.ok(measured.displayLoaded, `${name}: Heebo did not load`)
       c.ok(measured.monoLoaded, `${name}: Hasubi Mono did not load`)
-      c.ok(Math.abs(measured.displayWidth - measured.missingWidth) > 1, `${name}: LT Superior measures like fallback`)
-      c.ok(/LT Superior/.test(measured.h1), `${name}: h1 uses ${measured.h1}`)
+      c.ok(Math.abs(measured.displayWidth - measured.missingWidth) > 1, `${name}: Heebo measures like fallback`)
+      c.ok(/Heebo/.test(measured.h1), `${name}: h1 uses ${measured.h1}`)
       c.ok(/Hasubi Mono/.test(measured.eyebrow), `${name}: eyebrow uses ${measured.eyebrow}`)
       c.ok(/Hasubi Mono/.test(measured.figure), `${name}: figures use ${measured.figure}`)
       c.ok(/Noto Sans Hebrew/.test(measured.body), `${name}: body uses ${measured.body}`)
-      c.note(`${name}: LT ${measured.displayWidth.toFixed(1)}px vs fallback ${measured.missingWidth.toFixed(1)}px`)
+      c.note(`${name}: Heebo ${measured.displayWidth.toFixed(1)}px vs fallback ${measured.missingWidth.toFixed(1)}px`)
     },
     { path: pathname },
   )
