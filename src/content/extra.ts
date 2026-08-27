@@ -201,52 +201,15 @@ export default {
     intro: '30 ימי היכרות',
     introNote: 'במסלול החינמי חמש היכולות המסומנות פתוחות במשך 30 יום מרגע אימות המייל. אחריהן הן ממשיכות במסלול בסיס ומעלה.',
 
-    // What the card itself prints. Five or six lines, the way the reference image
-    // has them, and each one is a row of the table below rather than a new claim.
-    cards: [
-      [
-        '20 מסמכים בחודש',
-        'משתמש אחד',
-        'שרשרת מלאה: ספק, הזמנה, קבלה, חשבונית, תשלום',
-        'שלושה תפקידים והפרדת סמכויות',
-        '30 ימי היכרות עם יכולות בסיס',
-      ],
-      [
-        '40 מסמכים בחודש',
-        'עד 5 משתמשים',
-        'קריאה אוטומטית של מסמכים',
-        'היסטוריה מלאה',
-        'ייצוא Excel ודוחות לרו״ח',
-        'התראות ואוטומציות במייל',
-      ],
-      [
-        '150 מסמכים בחודש',
-        'עד 15 משתמשים',
-        'כל היכולות של בסיס',
-        'התאמות בנק',
-        'תור תשלומים לרואה החשבון',
-        'חשבוניות מרכזות',
-      ],
-      [
-        '375 מסמכים בחודש',
-        'עד 30 משתמשים',
-        'עד 10 סניפים',
-        'כל היכולות של פרו',
-        'חיבור למערכות אחרות',
-        'תמיכה מורחבת',
-      ],
-      [
-        'מכסת מסמכים לפי חוזה',
-        'משתמשים וסניפים ללא הגבלה',
-        'כל היכולות פתוחות',
-        'הסדר הרשאות משלכם',
-        'תמיכה מורחבת',
-      ],
-    ],
-
-    // The comparison table. `icon` is a key into the map in PlansChapter.tsx; a
-    // cell is either a string, `true` for included, or `false` for not included,
-    // and 'intro' for the five Free holds for thirty days.
+    // Every card prints THESE rows, all of them, in this order, with a rule
+    // through the ones its plan does not carry (owner, 28.08.2026). One list
+    // and one order for the cards and for the table under them: a card that
+    // showed only its own wins made five cards impossible to read against each
+    // other, which is the one thing a price table is for.
+    //
+    // The first two are not entitlements and never move: they are what the
+    // product IS, and they are on this page already (chapter 01 and the FAQ).
+    // The rest are the ladder, in the migration's own display order.
     rows: [
       {
         icon: 'documents',
@@ -262,6 +225,16 @@ export default {
         icon: 'branches',
         label: 'סניפים',
         cells: ['1', '1', '1', '10', 'ללא הגבלה'],
+      },
+      {
+        icon: 'chain',
+        label: 'שרשרת מלאה מרכש עד תשלום',
+        cells: [true, true, true, true, true],
+      },
+      {
+        icon: 'roles',
+        label: 'שלושה תפקידים והפרדת סמכויות',
+        cells: [true, true, true, true, true],
       },
       {
         icon: 'automation',

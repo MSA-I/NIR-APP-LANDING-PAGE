@@ -76,9 +76,10 @@ export const SHADER_PALETTE = ['#04080b', '#003f47', '#0d6470', '#5d9096', '#cfe
 // title page rather than guessed:
 //   - the lightest colour is weighted down to a quarter of the ramp, because
 //     #e8eef1 at an equal share is a white field behind a display headline;
-//   - `noise` stays at the catalogue's 0. The page paints its own grain over
-//     everything (.grain in styles.css), and two grains at different scales
-//     read as a compression artefact rather than as film.
+//   - `noise` stays at the catalogue's 0. The page painted its own grain over
+//     everything until 28.08.2026, when the owner had that removed; this ground
+//     was never the reason it was there, and it does not band without it. If it
+//     ever does, `noise` here is the one surface to answer it on.
 const RECIPE = {
   softness: 0.76,
   intensity: 0.45,

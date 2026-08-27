@@ -215,7 +215,6 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         topLabel={t.title_page.folio}
       />
 
-      <div className="grain" aria-hidden="true" />
     </>
   )
 }

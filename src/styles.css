@@ -1097,18 +1097,13 @@ html:dir(ltr) .flow__arrow { rotate: 180deg; }
   .footer-body { margin-block: 0; }
 }
 
-/* -------------------------------------------------------------------- grain */
-/* A single film grain over the whole page. The reference's shader is not clean
-   and neither is this one: grain is what keeps a large flat gradient from
-   banding on an 8-bit display. */
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  pointer-events: none;
-  opacity: 0.038;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+/* THE GRAIN IS GONE. Owner, 28.08.2026: "there is a grain like this over
+   every dark area, remove it." It was a fixed film of fractal noise over the
+   whole page at 0.038, there to stop a large flat gradient banding on an
+   8-bit display. The banding it was insuring against is a maybe; the texture
+   it put on every dark surface was on the screen. If banding ever shows, the
+   place to answer it is the shader's own `noise`, which is one surface rather
+   than all of them. */
 
 /* ------------------------------------------------------------- reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -2150,17 +2145,13 @@ html[dir='rtl'] { --knob: -1; }
   text-align: start;
   color: var(--color-ink);
   border-radius: 18px;
-  background-color: color-mix(in srgb, var(--color-onyx-lift) 78%, var(--color-onyx));
+  background-color: var(--color-onyx);
   /* Colour and gradient declared separately, here and on every face below. The
      shorthand leaves `background-color` transparent, and anything that asks an
      element what ground it is on reads the COLOUR: graded that way a card's own
      type gets measured against the page's ground four ancestors up. */
-  background-image: linear-gradient(
-    170deg,
-    color-mix(in srgb, var(--color-onyx-lift) 92%, var(--color-ink)) 0%,
-    color-mix(in srgb, var(--color-onyx-lift) 70%, var(--color-onyx)) 100%
-  );
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 10%, transparent);
+  background-image: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent);
   /* The lift is on `translate`, not on `transform`. Every card is a Motion
      element and Motion writes `transform` inline for the entrance; an inline
      transform beats a `:hover` rule, so the two were arguing over the same
@@ -2169,7 +2160,33 @@ html[dir='rtl'] { --knob: -1; }
 }
 .plan-card:hover { translate: 0 -5px; }
 
-/* ---- the three faces that keep their own ground --------------------------- */
+/* ---- the five faces -------------------------------------------------------
+   Named one by one by the owner, 28.08.2026. The first two follow the view,
+   because they ARE the view: the free plan is the ground beside it and the
+   basic plan is that ground lifted a little. The other three keep a colour of
+   their own in both views, because they are objects rather than surfaces, and
+   keeping the ground means pinning the type, token by token rather than
+   property by property, so every rule inside the card follows.
+   ========================================================================= */
+
+/* The free plan. The page's own ground, so only the edge says it is a card. */
+.plan-card--plain {
+  background-color: var(--color-onyx);
+  background-image: none;
+}
+
+/* The basic plan: "a little more colour", and no more. One step of lift and a
+   breath of the accent through it, which is the smallest difference that still
+   reads as a difference at arm's length. */
+.plan-card--lift {
+  background-color: color-mix(in srgb, var(--color-onyx-lift) 62%, var(--color-onyx));
+  background-image: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--color-oceanic) 7%, var(--color-onyx-lift)) 0%,
+    color-mix(in srgb, var(--color-onyx-lift) 55%, var(--color-onyx)) 100%
+  );
+}
+
 .plan-card--pointed,
 .plan-card--violet,
 .plan-card--deep {
@@ -2179,27 +2196,65 @@ html[dir='rtl'] { --knob: -1; }
   color: var(--color-ink);
 }
 
-/* The plan the vendor points at: the page's own accent, lit and ringed. */
+/* The plan the vendor points at. THE RING AND NOTHING ELSE: it carried an outer
+   glow and the owner had it removed, so the whole of its emphasis is one and a
+   half pixels of the page's accent around a ground that is otherwise quiet. */
 .plan-card--pointed {
   background-color: #06222b;
-  background-image: linear-gradient(170deg, #0b3f4a 0%, #06222b 62%, #082c36 100%);
-  box-shadow:
-    inset 0 0 0 1.5px color-mix(in srgb, #5d9096 78%, transparent),
-    0 0 34px -12px color-mix(in srgb, #5d9096 55%, transparent);
+  background-image: linear-gradient(170deg, #0a3540 0%, #06222b 70%, #072830 100%);
+  box-shadow: inset 0 0 0 1.6px color-mix(in srgb, #5d9096 85%, transparent);
 }
 
-/* Blue into violet, which is where the reference's ladder turns. */
+/* The premium plan, blue into violet, with a gloss travelling across it. */
 .plan-card--violet {
   background-color: #1b3f7d;
   background-image: linear-gradient(160deg, #1b4fa8 0%, #3b2585 58%, #4a1f86 100%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #c4b5fd 30%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #c4b5fd 32%, transparent);
 }
 
-/* And the deep violet the top rung lands on. */
+/* The gloss. A wide diagonal highlight crossing the card and starting again.
+   It is the one CSS animation on this tray, so it is slow: eight seconds
+   across, then a long rest before it comes round. */
+.plan-card__gloss {
+  position: absolute;
+  inset: -40%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    color-mix(in srgb, var(--color-ink) 6%, transparent) 46%,
+    color-mix(in srgb, var(--color-ink) 17%, transparent) 50%,
+    color-mix(in srgb, var(--color-ink) 6%, transparent) 54%,
+    transparent 62%
+  );
+  translate: -60% 0;
+  animation: plan-gloss 8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+@keyframes plan-gloss {
+  0%   { translate: -75% 0; }
+  55%  { translate: 75% 0; }
+  100% { translate: 75% 0; }
+}
+
+/* The business plan. Its ground is a shader of its own; the gradient below is
+   what the card is before the field arrives and what it falls back to where
+   there is no GL context at all, so the two are the same violet. */
 .plan-card--deep {
   background-color: #2e1065;
   background-image: linear-gradient(160deg, #4c1d95 0%, #2e1065 66%, #1e0b45 100%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #c4b5fd 26%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #c4b5fd 30%, transparent);
+}
+.plan-card__field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+  /* The field is a bright object and the card carries six lines of type. Held
+     under half, it reads as movement in the ground rather than as a picture
+     behind the words, and G7 measures the type on what is composited. */
+  opacity: 0.72;
 }
 
 /* ---- the anatomy --------------------------------------------------------- */
@@ -2289,11 +2344,15 @@ html[dir='rtl'] { --knob: -1; }
   background: color-mix(in srgb, var(--color-ink) 16%, transparent);
 }
 
+/* Every card prints every row, so the list is a spec sheet rather than a sales
+   list: mark, label, and the figure at the far edge where the eye can run down
+   a column of them. A row the plan does not carry keeps its line and loses its
+   emphasis, which is what makes an absence visible at all. */
 .plan-card__list {
   position: relative;
   z-index: 2;
   display: grid;
-  gap: 0.65rem;
+  gap: 0.55rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -2302,18 +2361,37 @@ html[dir='rtl'] { --knob: -1; }
 .plan-card__list li {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: color-mix(in srgb, var(--color-ink) 78%, transparent);
+  gap: 0.55rem;
+  font-size: 0.83rem;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--color-ink) 82%, transparent);
 }
+.plan-card__row { flex: 1 1 auto; }
+.plan-card__figure {
+  flex: none;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* A figure that is a WORD is not a figure. “לפי חוזה” and “ללא הגבלה” set in the
+   same bold mono as 375 read as the loudest thing on the card and pushed their
+   own labels onto a second line. */
+.plan-card__figure--words {
+  font-weight: 500;
+  font-size: 0.76rem;
+  color: color-mix(in srgb, var(--color-ink) 62%, transparent);
+}
+.plan-card__list li.is-absent {
+  color: color-mix(in srgb, var(--color-ink) 40%, transparent);
+}
+.plan-card__list li.is-absent .plan-card__row { text-decoration: line-through; }
+
 .plan-card__tick {
   display: grid;
   place-content: center;
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
   flex: none;
-  margin-block-start: 0.08rem;
+  margin-block-start: 0.1rem;
   border-radius: 9999px;
   border: 1px solid color-mix(in srgb, var(--color-oceanic) 45%, transparent);
   background: color-mix(in srgb, var(--color-oceanic) 14%, transparent);
@@ -2322,9 +2400,15 @@ html[dir='rtl'] { --knob: -1; }
 .plan-card--pointed .plan-card__tick,
 .plan-card--violet .plan-card__tick,
 .plan-card--deep .plan-card__tick {
-  border-color: color-mix(in srgb, var(--color-ink) 34%, transparent);
-  background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  border-color: color-mix(in srgb, var(--color-ink) 36%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 15%, transparent);
   color: var(--color-ink);
+}
+/* The absent mark is the same ring with nothing in it but a rule. */
+.plan-card__list li.is-absent .plan-card__tick {
+  border-color: color-mix(in srgb, var(--color-ink) 18%, transparent);
+  background: transparent;
+  color: color-mix(in srgb, var(--color-ink) 42%, transparent);
 }
 
 /* The action sits on the card's floor, so five cards of different lengths still
@@ -2392,13 +2476,77 @@ html[dir='rtl'] { --knob: -1; }
   font-weight: 750;
   color: var(--color-ink);
 }
-.plans-compare__table thead th.is-pointed {
-  color: color-mix(in srgb, var(--color-oceanic) 62%, var(--color-ink));
+
+/* THE NAME CARRIES THE PLAN'S OWN FACE. Owner, 28.08.2026: the colour was
+   right and the effect was missing, so each name sits in a chip cut from its
+   card. The chip is what is coloured; the type on it is a solid ink on a
+   ground that keeps still, which is what keeps it measurable.
+   The three coloured chips pin their ink for the same reason their cards do:
+   they are the same object in both views. */
+.plans-compare__chip {
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 0.3rem 0.85rem;
 }
-.plans-compare__table thead th.is-violet,
-.plans-compare__table thead th.is-deep { color: #b9a3ff; }
-:root[data-theme='light'] .plans-compare__table thead th.is-violet,
-:root[data-theme='light'] .plans-compare__table thead th.is-deep { color: #5b21b6; }
+.plans-compare__chip-name { position: relative; z-index: 1; }
+
+.plans-compare__table thead th.is-lift .plans-compare__chip {
+  background: color-mix(in srgb, var(--color-oceanic) 8%, var(--color-onyx-lift));
+}
+
+/* Pointed: the ring, exactly as the card wears it. */
+.plans-compare__table thead th.is-pointed .plans-compare__chip {
+  --color-ink: #fbf6ee;
+  color: var(--color-ink);
+  background: #06222b;
+  box-shadow: inset 0 0 0 1.6px color-mix(in srgb, #5d9096 85%, transparent);
+}
+
+/* Violet: the card's gradient with the card's gloss travelling over it. */
+.plans-compare__table thead th.is-violet .plans-compare__chip {
+  --color-ink: #fbf6ee;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--color-ink);
+  background-color: #1b3f7d;
+  background-image: linear-gradient(120deg, #1b4fa8 0%, #3b2585 58%, #4a1f86 100%);
+}
+.plans-compare__table thead th.is-violet .plans-compare__chip::before {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  z-index: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    color-mix(in srgb, var(--color-ink) 8%, transparent) 46%,
+    color-mix(in srgb, var(--color-ink) 24%, transparent) 50%,
+    color-mix(in srgb, var(--color-ink) 8%, transparent) 54%,
+    transparent 62%
+  );
+  translate: -75% 0;
+  animation: plan-gloss 8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+/* Deep: the field the card runs, drawn here as a slow drift of the same three
+   violets. A second WebGL context for a chip in a table header would be a
+   caricature of the idea; the movement is what belongs to the name. */
+.plans-compare__table thead th.is-deep .plans-compare__chip {
+  --color-ink: #fbf6ee;
+  color: var(--color-ink);
+  background-color: #2e1065;
+  background-image:
+    radial-gradient(80% 140% at 15% 20%, color-mix(in srgb, #8b5cf6 62%, transparent), transparent 70%),
+    radial-gradient(80% 140% at 85% 80%, color-mix(in srgb, #5b2bb0 70%, transparent), transparent 70%),
+    linear-gradient(160deg, #4c1d95 0%, #2e1065 70%);
+  background-size: 220% 220%, 220% 220%, 100% 100%;
+  animation: plan-field 14s ease-in-out infinite alternate;
+}
+@keyframes plan-field {
+  0%   { background-position: 0% 0%, 100% 100%, 0 0; }
+  100% { background-position: 100% 60%, 0% 40%, 0 0; }
+}
 
 .plans-compare__table tbody th {
   text-align: start;

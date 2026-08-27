@@ -48,15 +48,18 @@ import {
   Minus,
   Plug,
   ScanText,
+  ShieldCheck,
   Sprout,
   Store,
   Users,
   Wallet,
+  Workflow,
   History,
   Sheet,
 } from 'lucide-react'
 
 import { Cta } from './Cta'
+import { PlanShader } from './PlanShader'
 import { Html, Reveal, RevealGroup, RevealItem, SplitHeading, useCalm } from '@/lib/motion'
 
 type Row = { name: string; who: string; docs: string; price: string }
@@ -85,7 +88,6 @@ type Ladder = {
   unlimited: string
   intro: string
   introNote: string
-  cards: string[][]
   rows: { icon: string; label: string; cells: Cell[] }[]
 }
 
@@ -149,8 +151,25 @@ const RECOMMENDED = 2
 
 const ICONS = [Sprout, Store, Building2, Building, Landmark]
 
-/** Which face each card wears, climbing with the ladder. */
-const FACE = ['', '', 'plan-card--pointed', 'plan-card--violet', 'plan-card--deep']
+/**
+ * Which face each card wears, climbing with the ladder.
+ *
+ * Owner, 28.08.2026, all five named separately:
+ *   PLAIN    the free plan is the page's own ground, so the card is the colour
+ *            of the thing beside it and only its edge says it is a card.
+ *   LIFT     the basic plan is "a little more colour" than that, and no more.
+ *   POINTED  the ring alone. It carried an outer glow and the glow went: what
+ *            marks this plan is the border.
+ *   VIOLET   a gloss, which is a highlight travelling across the card.
+ *   DEEP     a shader of its own; see PlanShader.tsx.
+ */
+const FACE = [
+  'plan-card--plain',
+  'plan-card--lift',
+  'plan-card--pointed',
+  'plan-card--violet',
+  'plan-card--deep',
+]
 
 /**
  * The table's row glyphs, keyed by the `icon` in the content.
@@ -163,6 +182,8 @@ const ROW_ICONS: Record<string, typeof Check> = {
   documents: Files,
   users: Users,
   branches: Building2,
+  chain: Workflow,
+  roles: ShieldCheck,
   automation: ScanText,
   history: History,
   export: Sheet,
@@ -279,6 +300,13 @@ export function PlansChapter({
                 : { label: plansCta.free, href: ctaHref }
             return (
               <RevealItem key={r.name} className={['plan-card', FACE[i]].filter(Boolean).join(' ')}>
+                {/* The gloss: one element, so a card that does not carry it
+                    costs nothing, and it sits behind everything the card says. */}
+                {FACE[i] === 'plan-card--violet' && (
+                  <span className="plan-card__gloss" aria-hidden="true" />
+                )}
+                {FACE[i] === 'plan-card--deep' && <PlanShader className="plan-card__field" />}
+
                 <span className="plan-card__head">
                   <span className="plan-card__icon" aria-hidden="true">
                     <Icon className="size-[1.15rem]" strokeWidth={1.7} />
@@ -312,17 +340,50 @@ export function PlansChapter({
 
                 <span className="plan-card__rule" aria-hidden="true" />
 
+                {/* Every card prints every row, in one order, so five cards can
+                    be read against each other by running an eye down them. A
+                    plan that does not carry a row gets a rule through the
+                    label rather than losing the line, which is the owner's
+                    instruction of 28.08.2026 and the only way an absence is
+                    visible at all.
+
+                    The five rows the free plan holds only for its first thirty
+                    days are drawn as absent HERE and as the introduction pill
+                    in the table: a card says what a plan is, and "thirty days
+                    of something else" is not what it is. The note under the
+                    table is where that fact belongs, and it is there. */}
                 <ul className="plan-card__list">
-                  {(ladder.cards[i] ?? []).map((f, n) => (
-                    <li key={f}>
-                      <span className="plan-card__tick">
-                        <Check className="size-3" strokeWidth={2.5} />
-                      </span>
-                      {/* The document count is the one line on a card that a
-                          gate reads, and it is the first line of every list. */}
-                      <span {...(n === 0 ? { 'data-plan-docs': r.docs } : {})}>{f}</span>
-                    </li>
-                  ))}
+                  {ladder.rows.map((row, n) => {
+                    const cell = row.cells[i]
+                    const has = cell !== false && cell !== 'intro'
+                    return (
+                      <li key={row.label} className={has ? '' : 'is-absent'}>
+                        <span className="plan-card__tick" aria-hidden="true">
+                          {has ? (
+                            <Check className="size-3" strokeWidth={2.5} />
+                          ) : (
+                            <Minus className="size-3" strokeWidth={2.5} />
+                          )}
+                        </span>
+                        <span className="plan-card__row">{row.label}</span>
+                        {typeof cell === 'string' && cell !== 'intro' && (
+                          // The document count is the one line on a card a gate
+                          // reads, and it is the first row of every list.
+                          <span
+                            {...(n === 0 ? { 'data-plan-docs': r.docs } : {})}
+                            className={
+                              /\d/.test(cell)
+                                ? 'plan-card__figure ip-fig'
+                                : 'plan-card__figure plan-card__figure--words'
+                            }
+                          >
+                            {cell}
+                          </span>
+                        )}
+                        <span className="sr-only">{has ? ladder.included : ladder.absent}</span>
+                      </li>
+                    )
+                  })}
                 </ul>
 
                 <div className="plan-card__action">
@@ -347,13 +408,19 @@ export function PlansChapter({
                 <thead>
                   <tr>
                     <th scope="col">{ladder.featuresHeader}</th>
+                    {/* The owner, 28.08.2026: the plan's name in the table
+                        should carry the plan's own effect, not only its colour.
+                        So each name sits in a chip cut from the card's face, and
+                        the two cards that move take their movement with them:
+                        the gloss travels across the violet chip, and the deep
+                        chip carries a slow field. The chip is what is coloured
+                        and the type on it is not, so the ink stays a solid,
+                        measurable colour on a ground that keeps still. */}
                     {rows.map((r, i) => (
-                      <th
-                        key={r.name}
-                        scope="col"
-                        className={FACE[i] ? `is-${FACE[i].replace('plan-card--', '')}` : ''}
-                      >
-                        {r.name}
+                      <th key={r.name} scope="col" className={`is-${FACE[i].slice(11)}`}>
+                        <span className="plans-compare__chip">
+                          <span className="plans-compare__chip-name">{r.name}</span>
+                        </span>
                       </th>
                     ))}
                   </tr>
@@ -372,10 +439,7 @@ export function PlansChapter({
                           </span>
                         </th>
                         {row.cells.map((cell, i) => (
-                          <td
-                            key={rows[i]?.name ?? i}
-                            className={FACE[i] ? `is-${FACE[i].replace('plan-card--', '')}` : ''}
-                          >
+                          <td key={rows[i]?.name ?? i} className={`is-${FACE[i].slice(11)}`}>
                             {cell === true ? (
                               <>
                                 <span className="plans-compare__yes">

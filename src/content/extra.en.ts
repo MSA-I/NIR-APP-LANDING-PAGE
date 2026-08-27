@@ -102,46 +102,8 @@ const extraEn = {
     intro: '30-day introduction',
     introNote: 'On the free plan the five marked capabilities are open for 30 days from email verification. After that they continue on Basic and above.',
 
-    cards: [
-      [
-        '20 documents per month',
-        'One user',
-        'Full chain: supplier, order, receipt, invoice and payment',
-        'Three roles with separation of duties',
-        'A 30-day introduction to the Basic capabilities',
-      ],
-      [
-        '40 documents per month',
-        'Up to 5 users',
-        'Automatic document reading',
-        'Full history',
-        'Excel exports and accountant reports',
-        'Email alerts and automations',
-      ],
-      [
-        '150 documents per month',
-        'Up to 15 users',
-        'Everything in Basic',
-        'Bank reconciliation',
-        'Accountant payment queue',
-        'Consolidated invoices',
-      ],
-      [
-        '375 documents per month',
-        'Up to 30 users',
-        'Up to 10 locations',
-        'Everything in Pro',
-        'Integrations with other systems',
-        'Extended support',
-      ],
-      [
-        'Document volume per contract',
-        'Unlimited users and locations',
-        'Every capability open',
-        'Your own permission structure',
-        'Extended support',
-      ],
-    ],
+    // Every card prints THESE rows, all of them, in this order, with a rule
+    // through the ones its plan does not carry. See extra.ts for why.
 
     rows: [
       {
@@ -158,6 +120,16 @@ const extraEn = {
         icon: 'branches',
         label: 'Locations',
         cells: ['1', '1', '1', '10', 'Unlimited'],
+      },
+      {
+        icon: 'chain',
+        label: 'Full chain from purchase to payment',
+        cells: [true, true, true, true, true],
+      },
+      {
+        icon: 'roles',
+        label: 'Three roles with separation of duties',
+        cells: [true, true, true, true, true],
       },
       {
         icon: 'automation',
