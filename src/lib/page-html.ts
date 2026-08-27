@@ -42,6 +42,8 @@ const CHROME = {
     terms: 'תנאי שימוש',
     privacy: 'מדיניות פרטיות',
     operator: 'מפעילת השירות: In Place, הרותם 14, כפר אדומים. מספר רישום 036689081. טלפון 054-254-7074.',
+    updated: 'עודכן',
+    dateFormat: 'he-IL',
     ogAlt: 'InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד',
     fonts: ['NotoSansHebrew-Hebrew.woff2', 'Heebo-hebrew.woff2'],
   },
@@ -65,6 +67,8 @@ const CHROME = {
     terms: 'Terms of use',
     privacy: 'Privacy policy',
     operator: 'Operated by In Place, HaRotem 14, Kfar Adumim, Israel. Registration number 036689081. Telephone +972-54-254-7074.',
+    updated: 'Updated',
+    dateFormat: 'en-GB',
     ogAlt: 'InPlace: everything between the order and the money, in one place',
     fonts: ['NotoSansHebrew-Latin.woff2', 'Heebo-latin.woff2'],
   },
@@ -133,6 +137,35 @@ const section = (s: Section) => `
           ${(s.after || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
         </section>`
 
+/**
+ * When each supporting page was written, and when its words last changed.
+ *
+ * WHY IT IS HERE AND NOT IN THE DICTIONARY
+ * One date per page, not one per translation: the English edition of
+ * /invoice-matching/ is the Hebrew page said again, so the two are the same
+ * document and they were last revised together. Keyed by slug, so the two
+ * dictionaries cannot drift apart on the one field they must agree on.
+ *
+ * WHY IT IS WRITTEN BY HAND
+ * The alternatives are worse. A file mtime is the moment of `git clone` on the
+ * build machine, so it would stamp every page with the deploy date; the build
+ * date itself would claim in public that every page was revised this morning.
+ * Neither is true, and a date that is not true is worth less than no date.
+ *
+ * THE RULE: change `updated` in the same commit that changes the page's words,
+ * and only then. A typo fix is a change; a stylesheet is not.
+ */
+const DATES: Record<string, { published: string; updated: string }> = {
+  'procurement-software': { published: '2026-08-27', updated: '2026-08-27' },
+  'supplier-invoices': { published: '2026-08-27', updated: '2026-08-27' },
+  'invoice-matching': { published: '2026-08-27', updated: '2026-08-27' },
+  'vs-spreadsheet': { published: '2026-08-27', updated: '2026-08-27' },
+  'vs-erp': { published: '2026-08-27', updated: '2026-08-27' },
+  about: { published: '2026-08-27', updated: '2026-08-27' },
+  terms: { published: '2026-08-27', updated: '2026-08-27' },
+  privacy: { published: '2026-08-27', updated: '2026-08-27' },
+}
+
 const schemaFor = (page: Page, locale: LocaleCode) => {
   const lang = locale === 'he' ? 'he-IL' : 'en'
   const home = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/en/`
@@ -172,6 +205,14 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
         name: page.title,
         description: page.description,
         inLanguage: lang,
+        // When it was written and when it last changed. An answer engine
+        // weighs a page it can date against one it cannot, and until now
+        // nothing on this site carried a date at all — not in the markup and
+        // not on the screen.
+        ...(DATES[page.slug] && {
+          datePublished: DATES[page.slug].published,
+          dateModified: DATES[page.slug].updated,
+        }),
         isPartOf: { '@id': `${home}#website` },
         publisher: { '@id': `${ORIGIN}/#organization` },
       },
@@ -344,10 +385,20 @@ export function pageHtml(
 
   // Every supporting page exists in both editions as of 27.08.2026, the two
   // legal documents included, so every one of them names its twin.
+  //
+  // x-default points at the ENGLISH edition, which is what index.html and
+  // en/index.html have always said and what these pages said the opposite of
+  // until 28.08.2026. Two homes claiming /en/ and sixteen supporting pages
+  // claiming the Hebrew one is a site arguing with itself about which document
+  // serves a reader whose language matches neither, and a crawler resolving
+  // that argument is not obliged to resolve it the way anybody here would.
+  // English is the right answer to the question x-default actually asks: a
+  // Hebrew speaker is already served by hreflang="he", so the fallback is only
+  // ever read by somebody who is neither.
   const alternates = `
     <link rel="alternate" hreflang="he" href="${ORIGIN}/${page.slug}/" />
     <link rel="alternate" hreflang="en" href="${ORIGIN}/en/${page.slug}/" />
-    <link rel="alternate" hreflang="x-default" href="${ORIGIN}/${page.slug}/" />`
+    <link rel="alternate" hreflang="x-default" href="${ORIGIN}/en/${page.slug}/" />`
 
   return `<!doctype html>
 <html lang="${locale}" dir="${t.dir}">
@@ -438,7 +489,20 @@ ${
       </main>
 
       <footer class="doc-foot">
-        <p class="eyebrow">InPlace</p>
+        <p class="eyebrow">InPlace</p>${
+          DATES[page.slug]
+            ? `
+        <p class="cap"><time datetime="${DATES[page.slug].updated}">${escape(
+                t.updated
+              )} ${escape(
+                new Intl.DateTimeFormat(t.dateFormat, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                }).format(new Date(`${DATES[page.slug].updated}T00:00:00Z`))
+              )}</time></p>`
+            : ''
+        }
         <div class="doc-rail">
           ${pill(locale === 'he' ? '/' : '/en/', escape(t.home))}
           ${pill('https://app.inplace.digital', escape(t.login))}

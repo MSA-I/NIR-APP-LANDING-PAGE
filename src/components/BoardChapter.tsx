@@ -106,8 +106,16 @@ export function BoardChapter({
         <Reveal>
           <figure className="board__figure crops relative mx-auto mt-[clamp(2.5rem,6vh,4rem)] mb-0 max-w-[62rem] overflow-clip rounded-[12px] border border-onyx-line bg-onyx-lift">
             <span className="crops__b" aria-hidden="true" />
+            {/* Three rungs. This one is drawn at 990 CSS px on a 1512px
+                desktop and at 356 on a 390px phone; scripts/build-shots.mjs
+                writes the two narrow cuts and explains the widths. */}
             <img
               src={`/${img}`}
+              srcSet={`/${img.replace(/\.webp$/, '-800.webp')} 800w, /${img.replace(
+                /\.webp$/,
+                '-1400.webp'
+              )} 1400w, /${img} 1800w`}
+              sizes="(min-width: 1024px) 62rem, 100vw"
               alt={imageAlt}
               width={1800}
               height={1788}

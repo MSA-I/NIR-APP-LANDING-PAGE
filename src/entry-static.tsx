@@ -48,6 +48,35 @@ export function render(locale: LocaleCode = 'he') {
 const ORIGIN = 'https://inplace.digital'
 
 /**
+ * The six screens of the product, at full width.
+ *
+ * Written out rather than read off the dictionary because `he.ts` gives them as
+ * `assets/screen-*.webp` in two separate places — five in the stations, one on
+ * the board — and the graph wants one absolute list. The narrow `-1000` cuts
+ * that scripts/build-shots.mjs writes are deliberately absent: they are the
+ * same six pictures, and offering each twice would describe a product with
+ * twelve screens.
+ */
+const SCREENSHOTS = [
+  'screen-office-orders',
+  'screen-office-receiving',
+  'screen-office-invoices',
+  'screen-owner-exceptions',
+  'screen-owner-payment-requests',
+  'screen-owner-dashboard',
+].map((n) => `${ORIGIN}/assets/${n}.webp`)
+
+/**
+ * When the home page's words last changed.
+ *
+ * The same rule as `DATES` in src/lib/page-html.ts, and for the same reason:
+ * change it in the commit that changes what the page says, never in a commit
+ * that changes how it looks. A build date here would tell every answer engine
+ * that this page was revised this morning, every morning.
+ */
+const UPDATED = '2026-08-27'
+
+/**
  * The structured data, built from the same dictionary the page renders.
  *
  * Generated rather than hand-written for one reason: the prices. `he.ts` is the
@@ -171,7 +200,34 @@ export function schema(locale: LocaleCode = 'he') {
         // that says what the product does, which is what a description is for.
         description: d.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
         publisher: { '@id': `${ORIGIN}/#organization` },
+        // The screens the page already shows. They were in the sitemap for
+        // image search and in the markup with their alt text, and nowhere in
+        // the graph, so nothing tied a picture of the product to the entity
+        // that is the product.
+        screenshot: SCREENSHOTS,
         offers,
+      },
+      // The document itself. The other three nodes describe the company, the
+      // site and the software; none of them described the page a reader is on,
+      // which is the node every supporting page has carried since it was
+      // written and the home page had not.
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: d.brand,
+        description: d.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
+        inLanguage: lang,
+        dateModified: UPDATED,
+        isPartOf: { '@id': `${url}#website` },
+        publisher: { '@id': `${ORIGIN}/#organization` },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          '@id': `${url}#primaryimage`,
+          url: `${ORIGIN}/assets/screen-owner-dashboard.webp`,
+          width: 1800,
+          height: 1788,
+        },
       },
     ],
   }

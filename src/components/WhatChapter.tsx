@@ -30,6 +30,9 @@ const NAV_STEP: Record<string, number> = {
 
 const navKey = (img: string) => img.replace(/^assets\/screen-/, '').replace(/\.webp$/, '')
 
+/** The narrower cuts of the same shot, written by scripts/build-shots.mjs. */
+const rung = (img: string, w: number) => img.replace(/\.webp$/, `-${w}.webp`)
+
 export function WhatChapter({
   folio,
   eyebrow,
@@ -162,8 +165,17 @@ export function WhatChapter({
 
                   <figure className="m-0">
                     <div className="relative overflow-clip rounded-[10px] border border-wheat-line bg-white shadow-[0_30px_70px_-40px_rgba(10,23,29,0.55)]">
+                      {/* Three rungs, and the browser picks. The panel is
+                          drawn at about 863 CSS px on a 1512px desktop and at
+                          344 on a 390px phone, so the 2000px file is right for
+                          one of them and four times too many pixels for the
+                          other. 800 serves a phone at device-pixel-ratio 2 and
+                          1400 serves one at 3; scripts/build-shots.mjs writes
+                          them and explains the two numbers. */}
                       <img
                         src={`/${s.img}`}
+                        srcSet={`/${rung(s.img, 800)} 800w, /${rung(s.img, 1400)} 1400w, /${s.img} 2000w`}
+                        sizes="(min-width: 1024px) 55rem, 100vw"
                         alt={`${title}. ${screenAltSuffix}`}
                         width={2000}
                         height={1334}

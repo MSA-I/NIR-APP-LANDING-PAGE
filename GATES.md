@@ -447,6 +447,81 @@ printed on every run; it is a note, not a verdict.
 startup chunks for "GrainGradient" and failed on a correct build, because the
 entry legitimately names the export it is lazily importing.
 
+## G23 — the quiet four, from the audit of 28.08.2026
+
+    CHECK: node scripts/gates/g23-seo.mjs
+    EXPECT: G23 PASS
+
+**MET.** 18 documents checked, 12 image ladders, 18 URLs in `llms.txt`.
+
+Four things the site got wrong without breaking anything. None of them showed up
+in a screenshot, none of them failed a gate, and all four are the kind that come
+back the first time somebody copies a `<head>` or adds a locale.
+
+**1. The site answered `x-default` twice, differently.** `index.html` and
+`en/index.html` named the English edition; the sixteen supporting pages named
+the Hebrew one. That is the site arguing with itself about which document serves
+a reader whose language matches neither, and a crawler settling the argument is
+under no obligation to settle it the way anybody here would have. It is English
+everywhere now: a Hebrew reader is already served by `hreflang="he"`, so the
+fallback is only ever read by somebody who is neither. The gate asserts the
+`x-default` href equals the `en` href on every page, and that the address it
+names is a page the build actually produced.
+
+**2. The screenshots had one width, and phones paid for it.** Measured on
+27.08.2026: the panels are drawn at **863 CSS px** on a 1512px desktop and at
+**344** on a 390px phone, against source files of 2000px. At a device-pixel
+ratio of 2 the desktop wants 1,726 of those pixels and is right to have them;
+the phone wants 780 and downloads 2000.
+
+The first fix was a single 1000px rung, and measurement is the only reason it
+did not ship: on a ratio-3 phone it changed **nothing**. 390 x 3 is 1,170, a
+browser never picks a candidate narrower than it needs, and 1,170 is more than
+1,000, so it stepped straight past the new file to the original. The ladder is
+800 and 1400 now, and both are used:
+
+| viewport | ratio | picked | bytes for the two screens on load |
+|---|---|---|---|
+| 1512 x 900 | 2 | the original | 172KB |
+| 390 x 844 | 3 | `-1400` | 119KB, 31% less |
+| 390 x 844 | 2 | `-800` | 56KB, 67% less |
+
+So the gate does not assert "a srcset exists". It asserts that every width named
+is a file in the build, that there is a rung at or below 800w, and that there is
+a rung between 1170w and the widest — which is the assertion the 1000px version
+would have failed.
+
+It also asserts the narrow cuts appear in NEITHER the sitemap NOR the
+`SoftwareApplication` graph. They are the same six pictures; offering each three
+times would describe a product with eighteen screens.
+
+**3. Nothing on the site carried a date.** Not in the markup, not on the screen.
+An answer engine weighs a page it can date against one it cannot, and this one
+could not be dated at all. The supporting pages now declare `datePublished` and
+`dateModified` and print the second one in their footer inside a `<time>`; the
+gate asserts the visible stamp and the structured one are the same string, which
+is the failure mode that matters — a page that says one date to a reader and
+another to a crawler.
+
+The dates are written by hand in `DATES` in `src/lib/page-html.ts`, keyed by
+slug so the two editions of one document cannot drift. The alternatives were
+measured and rejected: a file mtime is the moment of `git clone` on the build
+machine, and the build date would tell every engine that all eighteen pages were
+revised this morning, every morning.
+
+**4. `llms.txt` did not exist.** Google says in as many words that it does not
+read it and that it changes nothing in Search, so this earns nothing from the
+engine that sends most of the traffic. It is published anyway, for the same
+reason `robots.txt` carries no `Disallow`: the owner's decision of 27.08.2026 is
+that this page wants to be quoted, several smaller answer engines do fetch it,
+and 6KB is a cheap bet.
+
+It is **generated**, from the titles and descriptions the built documents
+declare, because the hand-written `public/sitemap.xml` was wrong within the hour
+of being written and was still claiming this was a one-page site on the day it
+was deleted. The gate walks both directions: every built page appears in
+`llms.txt`, and every URL in `llms.txt` is a page that was built.
+
 ---
 
 ## Three gates that had to change, and why
