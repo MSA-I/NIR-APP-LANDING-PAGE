@@ -74,9 +74,9 @@ const extraEn = {
       'A record of every sensitive financial action',
     ],
     yearly: ['No charge', '$200', '$790', '$1,490', 'Contact us'],
-    saveLabel: 'Two months free',
+    saveLabel: '30% off',
     billedMonthly: 'Billed monthly',
-    billedYearly: 'Billed yearly, twelve months for ten',
+    billedYearly: 'Billed yearly',
   },
 
   // Each card asks for what it can actually give. The plan with no figure has

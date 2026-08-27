@@ -357,7 +357,16 @@ export function PlansChapter({
                     const cell = row.cells[i]
                     const has = cell !== false && cell !== 'intro'
                     return (
-                      <li key={row.label} className={has ? '' : 'is-absent'}>
+                      // NO QUANTITY ON A CARD (owner, 28.08.2026): the row says
+                      // which capability, and the table under the cards says how
+                      // many. `data-plan-docs` rides the document row all the
+                      // same, because G14 reads the published quota off the card
+                      // as an attribute and never as text.
+                      <li
+                        key={row.label}
+                        className={has ? '' : 'is-absent'}
+                        {...(n === 0 ? { 'data-plan-docs': r.docs } : {})}
+                      >
                         <span className="plan-card__tick" aria-hidden="true">
                           {has ? (
                             <Check className="size-3" strokeWidth={2.5} />
@@ -366,20 +375,6 @@ export function PlansChapter({
                           )}
                         </span>
                         <span className="plan-card__row">{row.label}</span>
-                        {typeof cell === 'string' && cell !== 'intro' && (
-                          // The document count is the one line on a card a gate
-                          // reads, and it is the first row of every list.
-                          <span
-                            {...(n === 0 ? { 'data-plan-docs': r.docs } : {})}
-                            className={
-                              /\d/.test(cell)
-                                ? 'plan-card__figure ip-fig'
-                                : 'plan-card__figure plan-card__figure--words'
-                            }
-                          >
-                            {cell}
-                          </span>
-                        )}
                         <span className="sr-only">{has ? ladder.included : ladder.absent}</span>
                       </li>
                     )
@@ -457,7 +452,7 @@ export function PlansChapter({
                             ) : cell === 'intro' ? (
                               <span className="plans-compare__intro">{ladder.intro}</span>
                             ) : (
-                              <span className="ip-fig">{cell}</span>
+                              <span className="plans-compare__num">{cell}</span>
                             )}
                           </td>
                         ))}

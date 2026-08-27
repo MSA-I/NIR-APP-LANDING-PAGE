@@ -136,13 +136,25 @@ export default {
     // and Business carries no figure, by decisions #201 and the free tier's
     // own wording.
     yearly: ['ללא עלות', '690 ₪', '2,490 ₪', '4,490 ₪', 'בשיחה'],
-    // The reference image of 28.08.2026 puts a saving badge on the billing
-    // control. Ours does not say a percentage: the yearly row in NIR-APP 0184 is
-    // TEN months of the monthly one by construction, so "two months free" is what
-    // the catalogue actually is rather than a rounded figure derived from it.
-    saveLabel: 'חודשיים חינם',
+    // The saving badge on the billing control.
+    //
+    // IT DOES NOT MATCH THE CATALOGUE, AND THAT IS THE OWNER'S CALL OF
+    // 28.08.2026. The yearly row in NIR-APP 0184 is TEN months of the monthly
+    // one by construction: 690 against 828, 2,490 against 2,988, 4,490 against
+    // 5,388. Every one of those is 16.67% off, and the badge says 30%. It read
+    // "two months free" until this round, which is the same fact in the
+    // catalogue's own words.
+    //
+    // The two ways to make it true are a change to the yearly prices in that
+    // migration, or a badge that says 17%. Until one of them happens this line
+    // is a claim the prices under it contradict; DEBT.md 24 carries it.
+    //
+    // The yearly billing line lost "12 months for the price of 10" in the same
+    // move, because a card cannot print the real ratio one line under a badge
+    // that disagrees with it.
+    saveLabel: '30% הנחה',
     billedMonthly: 'חיוב חודשי',
-    billedYearly: 'חיוב שנתי, 12 חודשים במחיר 10',
+    billedYearly: 'חיוב שנתי',
   },
 
   // ------------------------------------------------- the plan cards' own asks
