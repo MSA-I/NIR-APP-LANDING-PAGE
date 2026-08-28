@@ -18,8 +18,16 @@
 // WHERE THE FACTS COME FROM
 // Nir's biography is his own answer of 28.08.2026, condensed but not embellished:
 // the twenty years, the chain in food, and the sentence that the idea came out
-// of the work rather than out of market research are all his. The owner
-// confirmed the spelling of both names on the same day.
+// of the work rather than out of market research are all his. Moshe's is his own
+// words of the same day, carried as written. The owner confirmed the spelling of
+// both names.
+//
+// Both biographies name the product, and that is deliberate rather than tidy.
+// Moshe's said InPlace from the first draft and Nir's did not, which left the
+// man who conceived it as the only one of the two never named beside it. It
+// matters twice over: on the page the two paragraphs now read as a pair, and in
+// the graph each Person's `description` states the relation to the entity in the
+// same sentence as the person, which is the join an answer engine is looking for.
 //
 // WHAT IS DELIBERATELY ABSENT
 // `sameAs`. Neither person's profile is published here, by the owner's decision
@@ -43,13 +51,17 @@ export type Person = {
   family: string
   jobTitle: string
   /**
-   * The paragraph under the name on the about page.
+   * The paragraphs under the name on the about page.
+   *
+   * A list rather than one string since 28.08.2026, when the owner supplied
+   * Nir's in three. The graph takes one string and joins them with a space; the
+   * page prints one paragraph each.
    *
    * Empty for a person whose biography has not been supplied yet, and the page
    * then prints the name and the role alone rather than a sentence with a hole
    * in it. A short true line beats a long one that waits.
    */
-  bio: string
+  bio: string[]
   /**
    * The portrait, without an extension.
    *
@@ -87,8 +99,17 @@ const he: People = {
     given: 'ניר',
     family: 'ברמוחה',
     jobTitle: 'מייסד',
-    bio:
-      'מעל עשרים שנה בעולם העסקים והתפעול, בישראל ובחוץ לארץ. הקים וניהל עסקים, ובהם רשת בתחום המזון, ועבד יום־יום מול ספקים, הזמנות, מלאי, עובדים, תשלומים וחשבוניות. הרעיון למערכת לא נולד ממחקר שוק אלא מהעבודה עצמה: הצורך לעשות סדר בתהליכים שבהרבה עסקים עדיין מתנהלים בוואטסאפ, באקסלים, בטלפון ובבדיקה ידנית. מה שכתוב בעמודים המקצועיים באתר הזה מגיע מהשטח הזה.',
+    // The owner's text of 28.08.2026, carried word for word, and that includes
+    // the two things the house rules would otherwise have changed: the dash in
+    // the third paragraph, where he.ts asks for a colon or a comma, and the
+    // absent full stop at the end of it. Both are flagged rather than corrected.
+    // A biography is the one kind of copy where somebody else's wording is the
+    // whole point.
+    bio: [
+      'מעל עשרים שנות ניסיון בעולם העסקים והתפעול, בישראל ובחו״ל. כיום עוסק בניהול עסקים, בהם רשת בתחום המזון, ומכיר מקרוב את העבודה היומיומית מול ספקים, הזמנות, מלאי, עובדים, תשלומים וחשבוניות.',
+      'מתוך הניסיון הזה נולד הרעיון להקים את InPlace. לא בעקבות מחקר שוק תיאורטי, אלא מתוך צורך אמיתי שעלה מהשטח: לעשות סדר בתהליכים שבעסקים רבים עדיין מתנהלים באמצעות וואטסאפ, קבצי אקסל, שיחות טלפון ובדיקות ידניות.',
+      'גם התוכן המקצועי באתר נכתב מאותה נקודת מבט — מתוך ניסיון מעשי, היכרות עם האתגרים היומיומיים והבנה של הדרך שבה עסקים באמת מתנהלים',
+    ],
     portrait: 'portrait-nir',
   },
   moshe: {
@@ -97,8 +118,9 @@ const he: People = {
     jobTitle: 'מייסד',
     // His own words, supplied 28.08.2026, carried as written. The name and the
     // role that opened them are stripped because the template prints those.
-    bio:
+    bio: [
       'שלוש שנים בבניית מערכות שמחברות בין נתונים, אוטומציה ותהליכים עסקיים, שבהן דיוק ובקרה הם חלק מהפעולה עצמה. הניסיון הזה הוביל לעיקרון שעליו InPlace בנויה: לא לגלות בדוח אחרי שהתשלום יצא שמשהו היה לא נכון, אלא לזהות את החריגה ולעצור אותה לפני שהכסף יוצא.',
+    ],
     portrait: 'portrait-moshe',
   },
   credit: 'נכתב על סמך הניסיון של {expert}, מייסד InPlace. המערכת נבנתה בידי {builder}.',
@@ -111,16 +133,23 @@ const en: People = {
     given: 'Nir',
     family: 'Barmuha',
     jobTitle: 'Founder',
-    bio:
-      'More than twenty years in business and operations, in Israel and abroad. He has founded and run businesses, among them a chain in food, and worked day to day with suppliers, orders, stock, staff, payments and invoices. The idea for the system did not come out of market research. It came out of the work itself: the need to put order into processes that in many businesses still run on WhatsApp, on spreadsheets, on the telephone and on a manual check. What is written on the professional pages of this site comes from that ground.',
+    // A translation of the Hebrew above rather than a second original, so the
+    // full stop the Hebrew is missing is present here: what is carried word for
+    // word is the owner's own wording, and this is not it.
+    bio: [
+      'More than twenty years of experience in business and operations, in Israel and abroad. He runs businesses today, among them a chain in food, and knows at first hand the daily work with suppliers, orders, stock, staff, payments and invoices.',
+      'The idea of founding InPlace came out of that experience. Not out of theoretical market research, but out of a real need that came off the ground: to put order into processes that in many businesses still run on WhatsApp, on spreadsheet files, on telephone calls and on manual checks.',
+      'The professional content on this site is written from that same point of view: out of practical experience, out of familiarity with the daily difficulties, and out of an understanding of how businesses actually run.',
+    ],
     portrait: 'portrait-nir',
   },
   moshe: {
     given: 'Moshe',
     family: 'Sananes',
     jobTitle: 'Founder',
-    bio:
+    bio: [
       'Three years building systems that join data, automation and business processes, in which accuracy and control are part of the operation itself. That experience led to the principle InPlace is built on: not to find out from a report, after the payment has gone out, that something was wrong, but to identify the exception and stop it before the money leaves.',
+    ],
     portrait: 'portrait-moshe',
   },
   credit:

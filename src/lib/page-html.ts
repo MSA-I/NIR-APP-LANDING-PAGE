@@ -161,7 +161,14 @@ const founder = (p: Person) => `
               <div class="doc-member__panel">
                 <p class="doc-member__name">${escape(p.given)}<br /><span>${escape(
                   p.family
-                )}</span></p>${p.bio ? `\n                <p class="doc-member__bio">${copy(p.bio)}</p>` : ''}
+                )}</span></p>${
+                  p.bio.length
+                    ? `
+                <div class="doc-member__bio">
+                  ${p.bio.map((para) => `<p>${copy(para)}</p>`).join('\n                  ')}
+                </div>`
+                    : ''
+                }
               </div>
             </div>
           </div>`
@@ -299,7 +306,9 @@ const personNode = (p: Person, id: string) => ({
   '@id': `${ORIGIN}/#${id}`,
   name: fullName(p),
   jobTitle: p.jobTitle,
-  ...(p.bio ? { description: p.bio } : {}),
+  // Schema takes one string, so the paragraphs are joined with a space. An
+  // empty list declares no description at all rather than an empty one.
+  ...(p.bio.length ? { description: p.bio.join(' ') } : {}),
   // The WebP, not the AVIF. This is the field a crawler reads, and the WebP is
   // the one the <img> itself carries, so the picture declared is the picture a
   // reader without AVIF is served.
@@ -556,7 +565,10 @@ const STYLE = `
       .doc-member__name { margin: 0; font-size: 3rem; line-height: 1.1;
         font-weight: 200; letter-spacing: -0.025em; color: var(--color-ink); }
       .doc-member__name span { font-weight: 400; }
-      .doc-member__bio { margin: 0; font-size: 0.875rem; line-height: 1.8;
+      /* One paragraph or three. The panel's own 3.5rem holds the name off the
+         biography; inside it the paragraphs sit at a reading gap. */
+      .doc-member__bio { display: flex; flex-direction: column; gap: 1rem; }
+      .doc-member__bio p { margin: 0; font-size: 0.875rem; line-height: 1.8;
         color: var(--color-ink-soft); }
       /* The catalogue card is built for a page that is nothing but the card. In
          a 44rem reading column the panel runs out of room first, so below 46rem
@@ -572,7 +584,7 @@ const STYLE = `
       /* The light view: the same wash, and the two type colours this page
          already uses for a heading and for body. */
       :root[data-theme="light"] .doc-member__name { color: var(--color-ink-on-light); }
-      :root[data-theme="light"] .doc-member__bio,
+      :root[data-theme="light"] .doc-member__bio p,
       :root[data-theme="light"] .doc-member__role { color: var(--color-ink-on-light-soft); }
       .doc-table { border-collapse: collapse; inline-size: 100%; min-inline-size: 28rem; font-size: 0.95rem; }
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
