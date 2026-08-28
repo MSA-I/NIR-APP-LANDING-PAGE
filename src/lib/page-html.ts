@@ -531,21 +531,27 @@ const STYLE = `
       /* No side is named anywhere in this card. In Hebrew the portrait falls at
          the start of the row and the panel overlaps it from the end; the same
          two rules put them the other way round in English. */
-      /* flex-start, where the catalogue centres.
+      /* stretch, where the catalogue centres, and this took three goes.
          Centring is right when the panel and the picture are near the same
-         height, and neither of these is: measured on 28.08.2026, the name of the
-         shorter of the two biographies began 93px below the top edge of the
-         photograph beside it and read as though it had been dropped there. The
-         owner's instruction is that the type meets the picture's edge. Aligned
-         at the start, the heading sits on the top edge of every portrait
-         whatever the biography under it turns out to weigh. */
-      .doc-member__row { display: flex; align-items: flex-start;
+         height, and these two never are: one biography is three paragraphs and
+         the other is one, and the English of the first is longer again than its
+         Hebrew. Centred, the shorter name began 93px below the top edge of its
+         photograph. Aligned at the start, the top edges met and the longest
+         biography then hung 168px below the bottom of the picture beside it.
+         Stretched, the picture is as tall as the words are: both edges meet at
+         once, which is what the owner asked for. */
+      .doc-member__row { display: flex; align-items: stretch;
         justify-content: flex-end; }
       /* z-index 1 rather than none, so the frame is a stacking context and the
          wash inside it stays inside it. Without this the wash sits at 10 in the
          page's own stacking order and paints over the panel at 2. */
+      /* 500px is the catalogue's height, and it is the floor rather than the
+         figure: the frame grows with the biography beside it and never shrinks
+         under a short one. The cover fit on the image below is what makes that
+         safe, and the sources are 720 by 1000, so there is height in hand to
+         crop from at every size this reaches. */
       .doc-member__frame { position: relative; z-index: 1; flex: none;
-        inline-size: 360px; block-size: 500px; overflow: hidden; }
+        inline-size: 360px; min-block-size: 500px; overflow: hidden; }
       .doc-member__frame picture { display: block; block-size: 100%; }
       .doc-member__frame img { inline-size: 100%; block-size: 100%;
         object-fit: cover;
@@ -584,7 +590,7 @@ const STYLE = `
       @media (max-width: 46rem) {
         .doc-member__row { display: block; }
         .doc-member__frame { inline-size: 100%; max-inline-size: 360px;
-          block-size: auto; aspect-ratio: 360 / 500; }
+          block-size: auto; min-block-size: 0; aspect-ratio: 360 / 500; }
         .doc-member__panel { margin-inline-start: 0; inline-size: 100%;
           gap: 1.5rem; margin-block-start: 1.75rem; }
         .doc-member__name { font-size: 2.25rem; }
