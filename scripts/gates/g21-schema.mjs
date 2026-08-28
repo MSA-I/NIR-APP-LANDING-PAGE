@@ -141,6 +141,60 @@ for (const { url, file } of pages()) {
     )
   }
 
+  // ---- the people ---------------------------------------------------------
+  // Who is speaking is a claim like any other, so it is held to the page the
+  // same way. The about page prints both founders with data-person and the home
+  // page declares them under the Organization; the six professional pages
+  // declare one author and print the credit that says so. The two legal
+  // documents declare no author, and that is asserted rather than assumed: they
+  // carry the text a user consents to, and attributing it to a person as its
+  // author is a different statement from the one those pages make.
+  const printedPeople = [...html.matchAll(/data-person="([^"]*)"/g)].map((m) => plain(m[1]))
+  const org = graph.find((n) => n['@type'] === 'Organization') || {}
+  const persons = graph.filter((n) => n['@type'] === 'Person')
+
+  // `founder` is a list of references. A reference to a node that is not in this
+  // document's own graph names nobody.
+  for (const ref of Array.isArray(org.founder) ? org.founder : []) {
+    c.ok(
+      persons.some((person) => person['@id'] === ref['@id']),
+      at(`names a founder (${ref['@id']}) that no Person node in its own graph declares`)
+    )
+  }
+
+  for (const printed of printedPeople) {
+    c.ok(
+      persons.some((person) => plain(person.name || '') === printed),
+      at(`prints "${printed}" as a founder and declares no Person for them`)
+    )
+  }
+
+  const text = plain(html.replace(/<script[\s\S]*?<\/script>/g, ''))
+  for (const person of persons) {
+    c.ok(
+      text.includes(plain(person.name || '')),
+      at(`declares a Person the page never names: "${person.name}"`)
+    )
+    // A Person with a job title and nothing else is a name. A Person with an
+    // empty description claims they have none, which is a different thing from
+    // making no claim, and src/entry-static.tsx omits the key instead.
+    c.ok(
+      !('description' in person) || Boolean(String(person.description).trim()),
+      at(`declares "${person.name}" with an empty description`)
+    )
+  }
+
+  // An author reference that resolves to nothing is a page with no author that
+  // says it has one.
+  const webpage = graph.find((n) => n['@type'] === 'WebPage')
+  const authorId = webpage?.author?.['@id']
+  if (authorId) {
+    c.ok(
+      persons.some((person) => person['@id'] === authorId),
+      at(`names an author (${authorId}) that no Person node in its own graph declares`)
+    )
+  }
+
   if (onPage.length === 0) {
     c.ok(
       offers.length === 0,

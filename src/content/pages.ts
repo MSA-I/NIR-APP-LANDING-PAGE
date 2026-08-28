@@ -39,6 +39,15 @@ export type Section = {
   table?: { headers: [string, string]; rows: [string, string][] }
   /** Runs after the list or the table, and closes the section. */
   after?: string[]
+  /**
+   * Print the two founders here, between the paragraphs and the table.
+   *
+   * Set on exactly one section of one page. The names and the biography are in
+   * src/content/people.ts rather than in the copy above, because the two
+   * structured-data generators declare the same people and a second copy in
+   * prose is a second copy that nothing compares.
+   */
+  people?: true
 }
 
 export type Page = {
@@ -577,9 +586,14 @@ const pages: Page[] = [
       },
       {
         h2: 'מי עומד מאחורי המערכת',
+        // The two names and the biography come from src/content/people.ts, which
+        // both structured-data generators read as well, so the page and the graph
+        // cannot disagree about who built this. src/lib/page-html.ts splices them
+        // in above the table below.
         paras: [
           'InPlace היא מוצר של In Place, עסק רשום בישראל. הפרטים כאן הם אותם פרטים שמופיעים בנתונים המובנים של האתר, כדי שמי שבודק מי מבקש גישה למידע הפיננסי שלו יקבל תשובה אחת בשני המקומות.',
         ],
+        people: true,
         table: {
           headers: ['פרט', 'ערך'],
           rows: [

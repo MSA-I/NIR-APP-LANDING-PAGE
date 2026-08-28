@@ -213,6 +213,19 @@ export function schema(locale: LocaleCode = 'he') {
             availableLanguage: ['he', 'en'],
           },
         ],
+        // NO `founder` HERE, and the reason is this gate's oldest rule.
+        //
+        // Until 28.08.2026 the answer this site gave to "who is behind it" was a
+        // registration number and an address, which identifies an entity and not
+        // a person. Experience is a property of people, and in a subject that is
+        // about other people's money every engine weighs that harder. So the two
+        // founders are declared now.
+        //
+        // They are declared on /about/, which is the page that prints them. This
+        // home page never names either man, and g21 already holds that an Offer
+        // on a page with no price is a claim with no source. A founder on a page
+        // that does not name him is the same claim, and the gate said so: it
+        // failed the first cut of this block by name.
       },
       {
         '@type': 'WebSite',

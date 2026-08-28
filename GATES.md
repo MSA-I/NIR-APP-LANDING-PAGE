@@ -385,7 +385,9 @@ the reader who asked for less motion, and the render that has no window at all.
 
 **MET.** Home: Organization, WebSite, SoftwareApplication with four offers,
 VideoObject, WebPage, and a FAQPage carrying eight questions.
-Each supporting page: Organization, WebSite, WebPage, BreadcrumbList.
+Each professional page: Organization, WebSite, WebPage, BreadcrumbList and the
+Person who authored it. `/about/` carries a second Person and the Organization's
+`founder`. The two legal documents carry neither.
 
 There were no `application/ld+json` blocks at all. The block is generated in
 `src/entry-static.tsx` from the same dictionary the page renders, so the prices
@@ -417,6 +419,35 @@ node read only `d.faq.items` and declared seven, and the gate failed it by name:
 `prints a question no FAQPage declares`. A one-directional check would have
 passed it, and the page would have shipped an eighth answer no engine was told
 about.
+
+**The people, by the same rule as the prices.** Until 28.08.2026 the answer this
+site gave to "who is behind it" was a registration number and an address. That
+identifies an entity, and experience is a property of people; in a subject that
+is about other people's money every engine weighs that harder than it does
+elsewhere. Two `Person` nodes now, `founder` on the Organization and `author` on
+each of the six professional pages, all read out of `src/content/people.ts` so
+the page and the graph cannot disagree about who built this.
+
+The gate holds them to the page in both directions, as it does the offers: every
+name printed with `data-person` is declared, every `Person` declared is named in
+the page's text, and every `founder` and `author` reference resolves to a node in
+that document's own graph.
+
+**It moved the founders once already.** The first cut declared them on the home
+page, under the Organization, where all the other company facts sit. The gate
+failed it — `declares a Person the page never names` — and it was right by this
+file's oldest rule: an Offer on a page with no price is a claim with no source,
+and a founder on a page that never names him is the same claim. They are declared
+on `/about/`, which is the page that prints them, and nowhere else.
+
+An empty `description` fails too. `src/content/people.ts` carries no biography
+for the second founder yet, and the generator omits the key rather than sending
+an empty string: a blank description declares that a person has none, which is a
+different statement from making none. `DEBT.md` item 29.
+
+Neither node carries `sameAs`. The owner's decision of 28.08.2026 is that no
+personal profile is published here and the only external profile this site will
+carry is the company's own, which does not exist yet. Item 21.
 
 **What it still forbids, and why:**
 

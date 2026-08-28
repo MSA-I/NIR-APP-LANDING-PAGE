@@ -14,6 +14,7 @@
 
 import type { Page, Section } from '@/content/pages'
 import type { LocaleCode } from '@/content/locales'
+import { peopleByLocale, type Person } from '@/content/people'
 import { emphasiseBrand } from '@/lib/motion'
 
 const ORIGIN = 'https://inplace.digital'
@@ -107,10 +108,33 @@ const copy = (s: string) => emphasiseBrand(s)
 // carries the substance, `after` closes. The first cut had one `paras` field
 // rendered before the list, which put every closing sentence above the thing it
 // was closing.
-const section = (s: Section) => `
+/**
+ * One founder: the name, the role, and the paragraph under them.
+ *
+ * `data-person` is what g21 reads. The name is also inside the <b>, and the gate
+ * could scrape that instead, but a class name and a tag are layout and this is a
+ * fact about who is speaking, which is the thing being compared with the graph.
+ *
+ * A person whose biography has not been supplied prints the name and the role
+ * and stops. The alternative is a sentence with a hole in it, and the hole would
+ * be published.
+ */
+const founder = (p: Person) => `
+          <p class="body" data-person="${attr(p.name)}"><b>${escape(p.name)}</b>, ${escape(
+  p.jobTitle
+)}.${p.bio ? ` ${copy(p.bio)}` : ''}</p>`
+
+const section = (s: Section, locale: LocaleCode) => `
         <section class="doc-section">
           <h2>${escape(s.h2)}</h2>
           ${(s.paras || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
+          ${
+            s.people
+              ? `<p class="body">${copy(peopleByLocale[locale].intro)}</p>
+          ${founder(peopleByLocale[locale].nir)}
+          ${founder(peopleByLocale[locale].moshe)}`
+              : ''
+          }
           ${
             s.list
               ? `<ul class="doc-list" aria-label="${attr(s.list.label)}">
@@ -179,6 +203,16 @@ const DATES: Record<string, { published: string; updated: string }> = {
 const RUNGS = [800, 1440] as const
 
 /**
+ * The fragment that identifies the author node, in both editions.
+ *
+ * A person is one entity whatever language the page describing them is written
+ * in, so the id does not travel with the locale the way `#website` does. An
+ * engine reading the Hebrew page and the English one must be able to tell that
+ * it has met the same man twice.
+ */
+const AUTHOR_ID = 'nir'
+
+/**
  * One product screen, as a complete <picture>.
  *
  * AVIF first because the browser takes the first type it understands, and AVIF
@@ -207,10 +241,31 @@ const picture = (image: { src: string; w: number; h: number; alt: string; cap: s
         </figure>`
 }
 
+/**
+ * A founder, as a node.
+ *
+ * `description` is omitted rather than emptied for a person whose biography has
+ * not been supplied. An empty string declares that this person has no
+ * description, which is a different claim from making none, and g21 fails it.
+ */
+const personNode = (p: Person, id: string) => ({
+  '@type': 'Person',
+  '@id': `${ORIGIN}/#${id}`,
+  name: p.name,
+  jobTitle: p.jobTitle,
+  ...(p.bio ? { description: p.bio } : {}),
+  worksFor: { '@id': `${ORIGIN}/#organization` },
+})
+
 const schemaFor = (page: Page, locale: LocaleCode) => {
   const lang = locale === 'he' ? 'he-IL' : 'en'
   const home = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/en/`
   const url = `${ORIGIN}${pathOf(page.slug, locale)}`
+  const p = peopleByLocale[locale]
+  // The page that prints both founders is the page that declares them, and it is
+  // the only one. Everywhere else the author alone is declared, because that is
+  // the only person those pages name.
+  const printsPeople = page.sections.some((s) => s.people)
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -230,6 +285,18 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
           addressCountry: 'IL',
         },
         telephone: '+972-54-254-7074',
+        // Only where they are printed, which is /about/ and nowhere else. The
+        // Person nodes themselves are below; this is the edge from the company
+        // to them, and it is the same rule that keeps an Offer off a page with
+        // no price.
+        ...(printsPeople
+          ? {
+              founder: [
+                { '@id': `${ORIGIN}/#${AUTHOR_ID}` },
+                { '@id': `${ORIGIN}/#moshe` },
+              ],
+            }
+          : {}),
       },
       {
         '@type': 'WebSite',
@@ -254,6 +321,7 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
           datePublished: DATES[page.slug].published,
           dateModified: DATES[page.slug].updated,
         }),
+        ...(page.legal ? {} : { author: { '@id': `${ORIGIN}/#${AUTHOR_ID}` } }),
         isPartOf: { '@id': `${home}#website` },
         publisher: { '@id': `${ORIGIN}/#organization` },
       },
@@ -264,6 +332,20 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
           { '@type': 'ListItem', position: 2, name: page.eyebrow, item: url },
         ],
       },
+      // Who is speaking on this page.
+      //
+      // The six professional pages are `author`ed by the founder whose working
+      // life they describe, and the credit line at the foot of each says the same
+      // thing in the page's own words, so the declaration is not a claim the
+      // reader cannot see. The two legal documents take neither: they carry the
+      // text a user consents to, and attributing terms of use to a person as
+      // their author is a different statement from the one those pages make.
+      //
+      // No `sameAs`. The owner's decision of 28.08.2026 is that no personal
+      // profile is published here and the only external profile this site will
+      // carry is the company's own, which does not exist yet. DEBT.md item 21.
+      ...(page.legal ? [] : [personNode(p.nir, AUTHOR_ID)]),
+      ...(printsPeople ? [personNode(p.moshe, 'moshe')] : []),
     ],
   }
 }
@@ -368,6 +450,9 @@ const STYLE = `
       /* The screen this page is about. Same frame the home page draws round the
          same six pictures: a light card, because the product's own screens are
          light and a dark border round them reads as a hole in the page. */
+      /* The credit sits under the date and reads at the same weight: it is a
+         fact about the page, not a signature the page is proud of. */
+      .doc-credit { max-inline-size: 44rem; }
       .doc-shot { margin: clamp(1.75rem, 4vh, 2.5rem) 0 0; }
       .doc-shot picture { display: block; overflow: clip; border-radius: 10px;
         border: 1px solid var(--color-wheat-line); background: #fff;
@@ -512,7 +597,7 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
         <p class="eyebrow">${escape(page.eyebrow)}</p>
         <h1>${copy(page.h1)}</h1>
         <p class="lede">${copy(page.lede)}</p>${page.image ? picture(page.image) : ''}
-${page.sections.map(section).join('\n')}
+${page.sections.map((s) => section(s, locale)).join('\n')}
 
 ${
           page.legal
@@ -552,6 +637,19 @@ ${
                 }).format(new Date(`${DATES[page.slug].updated}T00:00:00Z`))
               )}</time></p>`
             : ''
+        }${
+          /* The credit, on the six professional pages and not on the two legal
+             ones. It is the sentence the `author` node declares, printed where a
+             reader can see it: a declaration a page does not make in its own
+             words is a claim about the page rather than a fact of it. */
+          page.legal
+            ? ''
+            : `
+        <p class="cap doc-credit">${escape(
+          peopleByLocale[locale].credit
+            .replace('{expert}', peopleByLocale[locale].nir.name)
+            .replace('{builder}', peopleByLocale[locale].moshe.name)
+        )}</p>`
         }
         <div class="doc-rail">
           ${pill(locale === 'he' ? '/' : '/en/', escape(t.home))}

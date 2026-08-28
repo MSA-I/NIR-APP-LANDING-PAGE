@@ -488,9 +488,12 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Who stands behind the system',
+        // The two names and the biography come from src/content/people.ts. See
+        // the note on the Hebrew twin of this section.
         paras: [
           'InPlace is a product of In Place, a business registered in Israel. The details here are the same details that appear in the site’s structured data, so that anyone checking who is asking for access to their financial information gets one answer in both places.',
         ],
+        people: true,
         table: {
           headers: ['Detail', 'Value'],
           rows: [
