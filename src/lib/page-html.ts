@@ -14,6 +14,7 @@
 
 import type { Page, Section } from '@/content/pages'
 import type { LocaleCode } from '@/content/locales'
+import { peopleByLocale, fullName, type Person } from '@/content/people'
 import { emphasiseBrand } from '@/lib/motion'
 
 const ORIGIN = 'https://inplace.digital'
@@ -42,6 +43,8 @@ const CHROME = {
     terms: 'תנאי שימוש',
     privacy: 'מדיניות פרטיות',
     operator: 'מפעילת השירות: In Place, הרותם 14, כפר אדומים. מספר רישום 036689081. טלפון 054-254-7074.',
+    updated: 'עודכן',
+    dateFormat: 'he-IL',
     ogAlt: 'InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד',
     fonts: ['NotoSansHebrew-Hebrew.woff2', 'Heebo-hebrew.woff2'],
   },
@@ -65,6 +68,8 @@ const CHROME = {
     terms: 'Terms of use',
     privacy: 'Privacy policy',
     operator: 'Operated by In Place, HaRotem 14, Kfar Adumim, Israel. Registration number 036689081. Telephone +972-54-254-7074.',
+    updated: 'Updated',
+    dateFormat: 'en-GB',
     ogAlt: 'InPlace: everything between the order and the money, in one place',
     fonts: ['NotoSansHebrew-Latin.woff2', 'Heebo-latin.woff2'],
   },
@@ -99,14 +104,90 @@ const attr = (s: string) =>
 
 const copy = (s: string) => emphasiseBrand(s)
 
+/**
+ * One founder, as 21st.dev's team-member-card.
+ *
+ * `data-person` carries the joined name, which is what g21 compares with the
+ * graph. The card prints the two halves on two lines and a gate reading the
+ * markup would have to join them back; the attribute says the fact plainly.
+ *
+ * Chosen by the owner on 28.08.2026 (@Shatlyk1011, id team-member-card, whose
+ * own source is emerald-ui.com). Its anatomy is taken as it stands: a spaced
+ * uppercase role label above; a 360 by 500 portrait; a text panel pulled 32px
+ * back over the picture and lifted above it; the given name in extralight at
+ * 48px over the family name in regular; and the biography under them.
+ *
+ * THREE THINGS ARE NOT COPIED, AND EACH FOR A REASON
+ *
+ * The 80px circle with the arrow. In the catalogue it is a link to the person,
+ * with `cursor-pointer` and a tab stop. The owner's decision of 28.08.2026 is
+ * that no personal profile is published on this site, so the circle would be a
+ * control that goes nowhere and takes a keyboard stop on the way.
+ *
+ * The entrance. The catalogue component fades the three parts in from three
+ * directions on `whileInView`, which needs Framer Motion, and these documents
+ * ship no JavaScript at all. A CSS animation would fire on load rather than on
+ * arrival, which for a card this far down the page means it finishes before
+ * anybody sees it. The hover on the portrait is CSS and is kept.
+ *
+ * The colours. `zinc` is not a colour this site has. The card is repainted in
+ * the page's own tokens, exactly as the flow button, the plan cards, the FAQ
+ * panels and the colophon were.
+ */
+const founder = (p: Person) => `
+          <div class="doc-member" data-person="${attr(fullName(p))}">
+            <p class="doc-member__role">${escape(p.jobTitle)}</p>
+            <div class="doc-member__row">${
+              /* AVIF first, because the browser takes the first type it
+                 understands, and a WebP source above it would mean nothing ever
+                 reaches the AVIF. Both carry a width descriptor and the size of
+                 the frame they are drawn in: one rung is not a ladder, but g23
+                 asserts that every candidate declares its width, and it is right
+                 to. A srcset entry without one is a file whose size the browser
+                 has to guess at. */
+              p.portrait
+                ? `
+              <div class="doc-member__frame">
+                <span class="doc-member__veil" aria-hidden="true"></span>
+                <picture>
+                  <source type="image/avif" srcset="/assets/${p.portrait}.avif 720w" sizes="360px" />
+                  <source type="image/webp" srcset="/assets/${p.portrait}.webp 720w" sizes="360px" />
+                  <img src="/assets/${p.portrait}.webp" alt=""
+                       width="720" height="1000" loading="lazy" decoding="async" />
+                </picture>
+              </div>`
+                : ''
+            }
+              <div class="doc-member__panel">
+                <p class="doc-member__name">${escape(p.given)}<br /><span>${escape(
+                  p.family
+                )}</span></p>${
+                  p.bio.length
+                    ? `
+                <div class="doc-member__bio">
+                  ${p.bio.map((para) => `<p>${copy(para)}</p>`).join('\n                  ')}
+                </div>`
+                    : ''
+                }
+              </div>
+            </div>
+          </div>`
+
 // Order matters, and the shape says so: `paras` introduce, `list` or `table`
 // carries the substance, `after` closes. The first cut had one `paras` field
 // rendered before the list, which put every closing sentence above the thing it
 // was closing.
-const section = (s: Section) => `
+const section = (s: Section, locale: LocaleCode) => `
         <section class="doc-section">
           <h2>${escape(s.h2)}</h2>
           ${(s.paras || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
+          ${
+            s.people
+              ? `<p class="body">${copy(peopleByLocale[locale].intro)}</p>
+          ${founder(peopleByLocale[locale].nir)}
+          ${founder(peopleByLocale[locale].moshe)}`
+              : ''
+          }
           ${
             s.list
               ? `<ul class="doc-list" aria-label="${attr(s.list.label)}">
@@ -133,10 +214,117 @@ const section = (s: Section) => `
           ${(s.after || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
         </section>`
 
+/**
+ * When each supporting page was written, and when its words last changed.
+ *
+ * WHY IT IS HERE AND NOT IN THE DICTIONARY
+ * One date per page, not one per translation: the English edition of
+ * /invoice-matching/ is the Hebrew page said again, so the two are the same
+ * document and they were last revised together. Keyed by slug, so the two
+ * dictionaries cannot drift apart on the one field they must agree on.
+ *
+ * WHY IT IS WRITTEN BY HAND
+ * The alternatives are worse. A file mtime is the moment of `git clone` on the
+ * build machine, so it would stamp every page with the deploy date; the build
+ * date itself would claim in public that every page was revised this morning.
+ * Neither is true, and a date that is not true is worth less than no date.
+ *
+ * THE RULE: change `updated` in the same commit that changes the page's words,
+ * and only then. A typo fix is a change; a stylesheet is not.
+ */
+const DATES: Record<string, { published: string; updated: string }> = {
+  'procurement-software': { published: '2026-08-27', updated: '2026-08-27' },
+  'supplier-invoices': { published: '2026-08-27', updated: '2026-08-27' },
+  'invoice-matching': { published: '2026-08-27', updated: '2026-08-27' },
+  'vs-spreadsheet': { published: '2026-08-27', updated: '2026-08-27' },
+  'vs-erp': { published: '2026-08-27', updated: '2026-08-27' },
+  about: { published: '2026-08-27', updated: '2026-08-27' },
+  terms: { published: '2026-08-27', updated: '2026-08-27' },
+  privacy: { published: '2026-08-27', updated: '2026-08-27' },
+}
+
+/**
+ * The three widths every product screenshot ships in.
+ *
+ * `null` is the original file, which is 2000px on five of the six and 1800px on
+ * the control centre. The numbers and the reasoning behind them live in
+ * scripts/build-shots.mjs, which writes the files; the widest descriptor is read
+ * off the picture itself rather than assumed, because those two are not the same
+ * number and a descriptor that lies about a file's width defeats the whole
+ * mechanism.
+ */
+const RUNGS = [800, 1440] as const
+
+/**
+ * The fragment that identifies the author node, in both editions.
+ *
+ * A person is one entity whatever language the page describing them is written
+ * in, so the id does not travel with the locale the way `#website` does. An
+ * engine reading the Hebrew page and the English one must be able to tell that
+ * it has met the same man twice.
+ */
+const AUTHOR_ID = 'nir'
+
+/**
+ * One product screen, as a complete <picture>.
+ *
+ * AVIF first because the browser takes the first type it understands, and AVIF
+ * is 40% smaller than the WebP on this material — measured, not assumed; the
+ * table is in scripts/build-shots.mjs. The <img> at the end carries the WebP
+ * ladder and is what a browser without AVIF gets, which is also what every
+ * crawler reads.
+ *
+ * `sizes` is the reading column: .doc is 44rem wide and the picture fills it.
+ */
+const picture = (image: { src: string; w: number; h: number; alt: string; cap: string }) => {
+  const base = image.src.replace(/\.webp$/, '')
+  const { w, h } = image
+  const set = (ext: string) =>
+    [...RUNGS.map((r) => `/${base}-${r}.${ext} ${r}w`), `/${base}.${ext} ${w}w`].join(', ')
+  const sizes = '(min-width: 46rem) 44rem, 100vw'
+  return `
+        <figure class="doc-shot">
+          <picture>
+            <source type="image/avif" srcset="${set('avif')}" sizes="${sizes}" />
+            <source type="image/webp" srcset="${set('webp')}" sizes="${sizes}" />
+            <img src="/${image.src}" alt="${attr(image.alt)}" width="${w}" height="${h}"
+                 loading="lazy" decoding="async" />
+          </picture>
+          <figcaption class="cap">${escape(image.cap)}</figcaption>
+        </figure>`
+}
+
+/**
+ * A founder, as a node.
+ *
+ * `description` is omitted rather than emptied for a person whose biography has
+ * not been supplied. An empty string declares that this person has no
+ * description, which is a different claim from making none, and g21 fails it.
+ */
+const personNode = (p: Person, id: string) => ({
+  '@type': 'Person',
+  '@id': `${ORIGIN}/#${id}`,
+  name: fullName(p),
+  jobTitle: p.jobTitle,
+  // Schema takes one string, so the paragraphs are joined with a space. An
+  // empty list declares no description at all rather than an empty one.
+  ...(p.bio.length ? { description: p.bio.join(' ') } : {}),
+  // The WebP, not the AVIF. This is the field a crawler reads, and the WebP is
+  // the one the <img> itself carries, so the picture declared is the picture a
+  // reader without AVIF is served.
+  ...(p.portrait ? { image: `${ORIGIN}/assets/${p.portrait}.webp` } : {}),
+  worksFor: { '@id': `${ORIGIN}/#organization` },
+})
+
 const schemaFor = (page: Page, locale: LocaleCode) => {
   const lang = locale === 'he' ? 'he-IL' : 'en'
   const home = locale === 'he' ? `${ORIGIN}/` : `${ORIGIN}/en/`
   const url = `${ORIGIN}${pathOf(page.slug, locale)}`
+  const p = peopleByLocale[locale]
+  // The page that prints both founders is the page that declares them, and it is
+  // the only one. Everywhere else the author alone is declared, because that is
+  // the only person those pages name.
+  const printsPeople = page.sections.some((s) => s.people)
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -156,6 +344,18 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
           addressCountry: 'IL',
         },
         telephone: '+972-54-254-7074',
+        // Only where they are printed, which is /about/ and nowhere else. The
+        // Person nodes themselves are below; this is the edge from the company
+        // to them, and it is the same rule that keeps an Offer off a page with
+        // no price.
+        ...(printsPeople
+          ? {
+              founder: [
+                { '@id': `${ORIGIN}/#${AUTHOR_ID}` },
+                { '@id': `${ORIGIN}/#moshe` },
+              ],
+            }
+          : {}),
       },
       {
         '@type': 'WebSite',
@@ -172,6 +372,15 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
         name: page.title,
         description: page.description,
         inLanguage: lang,
+        // When it was written and when it last changed. An answer engine
+        // weighs a page it can date against one it cannot, and until now
+        // nothing on this site carried a date at all — not in the markup and
+        // not on the screen.
+        ...(DATES[page.slug] && {
+          datePublished: DATES[page.slug].published,
+          dateModified: DATES[page.slug].updated,
+        }),
+        ...(page.legal ? {} : { author: { '@id': `${ORIGIN}/#${AUTHOR_ID}` } }),
         isPartOf: { '@id': `${home}#website` },
         publisher: { '@id': `${ORIGIN}/#organization` },
       },
@@ -182,6 +391,20 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
           { '@type': 'ListItem', position: 2, name: page.eyebrow, item: url },
         ],
       },
+      // Who is speaking on this page.
+      //
+      // The six professional pages are `author`ed by the founder whose working
+      // life they describe, and the credit line at the foot of each says the same
+      // thing in the page's own words, so the declaration is not a claim the
+      // reader cannot see. The two legal documents take neither: they carry the
+      // text a user consents to, and attributing terms of use to a person as
+      // their author is a different statement from the one those pages make.
+      //
+      // No `sameAs`. The owner's decision of 28.08.2026 is that no personal
+      // profile is published here and the only external profile this site will
+      // carry is the company's own, which does not exist yet. DEBT.md item 21.
+      ...(page.legal ? [] : [personNode(p.nir, AUTHOR_ID)]),
+      ...(printsPeople ? [personNode(p.moshe, 'moshe')] : []),
     ],
   }
 }
@@ -283,6 +506,100 @@ const STYLE = `
         display: grid; gap: 0.6rem; list-style: disc; }
       .doc-list li::marker { color: var(--color-oceanic); }
       .doc-scroll { overflow-x: auto; margin-block-start: 1.25rem; }
+      /* The screen this page is about. Same frame the home page draws round the
+         same six pictures: a light card, because the product's own screens are
+         light and a dark border round them reads as a hole in the page. */
+      .doc-shot { margin: clamp(1.75rem, 4vh, 2.5rem) 0 0; }
+      .doc-shot picture { display: block; overflow: clip; border-radius: 10px;
+        border: 1px solid var(--color-wheat-line); background: #fff;
+        box-shadow: 0 30px 70px -40px rgba(10, 23, 29, 0.55); }
+      .doc-shot img { display: block; inline-size: 100%; block-size: auto; }
+      .doc-shot figcaption { margin-block-start: 0.75rem; }
+      /* The credit sits under the date and reads at the same weight: it is a
+         fact about the page, not a signature the page is proud of. */
+      .doc-credit { max-inline-size: 44rem; }
+      /* 21st.dev's team-member-card, repainted. Every measurement below is the
+         catalogue component's own, converted out of its Tailwind classes: my-16
+         is 64px, mb-4 is 16px, w-90 by h-125 is 360 by 500, its negative inline
+         offset of 8 is 32px (written out rather than quoted, because g4 reads
+         this file for physical direction words and it is right to),
+         gap-14 is 56px, text-5xl is 48px, text-xs is 12px, text-sm is 14px. */
+      .doc-member { margin-block: 4rem; }
+      .doc-member__role { margin-block-end: 1rem; font-size: 0.75rem;
+        font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
+        color: var(--color-ink-dim); }
+      /* No side is named anywhere in this card. In Hebrew the portrait falls at
+         the start of the row and the panel overlaps it from the end; the same
+         two rules put them the other way round in English. */
+      /* stretch, where the catalogue centres, and this took three goes.
+         Centring is right when the panel and the picture are near the same
+         height, and these two never are: one biography is three paragraphs and
+         the other is one, and the English of the first is longer again than its
+         Hebrew. Centred, the shorter name began 93px below the top edge of its
+         photograph. Aligned at the start, the top edges met and the longest
+         biography then hung 168px below the bottom of the picture beside it.
+         Stretched, the picture is as tall as the words are: both edges meet at
+         once, which is what the owner asked for. */
+      .doc-member__row { display: flex; align-items: stretch;
+        justify-content: flex-end; }
+      /* z-index 1 rather than none, so the frame is a stacking context and the
+         wash inside it stays inside it. Without this the wash sits at 10 in the
+         page's own stacking order and paints over the panel at 2. */
+      /* 500px is the catalogue's height, and it is the floor rather than the
+         figure: the frame grows with the biography beside it and never shrinks
+         under a short one. The cover fit on the image below is what makes that
+         safe, and the sources are 720 by 1000, so there is height in hand to
+         crop from at every size this reaches. */
+      .doc-member__frame { position: relative; z-index: 1; flex: none;
+        inline-size: 360px; min-block-size: 500px; overflow: hidden; }
+      .doc-member__frame picture { display: block; block-size: 100%; }
+      .doc-member__frame img { inline-size: 100%; block-size: 100%;
+        object-fit: cover;
+        transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1); }
+      .doc-member__frame:hover img { transform: scale(1.05); }
+      /* The catalogue washes black up from the foot of the picture. Kept
+         literally, because it is what settles a photograph onto a dark ground. */
+      .doc-member__veil { position: absolute; inset: 0; z-index: 10;
+        pointer-events: none;
+        background: linear-gradient(to top, rgb(0 0 0 / 0.2), transparent 50%); }
+      /* The overlap is the card's signature: the panel's box tucks 32px under
+         the picture. What must NOT tuck under it is the words, and in the
+         catalogue nothing does, because the 80px circle stands at the start of
+         the lower row and absorbs exactly that much. The circle is not here, so
+         the panel pays it back as padding.
+         3.75rem rather than the 2rem that merely cancels the overlap: at 2rem
+         every line ended flush on the photograph, losing nothing and reading as
+         though it had been cut. Measured, on the widest line of each: the ink
+         stopped at 603px and the picture began at 603px. The extra 28px is the
+         air that makes the two read as separate things. */
+      .doc-member__panel { position: relative; z-index: 2;
+        margin-inline-start: -2rem; padding-inline-start: 3.75rem;
+        inline-size: calc(100% - 320px);
+        display: flex; flex-direction: column; gap: 3.5rem; }
+      .doc-member__name { margin: 0; font-size: 3rem; line-height: 1.1;
+        font-weight: 200; letter-spacing: -0.025em; color: var(--color-ink); }
+      .doc-member__name span { font-weight: 400; }
+      /* One paragraph or three. The panel's own 3.5rem holds the name off the
+         biography; inside it the paragraphs sit at a reading gap. */
+      .doc-member__bio { display: flex; flex-direction: column; gap: 1rem; }
+      .doc-member__bio p { margin: 0; font-size: 0.875rem; line-height: 1.8;
+        color: var(--color-ink-soft); }
+      /* The catalogue card is built for a page that is nothing but the card. In
+         a 44rem reading column the panel runs out of room first, so below 46rem
+         the two stack and the frame gives up its fixed width. */
+      @media (max-width: 46rem) {
+        .doc-member__row { display: block; }
+        .doc-member__frame { inline-size: 100%; max-inline-size: 360px;
+          block-size: auto; min-block-size: 0; aspect-ratio: 360 / 500; }
+        .doc-member__panel { margin-inline-start: 0; inline-size: 100%;
+          gap: 1.5rem; margin-block-start: 1.75rem; }
+        .doc-member__name { font-size: 2.25rem; }
+      }
+      /* The light view: the same wash, and the two type colours this page
+         already uses for a heading and for body. */
+      :root[data-theme="light"] .doc-member__name { color: var(--color-ink-on-light); }
+      :root[data-theme="light"] .doc-member__bio p,
+      :root[data-theme="light"] .doc-member__role { color: var(--color-ink-on-light-soft); }
       .doc-table { border-collapse: collapse; inline-size: 100%; min-inline-size: 28rem; font-size: 0.95rem; }
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
         border-block-end: 1px solid var(--color-onyx-line); }
@@ -344,10 +661,20 @@ export function pageHtml(
 
   // Every supporting page exists in both editions as of 27.08.2026, the two
   // legal documents included, so every one of them names its twin.
+  //
+  // x-default points at the ENGLISH edition, which is what index.html and
+  // en/index.html have always said and what these pages said the opposite of
+  // until 28.08.2026. Two homes claiming /en/ and sixteen supporting pages
+  // claiming the Hebrew one is a site arguing with itself about which document
+  // serves a reader whose language matches neither, and a crawler resolving
+  // that argument is not obliged to resolve it the way anybody here would.
+  // English is the right answer to the question x-default actually asks: a
+  // Hebrew speaker is already served by hreflang="he", so the fallback is only
+  // ever read by somebody who is neither.
   const alternates = `
     <link rel="alternate" hreflang="he" href="${ORIGIN}/${page.slug}/" />
     <link rel="alternate" hreflang="en" href="${ORIGIN}/en/${page.slug}/" />
-    <link rel="alternate" hreflang="x-default" href="${ORIGIN}/${page.slug}/" />`
+    <link rel="alternate" hreflang="x-default" href="${ORIGIN}/en/${page.slug}/" />`
 
   return `<!doctype html>
 <html lang="${locale}" dir="${t.dir}">
@@ -410,8 +737,8 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
       <main>
         <p class="eyebrow">${escape(page.eyebrow)}</p>
         <h1>${copy(page.h1)}</h1>
-        <p class="lede">${copy(page.lede)}</p>
-${page.sections.map(section).join('\n')}
+        <p class="lede">${copy(page.lede)}</p>${page.image ? picture(page.image) : ''}
+${page.sections.map((s) => section(s, locale)).join('\n')}
 
 ${
           page.legal
@@ -438,7 +765,33 @@ ${
       </main>
 
       <footer class="doc-foot">
-        <p class="eyebrow">InPlace</p>
+        <p class="eyebrow">InPlace</p>${
+          DATES[page.slug]
+            ? `
+        <p class="cap"><time datetime="${DATES[page.slug].updated}">${escape(
+                t.updated
+              )} ${escape(
+                new Intl.DateTimeFormat(t.dateFormat, {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                }).format(new Date(`${DATES[page.slug].updated}T00:00:00Z`))
+              )}</time></p>`
+            : ''
+        }${
+          /* The credit, on the six professional pages and not on the two legal
+             ones. It is the sentence the `author` node declares, printed where a
+             reader can see it: a declaration a page does not make in its own
+             words is a claim about the page rather than a fact of it. */
+          page.legal
+            ? ''
+            : `
+        <p class="cap doc-credit">${escape(
+          peopleByLocale[locale].credit
+            .replace('{expert}', fullName(peopleByLocale[locale].nir))
+            .replace('{builder}', fullName(peopleByLocale[locale].moshe))
+        )}</p>`
+        }
         <div class="doc-rail">
           ${pill(locale === 'he' ? '/' : '/en/', escape(t.home))}
           ${pill('https://app.inplace.digital', escape(t.login))}

@@ -383,8 +383,11 @@ the reader who asked for less motion, and the render that has no window at all.
     CHECK: node scripts/gates/g21-schema.mjs
     EXPECT: G21 PASS
 
-**MET.** Home: Organization, WebSite, SoftwareApplication with four offers.
-Each supporting page: Organization, WebSite, WebPage, BreadcrumbList.
+**MET.** Home: Organization, WebSite, SoftwareApplication with four offers,
+VideoObject, WebPage, and a FAQPage carrying eight questions.
+Each professional page: Organization, WebSite, WebPage, BreadcrumbList and the
+Person who authored it. `/about/` carries a second Person and the Organization's
+`founder`. The two legal documents carry neither.
 
 There were no `application/ld+json` blocks at all. The block is generated in
 `src/entry-static.tsx` from the same dictionary the page renders, so the prices
@@ -396,16 +399,77 @@ Offers exist only where prices are printed. A supporting page that discusses the
 product without publishing the catalogue declares no offers, because an Offer on
 a page with no price is a claim with no source.
 
-**What it forbids, and why:**
+**The questions, in both directions.** `FAQPage` was on the forbidden list until
+28.08.2026, because Google retired FAQ rich results for every site on
+07.05.2026 and there was no SERP feature left to earn. That reasoning was sound
+about the wrong reader: a rich result is a Google feature, and ChatGPT,
+Perplexity and Claude parse `FAQPage` to lift a question and its answer as a
+unit whether or not Google draws an accordion. The eight answers were already on
+the page in native `<details>` and already readable with JavaScript switched off.
+Only the declaration was missing.
+
+So the type is allowed, and it is held to the page the way the prices are. Every
+question carries `data-faq-q` in the markup; the gate asserts that each one is
+declared and each declared one is printed, and that no Answer is empty.
+
+**This is the assertion that caught its own first draft.** The chapter renders
+seven questions from `he.ts` and an eighth from `extra.ts`, because g2 freezes
+`he.ts` leaf by leaf and a new key there fails the build. The first cut of the
+node read only `d.faq.items` and declared seven, and the gate failed it by name:
+`prints a question no FAQPage declares`. A one-directional check would have
+passed it, and the page would have shipped an eighth answer no engine was told
+about.
+
+**The people, by the same rule as the prices.** Until 28.08.2026 the answer this
+site gave to "who is behind it" was a registration number and an address. That
+identifies an entity, and experience is a property of people; in a subject that
+is about other people's money every engine weighs that harder than it does
+elsewhere. Two `Person` nodes now, `founder` on the Organization and `author` on
+each of the six professional pages, all read out of `src/content/people.ts` so
+the page and the graph cannot disagree about who built this.
+
+The gate holds them to the page in both directions, as it does the offers: every
+name printed with `data-person` is declared, every `Person` declared is named in
+the page's text, and every `founder` and `author` reference resolves to a node in
+that document's own graph.
+
+**It moved the founders once already.** The first cut declared them on the home
+page, under the Organization, where all the other company facts sit. The gate
+failed it — `declares a Person the page never names` — and it was right by this
+file's oldest rule: an Offer on a page with no price is a claim with no source,
+and a founder on a page that never names him is the same claim. They are declared
+on `/about/`, which is the page that prints them, and nowhere else.
+
+An empty `description` fails too, and the mechanism is kept now that both
+biographies exist: the generator omits the key rather than sending an empty
+string, because a blank description declares that a person has none, which is a
+different statement from making none.
+
+Both founders carry a portrait, and G23 held them to the same standard as the
+product screenshots the moment they appeared. It failed the first cut twice over
+— no WebP `<source>` for a browser without AVIF, and a `srcset` candidate with no
+width descriptor — and the fix was to conform rather than to narrow the gate. One
+rung is not a ladder, but a candidate that does not declare its width is a file
+whose size the browser has to guess at, and that is true at any number of rungs.
+
+G4 then caught the card that carries them, in the one place nobody looks: a
+comment. The card is 21st.dev's team-member-card, and documenting what its
+Tailwind classes convert to meant writing one of those class names out, which
+contains a physical direction. The gate reads this file for exactly that and does
+not care that the occurrence is prose. It is right not to care — the next person
+to copy a line out of a comment into a rule would ship it — so the measurement is
+written out in words instead.
+
+Neither node carries `sameAs`. The owner's decision of 28.08.2026 is that no
+personal profile is published here and the only external profile this site will
+carry is the company's own, which does not exist yet. Item 21.
+
+**What it still forbids, and why:**
 
 | type | why not |
 |---|---|
-| `FAQPage` | Google retired FAQ rich results for every site on 07.05.2026 |
 | `Review`, `AggregateRating` | the quotes are `placeholder: true` and the page says so in its own words; marking them up as customer reviews turns an honest disclosure into a violation |
-| `HowTo` | deprecated since 2023 |
-
-`address` and `telephone` are absent from the Organization for the same family
-of reasons: nobody has supplied them, and an invented address is worse than none.
+| `HowTo` | retired as well, and there are no steps on this page waiting to be declared. A schema type is not a reason to write copy |
 
 ## G22 — how much JavaScript stands between the reader and the page
 
@@ -446,6 +510,164 @@ printed on every run; it is a note, not a verdict.
 **The shader test looks for GLSL, not for a name.** The first cut grepped the
 startup chunks for "GrainGradient" and failed on a correct build, because the
 entry legitimately names the export it is lazily importing.
+
+## G23 — the quiet four, from the audit of 28.08.2026
+
+    CHECK: node scripts/gates/g23-seo.mjs
+    EXPECT: G23 PASS
+
+**MET.** 18 documents checked, 12 image ladders, 24 `<picture>` wrappers, 18
+URLs in `llms.txt`, 12 product screens with no page repeating another's.
+
+Four things the site got wrong without breaking anything. None of them showed up
+in a screenshot, none of them failed a gate, and all four are the kind that come
+back the first time somebody copies a `<head>` or adds a locale.
+
+**1. The site answered `x-default` twice, differently.** `index.html` and
+`en/index.html` named the English edition; the sixteen supporting pages named
+the Hebrew one. That is the site arguing with itself about which document serves
+a reader whose language matches neither, and a crawler settling the argument is
+under no obligation to settle it the way anybody here would have. It is English
+everywhere now: a Hebrew reader is already served by `hreflang="he"`, so the
+fallback is only ever read by somebody who is neither. The gate asserts the
+`x-default` href equals the `en` href on every page, and that the address it
+names is a page the build actually produced.
+
+**2. The screenshots had one width, and phones paid for it.** Measured on
+27.08.2026: the panels are drawn at **863 CSS px** on a 1512px desktop and at
+**344** on a 390px phone, against source files of 2000px. At a device-pixel
+ratio of 2 the desktop wants 1,726 of those pixels and is right to have them;
+the phone wants 780 and downloads 2000.
+
+The first fix was a single 1000px rung, and measurement is the only reason it
+did not ship: on a ratio-3 phone it changed **nothing**. 390 x 3 is 1,170, a
+browser never picks a candidate narrower than it needs, and 1,170 is more than
+1,000, so it stepped straight past the new file to the original. The ladder is
+800 and 1400 now, and both are used:
+
+| viewport | ratio | picked |
+|---|---|---|
+| 1512 x 900 | 2 | the full-width AVIF |
+| 390 x 844 | 3 | `-1440.avif` |
+| 390 x 844 | 2 | `-800.avif` |
+| the 702px reading column, 1512 x 900 | 2 | `-1440.avif` |
+
+The middle rung is **1440 and not a round 1400**, and the forty pixels are the
+whole point: the supporting pages draw these inside a 702px reading column,
+which is 1,404 device pixels on a ratio-2 desktop. Four pixels over a 1400 rung,
+so the browser skipped it and fetched the 2000px file for a 702px slot — 66KB
+where 20KB would do.
+
+AVIF sits in front of the WebP in a `<picture>`, and it too was measured before
+it was built, because the owner's condition was that it ship only if it paid on
+*this* material — interface screenshots, which are large flat fields and small
+text, the case WebP already handles well. On the largest of the twelve, against
+the WebP that ships: **45% smaller at a structural similarity of 0.997**. Across
+all thirty-six files it is 39% smaller. `yuv444p` rather than the usual 420,
+which was 4KB smaller and smeared the teal figures.
+
+The order of the sources is the feature, so the gate asserts it: the browser
+takes the first type it understands, and a WebP source written above the AVIF
+one means no browser ever reaches the AVIF, with nothing about the page looking
+wrong.
+
+So the gate does not assert "a srcset exists". It asserts that every width named
+is a file in the build, that there is a rung at or below 800w, and that there is
+a rung between 1170w and the widest — which is the assertion the 1000px version
+would have failed.
+
+It also asserts the narrow cuts appear in NEITHER the sitemap NOR the
+`SoftwareApplication` graph. They are the same six pictures; offering each three
+times would describe a product with eighteen screens.
+
+**3. Nothing on the site carried a date.** Not in the markup, not on the screen.
+An answer engine weighs a page it can date against one it cannot, and this one
+could not be dated at all. The supporting pages now declare `datePublished` and
+`dateModified` and print the second one in their footer inside a `<time>`; the
+gate asserts the visible stamp and the structured one are the same string, which
+is the failure mode that matters — a page that says one date to a reader and
+another to a crawler.
+
+The dates are written by hand in `DATES` in `src/lib/page-html.ts`, keyed by
+slug so the two editions of one document cannot drift. The alternatives were
+measured and rejected: a file mtime is the moment of `git clone` on the build
+machine, and the build date would tell every engine that all eighteen pages were
+revised this morning, every morning.
+
+**4. `llms.txt` did not exist.** Google says in as many words that it does not
+read it and that it changes nothing in Search, so this earns nothing from the
+engine that sends most of the traffic. It is published anyway, for the same
+reason `robots.txt` carries no `Disallow`: the owner's decision of 27.08.2026 is
+that this page wants to be quoted, several smaller answer engines do fetch it,
+and 6KB is a cheap bet.
+
+It is **generated**, from the titles and descriptions the built documents
+declare, because the hand-written `public/sitemap.xml` was wrong within the hour
+of being written and was still claiming this was a one-page site on the day it
+was deleted. The gate walks both directions: every built page appears in
+`llms.txt`, and every URL in `llms.txt` is a page that was built.
+
+### The three the owner decided on 28.08.2026
+
+**5. Twelve screens, and no page repeating another's.** The supporting pages had
+no picture at all. The first fix gave them one each out of the six the home page
+already shows, and the owner's objection to that is right in both directions: a
+reader arriving from the home page meets the same picture twice, and image
+search is offered one file claiming to be two subjects.
+
+So there are twelve now. `scripts/capture-app-dated.mjs` took them from the
+running application against the local demo tenant, with its clock set to
+17.07.2026 so the month cards are not empty, and `scripts/build-doc-shots.mjs`
+records which page carries which:
+
+| page | screen | why that screen |
+|---|---|---|
+| `/procurement-software/` | suppliers | where a purchase chain starts |
+| `/supplier-invoices/` | credits | the page's own credits section |
+| `/invoice-matching/` | alerts | the duplicate-invoice catch |
+| `/vs-spreadsheet/` | price lists | exactly the spreadsheet's job |
+| `/vs-erp/` | supplier performance | the question an ERP answers after a project |
+| `/about/` | bank reconciliation | the third role, at work |
+
+The two legal documents carry **none**, and the gate asserts that too, because
+deliberate absence and forgetting look identical in a build: no screen in the
+product depicts a terms of use, and one chosen to fill the space is decoration
+on the page a reader is reading in order to decide something.
+
+Finding these took fixing the capture script, which had been broken for a while
+and did not say so. It asked the app for `/price-lists`; NIR-APP's own route
+table calls it `/prices`, so the router bounced the request to the role's home
+and the script wrote a **second copy of the dashboard** under the name
+`office-price-lists`, reporting `ok`. A capture script cannot tell a redirect
+from an arrival unless it looks.
+
+The gate reads only what a page **draws**. The home page's `SoftwareApplication`
+node lists all twelve, because all twelve are screens of the product; counting
+the graph as well would make every page look like a repeat of every other.
+
+**6. The film is declared.** `VideoObject`, with the risk stated rather than
+waved off: this is a rendered visualisation with no voice and no narrative, and
+marking it up as a video is a claim that somebody arriving from a video result
+gets a video. What makes it honest is that the page says so first — the caption
+under the film opens with the word *visualisation* in both editions — and the
+gate asserts the declaration is **that same sentence**, present in the page's own
+markup, and not a second description written for search. It also opens both
+files the node names, because a `thumbnailUrl` pointing at nothing is a promise
+that 404s.
+
+**7. IndexNow, fired by itself.** Bing, Yandex and Naver take a push
+notification; Google does not participate, so nothing here changes anything in
+Google Search. The protocol proves control of the host with a file whose **name**
+is the key and whose **content** is the same key, which is a pair that can drift
+in silence — so the gate asserts there is exactly one such file and that the two
+halves agree.
+
+`scripts/ping-indexnow.mjs` reads the **live** sitemap rather than the build:
+the point of the call is "these addresses have new content now", and the only
+thing that knows what is being served is the thing serving it. A failure exits
+0. As of 28.08.2026 the domain does not resolve at all, so what the script
+currently prints is `IndexNow not sent: … could not be fetched` — which is the
+correct answer, and the workflow does not fail over it.
 
 ---
 

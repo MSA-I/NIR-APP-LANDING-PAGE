@@ -56,6 +56,13 @@
     <meta property="og:site_name" content="InPlace" />
     <meta property="og:locale" content="he_IL" />
     <!--
+      The other edition, named. en/index.html has declared its Hebrew twin here
+      since it was written; this page did not declare its English one, so a
+      chat client reading the pair was told the relationship in one direction
+      only.
+    -->
+    <meta property="og:locale:alternate" content="en_US" />
+    <!--
       The share card. Built by scripts/build-og.mjs out of scripts/og-template.html,
       so the picture that represents this page in a chat window is reviewable and
       rebuildable rather than a binary somebody exported once.

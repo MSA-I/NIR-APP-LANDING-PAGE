@@ -29,7 +29,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MotionConfig } from 'motion/react'
 import App from './App'
-import { contentByLocale, type LocaleCode } from './content/locales'
+import { contentByLocale, extraByLocale, type LocaleCode } from './content/locales'
 import site from './content/pages'
 import siteEn from './content/pages.en'
 import { pageHtml } from './lib/page-html'
@@ -48,6 +48,56 @@ export function render(locale: LocaleCode = 'he') {
 const ORIGIN = 'https://inplace.digital'
 
 /**
+ * Every screen of the product this site publishes, at full width.
+ *
+ * Written out rather than read off the dictionaries because they are spread
+ * across four files — five stations and a board in `he.ts`, and one per
+ * supporting page in `pages.ts` — and the graph wants one absolute list.
+ *
+ * The narrow `-800` and `-1440` cuts that scripts/build-shots.mjs writes are
+ * deliberately absent, and so are the AVIF twins of all of them: they are the
+ * same twelve pictures at other sizes and in another format, and offering each
+ * six times over would describe a product with seventy-two screens.
+ */
+const SCREENSHOTS = [
+  // The six the home page shows, in the order it shows them.
+  'screen-office-orders',
+  'screen-office-receiving',
+  'screen-office-invoices',
+  'screen-owner-exceptions',
+  'screen-owner-payment-requests',
+  'screen-owner-dashboard',
+  // The six the supporting pages show, added 28.08.2026. They are six OTHER
+  // screens rather than these six again, on the owner's instruction, and
+  // scripts/build-doc-shots.mjs records which page carries which.
+  'screen-office-suppliers',
+  'screen-office-credits',
+  'screen-owner-alerts',
+  'screen-office-prices',
+  'screen-owner-analytics',
+  'screen-accountant-bank',
+].map((n) => `${ORIGIN}/assets/${n}.webp`)
+
+/**
+ * When the home page's words last changed.
+ *
+ * The same rule as `DATES` in src/lib/page-html.ts, and for the same reason:
+ * change it in the commit that changes what the page says, never in a commit
+ * that changes how it looks. A build date here would tell every answer engine
+ * that this page was revised this morning, every morning.
+ */
+const UPDATED = '2026-08-27'
+
+/**
+ * Authored copy, as the text a machine should read.
+ *
+ * Everything in the dictionaries is written for the page: emphasis as <b>, and
+ * &nbsp; where two words must not be split across a line. Neither belongs in a
+ * schema string, which is read rather than laid out.
+ */
+const plain = (s: string) => s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')
+
+/**
  * The structured data, built from the same dictionary the page renders.
  *
  * Generated rather than hand-written for one reason: the prices. `he.ts` is the
@@ -55,9 +105,23 @@ const ORIGIN = 'https://inplace.digital'
  * beside it would be a second catalogue that nothing compares, and the first
  * time a price moved the page and the markup would disagree in public.
  *
+ * WHY `FAQPage` IS HERE AFTER ALL
+ * It was absent until 28.08.2026, on the ground that Google retired FAQ rich
+ * results for every site on 07.05.2026. That reasoning was sound and it was
+ * about the wrong reader. A rich result is a SERP feature; this block is not
+ * published to earn one. ChatGPT, Perplexity and Claude parse `FAQPage` to
+ * lift a question and its answer as a unit, and they do it whether or not
+ * Google draws an accordion. The seven answers were already on the page, in
+ * native `<details>`, readable with JavaScript switched off; the only thing
+ * missing was the declaration that they are questions and answers.
+ *
+ * It costs nothing to be wrong about this. Google ignores a `FAQPage` it will
+ * not render, which is the same thing it did before the block existed.
+ *
  * WHAT IS DELIBERATELY ABSENT
- * - `FAQPage`. Google retired FAQ rich results for every site on 07.05.2026.
- *   There is no SERP feature left to earn, and claiming one is not a reason.
+ * - `HowTo`. Google retired it as well, and unlike the answers above there is
+ *   no set of steps on this page waiting to be declared. It would have to be
+ *   written first, and a schema type is not a reason to write copy.
  * - `Review` / `AggregateRating`. The quotes in src/content/extra.ts are marked
  *   `placeholder: true` and the page says in its own words that they are
  *   examples written in-house, not customers. Marking them up as reviews would
@@ -149,6 +213,19 @@ export function schema(locale: LocaleCode = 'he') {
             availableLanguage: ['he', 'en'],
           },
         ],
+        // NO `founder` HERE, and the reason is this gate's oldest rule.
+        //
+        // Until 28.08.2026 the answer this site gave to "who is behind it" was a
+        // registration number and an address, which identifies an entity and not
+        // a person. Experience is a property of people, and in a subject that is
+        // about other people's money every engine weighs that harder. So the two
+        // founders are declared now.
+        //
+        // They are declared on /about/, which is the page that prints them. This
+        // home page never names either man, and g21 already holds that an Offer
+        // on a page with no price is a claim with no source. A founder on a page
+        // that does not name him is the same claim, and the gate said so: it
+        // failed the first cut of this block by name.
       },
       {
         '@type': 'WebSite',
@@ -169,9 +246,89 @@ export function schema(locale: LocaleCode = 'he') {
         inLanguage: lang,
         // The title page's lede is two paragraphs; the first is the sentence
         // that says what the product does, which is what a description is for.
-        description: d.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
+        description: plain(d.title_page.lede[0]),
         publisher: { '@id': `${ORIGIN}/#organization` },
+        // The screens the page already shows. They were in the sitemap for
+        // image search and in the markup with their alt text, and nowhere in
+        // the graph, so nothing tied a picture of the product to the entity
+        // that is the product.
+        screenshot: SCREENSHOTS,
         offers,
+      },
+      // The film, declared.
+      //
+      // The owner's ruling of 28.08.2026, taken with the risk stated: this is a
+      // rendered visualisation of the workflow, with no voice and no narrative,
+      // and marking it up as a video is a claim that a reader clicking through
+      // from a video result gets a video. The page does not hide what it is —
+      // the caption below the film opens with the word "visualisation" in both
+      // editions, and that same sentence is the `description` here, so the
+      // declaration says exactly what the page says.
+      //
+      // `contentUrl` is the desktop cut. The phone cut is the same film at
+      // another size, and offering both would describe two videos.
+      {
+        '@type': 'VideoObject',
+        '@id': `${url}#film`,
+        name: d.film.folio,
+        description: d.film.caption,
+        inLanguage: lang,
+        // The film was rebuilt on this date, at the compression the owner
+        // approved after reviewing it frame by frame. Change it when the film
+        // changes, not when the page does.
+        uploadDate: '2026-08-28',
+        // 34.88 seconds, from ffprobe. ISO 8601 takes whole seconds.
+        duration: 'PT35S',
+        thumbnailUrl: `${ORIGIN}/assets/film.webp`,
+        contentUrl: `${ORIGIN}/assets/film.mp4`,
+        embedUrl: url,
+        publisher: { '@id': `${ORIGIN}/#organization` },
+      },
+      // The document itself. The other three nodes describe the company, the
+      // site and the software; none of them described the page a reader is on,
+      // which is the node every supporting page has carried since it was
+      // written and the home page had not.
+      {
+        '@type': 'WebPage',
+        '@id': `${url}#webpage`,
+        url,
+        name: d.brand,
+        description: plain(d.title_page.lede[0]),
+        inLanguage: lang,
+        dateModified: UPDATED,
+        isPartOf: { '@id': `${url}#website` },
+        publisher: { '@id': `${ORIGIN}/#organization` },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          '@id': `${url}#primaryimage`,
+          url: `${ORIGIN}/assets/screen-owner-dashboard.webp`,
+          width: 1800,
+          height: 1788,
+        },
+      },
+      // Chapter 05, declared as what it already is.
+      //
+      // Read out of the same two lists App.tsx hands the chapter, in the same
+      // order: the seven in `he.ts`, then the eighth in `extra.ts`, which lives
+      // there because g2 freezes `he.ts` leaf by leaf and a new key in it fails
+      // the build. Declaring only the seven is what the first cut of this node
+      // did, and g21 failed it — which is the whole point of comparing the graph
+      // with the markup in both directions, exactly as it does for the prices.
+      //
+      // The answers are authored with <b> and &nbsp; for the page. Schema takes
+      // text, so both come out here, and the answer an engine quotes is the
+      // sentence a reader reads rather than a fragment of markup.
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        name: plain(d.faq.h2),
+        inLanguage: lang,
+        isPartOf: { '@id': `${url}#webpage` },
+        mainEntity: [...d.faq.items, ...extraByLocale[locale].faqExtra.items].map((item) => ({
+          '@type': 'Question',
+          name: plain(item.q),
+          acceptedAnswer: { '@type': 'Answer', text: plain(item.a) },
+        })),
       },
     ],
   }

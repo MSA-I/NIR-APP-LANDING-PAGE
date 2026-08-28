@@ -30,6 +30,21 @@ const NAV_STEP: Record<string, number> = {
 
 const navKey = (img: string) => img.replace(/^assets\/screen-/, '').replace(/\.webp$/, '')
 
+/**
+ * The srcset for one shot in one format.
+ *
+ * Three widths, written by scripts/build-shots.mjs, which also carries the
+ * measurement behind the two narrow numbers. These five panels are all
+ * 2000x1334, so the widest descriptor is a constant here; the control centre in
+ * BoardChapter is 1800 wide and says so itself.
+ */
+const ladder = (img: string, ext: 'avif' | 'webp') => {
+  const base = img.replace(/\.webp$/, '')
+  return `/${base}-800.${ext} 800w, /${base}-1440.${ext} 1440w, /${base}.${ext} 2000w`
+}
+
+const SIZES = '(min-width: 1024px) 55rem, 100vw'
+
 export function WhatChapter({
   folio,
   eyebrow,
@@ -162,15 +177,35 @@ export function WhatChapter({
 
                   <figure className="m-0">
                     <div className="relative overflow-clip rounded-[10px] border border-wheat-line bg-white shadow-[0_30px_70px_-40px_rgba(10,23,29,0.55)]">
-                      <img
-                        src={`/${s.img}`}
-                        alt={`${title}. ${screenAltSuffix}`}
-                        width={2000}
-                        height={1334}
-                        loading={i === 0 ? 'eager' : 'lazy'}
-                        decoding="async"
-                        className="w-full"
-                      />
+                      {/* Two formats and three widths, and the browser picks
+                          both. The panel is drawn at about 863 CSS px on a
+                          1512px desktop and at 344 on a 390px phone, so the
+                          2000px file is right for one of them and four times
+                          too many pixels for the other; 800 serves a phone at
+                          device-pixel-ratio 2 and 1440 serves one at 3.
+
+                          AVIF first because the browser takes the first type it
+                          understands, and it is 40% smaller than the WebP on
+                          this material. Both numbers were measured before any
+                          of this was built; the tables are in
+                          scripts/build-shots.mjs. The <img> keeps the WebP
+                          ladder, so a browser without AVIF and every crawler
+                          still read a complete picture. */}
+                      <picture>
+                        <source type="image/avif" srcSet={ladder(s.img, 'avif')} sizes={SIZES} />
+                        <source type="image/webp" srcSet={ladder(s.img, 'webp')} sizes={SIZES} />
+                        <img
+                          src={`/${s.img}`}
+                          srcSet={ladder(s.img, 'webp')}
+                          sizes={SIZES}
+                          alt={`${title}. ${screenAltSuffix}`}
+                          width={2000}
+                          height={1334}
+                          loading={i === 0 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          className="w-full"
+                        />
+                      </picture>
                       <div aria-hidden="true">
                         {panelHots.map((n) => (
                           <button

@@ -211,12 +211,14 @@ things on this page that nothing measures.
 | `world/` | The scene the film is rendered from: the world, its textures, its product captures |
 | `scripts/gates/` | The harness behind [GATES.md](GATES.md) |
 | `src/content/pages.ts` | The six supporting pages, with the product document each claim comes from |
+| `src/content/people.ts` | The two founders: who wrote the pages, and who built the system |
 | `src/lib/page-html.ts` | Those pages as documents: no client JavaScript, the site's own stylesheet |
 | `src/entry-static.tsx` | The build-time entry: the page as a string, the structured data, the supporting pages |
 | `scripts/prerender.mjs` | Writes all of that into `dist/` after `vite build` |
 | `scripts/build-sitemap.mjs` | `sitemap.xml`, derived from the pages that were actually built |
 | `scripts/faststart.mjs` | Moves the MP4 index to the front, and proves nothing else moved |
 | `scripts/build-og.mjs` | The share card, drawn in the browser from `og-template.html` |
+| `scripts/build-portraits.mjs` | The two founder portraits, 720x1000, WebP and AVIF |
 | `public/robots.txt`, `_headers`, `404.html` | What the host and the crawlers ask for |
 | `world/renders/` | The numbered world renders. Kept, reproducible, and out of the build |
 | `archive/build3/` | Build 3 entire, unedited: page, styles, engine, its own ledger |

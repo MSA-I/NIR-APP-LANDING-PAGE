@@ -39,6 +39,15 @@ export type Section = {
   table?: { headers: [string, string]; rows: [string, string][] }
   /** Runs after the list or the table, and closes the section. */
   after?: string[]
+  /**
+   * Print the two founders here, between the paragraphs and the table.
+   *
+   * Set on exactly one section of one page. The names and the biography are in
+   * src/content/people.ts rather than in the copy above, because the two
+   * structured-data generators declare the same people and a second copy in
+   * prose is a second copy that nothing compares.
+   */
+  people?: true
 }
 
 export type Page = {
@@ -51,6 +60,41 @@ export type Page = {
   h1: string
   lede: string
   sections: Section[]
+  /**
+   * One screen of the product, on the page that describes it.
+   *
+   * Added 28.08.2026. Until then these eight pages carried no picture at all:
+   * `/invoice-matching/` explained the invoice check and did not show the
+   * screen that performs it, while the screen itself sat on the home page under
+   * an `alt` written for the home page's argument. That cost twice over — a
+   * page with only text is picked less often by an answer engine, and an image
+   * ranks on the context around it, and the strongest context these six shots
+   * will ever have is the page that is about exactly them.
+   *
+   * The two legal documents carry none, and that is not an oversight: no screen
+   * in the product depicts a terms of use, and a screenshot chosen to fill the
+   * space would be decoration on the one page a reader is reading in order to
+   * decide something.
+   *
+   * `alt` is written for this page and this screen. `cap` is the line under it,
+   * and it says what the picture is doing in this argument.
+   *
+   * WHY THESE ARE NOT THE HOME PAGE'S SIX SCREENS
+   * The first cut of this field reused them, and the owner's instruction of
+   * 28.08.2026 was that it must not: a reader arriving from the home page would
+   * meet the same picture twice, and image search would be offered one file
+   * claiming to be two subjects. These are six OTHER screens of the same
+   * product — suppliers, credits, alerts, price lists, supplier performance,
+   * bank reconciliation — captured from the running application and listed in
+   * scripts/build-doc-shots.mjs against the page each belongs to.
+   *
+   * `w` and `h` are the real pixel size of the file, per image rather than a
+   * constant, because two of the six are cropped and are therefore not the
+   * 2000x1333 the other four are. A width or height attribute that disagrees
+   * with the file reserves the wrong amount of space and moves the page as the
+   * picture lands, which is the layout shift these attributes exist to prevent.
+   */
+  image?: { src: string; w: number; h: number; alt: string; cap: string }
   related: string[]
   source: string
   /**
@@ -169,6 +213,13 @@ const pages: Page[] = [
         ],
       },
     ],
+    image: {
+      src: 'assets/screen-office-suppliers.webp',
+      w: 2000,
+      h: 1333,
+      alt: 'מסך הספקים ב‑InPlace: רשימת הספקים עם קטגוריה, איש קשר, מינימום הזמנה והתראות פתוחות',
+      cap: 'כל ספק במקום אחד, עם מה שצריך לדעת עליו לפני שמזמינים ממנו.',
+    },
     related: ['supplier-invoices', 'invoice-matching', 'vs-erp'],
     source: 'PRODUCT.md (Users, Capability contract, Product Purpose); he.ts (plans)',
   },
@@ -233,6 +284,13 @@ const pages: Page[] = [
         ],
       },
     ],
+    image: {
+      src: 'assets/screen-office-credits.webp',
+      w: 2000,
+      h: 799,
+      alt: 'מסך הזיכויים ב‑InPlace: דרישות זיכוי מול ספקים, הסיבה לכל אחת והחשבונית שאליה היא מקושרת',
+      cap: 'חשבונית שגויה לא נמחקת. נפתחת מולה דרישת זיכוי, והיא נשארת פתוחה עד שהכסף חוזר.',
+    },
     related: ['invoice-matching', 'procurement-software', 'vs-spreadsheet'],
     source: 'PRODUCT.md (Capability contract, Product Purpose); he.ts (chapter 02, why.yes)',
   },
@@ -305,6 +363,13 @@ const pages: Page[] = [
         ],
       },
     ],
+    image: {
+      src: 'assets/screen-owner-alerts.webp',
+      w: 2000,
+      h: 788,
+      alt: 'מסך ההתראות ב‑InPlace: חשד לחיוב כפול, הזמנות שטרם אושרו, מחירים שעלו וחשבוניות ללא הזמנה',
+      cap: 'אותו ספק, אותו מספר חשבונית, פעמיים. בתיקייה אף אחד לא היה שם לב לזה.',
+    },
     related: ['supplier-invoices', 'procurement-software', 'vs-spreadsheet'],
     source: 'PRODUCT.md (Product Purpose, Design Principles 5); he.ts (film blocks, chapter 02)',
   },
@@ -373,6 +438,13 @@ const pages: Page[] = [
         ],
       },
     ],
+    image: {
+      src: 'assets/screen-office-prices.webp',
+      w: 2000,
+      h: 1333,
+      alt: 'מסך המחירונים ב‑InPlace: מחיר נוכחי מול מחיר קודם לכל מוצר, עם אחוז השינוי והתאריך שממנו הוא בתוקף',
+      cap: '66 מחירי ספקים, ושבע התייקרויות שסומנו לבד. זה הגיליון שאף אחד לא באמת מתחזק.',
+    },
     related: ['vs-erp', 'invoice-matching', 'procurement-software'],
     source: 'brand/context.md (Alternatives); he.ts (why.yes, why.no, film blocks)',
   },
@@ -442,6 +514,13 @@ const pages: Page[] = [
         ],
       },
     ],
+    image: {
+      src: 'assets/screen-owner-analytics.webp',
+      w: 2000,
+      h: 1333,
+      alt: 'מסך ביצועי הספקים ב‑InPlace: זמן אספקה, עמידה בזמנים, שינויי מחיר וחריגים פתוחים לכל ספק',
+      cap: 'השאלה שמערכת ERP עונה עליה אחרי פרויקט הטמעה. כאן היא מסך.',
+    },
     related: ['vs-spreadsheet', 'procurement-software', 'supplier-invoices'],
     source: 'brand/positioning.md (מה InPlace מסרבת להיות); brand/context.md (Alternatives)',
   },
@@ -507,9 +586,14 @@ const pages: Page[] = [
       },
       {
         h2: 'מי עומד מאחורי המערכת',
+        // The two names and the biography come from src/content/people.ts, which
+        // both structured-data generators read as well, so the page and the graph
+        // cannot disagree about who built this. src/lib/page-html.ts splices them
+        // in above the table below.
         paras: [
           'InPlace היא מוצר של In Place, עסק רשום בישראל. הפרטים כאן הם אותם פרטים שמופיעים בנתונים המובנים של האתר, כדי שמי שבודק מי מבקש גישה למידע הפיננסי שלו יקבל תשובה אחת בשני המקומות.',
         ],
+        people: true,
         table: {
           headers: ['פרט', 'ערך'],
           rows: [
@@ -529,6 +613,13 @@ const pages: Page[] = [
         ],
       },
     ],
+    image: {
+      src: 'assets/screen-accountant-bank.webp',
+      w: 2000,
+      h: 1333,
+      alt: 'מסך התאמות הבנק ב‑InPlace: תנועות מדף הבנק מול התשלומים והחשבוניות שכבר במערכת',
+      cap: 'התפקיד השלישי. רואה החשבון מקבל את השורות מותאמות, לא קובץ בסוף החודש.',
+    },
     related: ['procurement-software', 'vs-erp', 'supplier-invoices'],
     source:
       'brand/context.md (Name meaning, Values); PRODUCT.md (Design Principles, Accessibility, Users)',

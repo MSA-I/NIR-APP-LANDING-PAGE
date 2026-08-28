@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs && node scripts/build-sitemap.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs && node scripts/build-sitemap.mjs && node scripts/build-llms.mjs",
     "preview": "vite preview --port 4500",
     "serve": "vite preview --port 4500",
     "gates": "node scripts/gates/all.mjs",
