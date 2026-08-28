@@ -31,8 +31,16 @@
 import type { LocaleCode } from './locales'
 
 export type Person = {
-  /** As it is printed, and as it is declared. One string for both. */
-  name: string
+  /**
+   * The name, in two halves.
+   *
+   * 21st.dev's team-member-card sets the given name in extralight and the family
+   * name in regular on the line below it, so the card needs the two separately.
+   * Everything else needs them joined, and `fullName` below is the only place
+   * that joins them, so the printed name and the declared one cannot drift.
+   */
+  given: string
+  family: string
   jobTitle: string
   /**
    * The paragraph under the name on the about page.
@@ -45,9 +53,10 @@ export type Person = {
   /**
    * The portrait, without an extension.
    *
-   * scripts/build-portraits.mjs writes `<slug>.webp` and `<slug>.avif` at 320px
-   * square into public/assets. One size, because these are drawn at 96 CSS px
-   * and never change with the viewport: there is no ladder to pick from.
+   * scripts/build-portraits.mjs writes `<slug>.webp` and `<slug>.avif` at
+   * 720x1000 into public/assets, which is twice the card's 360x500 frame. One
+   * size, because the frame does not change with the viewport: there is no
+   * ladder to pick from.
    *
    * The `alt` is deliberately not written here. A portrait beside the name it
    * belongs to is decoration for a screen reader that has just read the name,
@@ -56,6 +65,9 @@ export type Person = {
    */
   portrait?: string
 }
+
+/** The two halves, joined. The only place they are, so nothing can drift. */
+export const fullName = (p: Person) => `${p.given} ${p.family}`
 
 export type People = {
   /** The subject-matter expert. He is the `author` of the six professional pages. */
@@ -72,14 +84,16 @@ const he: People = {
   intro:
     'InPlace נבנתה בידי שני אנשים, לא בידי מחלקת מוצר. ניר ברמוחה הביא את הבעיה, ומשה סננס בנה את המערכת שפותרת אותה.',
   nir: {
-    name: 'ניר ברמוחה',
+    given: 'ניר',
+    family: 'ברמוחה',
     jobTitle: 'מייסד',
     bio:
       'מעל עשרים שנה בעולם העסקים והתפעול, בישראל ובחוץ לארץ. הקים וניהל עסקים, ובהם רשת בתחום המזון, ועבד יום־יום מול ספקים, הזמנות, מלאי, עובדים, תשלומים וחשבוניות. הרעיון למערכת לא נולד ממחקר שוק אלא מהעבודה עצמה: הצורך לעשות סדר בתהליכים שבהרבה עסקים עדיין מתנהלים בוואטסאפ, באקסלים, בטלפון ובבדיקה ידנית. מה שכתוב בעמודים המקצועיים באתר הזה מגיע מהשטח הזה.',
     portrait: 'portrait-nir',
   },
   moshe: {
-    name: 'משה סננס',
+    given: 'משה',
+    family: 'סננס',
     jobTitle: 'מייסד',
     // His own words, supplied 28.08.2026, carried as written. The name and the
     // role that opened them are stripped because the template prints those.
@@ -94,14 +108,16 @@ const en: People = {
   intro:
     'InPlace was built by two people, not by a product department. Nir Barmuha brought the problem, and Moshe Sananes built the system that solves it.',
   nir: {
-    name: 'Nir Barmuha',
+    given: 'Nir',
+    family: 'Barmuha',
     jobTitle: 'Founder',
     bio:
       'More than twenty years in business and operations, in Israel and abroad. He has founded and run businesses, among them a chain in food, and worked day to day with suppliers, orders, stock, staff, payments and invoices. The idea for the system did not come out of market research. It came out of the work itself: the need to put order into processes that in many businesses still run on WhatsApp, on spreadsheets, on the telephone and on a manual check. What is written on the professional pages of this site comes from that ground.',
     portrait: 'portrait-nir',
   },
   moshe: {
-    name: 'Moshe Sananes',
+    given: 'Moshe',
+    family: 'Sananes',
     jobTitle: 'Founder',
     bio:
       'Three years building systems that join data, automation and business processes, in which accuracy and control are part of the operation itself. That experience led to the principle InPlace is built on: not to find out from a report, after the payment has gone out, that something was wrong, but to identify the exception and stop it before the money leaves.',

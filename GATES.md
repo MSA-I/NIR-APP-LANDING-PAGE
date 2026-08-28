@@ -452,6 +452,14 @@ width descriptor — and the fix was to conform rather than to narrow the gate. 
 rung is not a ladder, but a candidate that does not declare its width is a file
 whose size the browser has to guess at, and that is true at any number of rungs.
 
+G4 then caught the card that carries them, in the one place nobody looks: a
+comment. The card is 21st.dev's team-member-card, and documenting what its
+Tailwind classes convert to meant writing one of those class names out, which
+contains a physical direction. The gate reads this file for exactly that and does
+not care that the occurrence is prose. It is right not to care — the next person
+to copy a line out of a comment into a rule would ship it — so the measurement is
+written out in words instead.
+
 Neither node carries `sameAs`. The owner's decision of 28.08.2026 is that no
 personal profile is published here and the only external profile this site will
 carry is the company's own, which does not exist yet. Item 21.

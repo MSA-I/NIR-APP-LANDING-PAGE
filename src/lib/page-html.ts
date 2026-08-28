@@ -14,7 +14,7 @@
 
 import type { Page, Section } from '@/content/pages'
 import type { LocaleCode } from '@/content/locales'
-import { peopleByLocale, type Person } from '@/content/people'
+import { peopleByLocale, fullName, type Person } from '@/content/people'
 import { emphasiseBrand } from '@/lib/motion'
 
 const ORIGIN = 'https://inplace.digital'
@@ -104,44 +104,72 @@ const attr = (s: string) =>
 
 const copy = (s: string) => emphasiseBrand(s)
 
+/**
+ * One founder, as 21st.dev's team-member-card.
+ *
+ * `data-person` carries the joined name, which is what g21 compares with the
+ * graph. The card prints the two halves on two lines and a gate reading the
+ * markup would have to join them back; the attribute says the fact plainly.
+ *
+ * Chosen by the owner on 28.08.2026 (@Shatlyk1011, id team-member-card, whose
+ * own source is emerald-ui.com). Its anatomy is taken as it stands: a spaced
+ * uppercase role label above; a 360 by 500 portrait; a text panel pulled 32px
+ * back over the picture and lifted above it; the given name in extralight at
+ * 48px over the family name in regular; and the biography under them.
+ *
+ * THREE THINGS ARE NOT COPIED, AND EACH FOR A REASON
+ *
+ * The 80px circle with the arrow. In the catalogue it is a link to the person,
+ * with `cursor-pointer` and a tab stop. The owner's decision of 28.08.2026 is
+ * that no personal profile is published on this site, so the circle would be a
+ * control that goes nowhere and takes a keyboard stop on the way.
+ *
+ * The entrance. The catalogue component fades the three parts in from three
+ * directions on `whileInView`, which needs Framer Motion, and these documents
+ * ship no JavaScript at all. A CSS animation would fire on load rather than on
+ * arrival, which for a card this far down the page means it finishes before
+ * anybody sees it. The hover on the portrait is CSS and is kept.
+ *
+ * The colours. `zinc` is not a colour this site has. The card is repainted in
+ * the page's own tokens, exactly as the flow button, the plan cards, the FAQ
+ * panels and the colophon were.
+ */
+const founder = (p: Person) => `
+          <div class="doc-member" data-person="${attr(fullName(p))}">
+            <p class="doc-member__role">${escape(p.jobTitle)}</p>
+            <div class="doc-member__row">${
+              /* AVIF first, because the browser takes the first type it
+                 understands, and a WebP source above it would mean nothing ever
+                 reaches the AVIF. Both carry a width descriptor and the size of
+                 the frame they are drawn in: one rung is not a ladder, but g23
+                 asserts that every candidate declares its width, and it is right
+                 to. A srcset entry without one is a file whose size the browser
+                 has to guess at. */
+              p.portrait
+                ? `
+              <div class="doc-member__frame">
+                <span class="doc-member__veil" aria-hidden="true"></span>
+                <picture>
+                  <source type="image/avif" srcset="/assets/${p.portrait}.avif 720w" sizes="360px" />
+                  <source type="image/webp" srcset="/assets/${p.portrait}.webp 720w" sizes="360px" />
+                  <img src="/assets/${p.portrait}.webp" alt=""
+                       width="720" height="1000" loading="lazy" decoding="async" />
+                </picture>
+              </div>`
+                : ''
+            }
+              <div class="doc-member__panel">
+                <p class="doc-member__name">${escape(p.given)}<br /><span>${escape(
+                  p.family
+                )}</span></p>${p.bio ? `\n                <p class="doc-member__bio">${copy(p.bio)}</p>` : ''}
+              </div>
+            </div>
+          </div>`
+
 // Order matters, and the shape says so: `paras` introduce, `list` or `table`
 // carries the substance, `after` closes. The first cut had one `paras` field
 // rendered before the list, which put every closing sentence above the thing it
 // was closing.
-/**
- * One founder: the name, the role, and the paragraph under them.
- *
- * `data-person` is what g21 reads. The name is also inside the <b>, and the gate
- * could scrape that instead, but a class name and a tag are layout and this is a
- * fact about who is speaking, which is the thing being compared with the graph.
- *
- * A person whose biography has not been supplied prints the name and the role
- * and stops. The alternative is a sentence with a hole in it, and the hole would
- * be published.
- */
-const founder = (p: Person) => `
-          <div class="doc-founder" data-person="${attr(p.name)}">${
-  /* AVIF first, because the browser takes the first type it understands, and a
-     WebP source above it would mean nothing ever reaches the AVIF. Both carry a
-     width descriptor and a `sizes` of the box they are drawn in: one rung is not
-     a ladder, but g23 asserts that every candidate declares its width, and it is
-     right to. A srcset entry without one is a file whose size the browser has to
-     guess at. */
-  p.portrait
-    ? `
-            <picture>
-              <source type="image/avif" srcset="/assets/${p.portrait}.avif 320w" sizes="96px" />
-              <source type="image/webp" srcset="/assets/${p.portrait}.webp 320w" sizes="96px" />
-              <img class="doc-portrait" src="/assets/${p.portrait}.webp" alt=""
-                   width="320" height="320" loading="lazy" decoding="async" />
-            </picture>`
-    : ''
-}
-            <p class="body"><b>${escape(p.name)}</b>, ${escape(p.jobTitle)}.${
-  p.bio ? ` ${copy(p.bio)}` : ''
-}</p>
-          </div>`
-
 const section = (s: Section, locale: LocaleCode) => `
         <section class="doc-section">
           <h2>${escape(s.h2)}</h2>
@@ -269,7 +297,7 @@ const picture = (image: { src: string; w: number; h: number; alt: string; cap: s
 const personNode = (p: Person, id: string) => ({
   '@type': 'Person',
   '@id': `${ORIGIN}/#${id}`,
-  name: p.name,
+  name: fullName(p),
   jobTitle: p.jobTitle,
   ...(p.bio ? { description: p.bio } : {}),
   // The WebP, not the AVIF. This is the field a crawler reads, and the WebP is
@@ -481,27 +509,71 @@ const STYLE = `
       /* The credit sits under the date and reads at the same weight: it is a
          fact about the page, not a signature the page is proud of. */
       .doc-credit { max-inline-size: 44rem; }
-      /* A founder: the portrait at the start of the row, the paragraph beside it.
-         Laid out with flex and no side named, so the picture falls on the right
-         in Hebrew and on the left in English without a second rule. */
-      .doc-founder { display: flex; gap: 1.1rem; align-items: flex-start;
-        margin-block-start: 1.25rem; }
-      .doc-founder .body { margin: 0; }
-      /* The flex item is the <picture>, not the <img> inside it, so this is
-         where the size and the refusal to shrink belong. Putting the no-shrink
-         rule on the image instead leaves the wrapper free to collapse, and it
-         does: the
-         first cut drew both portraits as 24px slivers of a 96px face. */
-      .doc-founder picture { display: block; flex: none;
-        inline-size: 96px; block-size: 96px; }
-      .doc-portrait { inline-size: 100%; block-size: 100%; border-radius: 50%;
-        object-fit: cover; border: 1px solid var(--color-onyx-line); }
-      /* Under 30rem the picture would leave the paragraph a column four words
-         wide, so it goes above it instead of beside it. */
-      @media (max-width: 30rem) {
-        .doc-founder { display: block; }
-        .doc-founder picture { margin-block-end: 0.75rem; }
+      /* 21st.dev's team-member-card, repainted. Every measurement below is the
+         catalogue component's own, converted out of its Tailwind classes: my-16
+         is 64px, mb-4 is 16px, w-90 by h-125 is 360 by 500, its negative inline
+         offset of 8 is 32px (written out rather than quoted, because g4 reads
+         this file for physical direction words and it is right to),
+         gap-14 is 56px, text-5xl is 48px, text-xs is 12px, text-sm is 14px. */
+      .doc-member { margin-block: 4rem; }
+      .doc-member__role { margin-block-end: 1rem; font-size: 0.75rem;
+        font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
+        color: var(--color-ink-dim); }
+      /* No side is named anywhere in this card. In Hebrew the portrait falls at
+         the start of the row and the panel overlaps it from the end; the same
+         two rules put them the other way round in English. */
+      .doc-member__row { display: flex; align-items: center;
+        justify-content: flex-end; }
+      /* z-index 1 rather than none, so the frame is a stacking context and the
+         wash inside it stays inside it. Without this the wash sits at 10 in the
+         page's own stacking order and paints over the panel at 2. */
+      .doc-member__frame { position: relative; z-index: 1; flex: none;
+        inline-size: 360px; block-size: 500px; overflow: hidden; }
+      .doc-member__frame picture { display: block; block-size: 100%; }
+      .doc-member__frame img { inline-size: 100%; block-size: 100%;
+        object-fit: cover;
+        transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1); }
+      .doc-member__frame:hover img { transform: scale(1.05); }
+      /* The catalogue washes black up from the foot of the picture. Kept
+         literally, because it is what settles a photograph onto a dark ground. */
+      .doc-member__veil { position: absolute; inset: 0; z-index: 10;
+        pointer-events: none;
+        background: linear-gradient(to top, rgb(0 0 0 / 0.2), transparent 50%); }
+      /* The overlap is the card's signature: the panel's box tucks 32px under
+         the picture. What must NOT tuck under it is the words, and in the
+         catalogue nothing does, because the 80px circle stands at the start of
+         the lower row and absorbs exactly that much. The circle is not here, so
+         the panel pays it back as padding.
+         3.75rem rather than the 2rem that merely cancels the overlap: at 2rem
+         every line ended flush on the photograph, losing nothing and reading as
+         though it had been cut. Measured, on the widest line of each: the ink
+         stopped at 603px and the picture began at 603px. The extra 28px is the
+         air that makes the two read as separate things. */
+      .doc-member__panel { position: relative; z-index: 2;
+        margin-inline-start: -2rem; padding-inline-start: 3.75rem;
+        inline-size: calc(100% - 320px);
+        display: flex; flex-direction: column; gap: 3.5rem; }
+      .doc-member__name { margin: 0; font-size: 3rem; line-height: 1.1;
+        font-weight: 200; letter-spacing: -0.025em; color: var(--color-ink); }
+      .doc-member__name span { font-weight: 400; }
+      .doc-member__bio { margin: 0; font-size: 0.875rem; line-height: 1.8;
+        color: var(--color-ink-soft); }
+      /* The catalogue card is built for a page that is nothing but the card. In
+         a 44rem reading column the panel runs out of room first, so below 46rem
+         the two stack and the frame gives up its fixed width. */
+      @media (max-width: 46rem) {
+        .doc-member__row { display: block; }
+        .doc-member__frame { inline-size: 100%; max-inline-size: 360px;
+          block-size: auto; aspect-ratio: 360 / 500; }
+        .doc-member__panel { margin-inline-start: 0; inline-size: 100%;
+          gap: 1.5rem; margin-block-start: 1.75rem; }
+        .doc-member__name { font-size: 2.25rem; }
       }
+      /* The light view: the same wash, and the two type colours this page
+         already uses for a heading and for body. */
+      :root[data-theme="light"] .doc-member__name { color: var(--color-ink-on-light); }
+      :root[data-theme="light"] .doc-member__bio,
+      :root[data-theme="light"] .doc-member__role { color: var(--color-ink-on-light-soft); }
       .doc-table { border-collapse: collapse; inline-size: 100%; min-inline-size: 28rem; font-size: 0.95rem; }
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
         border-block-end: 1px solid var(--color-onyx-line); }
@@ -690,8 +762,8 @@ ${
             : `
         <p class="cap doc-credit">${escape(
           peopleByLocale[locale].credit
-            .replace('{expert}', peopleByLocale[locale].nir.name)
-            .replace('{builder}', peopleByLocale[locale].moshe.name)
+            .replace('{expert}', fullName(peopleByLocale[locale].nir))
+            .replace('{builder}', fullName(peopleByLocale[locale].moshe))
         )}</p>`
         }
         <div class="doc-rail">

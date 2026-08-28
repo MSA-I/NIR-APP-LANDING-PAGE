@@ -4,14 +4,21 @@
 // That script exists for the product screenshots, and everything it decides is
 // decided for them: an 800/1440 ladder sized to a phone drawing a 2000px picture
 // of an interface, and `yuv444p` because those are pictures of coloured text on
-// a light ground. Neither applies here. These are drawn at 96 CSS px inside a
-// paragraph and they never change size with the viewport, so there is no ladder
-// to build: one file at 320px covers a ratio-3 phone with pixels to spare.
+// a light ground. Neither applies here. These are drawn in a frame of a fixed
+// size that does not change with the viewport, so there is no ladder to build:
+// one file at twice the frame covers a retina screen with pixels to spare.
 //
-// The sources are 1254px square and already black and white, which is what the
-// owner supplied on 28.08.2026. Nothing crops them and nothing converts them:
-// a portrait that arrives square stays square, and a picture of a person is the
-// last thing to re-grade automatically.
+// WHY 360x500, WHICH IS NOT THE SHAPE THEY ARRIVED IN
+// The owner chose 21st.dev's team-member-card on 28.08.2026, and that frame is
+// 360 by 500. The sources are 1254px square, so filling it means losing the
+// sides: the crop takes the middle 903 columns of the square and the full
+// height. The subject of each of these two happens to sit in that middle, and
+// that is worth stating rather than assuming, because a centre crop is a guess
+// about where a person is standing and it is only correct by luck.
+//
+// The sources are already black and white, which is how the owner supplied them.
+// Nothing re-grades them: a picture of a person is the last thing to adjust
+// automatically.
 //
 // A committed artefact rather than a build step, exactly like the screenshots
 // and the film, because it needs ffmpeg and the deploy machine does not have it.
@@ -26,8 +33,12 @@ import path from 'node:path'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DIR = path.join(ROOT, 'public', 'assets')
 
-/** Drawn at 96 CSS px. 320 is a ratio-3 phone with room over. */
-const SIZE = 320
+/** The frame, in CSS pixels: 21st.dev's `w-90 h-125`. */
+const FRAME = { w: 360, h: 500 }
+
+/** Twice the frame, which is a retina screen and then some. */
+const W = FRAME.w * 2
+const H = FRAME.h * 2
 
 /** The same constant scripts/build-shots.mjs measured its way to. */
 const AVIF_CRF = 30
@@ -45,9 +56,10 @@ const ff = (args, what) => {
 
 const kb = (f) => (statSync(f).size / 1024).toFixed(0)
 
-// `increase` then a centre crop, so a source that is not square is filled rather
-// than squashed. Both of today's are already square and the crop is a no-op.
-const scale = `scale=${SIZE}:${SIZE}:force_original_aspect_ratio=increase:flags=lanczos,crop=${SIZE}:${SIZE}`
+// `increase` fills the frame on the short edge and overflows the long one; the
+// crop then takes the middle. Nothing is squashed, and what is lost is the
+// sides.
+const scale = `scale=${W}:${H}:force_original_aspect_ratio=increase:flags=lanczos,crop=${W}:${H}`
 
 for (const [name, from] of [
   ['portrait-nir', nir],
@@ -64,7 +76,7 @@ for (const [name, from] of [
   )
 
   console.log(
-    `${name}  ${SIZE}x${SIZE}  ${kb(webp)}KB WebP, ${kb(avif)}KB AVIF ` +
+    `${name}  ${W}x${H}  ${kb(webp)}KB WebP, ${kb(avif)}KB AVIF ` +
       `(${Math.round((1 - statSync(avif).size / statSync(webp).size) * 100)}% less)`
   )
 }
