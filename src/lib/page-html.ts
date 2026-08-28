@@ -120,9 +120,27 @@ const copy = (s: string) => emphasiseBrand(s)
  * be published.
  */
 const founder = (p: Person) => `
-          <p class="body" data-person="${attr(p.name)}"><b>${escape(p.name)}</b>, ${escape(
-  p.jobTitle
-)}.${p.bio ? ` ${copy(p.bio)}` : ''}</p>`
+          <div class="doc-founder" data-person="${attr(p.name)}">${
+  /* AVIF first, because the browser takes the first type it understands, and a
+     WebP source above it would mean nothing ever reaches the AVIF. Both carry a
+     width descriptor and a `sizes` of the box they are drawn in: one rung is not
+     a ladder, but g23 asserts that every candidate declares its width, and it is
+     right to. A srcset entry without one is a file whose size the browser has to
+     guess at. */
+  p.portrait
+    ? `
+            <picture>
+              <source type="image/avif" srcset="/assets/${p.portrait}.avif 320w" sizes="96px" />
+              <source type="image/webp" srcset="/assets/${p.portrait}.webp 320w" sizes="96px" />
+              <img class="doc-portrait" src="/assets/${p.portrait}.webp" alt=""
+                   width="320" height="320" loading="lazy" decoding="async" />
+            </picture>`
+    : ''
+}
+            <p class="body"><b>${escape(p.name)}</b>, ${escape(p.jobTitle)}.${
+  p.bio ? ` ${copy(p.bio)}` : ''
+}</p>
+          </div>`
 
 const section = (s: Section, locale: LocaleCode) => `
         <section class="doc-section">
@@ -254,6 +272,10 @@ const personNode = (p: Person, id: string) => ({
   name: p.name,
   jobTitle: p.jobTitle,
   ...(p.bio ? { description: p.bio } : {}),
+  // The WebP, not the AVIF. This is the field a crawler reads, and the WebP is
+  // the one the <img> itself carries, so the picture declared is the picture a
+  // reader without AVIF is served.
+  ...(p.portrait ? { image: `${ORIGIN}/assets/${p.portrait}.webp` } : {}),
   worksFor: { '@id': `${ORIGIN}/#organization` },
 })
 
@@ -450,15 +472,36 @@ const STYLE = `
       /* The screen this page is about. Same frame the home page draws round the
          same six pictures: a light card, because the product's own screens are
          light and a dark border round them reads as a hole in the page. */
-      /* The credit sits under the date and reads at the same weight: it is a
-         fact about the page, not a signature the page is proud of. */
-      .doc-credit { max-inline-size: 44rem; }
       .doc-shot { margin: clamp(1.75rem, 4vh, 2.5rem) 0 0; }
       .doc-shot picture { display: block; overflow: clip; border-radius: 10px;
         border: 1px solid var(--color-wheat-line); background: #fff;
         box-shadow: 0 30px 70px -40px rgba(10, 23, 29, 0.55); }
       .doc-shot img { display: block; inline-size: 100%; block-size: auto; }
       .doc-shot figcaption { margin-block-start: 0.75rem; }
+      /* The credit sits under the date and reads at the same weight: it is a
+         fact about the page, not a signature the page is proud of. */
+      .doc-credit { max-inline-size: 44rem; }
+      /* A founder: the portrait at the start of the row, the paragraph beside it.
+         Laid out with flex and no side named, so the picture falls on the right
+         in Hebrew and on the left in English without a second rule. */
+      .doc-founder { display: flex; gap: 1.1rem; align-items: flex-start;
+        margin-block-start: 1.25rem; }
+      .doc-founder .body { margin: 0; }
+      /* The flex item is the <picture>, not the <img> inside it, so this is
+         where the size and the refusal to shrink belong. Putting the no-shrink
+         rule on the image instead leaves the wrapper free to collapse, and it
+         does: the
+         first cut drew both portraits as 24px slivers of a 96px face. */
+      .doc-founder picture { display: block; flex: none;
+        inline-size: 96px; block-size: 96px; }
+      .doc-portrait { inline-size: 100%; block-size: 100%; border-radius: 50%;
+        object-fit: cover; border: 1px solid var(--color-onyx-line); }
+      /* Under 30rem the picture would leave the paragraph a column four words
+         wide, so it goes above it instead of beside it. */
+      @media (max-width: 30rem) {
+        .doc-founder { display: block; }
+        .doc-founder picture { margin-block-end: 0.75rem; }
+      }
       .doc-table { border-collapse: collapse; inline-size: 100%; min-inline-size: 28rem; font-size: 0.95rem; }
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
         border-block-end: 1px solid var(--color-onyx-line); }

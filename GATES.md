@@ -440,10 +440,17 @@ file's oldest rule: an Offer on a page with no price is a claim with no source,
 and a founder on a page that never names him is the same claim. They are declared
 on `/about/`, which is the page that prints them, and nowhere else.
 
-An empty `description` fails too. `src/content/people.ts` carries no biography
-for the second founder yet, and the generator omits the key rather than sending
-an empty string: a blank description declares that a person has none, which is a
-different statement from making none. `DEBT.md` item 29.
+An empty `description` fails too, and the mechanism is kept now that both
+biographies exist: the generator omits the key rather than sending an empty
+string, because a blank description declares that a person has none, which is a
+different statement from making none.
+
+Both founders carry a portrait, and G23 held them to the same standard as the
+product screenshots the moment they appeared. It failed the first cut twice over
+— no WebP `<source>` for a browser without AVIF, and a `srcset` candidate with no
+width descriptor — and the fix was to conform rather than to narrow the gate. One
+rung is not a ladder, but a candidate that does not declare its width is a file
+whose size the browser has to guess at, and that is true at any number of rungs.
 
 Neither node carries `sameAs`. The owner's decision of 28.08.2026 is that no
 personal profile is published here and the only external profile this site will

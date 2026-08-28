@@ -42,6 +42,19 @@ export type Person = {
    * in it. A short true line beats a long one that waits.
    */
   bio: string
+  /**
+   * The portrait, without an extension.
+   *
+   * scripts/build-portraits.mjs writes `<slug>.webp` and `<slug>.avif` at 320px
+   * square into public/assets. One size, because these are drawn at 96 CSS px
+   * and never change with the viewport: there is no ladder to pick from.
+   *
+   * The `alt` is deliberately not written here. A portrait beside the name it
+   * belongs to is decoration for a screen reader that has just read the name,
+   * so src/lib/page-html.ts marks it `alt=""` rather than reading the name out
+   * a second time.
+   */
+  portrait?: string
 }
 
 export type People = {
@@ -63,13 +76,16 @@ const he: People = {
     jobTitle: 'מייסד',
     bio:
       'מעל עשרים שנה בעולם העסקים והתפעול, בישראל ובחוץ לארץ. הקים וניהל עסקים, ובהם רשת בתחום המזון, ועבד יום־יום מול ספקים, הזמנות, מלאי, עובדים, תשלומים וחשבוניות. הרעיון למערכת לא נולד ממחקר שוק אלא מהעבודה עצמה: הצורך לעשות סדר בתהליכים שבהרבה עסקים עדיין מתנהלים בוואטסאפ, באקסלים, בטלפון ובבדיקה ידנית. מה שכתוב בעמודים המקצועיים באתר הזה מגיע מהשטח הזה.',
+    portrait: 'portrait-nir',
   },
   moshe: {
     name: 'משה סננס',
     jobTitle: 'מייסד',
-    // Supplied 28.08.2026: the name and the role. The biography is coming and is
-    // recorded as debt rather than invented in the meantime.
-    bio: '',
+    // His own words, supplied 28.08.2026, carried as written. The name and the
+    // role that opened them are stripped because the template prints those.
+    bio:
+      'שלוש שנים בבניית מערכות שמחברות בין נתונים, אוטומציה ותהליכים עסקיים, שבהן דיוק ובקרה הם חלק מהפעולה עצמה. הניסיון הזה הוביל לעיקרון שעליו InPlace בנויה: לא לגלות בדוח אחרי שהתשלום יצא שמשהו היה לא נכון, אלא לזהות את החריגה ולעצור אותה לפני שהכסף יוצא.',
+    portrait: 'portrait-moshe',
   },
   credit: 'נכתב על סמך הניסיון של {expert}, מייסד InPlace. המערכת נבנתה בידי {builder}.',
 }
@@ -82,11 +98,14 @@ const en: People = {
     jobTitle: 'Founder',
     bio:
       'More than twenty years in business and operations, in Israel and abroad. He has founded and run businesses, among them a chain in food, and worked day to day with suppliers, orders, stock, staff, payments and invoices. The idea for the system did not come out of market research. It came out of the work itself: the need to put order into processes that in many businesses still run on WhatsApp, on spreadsheets, on the telephone and on a manual check. What is written on the professional pages of this site comes from that ground.',
+    portrait: 'portrait-nir',
   },
   moshe: {
     name: 'Moshe Sananes',
     jobTitle: 'Founder',
-    bio: '',
+    bio:
+      'Three years building systems that join data, automation and business processes, in which accuracy and control are part of the operation itself. That experience led to the principle InPlace is built on: not to find out from a report, after the payment has gone out, that something was wrong, but to identify the exception and stop it before the money leaves.',
+    portrait: 'portrait-moshe',
   },
   credit:
     'Written on the experience of {expert}, founder of InPlace. The system was built by {builder}.',
