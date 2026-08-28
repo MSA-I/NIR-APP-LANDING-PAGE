@@ -511,15 +511,15 @@ printed on every run; it is a note, not a verdict.
 startup chunks for "GrainGradient" and failed on a correct build, because the
 entry legitimately names the export it is lazily importing.
 
-## G23 — the quiet four, from the audit of 28.08.2026
+## G23 — the quiet seven, from the audit of 28.08.2026
 
     CHECK: node scripts/gates/g23-seo.mjs
     EXPECT: G23 PASS
 
-**MET.** 18 documents checked, 12 image ladders, 24 `<picture>` wrappers, 18
+**MET.** 18 documents checked, 12 image ladders, 28 `<picture>` wrappers, 18
 URLs in `llms.txt`, 12 product screens with no page repeating another's.
 
-Four things the site got wrong without breaking anything. None of them showed up
+Seven things the site got wrong without breaking anything. None of them showed up
 in a screenshot, none of them failed a gate, and all four are the kind that come
 back the first time somebody copies a `<head>` or adds a locale.
 
@@ -592,7 +592,9 @@ The dates are written by hand in `DATES` in `src/lib/page-html.ts`, keyed by
 slug so the two editions of one document cannot drift. The alternatives were
 measured and rejected: a file mtime is the moment of `git clone` on the build
 machine, and the build date would tell every engine that all eighteen pages were
-revised this morning, every morning.
+revised this morning, every morning. `build-sitemap.mjs` now reads the authored
+`WebPage.dateModified` from each built document for `<lastmod>`, and this gate
+requires the sitemap and the page to publish the same date.
 
 **4. `llms.txt` did not exist.** Google says in as many words that it does not
 read it and that it changes nothing in Search, so this earns nothing from the
@@ -1890,7 +1892,7 @@ page only, never focuses a field, and never asks whether a chapter is reachable
 once the desktop nav is hidden. Twelve supporting pages had never been measured
 on a phone at all.
 
-`scripts/gates/g23-phone.mjs` is the gate that was missing. It failed on 50
+`scripts/gates/g24-phone.mjs` is the gate that was missing. It failed on 50
 assertions when it was written, before anything was changed.
 
 | | Measured | Fixed by |
@@ -1974,12 +1976,18 @@ meant to. A menu is read.
 
 | Asked | Answer |
 |---|---|
-| G23, before | **FAILED, 50 assertions**, on `/`, `/en/` and three supporting pages at 320 and 390 |
-| G23, after | **PASS** |
+| G24, before | **FAILED, 50 assertions**, on `/`, `/en/` and three supporting pages at 320 and 390 |
+| G24, after | **PASS** |
 | Positive control | three assertions inverted by hand — the dialog's size, the focus return, and Enter on the trigger — and all twelve instances failed. The oracle runs and can fail |
 | The other 24 gates | **25 met, 0 unmet, of 25 runnable gates**, G16 included |
 | Photographed | `/` and `/en/` at 320 and 390, the panel open, the dialog open, and the supporting pages in both editions |
 | The opened screen | 900px against 344px in the page at 390, and against 274px at 320 |
+
+Integration with G23 on 28.08.2026 renamed this phone gate from G23 to G24 so
+the runner has one stable id per oracle. The navigation disclosure now focuses
+its first ordinary link when opened and does not claim application-menu ARIA
+semantics; G24 proves pointer open, keyboard open, focus entry, Escape close and
+focus return at both phone widths.
 | Escape | closes the panel, returns focus to the trigger, and sets `aria-expanded` back to false |
 | Resize | measured, and not the fault. See the top of this round |
 
@@ -2065,7 +2073,7 @@ The first is the real fault above. The third is the real move above. **The secon
 was the gate being wrong, not the page**: `clientWidth` includes the tray's own
 1rem of padding, and a ticket that fills the line fills the content box and not
 the padding as well, so a correct 254px ticket read as 32px short. Both G16 and
-G23 measure the content box now. It is written down because the fix was to the
+G24 measure the content box now. It is written down because the fix was to the
 measurement, and a gate quietly relaxed to fit the page is worth less than no
 gate at all.
 

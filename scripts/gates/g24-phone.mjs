@@ -1,4 +1,4 @@
-// G23: the phone edition of the WHOLE site, not just the home page.
+// G24: the phone edition of the WHOLE site, not just the home page.
 //
 // G16 measures the React home page and passes. Every fault this gate names was
 // found on a phone anyway, because G16 never opens the six supporting pages,
@@ -29,7 +29,7 @@
 
 import { checker, withPage } from './lib.mjs'
 
-const c = checker('G23')
+const c = checker('G24')
 const PHONES = [
   { width: 320, height: 700 },
   { width: 390, height: 844 },
@@ -253,6 +253,11 @@ for (const viewport of PHONES) {
             return {
               visible: r.width > 0 && r.height > 0 && getComputedStyle(panel).visibility !== 'hidden',
               chapters: items.length,
+              firstFocused: document.activeElement === items[0],
+              appMenuSemantics:
+                panel.getAttribute('role') === 'menu' ||
+                document.querySelector('[data-folio-menu-trigger]')?.getAttribute('aria-haspopup') === 'menu' ||
+                items.some((item) => item.getAttribute('role') === 'menuitem'),
               short: items
                 .map((el) => el.getBoundingClientRect())
                 .filter((r) => r.width < 44 || r.height < 44).length,
@@ -261,6 +266,8 @@ for (const viewport of PHONES) {
           })
           c.ok(Boolean(open) && open.visible, `${tag}: the chapter menu does not open`)
           c.ok(Boolean(open) && open.chapters >= 4, `${tag}: the open menu holds ${open?.chapters} chapters, not 4`)
+          c.ok(Boolean(open) && open.firstFocused, `${tag}: opening the chapter navigation does not focus its first link`)
+          c.ok(Boolean(open) && !open.appMenuSemantics, `${tag}: chapter navigation claims application-menu semantics`)
           c.ok(Boolean(open) && open.short === 0, `${tag}: ${open?.short} menu item(s) under 44px`)
           c.ok(Boolean(open) && open.overflow <= 1, `${tag}: the open menu pushes ${open?.overflow}px of horizontal overflow`)
 
@@ -283,10 +290,12 @@ for (const viewport of PHONES) {
           // component this page borrowed once did exactly that.
           await page.keyboard.press('Enter')
           await page.waitForTimeout(300)
-          const byKey = await page.evaluate(
-            () => document.querySelector('[data-folio-menu]')?.hasAttribute('hidden') === false
-          )
-          c.ok(byKey, `${tag}: Enter on the trigger does not open the chapter menu`)
+          const byKey = await page.evaluate(() => ({
+            open: document.querySelector('[data-folio-menu]')?.hasAttribute('hidden') === false,
+            focused: document.activeElement?.hasAttribute('data-folio-menu-item'),
+          }))
+          c.ok(byKey.open, `${tag}: Enter on the trigger does not open the chapter menu`)
+          c.ok(byKey.focused === true, `${tag}: keyboard opening does not focus the first chapter link`)
           await page.keyboard.press('Escape')
           await page.waitForTimeout(200)
         }

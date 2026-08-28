@@ -18,7 +18,7 @@
 //
 //   node scripts/build-sitemap.mjs
 
-import { readdirSync, readFileSync, writeFileSync, statSync } from 'node:fs'
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
@@ -40,11 +40,22 @@ function pages(dir = DIST, prefix = '/') {
   return found
 }
 
-const iso = (file) => statSync(file).mtime.toISOString().slice(0, 10)
-
 const canonicalOf = (html) => {
   const m = html.match(/<link[^>]+rel=["']canonical["'][^>]*>/i)
   return m ? (m[0].match(/href=["']([^"']+)["']/i) || [])[1] || null : null
+}
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+/** The authored revision date from the page's WebPage structured-data node. */
+const modifiedOf = (html) => {
+  for (const [, source] of html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)) {
+    const data = JSON.parse(source)
+    const graph = Array.isArray(data['@graph']) ? data['@graph'] : [data]
+    const page = graph.find((node) => node?.['@type'] === 'WebPage')
+    if (ISO_DATE.test(page?.dateModified || '')) return page.dateModified
+  }
+  return null
 }
 
 const found = pages().sort((a, b) => a.url.length - b.url.length || a.url.localeCompare(b.url))
@@ -81,7 +92,9 @@ const entries = found.map(({ url, file }) => {
     problems.push(`${url} declares canonical ${declared}, but it is served at ${expected}`)
   }
   if (!declared) problems.push(`${url} has no canonical`)
-  return { url, expected, lastmod: iso(file) }
+  const lastmod = modifiedOf(html)
+  if (!lastmod) problems.push(`${url} has no valid WebPage.dateModified`)
+  return { url, expected, lastmod: lastmod || '' }
 })
 
 if (problems.length) {

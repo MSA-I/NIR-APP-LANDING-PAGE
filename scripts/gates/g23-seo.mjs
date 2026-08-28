@@ -168,6 +168,10 @@ c.note(`${pictures} <picture> wrappers, AVIF first in each`)
 // the SoftwareApplication graph both list the full-width files, and listing a
 // resize beside them would describe a product with three times as many screens.
 const sitemap = readFileSync(path.join(DIST, 'sitemap.xml'), 'utf8')
+const sitemapDates = new Map(
+  [...sitemap.matchAll(/<url>[\s\S]*?<loc>([^<]+)<\/loc>[\s\S]*?<lastmod>([^<]+)<\/lastmod>[\s\S]*?<\/url>/g)]
+    .map(([, loc, lastmod]) => [loc.replace(ORIGIN, ''), lastmod])
+)
 const home = readFileSync(path.join(DIST, 'index.html'), 'utf8')
 const graphBlock = (home.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/) || [])[1]
 for (const [where, text] of [
@@ -189,6 +193,10 @@ for (const { url, file } of all) {
   const node = graph.find((n) => n['@type'] === 'WebPage')
   if (!c.ok(Boolean(node), at('has no WebPage node'))) continue
   c.ok(ISO.test(node.dateModified || ''), at(`declares dateModified ${node.dateModified || 'nothing'}`))
+  c.ok(
+    sitemapDates.get(url) === node.dateModified,
+    at(`declares ${node.dateModified || 'no date'} but sitemap.xml says ${sitemapDates.get(url) || 'nothing'}`)
+  )
 
   // The home page is the catalogue and moves with the product; the supporting
   // pages are documents, and a document says on its own face when it was last

@@ -86,7 +86,7 @@ const SCREENSHOTS = [
  * that changes how it looks. A build date here would tell every answer engine
  * that this page was revised this morning, every morning.
  */
-const UPDATED = '2026-08-27'
+const UPDATED = '2026-08-28'
 
 /**
  * Authored copy, as the text a machine should read.

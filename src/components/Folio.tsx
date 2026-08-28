@@ -63,6 +63,7 @@ export function Folio({
   const [lifted, setLifted] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const boxRef = useRef<HTMLElement>(null)
+  const menuRef = useRef<HTMLElement>(null)
   const menuId = useId()
 
   // The folio publishes its own height.
@@ -100,6 +101,7 @@ export function Folio({
   useEffect(() => {
     if (!menuOpen) return
     const box = boxRef.current
+    menuRef.current?.querySelector<HTMLElement>('[data-folio-menu-item]')?.focus()
     const onPointer = (event: PointerEvent) => {
       if (!box?.contains(event.target as Node)) setMenuOpen(false)
     }
@@ -151,7 +153,6 @@ export function Folio({
           data-folio-menu-trigger=""
           className="folio__icon lg:hidden"
           aria-label={menuOpen ? menuLabels.close : menuLabels.open}
-          aria-haspopup="menu"
           aria-expanded={menuOpen}
           aria-controls={menuId}
           onClick={() => setMenuOpen((value) => !value)}
@@ -219,18 +220,18 @@ export function Folio({
         {/* Placed against the header rather than inside its flow: the box
             publishes its own height to --folio-h, and a panel that grew that
             box would move the whole document down every time it opened. */}
-        <div
+        <nav
+          ref={menuRef}
           id={menuId}
           data-folio-menu=""
           className="folio__menu lg:hidden"
-          role="menu"
           aria-label={menuLabels.label}
           hidden={!menuOpen}
         >
           {links.map((l) => (
             <a
               key={l.href}
-              role="menuitem"
+              data-folio-menu-item=""
               className="folio__menu-item"
               href={l.href}
               onClick={() => setMenuOpen(false)}
@@ -242,7 +243,7 @@ export function Folio({
             <span className="folio__menu-langs">{languageControl}</span>
             {themeControl}
           </div>
-        </div>
+        </nav>
       </div>
     </header>
   )

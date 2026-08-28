@@ -244,12 +244,12 @@ const section = (s: Section, locale: LocaleCode) => `
  * and only then. A typo fix is a change; a stylesheet is not.
  */
 const DATES: Record<string, { published: string; updated: string }> = {
-  'procurement-software': { published: '2026-08-27', updated: '2026-08-27' },
-  'supplier-invoices': { published: '2026-08-27', updated: '2026-08-27' },
-  'invoice-matching': { published: '2026-08-27', updated: '2026-08-27' },
-  'vs-spreadsheet': { published: '2026-08-27', updated: '2026-08-27' },
-  'vs-erp': { published: '2026-08-27', updated: '2026-08-27' },
-  about: { published: '2026-08-27', updated: '2026-08-27' },
+  'procurement-software': { published: '2026-08-27', updated: '2026-08-28' },
+  'supplier-invoices': { published: '2026-08-27', updated: '2026-08-28' },
+  'invoice-matching': { published: '2026-08-27', updated: '2026-08-28' },
+  'vs-spreadsheet': { published: '2026-08-27', updated: '2026-08-28' },
+  'vs-erp': { published: '2026-08-27', updated: '2026-08-28' },
+  about: { published: '2026-08-27', updated: '2026-08-28' },
   terms: { published: '2026-08-27', updated: '2026-08-27' },
   privacy: { published: '2026-08-27', updated: '2026-08-27' },
 }
