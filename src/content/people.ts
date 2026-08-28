@@ -99,16 +99,19 @@ const he: People = {
     given: 'ניר',
     family: 'ברמוחה',
     jobTitle: 'מייסד',
-    // The owner's text of 28.08.2026, carried word for word, and that includes
-    // the two things the house rules would otherwise have changed: the dash in
-    // the third paragraph, where he.ts asks for a colon or a comma, and the
-    // absent full stop at the end of it. Both are flagged rather than corrected.
-    // A biography is the one kind of copy where somebody else's wording is the
-    // whole point.
+    // The owner's text of 28.08.2026, carried word for word.
+    //
+    // Two things in it were flagged rather than corrected, because a biography
+    // is the one kind of copy where somebody else's wording is the whole point.
+    // He then ruled on both the same day: the full stop at the end is his, added
+    // on his instruction, and the dash in the third paragraph stays, although
+    // he.ts asks for a colon or a comma in Hebrew. The house rule loses to the
+    // author here, and that is worth writing down so the next reader does not
+    // "fix" it.
     bio: [
       'מעל עשרים שנות ניסיון בעולם העסקים והתפעול, בישראל ובחו״ל. כיום עוסק בניהול עסקים, בהם רשת בתחום המזון, ומכיר מקרוב את העבודה היומיומית מול ספקים, הזמנות, מלאי, עובדים, תשלומים וחשבוניות.',
       'מתוך הניסיון הזה נולד הרעיון להקים את InPlace. לא בעקבות מחקר שוק תיאורטי, אלא מתוך צורך אמיתי שעלה מהשטח: לעשות סדר בתהליכים שבעסקים רבים עדיין מתנהלים באמצעות וואטסאפ, קבצי אקסל, שיחות טלפון ובדיקות ידניות.',
-      'גם התוכן המקצועי באתר נכתב מאותה נקודת מבט — מתוך ניסיון מעשי, היכרות עם האתגרים היומיומיים והבנה של הדרך שבה עסקים באמת מתנהלים',
+      'גם התוכן המקצועי באתר נכתב מאותה נקודת מבט — מתוך ניסיון מעשי, היכרות עם האתגרים היומיומיים והבנה של הדרך שבה עסקים באמת מתנהלים.',
     ],
     portrait: 'portrait-nir',
   },
@@ -133,9 +136,7 @@ const en: People = {
     given: 'Nir',
     family: 'Barmuha',
     jobTitle: 'Founder',
-    // A translation of the Hebrew above rather than a second original, so the
-    // full stop the Hebrew is missing is present here: what is carried word for
-    // word is the owner's own wording, and this is not it.
+    // A translation of the Hebrew above rather than a second original.
     bio: [
       'More than twenty years of experience in business and operations, in Israel and abroad. He runs businesses today, among them a chain in food, and knows at first hand the daily work with suppliers, orders, stock, staff, payments and invoices.',
       'The idea of founding InPlace came out of that experience. Not out of theoretical market research, but out of a real need that came off the ground: to put order into processes that in many businesses still run on WhatsApp, on spreadsheet files, on telephone calls and on manual checks.',

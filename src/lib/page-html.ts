@@ -531,7 +531,15 @@ const STYLE = `
       /* No side is named anywhere in this card. In Hebrew the portrait falls at
          the start of the row and the panel overlaps it from the end; the same
          two rules put them the other way round in English. */
-      .doc-member__row { display: flex; align-items: center;
+      /* flex-start, where the catalogue centres.
+         Centring is right when the panel and the picture are near the same
+         height, and neither of these is: measured on 28.08.2026, the name of the
+         shorter of the two biographies began 93px below the top edge of the
+         photograph beside it and read as though it had been dropped there. The
+         owner's instruction is that the type meets the picture's edge. Aligned
+         at the start, the heading sits on the top edge of every portrait
+         whatever the biography under it turns out to weigh. */
+      .doc-member__row { display: flex; align-items: flex-start;
         justify-content: flex-end; }
       /* z-index 1 rather than none, so the frame is a stacking context and the
          wash inside it stays inside it. Without this the wash sits at 10 in the
