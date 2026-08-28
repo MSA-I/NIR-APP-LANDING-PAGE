@@ -48,10 +48,36 @@ try {
       await page.evaluate(() => document.fonts.ready)
       await page.addStyleTag({ content: 'html{scroll-behavior:auto!important}' })
 
-      const trigger = page.locator('[data-language-trigger]')
+      /* THE LANGUAGE CONTROL MOVED, 28.08.2026.
+         Below 480px the row carries the menu, the mark, the way in and the
+         action, and there is no room for a fifth control once the mark is
+         centred rather than packed against the start. The language control
+         went into the panel the menu opens, beside the light/dark switch, on
+         the same argument: both change how the page is read rather than where
+         it goes. Two instances exist in the markup and exactly one of them is
+         ever drawn, which is why every locator here is `:visible`.
+
+         So on a phone this gate now opens the panel first, because that is
+         what a reader does. The keyboard walk below is unchanged and still
+         proves the same four things about the control itself. */
+      const onPhone = test.width < 480
+      if (onPhone) {
+        await page.locator('[data-folio-menu-trigger]').click()
+        await page.waitForTimeout(300)
+        c.ok(
+          await page.locator('[data-folio-menu]').isVisible(),
+          `${test.name}: the folio panel did not open`
+        )
+      }
+
+      const trigger = page.locator('[data-language-trigger]:visible')
+      c.ok(
+        (await trigger.count()) === 1,
+        `${test.name}: ${await trigger.count()} language triggers are drawn, not 1`
+      )
       await trigger.focus()
       await page.keyboard.press('ArrowDown')
-      const menu = page.locator('[data-language-menu]')
+      const menu = page.locator('[data-language-menu]:visible')
       c.ok(await menu.isVisible(), `${test.name}: ArrowDown did not open the language menu`)
 
       const alternate = await menu.locator(`a[href^="${test.alternate}"]`).first().getAttribute('href')
@@ -74,7 +100,13 @@ try {
         dir: document.documentElement.dir,
         scroll: document.documentElement.scrollWidth,
         client: document.documentElement.clientWidth,
-        triggerHeight: document.querySelector('[data-language-trigger]')?.getBoundingClientRect().height || 0,
+        triggerHeight: (() => {
+          const drawn = [...document.querySelectorAll('[data-language-trigger]')].find((el) => {
+            const r = el.getBoundingClientRect()
+            return r.width > 0 && r.height > 0 && getComputedStyle(el).visibility !== 'hidden'
+          })
+          return drawn ? drawn.getBoundingClientRect().height : 0
+        })(),
       }))
       c.ok(state.lang === test.lang, `${test.name}: html lang is ${state.lang}`)
       c.ok(state.dir === test.dir, `${test.name}: html dir is ${state.dir}`)

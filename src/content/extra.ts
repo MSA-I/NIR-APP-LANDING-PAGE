@@ -239,10 +239,25 @@ export default {
     toDark: 'מעבר לתצוגה כהה',
   },
 
+  /* The phone folio, 28.08.2026. Below 1024px the chapter list is not in the
+     running head, and until this round there was no other way to reach a
+     chapter from a phone at all. The trigger says what it opens; the panel
+     carries its own name because it is a menu, not a region. */
+  folioMenu: {
+    open: 'תפריט',
+    close: 'סגירת התפריט',
+    label: 'פרקי העמוד',
+  },
+
   accessibility: {
     screenAltSuffix: 'מסך מתוך InPlace',
     dashboardAlt: 'מרכז הבקרה של InPlace, מסך מלא מתוך המערכת',
     nextTestimonial: 'הציטוט הבא',
     previousTestimonial: 'הציטוט הקודם',
+    /* Chapter 02's screens are 2000px wide and a phone draws them at 344.
+       Their type lands under 3px there, so on a phone the picture is a
+       control that opens the real one. */
+    zoomScreen: 'הגדלת המסך',
+    closeScreen: 'סגירת המסך',
   },
 }

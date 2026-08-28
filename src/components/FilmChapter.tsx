@@ -41,22 +41,27 @@ export function FilmChapter({
     const video = videoRef.current
     if (!video) return
 
-    // Phones get the smaller cut. Read once: swapping src mid-scroll would
-    // reset the playhead the scroll is driving.
-    const small = window.matchMedia('(max-width: 767px)').matches
-
-    // The poster is set whatever the motion preference, and BEFORE the early
-    // return below: under `prefers-reduced-motion` the chapter is a still
-    // frame, and a still frame with no picture is a black rectangle. It is set
-    // here rather than in the markup because only this line knows which cut
-    // applies, and a poster in the markup was downloaded and then replaced,
-    // costing a phone both images.
-    video.poster = small ? '/assets/film-m.webp' : '/assets/film.webp'
-
-    if (calm) return
-
-    video.src = small ? '/assets/film-m.mp4' : '/assets/film.mp4'
-    video.load()
+    // WHICH CUT, AND WHEN IT IS DECIDED.
+    //
+    // The film has two renders: film.mp4 is 1920x1080 and film-m.mp4 is
+    // 810x1440, a portrait render made for phones. The stylesheet gives the
+    // element a 16/10 box above 768px and a 9/16 box below it, and the element
+    // is `object-fit: cover`, so the two have to agree: the wrong cut in the
+    // right box is not letterboxed, it is cropped to a band out of the middle.
+    //
+    // This used to be read once, on the grounds that swapping the source
+    // mid-scroll would reset the playhead the scroll drives. It does not: the
+    // scroll subscription below re-applies the wanted position on every
+    // change, and `loadedmetadata` replays it for exactly the case where the
+    // clip was still opening. What reading it once actually did was strand the
+    // wrong cut in the box whenever the query changed after mount — a rotation,
+    // a resized window, or the "desktop site" switch a phone browser offers.
+    // Measured on 28.08.2026, loading at 1440 and switching to 390:
+    // film.mp4 in a 218x388 box, with 68.4% of every frame thrown away. The
+    // other direction is 64.8%. It is the fault round eight fixed for a fresh
+    // load, arriving through the door round eight did not close.
+    const mq = window.matchMedia('(max-width: 767px)')
+    let cut: 'phone' | 'wide' | null = null
 
     let raf = 0
     let want = scrollYProgress.get()
@@ -80,6 +85,35 @@ export function FilmChapter({
     const schedule = () => {
       if (raf === 0) raf = requestAnimationFrame(step)
     }
+
+    // The poster is set whatever the motion preference: under
+    // `prefers-reduced-motion` the chapter is a still frame, and a still frame
+    // with no picture is a black rectangle. It is set here rather than in the
+    // markup because only this line knows which cut applies, and a poster in
+    // the markup was downloaded and then replaced, costing a phone both images.
+    //
+    // Guarded on the cut it last applied, so the query firing for a width that
+    // did not cross 768px costs nothing, and so a rotation never re-downloads
+    // the clip it is already playing.
+    const applyCut = () => {
+      const next = mq.matches ? 'phone' : 'wide'
+      if (next === cut) return
+      cut = next
+      video.poster = next === 'phone' ? '/assets/film-m.webp' : '/assets/film.webp'
+      if (calm) return
+      video.src = next === 'phone' ? '/assets/film-m.mp4' : '/assets/film.mp4'
+      video.load()
+      // `load()` drops the playhead to zero and `duration` to NaN. This puts
+      // the scroll's own position back the moment the new metadata lands,
+      // through the same handler that covers a clip still opening on arrival.
+      schedule()
+    }
+
+    applyCut()
+    mq.addEventListener('change', applyCut)
+
+    if (calm) return () => mq.removeEventListener('change', applyCut)
+
     const unsubscribe = scrollYProgress.on('change', (v) => {
       want = v
       schedule()
@@ -88,6 +122,7 @@ export function FilmChapter({
     video.addEventListener('canplay', schedule)
     schedule()
     return () => {
+      mq.removeEventListener('change', applyCut)
       unsubscribe()
       video.removeEventListener('loadedmetadata', schedule)
       video.removeEventListener('canplay', schedule)

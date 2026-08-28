@@ -1850,3 +1850,300 @@ that third step, and it is measured against the 4.5:1 floor rather than chosen.
 | Switch, `/`, `/en/`, `/about/`, `/en/about/` | click, Enter and Space each toggle; `localStorage`, `color-scheme`, body ground and `theme-color` all follow, with the right label per edition |
 | No flash | after a reload the attribute is already `light` at document commit, before the first paint |
 | Direction | knob travels to the inline end in both editions; `--knob` is the only thing that differs |
+
+## Round sixteen — the phone edition of the whole site, 28.08.2026
+
+The owner, on a phone: "כשאני מחליף ממצב של אתר רגיל לתצוגת מובייל במובייל יש
+המון באגים". He asked for every menu and every control to be walked and fixed,
+and named one example of the kind of economy he wanted — the account button
+shrunk to a press with no word on it.
+
+### The first thing measured was the sentence itself, and it was not the fault
+
+"When I switch" reads like a switching fault, so that is what was measured
+first: the page loaded at 1440 and resized to 390, at 390 straight, at 980 and
+then 390, and scrolled to the middle before resizing. The resized runs came back
+with a 114px running head against 104, a 370px plate against 378, a 1693px film
+chapter against 1331, and six words of the headline hanging over the edge.
+
+It reproduced, and then it stopped reproducing, in the same script, on the same
+build. What made the difference was a line added for a different reason: reading
+`matchMedia('(max-width: 767px)')` before taking the measurements. That read
+forces a style recalculation, and with it every run came back identical to a
+clean 390px load.
+
+**So the switch is not the fault. It is headless Chrome under CDP viewport
+emulation handing out stale computed styles**, and every number above was the
+harness measuring itself. It is written down because it looked exactly like the
+reported bug for about an hour, and the next person to measure a resize on this
+machine should force the recalculation before believing what comes back.
+
+What the owner is seeing is simpler and worse: the phone layout is wrong in
+places, at every width, whether he switched to it or loaded straight into it.
+
+### G16 passes, and eleven faults were on the phone anyway
+
+`scripts/gates/g16-mobile-experience.mjs` measures three widths, touch targets,
+overflow at seven scroll positions and the conversion path, and it passed
+throughout. It passed because of what it never opens: it measures the React home
+page only, never focuses a field, and never asks whether a chapter is reachable
+once the desktop nav is hidden. Twelve supporting pages had never been measured
+on a phone at all.
+
+`scripts/gates/g23-phone.mjs` is the gate that was missing. It failed on 50
+assertions when it was written, before anything was changed.
+
+| | Measured | Fixed by |
+|---|---|---|
+| 1 | The twelve supporting pages' running head was **223px tall in Hebrew and 274px in English** on an 844px screen, sticky: a third of the reading area spent on four nav pills wrapping over two and three rows | A two-row grid — brand and switch on one line, the chapters on a rail that scrolls sideways on the other. Under 120px |
+| 2 | Their brand chip was an **empty 44px circle**. `.brandchip > span:last-child` is hidden below 480px because the app's chip has a mark underneath it, and the static markup had no mark | The mark, in `page-html.ts`, sized by a rule both editions can reach |
+| 3 | Their comparison table declared a 28rem minimum — **448px in a 288px column**, 160px of it off the side of a 320px phone, with no scrollbar drawn to say so and the second column cut mid-word | The minimum goes below 640px and the cells wrap. Two columns stay two columns: a comparison read one side at a time is not one |
+| 4 | Every contact field computed to **15.68px. iOS Safari zooms the page in on focus under 16px**, so tapping "שם מלא" on an iPhone magnified the page and left the reader to pinch back out | One number |
+| 5 | The hero fineprint's top and the second action's bottom were **the same number** at 320, 360, 390 and 430: zero gap, and it read as text that had slipped inside the button | 0.9rem above it |
+| 6 | The colophon's wordmark link was **85 × 26.5px** against a 44px minimum — the last control on the page still built to be clicked | 44px |
+| 7 | **Nine pieces of type under 12px**: two plan codes at 10.56, the recommended badge at 10.56, four plan labels at 11.2, the billing cycle at 11.84, and the four headings the colophon's link groups stand under at 11.2 | 12px and up |
+
+The last row is what a second pass is for. The first cut of the gate skipped
+anything under eight characters, which in Hebrew is most of a label, so it
+reported four faults where there were nine. The threshold is four characters
+now, and the English edition is what exposed it: `per month` is nine characters
+and `לחודש` is five.
+
+### The owner's four decisions, 28.08.2026
+
+**The chapters are reachable.** Below 1024px the four chapter links were not in
+the running head and were nowhere else either: on a phone there was no way to
+jump to a chapter at all. A trigger opens a panel with the four of them, closing
+on Escape, on a press outside, on a chapter being chosen, and on the window
+growing past the width where the row carries them itself.
+
+**The way back in is reachable.** "כניסה למערכת" was a labelled pill from 640px
+up and nothing below it, so on every phone a reader who already had an account
+had no door in the running head. It is an icon there now, with the same name.
+
+**A product screen can be read.** Chapter 02's five screens are 2000px wide and
+a phone drew them at 344, which puts the product's own interface type under
+three pixels: five pieces of real evidence, as five grey smears. A press opens
+the screen at 900px in a `<dialog>` — `showModal`, so the top layer, the
+inertness, Escape and the backdrop are the browser's and not ours. The hotspot
+layer goes on touch, because it is a hover affordance and a finger landing on
+one would jump the reader to a different station than the one they pressed.
+
+**The action is an arrow.** The owner asked for it twice. He was told, before it
+was built, that the label appeared to fit — 121px at 320 and 131px at 390 in the
+row as it stood — and that the measurement would follow. It followed, on the row
+as it now stands, and it says the opposite.
+
+The row is five controls now where it was four, and the fifth is what changes
+the arithmetic. With the label-hiding rules lifted at runtime and nothing else
+touched, the action is flex-shrunk below the width its own string needs at every
+phone width but the widest:
+
+| | Hebrew | English |
+|---|---|---|
+| 320px | label squashed by **66.7px** | by **85.7px** |
+| 360px | by **40.8px** | by **59.2px** |
+| 390px | by **14.9px** | by **32.7px** |
+| 430px | fits | fits |
+
+A squashed label inside a pill with `overflow: hidden` is the fault round
+fifteen wrote down as "a circle with the word spilling out of it". **Below 430px
+the label does not fit beside four other controls, and the arrow is not a
+preference — it is the only thing that does.** The word stays as the anchor's
+`aria-label`, so the control still announces itself, and the filled action
+colour is what separates it from the four hairline controls beside it.
+
+What the arrow bought is measurable the other way too: five icons are 248px of
+the 288px a 320px phone gives, four gaps included, and the block of arithmetic
+that used to buy that room — a notch off the type, padding off the pill, the
+hover offset to zero, and below 360px the arrow hidden outright, which left a
+blank circle — is deleted. The switch moving into the panel is what pays for the
+fifth control; it is the widest thing in the row for the least it says.
+
+### One thing this round nearly shipped
+
+The panel was a translucent sheet over a `backdrop-filter`, matching the rest of
+the fixed chrome. Photographed, the hero's headline came through it clearly
+enough to compete with the four chapter names — and would have come through on
+every engine without `backdrop-filter`, which no screenshot on this machine
+would have shown either way, since SwiftShader does not draw it. It is opaque.
+The rest of the chrome is translucent because it rides over the page and is
+meant to. A menu is read.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| G23, before | **FAILED, 50 assertions**, on `/`, `/en/` and three supporting pages at 320 and 390 |
+| G23, after | **PASS** |
+| Positive control | three assertions inverted by hand — the dialog's size, the focus return, and Enter on the trigger — and all twelve instances failed. The oracle runs and can fail |
+| The other 24 gates | **25 met, 0 unmet, of 25 runnable gates**, G16 included |
+| Photographed | `/` and `/en/` at 320 and 390, the panel open, the dialog open, and the supporting pages in both editions |
+| The opened screen | 900px against 344px in the page at 390, and against 274px at 320 |
+| Escape | closes the panel, returns focus to the trigger, and sets `aria-expanded` back to false |
+| Resize | measured, and not the fault. See the top of this round |
+
+### Still not measured
+
+The film chapter's scrub was not re-timed on a phone this round; G10 and G18
+cover it at the widths they always have. Nothing here touched it, and nothing
+here claims it was checked.
+
+## Round sixteen, part two — the owner's row and the owner's prices, 28.08.2026
+
+Three instructions, arriving while the first part was being verified: the plans
+in a column rather than a sideways scroll, the menu at the reading start, and
+the mark in the middle. The first draft of the second instruction said left and
+was corrected to right in the same breath; on a right-to-left page those are the
+same instruction, and everything below is written with logical properties, so
+the English edition mirrors it without a second rule.
+
+### The tickets are a column now, and G16 had to be turned round to say so
+
+The rail was the deliberate thing: 72vw tickets, `overflow-x: auto`, a mandatory
+inline snap, `scroll-snap-stop: always`. It is the pattern a phone usually wants
+and four of G16's assertions were written to require it.
+
+The owner's argument is about this chapter rather than the pattern, and it is
+the better one: **a rail shows one plan and a slice of the next, and the chapter
+is a comparison of five prices.** A reader on a rail has to hold the plan that
+scrolled away in their head in order to compare it with the one on the screen.
+Read down the page all five are there.
+
+So four assertions in G16 now require the opposite of what they required
+yesterday: no `overflow-x`, no travel, no mandatory snap, and a ticket that
+fills the line rather than 72% of it. They were not softened into notes. A gate
+that passes whichever way the page is built is not evidence, and these fail on a
+rail exactly as the old four failed on a column.
+
+### What the centred mark cost, and the control that paid
+
+"In the middle" is not the middle of what is left between two groups. The row
+holds one control at the start and three at the end, so a grid track would have
+centred the mark against the leftover space and put it about fifty pixels off
+the row's own centre at 320px — and moved it again the next time a control was
+added. It is taken out of flow instead and centred against the row, with
+`inset-inline: 0` and `margin-inline: auto`, which needs no signed translate and
+therefore holds in both reading directions.
+
+Out of flow, it stopped taking the 44px width the icon-only chip is given below
+480px: `fit-content` on the more specific selector won, and **the mark became an
+18px touch target. G16 measured it, in the same run.** It carries a minimum now.
+
+The three actions then would not fit beside a centred mark. Measured at 320px:
+the actions began 136px in and the mark's own box ran to 166, so the flag sat on
+the mark. The arithmetic says three fit from about 372px up. **The language
+control moved into the panel below 480px**, beside the switch, on the switch's
+own argument — both change how the page is read rather than where it goes — and
+it draws its full name in there, which the row never had room for.
+
+### One press, two menus, and the bug that made
+
+The language control lives inside the panel now, and both listen for Escape on
+`document`. One press closed the language menu **and** the panel around it, and
+the reader was two steps back from where they meant to be. The folio's handler
+stands down while a language menu inside it is open: the innermost open thing
+takes the press, the next one takes the next press.
+
+G20 walks that control by keyboard at 390px and is what found it. It opens the
+panel first now, because that is what a reader does, and every locator in it is
+`:visible`, because two instances of the control exist in the markup and exactly
+one of them is ever drawn.
+
+### What the existing gates caught, which is the point of having them
+
+Nothing in this part was found by looking at it. The run after the change came
+back with six failures in G16 and one in G20:
+
+| Gate | Said |
+|---|---|
+| G16 | `undersized touch targets: InPlace 18x44`, at all three widths |
+| G16 | `pricing ticket is 254.0px of an available 286px`, at all three widths |
+| G20 | `strict mode violation: locator('[data-language-trigger]') resolved to 2 elements` |
+
+The first is the real fault above. The third is the real move above. **The second
+was the gate being wrong, not the page**: `clientWidth` includes the tray's own
+1rem of padding, and a ticket that fills the line fills the content box and not
+the padding as well, so a correct 254px ticket read as 32px short. Both G16 and
+G23 measure the content box now. It is written down because the fix was to the
+measurement, and a gate quietly relaxed to fit the page is worth less than no
+gate at all.
+
+## Round sixteen, part three — the film was cut, and it was cut by the switch, 28.08.2026
+
+The owner: "תבדוק את הנראות של הסרט במובייל יש שם איזה באג שהסרט נחתך בתצוגה".
+
+### What was measured first, and what it ruled out
+
+The film's box was walked through the whole chapter at 320, 360, 375, 390, 412
+and 430, at six real phone heights, twenty-two scroll positions each. It came
+back clean on every count that would explain a cut: `plateClips=0` at every
+stop, so the frame never clips its own picture; `vpBot=0`, so it is never cut
+off the bottom of the screen; and `crop=0%`, so the box and the picture agree.
+The sticky release was checked against the copy and it lands after the last
+block is read, at `currentTime` 34.8 of 34.8.
+
+So on a page **loaded** at a phone width there is nothing wrong with the film,
+which is why five earlier gate runs and a set of screenshots all passed over it.
+
+### The fault is in the journey, not the width
+
+The film ships two renders: `film.mp4` at 1920x1080 and `film-m.mp4` at
+810x1440, a portrait render made for phones. The stylesheet gives the element a
+16/10 box above 768px and a 9/16 box below it, and the element is
+`object-fit: cover`, so the two have to agree. The wrong cut in the right box is
+not letterboxed. It is cropped to a band out of the middle.
+
+Which cut to use was read **once**, in the mount effect, on the reasoning
+written beside it: swapping the source mid-scroll would reset the playhead the
+scroll drives. So a reader who ARRIVED at a phone width got the right film, and
+a reader who **changed** width afterwards kept the wrong one — a rotation, a
+resized window, or the "desktop site" switch a phone browser offers, which is
+the switch the owner opened this whole round with.
+
+Measured on 28.08.2026, standing 30% into the chapter:
+
+| Journey | In the element | In the box | Thrown away |
+|---|---|---|---|
+| straight to 390 | `film-m.mp4` 810x1440 | 218x388 | **0%** |
+| **1440, then 390** | `film.mp4` 1920x1080 | 218x388 | **68.4%** |
+| **1024, then 390** | `film.mp4` 1920x1080 | 218x388 | **68.4%** |
+| **390, then 1440** | `film-m.mp4` 810x1440 | 795x497 | **64.8%** |
+
+Two thirds of every frame, in both directions. Photographed at 390 after the
+1440 load, the chapter shows two enormous invoices cut off at both edges, with
+the desk and the scene gone.
+
+**This is round eight's fault, arriving through the door round eight did not
+close.** That round found the same crop — "65% of every frame thrown away, the
+desk gone, the stack of paper cut off at both ends" — and fixed it for a fresh
+load by giving each cut its own ratio. Nothing then asked what happens when the
+query changes after mount, and nothing since measured it.
+
+### The reason for reading it once does not hold
+
+Swapping the source does drop the playhead to zero and `duration` to NaN. It
+does not lose the position, because two things already in this effect put it
+back: the scroll subscription re-applies the wanted position on every change,
+and the `loadedmetadata` handler replays it for the case where the clip was
+still opening on arrival. The swap now calls the same scheduler, so the new cut
+opens on the frame the scroll is asking for.
+
+It is guarded on the cut it last applied, so a resize that does not cross 768px
+costs nothing and a rotation never re-downloads a clip it is already playing.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| Negative control | the component set aside with `git stash`, the gate re-run against the unfixed build: **9 assertions failed**, naming `film.mp4 in a 218x388 box` and `68.4% of every frame is cropped away`. The two journeys that do not cross 768px passed, which is what says the gate is measuring the crossing and not the width |
+| After the fix | every journey carries the matching cut. 0% thrown away on all three phone journeys |
+| The wide journey | 10%, which is the desktop composition: a 16/9 cut in a 16/10 box, and has been since the chapter was built. The gate budgets 3% for the phone box and 12% for the wide one — a wrong cut measures 68% and 65%, so neither can hide under either number |
+| Photographed | the same journey, before and after, at 390 |
+| The suite | 25 met, 0 unmet |
+
+### What this does not claim
+
+The scrub itself was not re-timed. The film's own pacing against the copy is
+what G10 and G18 measure and they are unchanged. What was measured here is which
+picture is in the box, and how much of it survives.

@@ -12,7 +12,8 @@
 // so they are converted: 100 - (x + w). Copied straight across, every hotspot
 // lands mirrored, which is what the first cut of build 3 did.
 
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { X } from 'lucide-react'
 import { motion } from 'motion/react'
 import NAV from '@/data/demo-nav.json'
 import { Html, Reveal, SplitHeading, useCalm } from '@/lib/motion'
@@ -55,6 +56,8 @@ export function WhatChapter({
   steps,
   dir,
   screenAltSuffix,
+  zoomLabel,
+  closeZoomLabel,
 }: {
   folio: string
   eyebrow: string
@@ -65,10 +68,33 @@ export function WhatChapter({
   steps: Step[]
   dir: 'rtl' | 'ltr'
   screenAltSuffix: string
+  zoomLabel: string
+  closeZoomLabel: string
 }) {
   const [at, setAt] = useState(0)
+  const [zoom, setZoom] = useState<number | null>(null)
   const calm = useCalm()
   const uid = useId()
+  const zoomRef = useRef<HTMLDialogElement>(null)
+
+  // The screens are 2000px wide and a phone draws them at 344, which puts the
+  // product's own type under 3px: the chapter's five pieces of real evidence
+  // were, on a phone, five grey smears. The owner's decision of 28.08.2026 is
+  // that a press opens the real one.
+  //
+  // `showModal` rather than an `open` attribute, because only the modal call
+  // puts the dialog in the top layer, makes the rest of the page inert, and
+  // hands Escape and the backdrop over to the browser. None of those three is
+  // worth re-implementing.
+  useEffect(() => {
+    const el = zoomRef.current
+    if (!el) return
+    if (zoom == null) {
+      if (el.open) el.close()
+      return
+    }
+    if (!el.open) el.showModal()
+  }, [zoom])
 
   return (
     <section id="what" data-folio={folio} className="pt-[clamp(2rem,6vh,4rem)]">
@@ -206,7 +232,19 @@ export function WhatChapter({
                           className="w-full"
                         />
                       </picture>
-                      <div aria-hidden="true">
+                      {/* The whole picture, as one control, on the widths
+                          where the picture cannot be read. It covers the
+                          hotspot layer rather than wrapping it: a button
+                          inside a button is not markup, and the hotspots are
+                          a pointer affordance that no phone performs. */}
+                      <button
+                        type="button"
+                        data-screen-zoom=""
+                        className="screen-zoom"
+                        aria-label={`${title}. ${zoomLabel}`}
+                        onClick={() => setZoom(i)}
+                      />
+                      <div className="screen-hots" aria-hidden="true">
                         {panelHots.map((n) => (
                           <button
                             key={n.label}
@@ -235,6 +273,46 @@ export function WhatChapter({
           </div>
         </div>
       </div>
+
+      {/* One dialog for five screens: only ever one is open, and five copies of
+          a 2000px image in the document would cost a phone five downloads it
+          did not ask for. The picture inside is at its own width in a scroller,
+          so the reader pans and pinches the real screen rather than a version
+          of it fitted to a box. */}
+      <dialog
+        ref={zoomRef}
+        className="screen-dialog"
+        aria-label={zoom == null ? closeZoomLabel : steps[zoom].t.replace(/&nbsp;/g, ' ')}
+        onClose={() => setZoom(null)}
+        onClick={(event) => {
+          // The backdrop is the dialog's own box outside its content, so a
+          // press that lands on the element itself is a press outside.
+          if (event.target === zoomRef.current) setZoom(null)
+        }}
+      >
+        {zoom != null && (
+          <>
+            <button
+              type="button"
+              className="screen-dialog__close"
+              aria-label={closeZoomLabel}
+              onClick={() => setZoom(null)}
+            >
+              <X className="size-5" aria-hidden="true" strokeWidth={2} />
+            </button>
+            <div className="screen-dialog__scroll">
+              <img
+                src={`/${steps[zoom].img}`}
+                alt={`${steps[zoom].t.replace(/&nbsp;/g, ' ')}. ${screenAltSuffix}`}
+                width={2000}
+                height={1334}
+                decoding="async"
+                className="screen-dialog__img"
+              />
+            </div>
+          </>
+        )}
+      </dialog>
     </section>
   )
 }

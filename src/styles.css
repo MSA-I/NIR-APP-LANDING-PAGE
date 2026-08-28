@@ -1781,6 +1781,205 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
 }
 .brandchip:active { scale: 0.96; }
 html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
+/* The app draws its mark with a `size-4` utility. The supporting pages ship no
+   utility stylesheet of their own, so the mark is sized here, where both
+   editions can reach it. */
+.brandchip__mark {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+
+/* ------------------------------------------------- the folio's icon controls
+   28.08.2026. Two controls in the running head say what they are with a shape
+   rather than a word: the chapter menu, which only exists below the width
+   where the chapters are in the row, and the way back in, which was a labelled
+   pill above 640px and nothing at all below it. Both carry an `aria-label`,
+   both are 44px, and both take the chip's border so the row stays one family
+   of shapes rather than a pill, a pill, and two loose glyphs. */
+.folio__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1.5px solid var(--color-onyx-line);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    border-color 0.4s var(--ease-out-quint),
+    background 0.4s var(--ease-out-quint);
+}
+.folio__icon:hover {
+  border-color: var(--color-oceanic);
+  background: color-mix(in srgb, var(--color-oceanic) 14%, transparent);
+}
+.folio__icon:active { scale: 0.96; }
+
+/* --------------------------------------------------------- the phone menu
+   Absolutely placed against the header, never in its flow. The header
+   publishes its own height to --folio-h and the whole document's geometry is
+   measured off that number, so a panel that grew the box would push the page
+   down by its own height every time somebody opened it. */
+.folio__menu {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline: 0.75rem;
+  z-index: 40;
+  display: grid;
+  gap: 0.35rem;
+  margin-block-start: 0.4rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-onyx-line);
+  border-radius: 14px;
+  /* Opaque, not a blurred sheet. The rest of the fixed chrome is translucent
+     because it rides over the page and is meant to; a menu is read, and the
+     first cut of this panel let the hero's headline through it clearly enough
+     to compete with the four chapter names. `backdrop-filter` would have
+     covered that on the devices that have it and nowhere else. */
+  background: var(--color-onyx-lift);
+  box-shadow: 0 26px 60px -30px rgb(0 0 0 / 0.75);
+}
+.folio__menu[hidden] { display: none; }
+.folio__menu-item {
+  display: flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  padding-inline: 0.9rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: background 0.3s var(--ease-out-quint);
+}
+.folio__menu-item:hover,
+.folio__menu-item:focus-visible {
+  background: color-mix(in srgb, var(--color-oceanic) 18%, transparent);
+}
+.folio__menu-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-block-start: 0.45rem;
+  margin-block-start: 0.15rem;
+  border-block-start: 1px solid var(--color-onyx-line);
+}
+/* Only below 480px, where the row gives the language control up. Above it the
+   control is in the row and this copy must not be a second one. */
+.folio__menu-langs { display: none; }
+/* The panel has the room the row never did, so the language name is drawn in
+   here even though the row's copy hides it. */
+.folio__menu-langs .language-switcher__name { display: inline; }
+/* The switch is in the row from 768 up and in the panel below it, so exactly
+   one of the two instances is ever drawn. */
+.folio__menu-foot { display: none; }
+@media (max-width: 767px) {
+  .folio__menu-foot { display: flex; }
+  .folio__wide-only { display: none; }
+}
+
+/* The mark in the middle, below the width where the chapters are in the row.
+   The owner's placement of 28.08.2026: menu at the reading start, mark in the
+   centre, the actions at the end.
+
+   It is taken out of flow to get there. Centring it with a grid track would
+   have put it at the middle of what is LEFT after the two groups, and the two
+   groups are not the same width — one control at the start and three at the
+   end — so the mark would have sat about fifty pixels off centre on a 320px
+   phone and moved every time a control was added. Out of flow it is centred
+   against the row itself, which is what "in the middle" means, and
+   `inset-inline: 0` with `margin-inline: auto` gets there without a signed
+   translate, so the same two lines hold in both reading directions. */
+@media (max-width: 1023px) {
+  .folio__row { position: relative; }
+  .folio__row > .brandchip {
+    position: absolute;
+    inset-inline: 0;
+    inset-block: 0;
+    margin: auto;
+    /* `fit-content` because an absolutely placed box with both inline insets
+       at 0 stretches to fill them otherwise. The minimum is here because
+       `fit-content` also OVERRIDES the 44px the icon-only chip is given below
+       480px, and this selector is the more specific of the two: without it the
+       mark became an 18px target, which is what G16 measured. */
+    inline-size: fit-content;
+    min-inline-size: 2.75rem;
+    block-size: fit-content;
+  }
+}
+
+/* ------------------------------------------------ chapter 02's screens, big
+   28.08.2026. The five screenshots are 2000px wide. A desktop draws one at
+   about 700 and a phone at 344, where the product's own interface type lands
+   under three pixels: the chapter's evidence existed but could not be read.
+
+   On a pointer the picture keeps the hotspot layer it has always had, which is
+   the product's own navigation answering a click. On a touch screen there is
+   no hover to discover those boxes with, so the whole picture becomes one
+   control instead, and it opens the screen at its real size. */
+.screen-zoom {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.screen-dialog {
+  inline-size: 100vw;
+  max-inline-size: 100vw;
+  block-size: 100dvh;
+  max-block-size: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--color-onyx) 94%, transparent);
+  color: var(--color-ink);
+  overflow: hidden;
+}
+.screen-dialog::backdrop { background: rgb(0 0 0 / 0.72); }
+.screen-dialog__scroll {
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  place-items: center;
+}
+/* At its own width inside a scroller, so the reader pans a real screen rather
+   than reading a version of it that was fitted to the box again. `min()` keeps
+   a desktop from opening a 2000px picture into a 1400px window and calling it
+   full size. */
+.screen-dialog__img {
+  inline-size: min(2000px, max(100%, 900px));
+  max-inline-size: none;
+  block-size: auto;
+  display: block;
+}
+.screen-dialog__close {
+  position: fixed;
+  inset-block-start: max(0.75rem, env(safe-area-inset-top));
+  inset-inline-end: 0.75rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1px solid var(--color-onyx-line);
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--color-onyx) 88%, transparent);
+  color: var(--color-ink);
+  cursor: pointer;
+}
 
 /* --------------------------------------------------------- language control */
 /* The shape asked for on 27.08.2026: a translucent pill carrying the flag and
@@ -2726,6 +2925,29 @@ html[dir='rtl'] { --knob: -1; }
     padding-inline: 0.9rem;
     font-size: 0.8rem;
   }
+
+  /* The action, as the owner asked for it on 28.08.2026: on a phone it is the
+     arrow and nothing else. The word is not deleted — it is the anchor's
+     `aria-label`, so the control still announces "פתיחת חשבון חינם" — and the
+     pill keeps the filled action colour, which is what separates it from the
+     four hairline controls beside it.
+
+     The label is what the arrows travel around, so with it gone both moves go
+     too: the lead arrow has nowhere to arrive from, and the shift that made
+     room for it is width the 44px circle does not have. */
+  .folio__actions .flow--primary {
+    inline-size: 2.75rem;
+    padding-inline: 0;
+    --flow-shift: 0;
+  }
+  .folio__actions .flow--primary .flow__label { display: none; }
+  .folio__actions .flow--primary .flow__arrow--lead { display: none; }
+  .folio__actions .flow--primary .flow__arrow--trail {
+    position: static;
+    inline-size: 1.05rem;
+    block-size: 1.05rem;
+  }
+  .folio__actions .flow--primary:hover .flow__arrow--trail { inset-inline-end: auto; }
   .language-switcher__trigger {
     min-block-size: 2.75rem;
     padding-inline: 0.65rem;
@@ -2788,7 +3010,14 @@ html[dir='rtl'] { --knob: -1; }
     inline-size: 100%;
     min-block-size: 3rem;
   }
-  .title-hero__fineprint { text-align: center; }
+  /* The line under the two actions was measured at zero pixels from the second
+     one's bottom edge at 320, 360, 390 and 430: its top and the button's
+     bottom were literally the same number. Read on a phone it looked like text
+     that had slipped inside the button rather than a note underneath it. */
+  .title-hero__fineprint {
+    text-align: center;
+    margin-block-start: 0.9rem;
+  }
   .title-hero__lede {
     gap: 1.25rem;
     border-block-start: 1px solid var(--color-onyx-line);
@@ -2911,23 +3140,26 @@ html[dir='rtl'] { --knob: -1; }
   .plans-switch__track[aria-checked='true'] .plans-switch__thumb {
     margin-inline-start: 1.5rem;
   }
+  /* The five tickets, one under the next.
+     Until 28.08.2026 they were a rail: 72vw tickets on a mandatory inline snap,
+     which is the pattern a phone usually wants and which G16 was written to
+     require. The owner asked for the column on 28.08.2026, and he is right
+     about this page — a rail shows one plan and a slice of the next, and asks
+     the reader to remember the one that scrolled away in order to compare it
+     with the one on screen. The whole chapter is a comparison of five prices.
+     Read down the page they are all still there. */
   .plans-tray {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: min(72vw, 19rem);
-    grid-template-columns: none;
-    justify-content: start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-inline: contain;
-    scroll-padding-inline: 1rem;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: thin;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    overflow-x: visible;
+    scroll-snap-type: none;
     padding: 1rem;
   }
   .plan-card {
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
+    scroll-snap-align: none;
     padding-inline: 1.4rem;
   }
   .plan-card:hover { translate: 0 0; }
@@ -2955,6 +3187,41 @@ html[dir='rtl'] { --knob: -1; }
   .footer-nav { gap: 1.35rem; }
   .footer-pills .flow--sm { min-block-size: 2.75rem; }
 
+  /* The colophon's wordmark is a link back to the top and it was 85x26.5px:
+     the one control on the page still built to be clicked rather than pressed. */
+  .footer-brand {
+    min-block-size: 2.75rem;
+    padding-inline-end: 0.25rem;
+  }
+
+  /* Four labels on the pricing tickets computed to 11.2px and two plan codes
+     to 10.56px. On a phone held at arm's length that is not small type, it is
+     type a reader gives up on, and one of the four is the sentence that says
+     how many documents the plan actually includes. */
+  .plan-card__label { font-size: 0.78rem; }
+  .plan-card__code { font-size: 0.75rem; }
+  .plan-card__term { font-size: 0.78rem; }
+  .plan-card__badge { font-size: 0.75rem; }
+
+  /* The four headings the colophon's link groups stand under. At 11.2px they
+     were the smallest type on the page, and they are the only thing telling a
+     reader which four links belong together. */
+  .footer-nav__label { font-size: 0.78rem; }
+
+  /* iOS Safari zooms the whole page in whenever a focused field computes under
+     16px, and every field on this form computed to 15.68. Tapping "שם מלא" on
+     an iPhone therefore magnified the page and left the reader to pinch back
+     out — a fault of the number, not of the layout, which is why nothing here
+     moves except the number. */
+  .cform__input { font-size: 1rem; }
+
+  /* The picture becomes the control here, and the hotspot layer under it goes:
+     it is a hover affordance, drawn only when a pointer finds it, and a finger
+     landing on one of those boxes would jump the reader to another station
+     instead of opening the screen they pressed. */
+  .screen-zoom { display: block; }
+  .screen-hots { display: none; }
+
   /* Every other control in the folio is 44px tall on a touch screen — the
      brand chip, the language trigger and the action all are. The theme switch
      was built at 32px, which is the desktop rhythm, and next to them it read
@@ -2963,20 +3230,20 @@ html[dir='rtl'] { --knob: -1; }
   .theme-toggle { block-size: 2.75rem; }
   .footer-bar { padding-block-start: 1rem; }
 
-  /* FOUR controls share the narrowest folio, and for a while the stylesheet
-     still thought there were three.
-     This block was written when the row was the brand, the language control
-     and the one action. The theme switch of 27.08.2026 made it four and the
-     breakpoint was not moved, so between 350px and 449px nothing compacted at
-     all and the action was squeezed to 31px of a 112px label: a circle with
-     the word spilling out of it. Below 350px the block did fire and was no
-     longer enough on its own.
-     Two things give, and they are the two whose meaning survives losing their
-     words: the brand keeps its mark (the wordmark is the first thing the page
-     itself says underneath), and the language control keeps its flag, which is
-     the label as much as the name is. Both keep their accessible names — the
-     brand its `aria-label`, the trigger the one it already carried. The action
-     never gives: it is the only thing in this bar a reader came to press. */
+  /* The row below 480px, rewritten on 28.08.2026 when what is in it changed.
+     Until this round it held four controls that each wanted a word — the brand
+     with its wordmark, the switch, the language name, and a five-word action —
+     and the whole block below was the arithmetic of getting them to fit: type
+     dropped a notch, padding came off the pill, the hover offset went to zero,
+     and at 360px the action's arrow was hidden outright.
+
+     None of that has anything left to squeeze, because the row is now five
+     controls that say what they are with a shape: the brand's mark, the
+     chapter menu, the way in, the flag, and the action's arrow. Five 44px
+     circles and four gaps is 244px inside the 288px this width gives, so the
+     narrowest phone has 44px of slack where it used to have none. What the
+     words used to do is done by an `aria-label` on each one, and by the panel
+     the menu opens, which has room to write them out in full. */
   @media (max-width: 479px) {
     .brandchip {
       inline-size: 2.75rem;
@@ -2989,65 +3256,37 @@ html[dir='rtl'] { --knob: -1; }
       padding-inline: 0.5rem;
     }
     .language-switcher__name { display: none; }
+
+    /* The language control joins the switch in the panel below 480px.
+       Measured, on the row the owner asked for on 28.08.2026: with the mark
+       centred against the row rather than packed against the start, the
+       actions have to begin after the mark ends, and three of them do not.
+       At 320px they start 136px in and the mark's own box runs to 166, so the
+       flag sat ON the mark. The arithmetic says the three fit from about
+       372px up; below that one has to go, and the language control is the one
+       whose home is already the panel — it changes how the page is read, not
+       where it goes, which is the switch's argument as well. Both keep their
+       full names in there, which the row never had room to draw. */
+    .folio__actions .language-switcher { display: none; }
+    .folio__menu-langs { display: flex; }
+
     .folio__row,
     .folio__actions { gap: 0.375rem; }
-    .folio__actions .flow--sm {
+    /* The action is the 44px circle declared above. This keeps every OTHER
+       small pill in the row off its own curve without touching it. */
+    .folio__actions .flow--sm:not(.flow--primary) {
       padding-inline: 0.7rem;
       white-space: nowrap;
     }
   }
 
-  /* The narrowest phone still in the wild is 320px, and four controls plus a
-     five-word action do not fit there on the ordinary rhythm. The last of the
-     spacing goes here rather than in the block above, so the 360px-and-up
-     phones that make up nearly all of them keep the roomier one.
-     The label gives here as well, and it is the English one that needs it:
-     "Open a free account" is half again the width of the Hebrew. A notch of
-     type size and a shorter hover offset — the label is translated by
-     `--flow-shift` so the arrow can swap places with it, and that offset is
-     width the pill has to hold — are enough, and neither is visible next to a
-     label that fits. */
   @media (max-width: 359px) {
     .folio__row,
     .folio__actions { gap: 0.25rem; }
-    .folio__actions .flow--sm {
-      /* The shift is the room the label makes for the arrow to swap into, and
-         the arrow is gone below. Zero here buys back the padding that keeps
-         "Open a free account" off the pill's own curve. */
-      --flow-shift: 0;
-      padding-inline: 0.6rem;
-      font-size: 0.75rem;
-    }
-    /* The arrow is absolutely placed 0.7rem in from the pill's edge, which is
-       further in than the padding now is: at this width it stopped sitting
-       beside the label and started sitting ON it. It is `aria-hidden`
-       decoration that repeats what the label says, and the hover swap it
-       belongs to is a pointer gesture no phone makes. */
-    .folio__actions .flow__arrow { display: none; }
-    /* And the chevron beside the flag. The flag is the whole control at this
-       width — it is what a reader looks for and what the trigger's own
-       `aria-label` says — and the caret next to it costs fourteen pixels that
-       the English label needs to finish its last letter. */
-    .language-switcher__chevron { display: none; }
     /* A flag on its own is 38px wide, and the row's controls are 44. G16 asks
        for the touch target, the eye asks for the rhythm, and both want the
        same number. */
     .language-switcher__trigger { min-inline-size: 2.75rem; }
-    /* The widest thing up here for the least it says. Ten pixels off the
-       switch is the difference between the English label fitting and not, and
-       all three numbers move together: a 54.4px pill on 3.2px padding leaves
-       48px of track, two 22.4px circles leave 3.2px between them, and the
-       travel is one circle plus that gap. */
-    .theme-toggle {
-      --toggle-travel: 1.6rem;
-      inline-size: 3.4rem;
-      padding: 0.2rem;
-    }
-    .theme-toggle__knob,
-    .theme-toggle__ghost {
-      inline-size: 1.4rem;
-      block-size: 1.4rem;
-    }
   }
 
   /* Touch has no hover. Avoid compositing layers and misleading lifts. */
