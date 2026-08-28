@@ -65,7 +65,13 @@ export function FaqChapter({
                       opening one closes the others, with no state and no
                       script, which is what the owner asked for and what the
                       catalogue component spends a useState on. */}
-                  <details className="faq" name="faq" open={i === 0}>
+                  {/* The question, where a gate can read it. g21 compares the
+                      FAQPage node in the structured data against the questions
+                      printed here, in both directions, the same way it compares
+                      the offers against the prices. Reading it off the rendered
+                      <summary> would work until somebody wrapped the text in
+                      another span. */}
+                  <details className="faq" name="faq" open={i === 0} data-faq-q={f.q}>
                     <summary className="faq-card__q">
                       <span className="faq-card__ring" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" className="faq-card__plus">

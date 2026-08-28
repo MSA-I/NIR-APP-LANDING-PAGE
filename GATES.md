@@ -383,7 +383,8 @@ the reader who asked for less motion, and the render that has no window at all.
     CHECK: node scripts/gates/g21-schema.mjs
     EXPECT: G21 PASS
 
-**MET.** Home: Organization, WebSite, SoftwareApplication with four offers.
+**MET.** Home: Organization, WebSite, SoftwareApplication with four offers,
+VideoObject, WebPage, and a FAQPage carrying eight questions.
 Each supporting page: Organization, WebSite, WebPage, BreadcrumbList.
 
 There were no `application/ld+json` blocks at all. The block is generated in
@@ -396,16 +397,33 @@ Offers exist only where prices are printed. A supporting page that discusses the
 product without publishing the catalogue declares no offers, because an Offer on
 a page with no price is a claim with no source.
 
-**What it forbids, and why:**
+**The questions, in both directions.** `FAQPage` was on the forbidden list until
+28.08.2026, because Google retired FAQ rich results for every site on
+07.05.2026 and there was no SERP feature left to earn. That reasoning was sound
+about the wrong reader: a rich result is a Google feature, and ChatGPT,
+Perplexity and Claude parse `FAQPage` to lift a question and its answer as a
+unit whether or not Google draws an accordion. The eight answers were already on
+the page in native `<details>` and already readable with JavaScript switched off.
+Only the declaration was missing.
+
+So the type is allowed, and it is held to the page the way the prices are. Every
+question carries `data-faq-q` in the markup; the gate asserts that each one is
+declared and each declared one is printed, and that no Answer is empty.
+
+**This is the assertion that caught its own first draft.** The chapter renders
+seven questions from `he.ts` and an eighth from `extra.ts`, because g2 freezes
+`he.ts` leaf by leaf and a new key there fails the build. The first cut of the
+node read only `d.faq.items` and declared seven, and the gate failed it by name:
+`prints a question no FAQPage declares`. A one-directional check would have
+passed it, and the page would have shipped an eighth answer no engine was told
+about.
+
+**What it still forbids, and why:**
 
 | type | why not |
 |---|---|
-| `FAQPage` | Google retired FAQ rich results for every site on 07.05.2026 |
 | `Review`, `AggregateRating` | the quotes are `placeholder: true` and the page says so in its own words; marking them up as customer reviews turns an honest disclosure into a violation |
-| `HowTo` | deprecated since 2023 |
-
-`address` and `telephone` are absent from the Organization for the same family
-of reasons: nobody has supplied them, and an invented address is worse than none.
+| `HowTo` | retired as well, and there are no steps on this page waiting to be declared. A schema type is not a reason to write copy |
 
 ## G22 — how much JavaScript stands between the reader and the page
 

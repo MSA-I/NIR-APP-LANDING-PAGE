@@ -11,10 +11,20 @@
 // the two: every price in the markup must appear in the graph, and every price
 // in the graph must appear in the markup.
 //
-// The prohibitions matter as much as the assertions:
+// The same comparison now runs over the questions. `FAQPage` was forbidden here
+// until 28.08.2026, because Google retired FAQ rich results for every site on
+// 07.05.2026 and there was no SERP feature left to earn. The owner's decision of
+// 28.08.2026 is that the SERP was never the reader this block is for: ChatGPT,
+// Perplexity and Claude parse `FAQPage` to lift a question and its answer as a
+// unit, whether or not Google draws an accordion. So the type is allowed, and it
+// is held to the page the same way the prices are — every question in the graph
+// is printed on the page, and every question printed on the page is in the graph.
 //
-//   FAQPage             Google retired FAQ rich results for every site on
-//                       07.05.2026. There is no SERP feature to earn.
+// The prohibitions that remain matter as much as the assertions:
+//
+//   HowTo               Retired as well, and there are no steps on this page
+//                       waiting to be declared. A schema type is not a reason
+//                       to write copy.
 //   Review              The quotes on this page are marked `placeholder: true`
 //   AggregateRating     in src/content/extra.ts and the page says in its own
 //                       words that they are examples written in-house. Marking
@@ -37,7 +47,20 @@ const pages = (dir = DIST, prefix = '/') => {
   return out
 }
 
-const FORBIDDEN = ['FAQPage', 'Review', 'AggregateRating', 'HowTo']
+const FORBIDDEN = ['Review', 'AggregateRating', 'HowTo']
+
+// The dictionaries author emphasis as <b> and hold word pairs together with
+// &nbsp;. src/entry-static.tsx strips both before the text reaches the graph,
+// so the markup must be read the same way before the two are compared.
+const plain = (s) =>
+  s
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
 
 for (const { url, file } of pages()) {
   const html = readFileSync(file, 'utf8')
@@ -80,6 +103,43 @@ for (const { url, file } of pages()) {
   )
   const app = graph.find((n) => n['@type'] === 'SoftwareApplication') || {}
   const offers = app.offers || []
+
+  // ---- the questions, in both directions ----------------------------------
+  // Chapter 05 prints its questions with data-faq-q; the FAQPage node declares
+  // them. A question in one and not the other is the drift this gate exists for,
+  // and a page with neither is a supporting page, which is allowed to have none.
+  const askedOnPage = [...html.matchAll(/data-faq-q="([^"]*)"/g)].map((m) => plain(m[1]))
+  const faq = graph.find((n) => n['@type'] === 'FAQPage')
+  const declared = (faq?.mainEntity || []).map((q) => plain(q.name || ''))
+
+  c.ok(
+    Boolean(faq) === askedOnPage.length > 0,
+    at(
+      faq
+        ? 'declares a FAQPage while printing no questions'
+        : `prints ${askedOnPage.length} questions and declares no FAQPage`
+    )
+  )
+
+  for (const question of declared) {
+    c.ok(
+      askedOnPage.includes(question),
+      at(`declares a question the page does not print: "${question}"`)
+    )
+  }
+  for (const question of askedOnPage) {
+    c.ok(
+      declared.includes(question),
+      at(`prints a question no FAQPage declares: "${question}"`)
+    )
+  }
+  // An Answer with no text is a Question the engine cannot lift.
+  for (const q of faq?.mainEntity || []) {
+    c.ok(
+      Boolean(q.acceptedAnswer?.text?.trim()),
+      at(`declares "${q.name}" with no answer text`)
+    )
+  }
 
   if (onPage.length === 0) {
     c.ok(
@@ -129,7 +189,8 @@ for (const { url, file } of pages()) {
 
   c.note(
     `${url} ${types.join(', ')}; ${offers.length} offers ` +
-      `(${offers.map((o) => `${o.name} ${o.price}`).join(', ')})`
+      `(${offers.map((o) => `${o.name} ${o.price}`).join(', ')}); ` +
+      `${declared.length} questions`
   )
 }
 

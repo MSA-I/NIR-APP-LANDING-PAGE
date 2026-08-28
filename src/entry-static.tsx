@@ -29,7 +29,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MotionConfig } from 'motion/react'
 import App from './App'
-import { contentByLocale, type LocaleCode } from './content/locales'
+import { contentByLocale, extraByLocale, type LocaleCode } from './content/locales'
 import site from './content/pages'
 import siteEn from './content/pages.en'
 import { pageHtml } from './lib/page-html'
@@ -89,6 +89,15 @@ const SCREENSHOTS = [
 const UPDATED = '2026-08-27'
 
 /**
+ * Authored copy, as the text a machine should read.
+ *
+ * Everything in the dictionaries is written for the page: emphasis as <b>, and
+ * &nbsp; where two words must not be split across a line. Neither belongs in a
+ * schema string, which is read rather than laid out.
+ */
+const plain = (s: string) => s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')
+
+/**
  * The structured data, built from the same dictionary the page renders.
  *
  * Generated rather than hand-written for one reason: the prices. `he.ts` is the
@@ -96,9 +105,23 @@ const UPDATED = '2026-08-27'
  * beside it would be a second catalogue that nothing compares, and the first
  * time a price moved the page and the markup would disagree in public.
  *
+ * WHY `FAQPage` IS HERE AFTER ALL
+ * It was absent until 28.08.2026, on the ground that Google retired FAQ rich
+ * results for every site on 07.05.2026. That reasoning was sound and it was
+ * about the wrong reader. A rich result is a SERP feature; this block is not
+ * published to earn one. ChatGPT, Perplexity and Claude parse `FAQPage` to
+ * lift a question and its answer as a unit, and they do it whether or not
+ * Google draws an accordion. The seven answers were already on the page, in
+ * native `<details>`, readable with JavaScript switched off; the only thing
+ * missing was the declaration that they are questions and answers.
+ *
+ * It costs nothing to be wrong about this. Google ignores a `FAQPage` it will
+ * not render, which is the same thing it did before the block existed.
+ *
  * WHAT IS DELIBERATELY ABSENT
- * - `FAQPage`. Google retired FAQ rich results for every site on 07.05.2026.
- *   There is no SERP feature left to earn, and claiming one is not a reason.
+ * - `HowTo`. Google retired it as well, and unlike the answers above there is
+ *   no set of steps on this page waiting to be declared. It would have to be
+ *   written first, and a schema type is not a reason to write copy.
  * - `Review` / `AggregateRating`. The quotes in src/content/extra.ts are marked
  *   `placeholder: true` and the page says in its own words that they are
  *   examples written in-house, not customers. Marking them up as reviews would
@@ -210,7 +233,7 @@ export function schema(locale: LocaleCode = 'he') {
         inLanguage: lang,
         // The title page's lede is two paragraphs; the first is the sentence
         // that says what the product does, which is what a description is for.
-        description: d.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
+        description: plain(d.title_page.lede[0]),
         publisher: { '@id': `${ORIGIN}/#organization` },
         // The screens the page already shows. They were in the sitemap for
         // image search and in the markup with their alt text, and nowhere in
@@ -257,7 +280,7 @@ export function schema(locale: LocaleCode = 'he') {
         '@id': `${url}#webpage`,
         url,
         name: d.brand,
-        description: d.title_page.lede[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' '),
+        description: plain(d.title_page.lede[0]),
         inLanguage: lang,
         dateModified: UPDATED,
         isPartOf: { '@id': `${url}#website` },
@@ -269,6 +292,30 @@ export function schema(locale: LocaleCode = 'he') {
           width: 1800,
           height: 1788,
         },
+      },
+      // Chapter 05, declared as what it already is.
+      //
+      // Read out of the same two lists App.tsx hands the chapter, in the same
+      // order: the seven in `he.ts`, then the eighth in `extra.ts`, which lives
+      // there because g2 freezes `he.ts` leaf by leaf and a new key in it fails
+      // the build. Declaring only the seven is what the first cut of this node
+      // did, and g21 failed it — which is the whole point of comparing the graph
+      // with the markup in both directions, exactly as it does for the prices.
+      //
+      // The answers are authored with <b> and &nbsp; for the page. Schema takes
+      // text, so both come out here, and the answer an engine quotes is the
+      // sentence a reader reads rather than a fragment of markup.
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        name: plain(d.faq.h2),
+        inLanguage: lang,
+        isPartOf: { '@id': `${url}#webpage` },
+        mainEntity: [...d.faq.items, ...extraByLocale[locale].faqExtra.items].map((item) => ({
+          '@type': 'Question',
+          name: plain(item.q),
+          acceptedAnswer: { '@type': 'Answer', text: plain(item.a) },
+        })),
       },
     ],
   }
