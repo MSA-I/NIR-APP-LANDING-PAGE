@@ -6,19 +6,15 @@
 // sections below are new copy for new sections; the guarantee G2 makes about
 // the old copy is worth more than the convenience of one dictionary.
 //
-// ONE BLOCK IS MARKED `placeholder: true` BELOW: `testimonials`. Five quotes
-// written as examples of what the product does, attributed to a ROLE and a
-// KIND of business, never to a named person or a named company.
+// NOTHING IN THIS FILE IS FLAGGED `placeholder: true` ANY MORE, and it took
+// two supplies from the owner for that to be true. The logo wall was flagged
+// until 26.08.2026, when he sent six real marks. The quotes were flagged until
+// 30.08.2026, when he sent five real responses with names.
 //
-// It is not a claim that anyone said anything. The product has not launched
-// and has no customers to quote, so the section says so in its own lede rather
-// than inventing five people. scripts/gates/g15-placeholders.mjs asserts that
-// every block flagged here renders its disclosure on the page, so the flag
-// cannot be dropped quietly and leave five invented quotes reading as real.
-//
-// The logo wall WAS flagged and is not any more: on 26.08.2026 the owner
-// supplied six real marks, and a disclosure under real logos would be a
-// stranger claim than none.
+// The flag and its machinery stay in the build: scripts/gates/g15-placeholders
+// asserts that any block flagged here renders a disclosure on the page, so the
+// next thing that stands in for something the product does not have yet cannot
+// reach the page quietly. Today nothing does.
 //
 // No em-dash in visible copy, per the house rule in he.ts.
 
@@ -55,53 +51,60 @@ export default {
   },
 
   // --------------------------------------------------------------- what people
+  // Round thirteen, 30.08.2026, and the first one that is not writing. The
+  // owner supplied five responses from people using the system, with names, in
+  // NIR-APP-DOCS/תגובות אמיתיות.txt. They are quoted here as he gave them, word
+  // for word, under the names he gave them under: a first name and one letter
+  // of the surname.
+  //
+  // What follows from that is the whole of this change:
+  //
+  //   1. `placeholder: true` is gone. It was true while these five were
+  //      examples written in-house. A flag reading "invented" over five real
+  //      people would be its own kind of false statement.
+  //   2. The disclosure no longer disclaims authorship, because we did not
+  //      write these. It says what the reader is looking at instead, and it
+  //      still renders in the same slot, where g15 measures it.
+  //   3. scripts/gates/g15-placeholders.mjs was rewritten in the same commit.
+  //      Two of its assertions had become the wrong assertion: that this block
+  //      IS flagged, and that no quote carries a name. What it keeps is the
+  //      machinery and the readability of the note.
+  //   4. `Review` and `AggregateRating` schema stay absent. The reason moved
+  //      and the answer did not; the note in src/entry-static.tsx says why.
+  //
+  // Nothing here was shortened, tidied or smoothed to fit. These run about half
+  // again as long as the five they replace, and the card is what gave.
   testimonials: {
-    placeholder: true,
     folioless: true,
     eyebrow: 'איך זה נשמע כשזה עובד',
-    h2: 'חמש דוגמאות למה שהמערכת&nbsp;משנה',
+    h2: 'חמישה משתמשים מספרים מה&nbsp;השתנה',
     disclosure:
-      'הציטוטים כאן הם דוגמאות ניסוח שנכתבו על ידינו, לא לקוחות. כל אחד מהם מתאר התנהגות שקיימת במערכת היום. הם יוחלפו בהמלצות אמיתיות אחרי ההשקה.',
-    // Round twelve, 27.08.2026. All five were rewritten; the section moved below
-    // the prices. It briefly went down to three and the owner put it back to
-    // five the same day, so the count here is his and the writing is the work.
-    //
-    // What was wrong with the old five is the problem a disclosure cannot fix:
-    // every one of them was a clean, complete, on-message sentence, which is the
-    // one thing people do not sound like. A written example that reads as
-    // marketing copy makes the disclosure above it look like an excuse.
-    //
-    // What changed in the writing, and nothing else did: each one now carries a
-    // detail that serves no argument (the driver still standing there, the note
-    // remembered on Thursday, the ten minutes of scrolling that found nothing),
-    // and two of them admit that the thing they praise was irritating before it
-    // was reassuring. No new capability is claimed in any of them; every
-    // behaviour described is on this page already.
+      'התגובות כאן נמסרו על ידי משתמשים במערכת ומצוטטות כלשונן. שמות המשפחה מופיעים באות אחת, בצורה שבה נמסרו לנו.',
     items: [
       {
-        q: 'פעם הייתי מגלה את הפער בסוף החודש, כשכבר שילמתי. עכשיו החשבונית נתקעת לי לפני התשלום ואני צריך להחליט מה עושים איתה. ברגע הראשון זה מעצבן. אחר כך זה בדיוק מה שרציתי.',
-        who: 'בעלים',
-        of: 'מסעדה עם שני סניפים',
+        q: 'לפני InPlace החשבוניות, המחירונים וההזמנות היו מפוזרים בין המייל, הוואטסאפ והקלסרים. היום אני יכול לראות במקום אחד מה הזמנתי, מה הגיע ועל מה הספק מבקש תשלום. כבר בבדיקה הראשונה מצאנו כמה פערים שפעם כנראה היו עוברים בלי ששמנו לב.',
+        who: 'איתי ל׳',
+        of: 'בעל מסעדה',
       },
       {
-        q: 'כל הזמנה יוצאת עם מספר ועם מחירון. פעם הייתי גולל בוואטסאפ עשר דקות כדי להיזכר מה בדיוק סוכם, ובחצי מהפעמים גם לא מצאתי.',
-        who: 'מנהל רכש',
-        of: 'רשת בתי קפה',
+        q: 'החלק שהכי עוזר לי הוא שלא צריך לזכור בעל פה איפה כל הזמנה עומדת. אני רואה אם היא נשלחה, מה התקבל ומה לא תואם לחשבונית. זה לא מחליף את העבודה שלי, אבל מוריד ממנה הרבה חיפושים ובדיקות ידניות.',
+        who: 'שירה מ׳',
+        of: 'מנהלת רכש',
       },
       {
-        q: 'אני מסמנת מה הגיע מהטלפון, ליד דלת הקבלה, כשהנהג עוד עומד שם. פעם זה היה פתק בכיס שנזכרתי בו ביום חמישי.',
-        who: 'מנהלת תפעול',
-        of: 'מטבח מרכזי',
+        q: 'בעבר הייתי מקבלת מסמכים חלקיים ורודפת אחרי השלמות לקראת התשלום. עכשיו המסמכים והפערים כבר מסודרים לפני שהם מגיעים אליי, ואני יכולה להתמקד רק במקרים שבאמת דורשים בדיקה. התהליך מול העסק ומול הספקים נהיה הרבה יותר ברור.',
+        who: 'רונית א׳',
+        of: 'מנהלת חשבונות',
       },
       {
-        q: 'מגיעות אליי רק חשבוניות שאושרו. אני משלם, מעלה אסמכתה, וזהו. מה שלא אושר לא מגיע אליי בכלל, וזה חסך לי בעיקר טלפונים.',
-        who: 'רואה חשבון',
-        of: 'משרד חיצוני',
+        q: 'כשיש כמה סניפים, קשה לדעת אם מה שחויבנו עליו באמת תואם למה שהגיע לכל סניף. ב-InPlace אפשר לעקוב אחרי ההזמנה, הקבלה והחשבונית באותו תהליך. במקרה של חוסר או מחיר שונה, לא צריך להתחיל לחפש הודעות ישנות כדי להבין מה קרה.',
+        who: 'עומר ש׳',
+        of: 'מנהל תפעול ברשת עסקים',
       },
       {
-        q: 'מה שהכי שינה זה שאני מאשר ומישהו אחר מעביר. בהתחלה הרגיז אותי שאין דרך לעקוף כשדחוף. היום זה הדבר שאני הכי סומך עליו.',
-        who: 'בעלים',
-        of: 'עסק מזון',
+        q: 'לא חיפשתי עוד מערכת עם עשרות מסכים, אלא דרך פשוטה לשלוט בכסף שיוצא לספקים. היום אני רואה מה ממתין לאישור, איפה קיימת חריגה ומה דורש טיפול לפני התשלום. יש לי יותר שליטה בלי להיות מעורב בכל פעולה קטנה.',
+        who: 'אלון כ׳',
+        of: 'בעל עסק',
       },
     ],
   },

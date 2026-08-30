@@ -122,10 +122,14 @@ const plain = (s: string) => s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')
  * - `HowTo`. Google retired it as well, and unlike the answers above there is
  *   no set of steps on this page waiting to be declared. It would have to be
  *   written first, and a schema type is not a reason to write copy.
- * - `Review` / `AggregateRating`. The quotes in src/content/extra.ts are marked
- *   `placeholder: true` and the page says in its own words that they are
- *   examples written in-house, not customers. Marking them up as reviews would
- *   turn an honest disclosure into a structured-data violation.
+ * - `Review` / `AggregateRating`. The quotes in src/content/extra.ts were
+ *   marked `placeholder: true` until 30.08.2026, and the page said in its own
+ *   words that they were examples written in-house; marking those up as
+ *   reviews would have turned an honest disclosure into a structured-data
+ *   violation. They are five real responses now, and both types stay out
+ *   anyway: a `Review` wants an author that can be checked and these carry a
+ *   first name and one letter, and an `AggregateRating` wants a rating that
+ *   nobody was ever asked for.
  * - `Review` is still absent; see above. The Organization's registered name,
  *   address and telephone were supplied by the owner on 27.08.2026 and are
  *   here now. They were withheld until then on purpose: an Organization with
