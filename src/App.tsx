@@ -47,6 +47,26 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
       ?.setAttribute('content', t.description)
   }, [direction, locale, t.description, t.htmlLang, t.title])
 
+  // The about page sat at the end of the six supporting pages, under "read on",
+  // which is where the five SEO pages live. It was the one page a reader looks
+  // for by name, filed under a heading that does not say its name, and the
+  // owner reported on 30.08.2026 that they could not find it. It moves to the
+  // product column, beside what the system does and the questions, which is
+  // what it is: a page about the product.
+  //
+  // Composed here and not in he.ts, because that file is build 3's copy and G2
+  // fails on anything added to it. The `more` column below is already built
+  // this way. The product column is found by the anchor it carries rather than
+  // by its index, so neither edition depends on the order of the other.
+  const pages = locale === 'he' ? site.pages : siteEn.pages
+  const pageHref = (slug: string) => (locale === 'he' ? `/${slug}/` : `/en/${slug}/`)
+  const about = pages.find((p) => p.slug === 'about')
+  const footerCols = t.footer.cols.map((c) =>
+    about && c.links.some((l) => l.href === '#faq')
+      ? { ...c, links: [...c.links, { t: about.nav, href: pageHref(about.slug) }] }
+      : c
+  )
+
   return (
     <>
       <a className="skip" href="#what">
@@ -204,15 +224,18 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         brand={t.brand}
         tagline={t.footer.tagline}
         rights={t.footer.rights}
-        cols={t.footer.cols}
+        cols={footerCols}
         // Six supporting pages per edition since 27.08.2026. The legal two are
         // excluded here because the colophon already links them under its own
-        // heading, and they exist in Hebrew only.
+        // heading, and they exist in Hebrew only. About is excluded from
+        // 30.08.2026 because it is in the product column now, and a colophon
+        // that lists the same page twice is the duplication this footer was
+        // just cleared of.
         more={{
           h: x.moreLabel,
-          links: (locale === 'he' ? site.pages : siteEn.pages)
-            .filter((p) => !p.legal)
-            .map((p) => ({ t: p.nav, href: locale === 'he' ? `/${p.slug}/` : `/en/${p.slug}/` })),
+          links: pages
+            .filter((p) => !p.legal && p.slug !== 'about')
+            .map((p) => ({ t: p.nav, href: pageHref(p.slug) })),
         }}
         marquee={t.title_page.index.map((c) => c.t)}
         topLabel={t.title_page.folio}
