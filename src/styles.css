@@ -1905,6 +1905,31 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   .folio__wide-only { display: none; }
 }
 
+/* THE THREE PHONE CONTROLS THAT WERE ON THE DESKTOP PAGE.
+   Folio.tsx asks for them with Tailwind's `lg:hidden` and `sm:hidden`. Those
+   utilities are real and they are in the stylesheet, but `@import "tailwindcss"`
+   puts them in `@layer utilities` and every rule authored in this file is
+   unlayered — and unlayered CSS beats layered CSS outright, whatever the
+   specificity and whatever the order. So `.folio__icon { display: inline-flex }`
+   won over `.lg\:hidden { display: none }` at every width, and the burger, the
+   login circle and the panel behind them have been on the 1440px page since the
+   phone edition landed. Measured on the built page: `lg:hidden` alone computes
+   to none, `folio__icon lg:hidden` computes to inline-flex.
+
+   The three below are the only markup in the codebase that carries both a folio
+   class and a responsive utility, which is why nothing else drifted: the desktop
+   nav and the login pill are pure utilities and were always right. Written here
+   as authored CSS, in the layer that actually wins, with the class and the
+   attribute together so order can never decide this again. The breakpoints are
+   Tailwind's own: lg is 64rem, sm is 40rem. */
+@media (min-width: 64rem) {
+  .folio__icon[data-folio-menu-trigger],
+  .folio__menu[data-folio-menu] { display: none; }
+}
+@media (min-width: 40rem) {
+  .folio__icon[data-folio-login] { display: none; }
+}
+
 /* The mark in the middle, below the width where the chapters are in the row.
    The owner's placement of 28.08.2026: menu at the reading start, mark in the
    centre, the actions at the end.
