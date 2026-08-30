@@ -606,11 +606,20 @@ const STYLE = `
           gap: 1.5rem; margin-block-start: 1.75rem; }
         .doc-member__name { font-size: 2.25rem; }
       }
-      /* The light view: the same wash, and the two type colours this page
-         already uses for a heading and for body. */
-      :root[data-theme="light"] .doc-member__name { color: var(--color-ink-on-light); }
-      :root[data-theme="light"] .doc-member__bio p,
-      :root[data-theme="light"] .doc-member__role { color: var(--color-ink-on-light-soft); }
+      /* THE LIGHT VIEW NEEDS NOTHING HERE, AND ASKING FOR IT BROKE IT.
+         Three rules used to sit at this spot, each naming --color-ink-on-light
+         for the light view. That reads as the right token and is the wrong one:
+         -on-light means "type on the cream plate", and the light view is the
+         two grounds trading places, so in it that token holds the CREAM. The
+         name was painted cream on cream at 1.05:1 — invisible, which is what the
+         owner reported on 30.08.2026 — and the biography and the role went to
+         2.12:1.
+
+         The rules above already say --color-ink, --color-ink-soft and
+         --color-ink-dim, and those three swap with the view on their own:
+         16.93 / 8.39 / 5.41 in the dark view, and on the wheat ground
+         --color-ink-dim is the measured #63737a that G7 holds to 4.5:1. The
+         correct override is no override. */
       .doc-table { border-collapse: collapse; inline-size: 100%; min-inline-size: 28rem; font-size: 0.95rem; }
       .doc-table th, .doc-table td { text-align: start; padding: 0.7rem 0.9rem; vertical-align: top;
         border-block-end: 1px solid var(--color-onyx-line); }
