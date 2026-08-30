@@ -1,13 +1,19 @@
-// G11: the five-step chain switches the panel, and the hotspots land.
+// G11: the five-step chain switches the panel, and the picture opens.
 //
-// The hotspots are drawn over the product's own navigation inside each
-// screenshot. Their boxes are measured off the running app as a distance from
-// the LEFT edge, and the page places them from the inline start, which in
-// Hebrew is the right. The conversion is one subtraction, and getting it wrong
-// mirrors every box while leaving the page looking plausible. So the gate does
-// not check the arithmetic, it checks the pixels: each hotspot must sit over
-// the navigation item it claims, which is asserted by requiring it to fall
-// inside the screenshot and to be nowhere near its mirror image.
+// It used to measure a second control as well — boxes drawn over the product's
+// own navigation inside each screenshot, whose fractions were measured off the
+// running app. The conversion from a left-edge fraction to an inline-start one
+// is a single subtraction, and getting it wrong mirrors every box while leaving
+// the page looking plausible, so this gate checked pixels rather than
+// arithmetic.
+//
+// That layer went on 31.08.2026: the application's navigation was rebuilt into
+// dropdown groups and not one of the five stations is a top-level item any
+// more, so there was nothing under the boxes to point at. What is left is the
+// chain, which was always the accessible control, and the picture itself, which
+// opens at every width now that the boxes are not covering it. Both are
+// measured here, and the mirroring question moved with the layer: nothing is
+// placed by a converted fraction any longer.
 
 import { withPage, checker } from './lib.mjs'
 
@@ -46,7 +52,6 @@ await withPage(async (page) => {
       { timeout: 5000 }
     )
 
-  let totalHots = 0
   const seenPanels = new Set()
 
   for (let i = 0; i < tabCount; i++) {
@@ -57,76 +62,69 @@ await withPage(async (page) => {
     const state = await page.evaluate((sel) => {
       const img = document.querySelector(sel + ' img')
       const heading = document.querySelector(sel + ' h3')
-      const box = img.getBoundingClientRect()
-      const hots = [...document.querySelectorAll(sel + ' button[tabindex="-1"]')].map(
-        (b) => {
-          const r = b.getBoundingClientRect()
-          return {
-            title: b.getAttribute('title'),
-            x: (r.left - box.left) / box.width,
-            y: (r.top - box.top) / box.height,
-            w: r.width / box.width,
-            h: r.height / box.height,
-          }
-        }
-      )
-      return { src: img.getAttribute('src'), heading: heading.textContent.trim(), hots }
+      const zoom = document.querySelector(sel + ' button[data-screen-zoom]')
+      const box = zoom?.getBoundingClientRect()
+      const picture = img.getBoundingClientRect()
+      return {
+        src: img.getAttribute('src'),
+        heading: heading.textContent.trim(),
+        // The control is the picture. Not a corner of it, not a chip beside
+        // it: if these two boxes drift apart, a reader is pressing a screen
+        // and hitting the plate behind it.
+        covers: Boolean(box) &&
+          Math.abs(box.width - picture.width) < 2 &&
+          Math.abs(box.height - picture.height) < 2,
+        named: (zoom?.getAttribute('aria-label') || '').trim(),
+        // Drawn, and drawn on the far corner, so it never sits over the
+        // product's own navigation — the part of the screenshot the chapter
+        // is pointing at.
+        chip: (() => {
+          const el = zoom?.querySelector('.screen-zoom__chip')
+          if (!el) return null
+          const r = el.getBoundingClientRect()
+          return { drawn: r.width > 0 && r.height > 0, fromTop: (r.top - picture.top) / picture.height }
+        })(),
+      }
     }, SELECTOR)
 
     seenPanels.add(state.src)
-    totalHots += state.hots.length
-    c.ok(state.hots.length > 0, `station ${i + 1} (${state.heading}) has no hotspots`)
-
-    for (const h of state.hots) {
-      c.ok(
-        h.x >= -0.01 && h.y >= -0.01 && h.x + h.w <= 1.01 && h.y + h.h <= 1.01,
-        `hotspot "${h.title}" on station ${i + 1} falls outside its screenshot ` +
-          `(x ${h.x.toFixed(3)}, w ${h.w.toFixed(3)})`
-      )
-      // The product's navigation sits across the top of every screen. A
-      // mirrored box would still be inside the image, so the row is checked
-      // too: a hotspot below the top eighth is not on the navigation.
-      c.ok(
-        h.y < 0.14,
-        `hotspot "${h.title}" on station ${i + 1} is at ${(h.y * 100).toFixed(1)}% down the ` +
-          `screenshot, and the product's navigation is not there`
-      )
-    }
+    c.ok(state.covers, `station ${i + 1} (${state.heading}): the picture is not the control`)
+    c.ok(state.named.length > 0, `station ${i + 1} (${state.heading}): the control has no accessible name`)
+    c.ok(Boolean(state.chip?.drawn), `station ${i + 1} (${state.heading}): nothing says the picture opens`)
+    c.ok(
+      Boolean(state.chip) && state.chip.fromTop > 0.5,
+      `station ${i + 1} (${state.heading}): the chip sits ${((state.chip?.fromTop ?? 0) * 100).toFixed(0)}% down the picture, over the product's own navigation`
+    )
   }
 
   c.ok(
     seenPanels.size === 5,
     `the five stations should show five different screens, they showed ${seenPanels.size}`
   )
-  c.note(`${totalHots} hotspots across ${seenPanels.size} screens`)
+  c.note(`five stations, five screens, each one its own control`)
 
-  // Clicking a hotspot moves the chain, which is the whole point of drawing
-  // them: the reader can navigate the demo from inside the product's own UI.
+  // And the picture opens, which is what replaced the boxes. `showModal` puts
+  // it in the top layer; a dialog that is merely `open` is not modal and the
+  // page behind it stays live, which is the failure this asserts against.
   await clickTab(0)
   await settleOn(0)
   await page.waitForTimeout(180)
-  const before = await page.$eval(SELECTOR + ' img', (el) => el.getAttribute('src'))
-  const clicked = await page.evaluate((sel) => {
-    // The hotspot that opens a different station than the one on screen, and
-    // it has to come from the panel the reader can actually see. Every panel
-    // carries its own copy of the boxes now, so an unqualified query returns
-    // the hidden ones too: the first cut of this line clicked a button inside
-    // `hidden`, which fires and sets the same station that was already open,
-    // and the gate then reported that hotspots do not work.
-    const hots = [...document.querySelectorAll(sel + ' button[tabindex="-1"]')]
-    const target = hots.find((b) => b.getAttribute('title') === 'חשבוניות') || hots[1]
-    if (!target) return null
-    target.click()
-    return target.getAttribute('title')
+  const opened = await page.evaluate(async (sel) => {
+    const inline = document.querySelector(sel + ' img')?.getBoundingClientRect().width || 0
+    document.querySelector(sel + ' button[data-screen-zoom]')?.click()
+    await new Promise((r) => setTimeout(r, 400))
+    const dialog = document.querySelector('dialog.screen-dialog')
+    const big = dialog?.querySelector('img')?.getBoundingClientRect().width || 0
+    return { open: dialog?.open === true, modal: dialog?.matches(':modal') === true, inline, big }
   }, SELECTOR)
-  c.ok(Boolean(clicked), 'no hotspot to click')
-  if (clicked) {
-    await settleOn(2)
-    await page.waitForTimeout(180)
-    const after = await page.$eval(SELECTOR + ' img', (el) => el.getAttribute('src'))
-    c.ok(before !== after, `clicking the "${clicked}" hotspot did not change the panel`)
-    c.note(`hotspot "${clicked}": ${before.split('screen-').pop()} -> ${after.split('screen-').pop()}`)
-  }
+  c.ok(opened.open, 'pressing a product screen does not open it')
+  c.ok(opened.modal, 'the opened screen is not a modal dialog')
+  c.ok(
+    opened.big >= opened.inline,
+    `the opened screen is ${opened.big.toFixed(0)}px against ${opened.inline.toFixed(0)}px in the page`
+  )
+  c.note(`the picture opens at ${opened.big.toFixed(0)}px from ${opened.inline.toFixed(0)}px in the page`)
+  await page.keyboard.press('Escape')
 })
 
 c.report()

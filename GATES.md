@@ -2506,3 +2506,105 @@ edition, so this cannot go quiet again.
 30.08.2026 — given the measurement — to close the application's own translation
 holes first; the per-screen numbers and what is left are in [DEBT.md](DEBT.md)
 §16. The page's side of it is ready either way, which is what item 8 is.
+
+## Round nineteen — the screens are taken, and the layer over them is not, 31.08.2026
+
+[DEBT.md](DEBT.md) §16 has been open since 27.08.2026: the five product screens
+and the control centre were captured from the Hebrew application and shown as
+they were under `/en/` too. It closes here, and it closes because the product
+changed rather than because the page found a workaround.
+
+### What had to be true first, and now is
+
+`NIR-APP` merged its English completion on 31.08.2026 — ten stages, 44 screens
+measured, `#155` — and the last of the six screens this page shows was wired the
+night before. Captured in English against that merge, the six carry **no
+interface Hebrew at all**. What is left in them is data: supplier names, product
+names, the demo organisation's own people.
+
+**The data stays Hebrew, by the owner's decision of 30.08.2026.** The screenshot
+is there to show the system can be worked in English, not to pretend it is an
+American product. An Israeli business reads Israeli supplier names.
+
+### Both editions, one moment
+
+The demo data is dated May to July 2026. Taken in August, every panel measured
+against "this month" drew nothing — in BOTH languages, which is how it was clear
+this was never a translation fault. The owner's instruction was that the two
+editions be taken at the same earlier moment, so they show the same business on
+the same day rather than two different empty ones.
+
+`lab/probe/capture-app-locale.mjs` fixes the browser clock to 20.07.2026 09:40
+and both sets come back with the same figures — ₪12,988 purchased, ₪5,299 paid,
+₪5,664 due in the coming week — which are the same figures the retired
+screenshots carried. The clock does not invent anything; it returns the system
+to the moment those pictures were taken.
+
+Two things had to be got right for it to work at all, and neither was obvious:
+
+- **`?lang=` does not pin the language.** `src/lib/i18n/locale.ts` puts a stored
+  choice above the query string, and after auth `ProfileLocaleSync` adopts
+  `profiles.locale` unconditionally. A run asking for Hebrew came back in English
+  on all six screens, with byte-identical numbers to the English run. The harness
+  now reports the `lang` each screen actually rendered in and exits non-zero if
+  it is not the one asked for.
+- **A `fullPage` screenshot does not scroll, it stitches.** The charts enter when
+  they are scrolled to, so the first runs photographed correct figures above the
+  fold and empty frames under them. The harness walks the page first.
+
+### The layer that came off
+
+Chapter 02 drew boxes over the product's own navigation inside each screenshot,
+so a reader could press what they saw. Measured against the merge, the
+application's top row is now Control room, New order, and four dropdown
+triggers; the three screens this chapter walks live inside those menus. A box
+over "Purchasing" would jump to one of the three stations it covers while the
+real control opens a menu.
+
+The owner's decision, 31.08.2026: take the layer off. What replaces it was
+already there — the chain of five stations above the picture, which is the
+accessible control, and which is the only one a phone ever performed. The
+picture itself is now pressable at **every** width rather than only on a phone,
+because the boxes are no longer covering it, and it carries a chip saying so.
+
+`data/demo-nav.json` and the measurement that wrote it are gone with the layer.
+**G11** stopped asking whether the hotspots land and now asks the two things
+that replaced them: the picture IS the control at every station, at the size of
+the picture, with a name and a visible chip that does not sit over the product's
+own navigation — and pressing it opens a modal dialog bigger than the panel.
+
+### The sentence that was no longer true
+
+`what.demoHint` in he.ts tells the reader they can press the navigation inside
+the screen. That file is build 3's copy and G2 freezes it leaf by leaf, so the
+key stays where it is, unread, and the sentence that is true is written beside
+it in extra.ts. The English edition also carried a claim the new screens
+contradict outright — that this site "does not claim that the current
+application interface is already localised" — and it now says what is the case.
+
+### The trap, for the second time
+
+The new sentence asked for its margin with `mt-3`, and computed to zero: `.cap`
+sets `margin: 0`, this stylesheet is unlayered, Tailwind's utilities are in
+`@layer utilities`, and unlayered CSS wins outright whatever the specificity.
+The sentence sat ON the last row of stations at every width. The same trap is
+documented at the folio's phone controls; it is authored CSS now, in the layer
+that wins.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| Interface Hebrew in the English capture | 0 strings across all six screens |
+| The two editions | same instant, same figures, every chart drawn |
+| The retired figures | ₪12,988 / ₪5,299 / ₪5,664 — the same numbers the old screenshots carried |
+| Payload | 18 screenshots, 54 widths, AVIF 39% under WebP; dist well inside the 26MB budget |
+| The chain and the picture | G11, rewritten: five stations, five screens, the picture opens at 1440px from 863px in the page |
+| The suite | **26 met, 0 unmet** |
+
+### What this round does not claim
+
+The six screens on the supporting pages are still the older captures, taken
+before the navigation was rebuilt. They are not on the home page and no gate
+measures them yet, and they are named in [DEBT.md](DEBT.md) §16 rather than
+quietly left.

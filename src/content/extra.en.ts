@@ -245,7 +245,7 @@ const extraEn = {
     label: 'Chapters',
   },
 
-  demoTouchHint: 'Tap a screen to open it full size.',
+  demoHint: 'Press a screen to open it at full size.',
 
   accessibility: {
     screenAltSuffix: 'InPlace product screen',

@@ -472,7 +472,7 @@ export default {
      The sentence that replaces it there is the one that IS true: the picture
      opens. It lives here and not in he.ts because that file is build 3's copy
      and G2 fails on a key added to it. */
-  demoTouchHint: 'לחיצה על המסך פותחת אותו בגודל מלא.',
+  demoHint: 'לחיצה על המסך פותחת אותו בגודל מלא.',
 
   accessibility: {
     screenAltSuffix: 'מסך מתוך InPlace',

@@ -2168,8 +2168,16 @@ html:dir(rtl) .drawer__chevron { scale: -1 1; }
    the product's own navigation answering a click. On a touch screen there is
    no hover to discover those boxes with, so the whole picture becomes one
    control instead, and it opens the screen at its real size. */
+/* The sentence under the chain.
+   Its margin is authored here rather than asked for with `mt-3`, because
+   `.cap` sets `margin: 0` and this file is unlayered while Tailwind's utilities
+   are in `@layer utilities` — unlayered CSS wins outright, whatever the
+   specificity. Measured 31.08.2026: the utility computed to 0 and the sentence
+   sat ON the last row of stations, at every width. The same trap is documented
+   at the phone controls in the folio; this is the second time it has bitten. */
+.demo-hint { margin-block-start: 0.85rem; }
+
 .screen-zoom {
-  display: none;
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -2205,14 +2213,7 @@ html:dir(rtl) .drawer__chevron { scale: -1 1; }
   box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.6);
 }
 
-/* One of the two chapter-02 hints is drawn, never both: the pointer one where
-   the hotspots exist, the touch one where the picture is the control. The
-   width is the same 768 the hotspot layer is switched at. */
-.demo-hint--touch { display: none; }
-@media (max-width: 767px) {
-  .demo-hint--pointer { display: none; }
-  .demo-hint--touch { display: block; }
-}
+
 
 .screen-dialog {
   inline-size: 100vw;
@@ -3733,13 +3734,6 @@ html[dir='rtl'] { --knob: -1; }
      out — a fault of the number, not of the layout, which is why nothing here
      moves except the number. */
   .cform__input { font-size: 1rem; }
-
-  /* The picture becomes the control here, and the hotspot layer under it goes:
-     it is a hover affordance, drawn only when a pointer finds it, and a finger
-     landing on one of those boxes would jump the reader to another station
-     instead of opening the screen they pressed. */
-  .screen-zoom { display: block; }
-  .screen-hots { display: none; }
 
   /* Every other control in the folio is 44px tall on a touch screen — the
      brand chip, the language trigger and the action all are. The theme switch

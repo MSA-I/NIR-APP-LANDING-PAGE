@@ -130,7 +130,7 @@ export function BoardChapter({
                 sizes={SIZES}
                 alt={imageAlt}
                 width={1800}
-                height={1788}
+                height={2256}
                 loading="lazy"
                 decoding="async"
                 className="w-full"

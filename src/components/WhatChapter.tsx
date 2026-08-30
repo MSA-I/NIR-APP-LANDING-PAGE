@@ -1,60 +1,30 @@
 // Chapter 02. The wheat plate: five stations of one chain, five real screens.
 //
-// Two controls, one action. The chain above is the accessible control with a
-// real name; the boxes drawn over the product's own navigation inside the
-// screenshot are the same action for a reader who is already looking at the
-// screen. The second set is aria-hidden and not focusable, because two tab
-// stops for one action is worse than one.
+// ONE CONTROL, AND IT IS THE CHAIN. Until 31.08.2026 the screenshots also
+// carried a second, silent one: boxes drawn over the product's own navigation
+// inside the picture, measured off the running app, so a reader already looking
+// at the screen could press what they saw. That layer is gone, and the reason
+// is in the product rather than in the page.
 //
-// The hotspot boxes are measured, not guessed: scripts/capture-demo.mjs reads
-// them off the running app. They arrive as a distance from the LEFT edge and
-// the page places them from the inline start, which in Hebrew is the right,
-// so they are converted: 100 - (x + w). Copied straight across, every hotspot
-// lands mirrored, which is what the first cut of build 3 did.
+// The application's navigation was rebuilt into dropdown groups. Measured on
+// 31.08.2026 against `main`, the top row is Control room, New order, and four
+// triggers — Purchasing, Documents, Finance, Control and reports — none of
+// which is a station. The three screens this chapter walks live INSIDE those
+// menus now. A box could still be drawn over "Purchasing", but pressing it
+// would jump to one of the three stations it covers while the real control
+// opens a menu, which is the one thing a picture of a product must not do.
+//
+// The owner's decision, same day: take the layer off. The chain above the
+// picture does the same work, it is the accessible control, it is the only one
+// a phone ever performed, and it says five things at once rather than hiding
+// four of them behind a menu.
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { Maximize2, X } from 'lucide-react'
 import { motion } from 'motion/react'
-import NAV from '@/data/demo-nav.json'
 import { Html, Reveal, SplitHeading, useCalm } from '@/lib/motion'
 
 type Step = { k: string; t: string; p: string; img: string; cap: string }
-type Hot = { label: string; key?: string; x: number; y: number; w: number; h: number }
-
-/**
- * Which station a box drawn over the product's own navigation opens.
- *
- * KEYED BY ROUTE FIRST, and the reason is dated: this map held five HEBREW
- * WORDS and nothing else until 30.08.2026. The screenshots are being taken
- * again from an application that now has an English edition, and the moment a
- * capture comes back with "Orders" over the same pixels, every lookup here
- * misses, `panelHots` filters to nothing, and five screens quietly stop being
- * clickable — no error, no warning, a feature that is simply gone. The route
- * is the same string in both editions, so the key survives the translation.
- *
- * The labels stay beside the keys because the data on disk today was measured
- * before the capture script recorded a route, and a page that only works after
- * the next capture is a page that does not work. scripts/gates/g11-demo.mjs
- * fails the build if any station ends up with no hotspots, in either edition,
- * so this cannot go quiet again whichever half of the table is doing the work.
- */
-const NAV_STEP: Record<string, number> = {
-  orders: 0,
-  receiving: 1,
-  invoices: 2,
-  exceptions: 3,
-  'payment-requests': 4,
-  הזמנות: 0,
-  קבלה: 1,
-  חשבוניות: 2,
-  בקרה: 3,
-  ניהול: 4,
-}
-
-/** The route if the capture recorded one, the printed word if it did not. */
-const stepOf = (n: Hot) => NAV_STEP[n.key ?? ''] ?? NAV_STEP[n.label]
-
-const navKey = (img: string) => img.replace(/^assets\/screen-/, '').replace(/\.webp$/, '')
 
 /**
  * The srcset for one shot in one format.
@@ -78,7 +48,6 @@ export function WhatChapter({
   lede,
   stepsLabel,
   demoHint,
-  touchHint,
   steps,
   dir,
   screenAltSuffix,
@@ -90,9 +59,8 @@ export function WhatChapter({
   h2: string
   lede: string
   stepsLabel: string
+  /** From extra.ts, not from the chapter's frozen copy; see the note below. */
   demoHint: string
-  /** The same hint, for the widths where the picture is the control. */
-  touchHint: string
   steps: Step[]
   dir: 'rtl' | 'ltr'
   screenAltSuffix: string
@@ -188,12 +156,13 @@ export function WhatChapter({
               })}
             </div>
           </Reveal>
-          {/* Two sentences, one drawn. Above 768px the hotspot layer is there
-              and the copy in he.ts is true; below it that layer is off and the
-              picture is the control, so the sentence that is true there is the
-              one about pressing it. See `demoTouchHint` in extra.ts. */}
-          <p className="cap mt-3 demo-hint demo-hint--pointer">{demoHint}</p>
-          <p className="cap mt-3 demo-hint demo-hint--touch">{touchHint}</p>
+          {/* ONE SENTENCE, and it comes from extra.ts rather than from the
+              chapter's own copy. `what.demoHint` in he.ts says the reader can
+              press the navigation inside the screenshot; that was true while
+              the boxes existed and it is not true now, and he.ts is build 3's
+              copy, which G2 freezes leaf by leaf. So the key stays where it is,
+              unread, and the sentence that IS true is written beside it. */}
+          <p className="cap demo-hint">{demoHint}</p>
 
           {/* All five panels are in the document; the four that are not
               selected carry `hidden`.
@@ -213,9 +182,6 @@ export function WhatChapter({
           <div className="mt-[clamp(2rem,4vh,3rem)]">
             {steps.map((s, i) => {
               const on = i === at
-              const panelHots = ((NAV as Record<string, Hot[]>)[navKey(s.img)] || []).filter(
-                (n) => stepOf(n) !== undefined,
-              )
               const title = s.t.replace(/&nbsp;/g, ' ')
               return (
                 <motion.div
@@ -265,11 +231,15 @@ export function WhatChapter({
                           className="w-full"
                         />
                       </picture>
-                      {/* The whole picture, as one control, on the widths
-                          where the picture cannot be read. It covers the
-                          hotspot layer rather than wrapping it: a button
-                          inside a button is not markup, and the hotspots are
-                          a pointer affordance that no phone performs. */}
+                      {/* The whole picture, as one control, AT EVERY WIDTH
+                          since 31.08.2026. It was a phone-only affordance,
+                          because a phone draws these 2000px screens at 344 and
+                          the product's own type lands under 3px there. On a
+                          desktop the boxes over the navigation were the way in,
+                          and those are gone — so without this a reader with a
+                          pointer had nothing to press at all. One behaviour
+                          everywhere, and one sentence under the chain to say
+                          so. */}
                       <button
                         type="button"
                         data-screen-zoom=""
@@ -287,26 +257,6 @@ export function WhatChapter({
                           {zoomLabel}
                         </span>
                       </button>
-                      <div className="screen-hots" aria-hidden="true">
-                        {panelHots.map((n) => (
-                          <button
-                            key={n.label}
-                            type="button"
-                            tabIndex={-1}
-                            title={n.label}
-                            onClick={() => setAt(stepOf(n) as number)}
-                            className="absolute rounded-[4px] border border-transparent transition-[background-color,border-color] duration-300 hover:border-oceanic-deep hover:bg-[color-mix(in_srgb,var(--color-oceanic)_22%,transparent)]"
-                            style={{
-                              insetInlineStart: `${(
-                                dir === 'rtl' ? 100 - (n.x + n.w) * 100 : n.x * 100
-                              ).toFixed(3)}%`,
-                              insetBlockStart: `${(n.y * 100).toFixed(3)}%`,
-                              inlineSize: `${(n.w * 100).toFixed(3)}%`,
-                              blockSize: `${(n.h * 100).toFixed(3)}%`,
-                            }}
-                          />
-                        ))}
-                      </div>
                     </div>
                     <Html html={s.cap} className="cap pt-3" />
                   </figure>

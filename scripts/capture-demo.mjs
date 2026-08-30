@@ -1,26 +1,25 @@
-// Re-capture the screens chapter 02 uses, and MEASURE where their top nav sits.
+// Re-capture the six screens the page shows: the five stations of chapter 02,
+// and the control centre chapter 03 prints in full.
 //
-// Two things this does that scripts/capture-app.mjs does not:
+// The control centre is captured fullPage, so the trends row at the bottom of
+// it is in the frame; a viewport-only capture cut the charts off halfway.
 //
-//   1. The control centre is captured fullPage, so the trends row at the bottom
-//      of it is in the frame. The old capture was viewport-only and cut the
-//      charts off halfway.
-//
-//   2. For every screen it records the bounding box of each top-nav item as a
-//      FRACTION of the image. Those fractions become the clickable hotspots on
-//      the page, so a visitor can click the product's own navigation inside the
-//      screenshot and the panel switches under them.
-//
-// Measuring beats eyeballing here: the nav shifts between roles (the owner has
-// items the buyer does not) and the active pill changes width, so hotspots
-// placed by hand would drift on three of the five screens.
+// IT NO LONGER MEASURES THE NAVIGATION. Until 31.08.2026 it recorded the
+// bounding box of every top-nav item as a fraction of the image, and the page
+// drew a clickable box over each one so a reader could work the product's own
+// navigation inside the screenshot. The application's navigation was rebuilt
+// into dropdown groups — measured against `main` that day, the top row holds
+// Control room, New order, and four triggers, and not one of the five stations
+// — so the boxes had nothing left to sit on. The owner's decision was to take
+// the layer off rather than to point it at menus, and the measurement went with
+// it. See the note at the top of src/components/WhatChapter.tsx.
 //
 // Credentials are read at runtime from NIR-APP-DOCS and never printed.
 //
 // Usage: node scripts/capture-demo.mjs [--base http://localhost:5200]
 
 import { chromium } from 'playwright-core'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 
@@ -52,7 +51,6 @@ const credentialFor = (role) => {
 
 await mkdir(OUT, { recursive: true })
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
-const nav = {}
 
 for (const role of ['office', 'owner']) {
   const ctx = await browser.newContext({
@@ -72,52 +70,11 @@ for (const role of ['office', 'owner']) {
     await page.goto(BASE + shot.route, { waitUntil: 'networkidle', timeout: 25000 })
     await page.waitForTimeout(1400)
 
-    // Measure before the screenshot, and against the full document height when
-    // the shot is fullPage, so the fractions match the image that is written.
-    const box = await page.evaluate((full) => {
-      const h = full
-        ? Math.max(document.documentElement.scrollHeight, innerHeight)
-        : innerHeight
-      const items = [...document.querySelectorAll('header a, header button, nav a, nav button')]
-        .map((el) => ({ el, t: (el.textContent || '').replace(/\s+/g, ' ').trim() }))
-        .filter((x) => x.t && x.t.length < 24)
-      // The ROUTE beside the word, from 30.08.2026. The page maps a box to a
-      // station, and until now it mapped it by the Hebrew word printed in the
-      // nav — which stops existing the moment these screens are captured from
-      // the application's English edition. A route reads the same in both.
-      const keyOf = (el) => {
-        const href = el.getAttribute('href') || ''
-        const path = href.replace(/^https?:\/\/[^/]+/, '').split('?')[0]
-        const last = path.split('/').filter(Boolean).pop()
-        return last && /^[a-z-]+$/.test(last) ? last : undefined
-      }
-      const seen = new Set()
-      const out = []
-      for (const { el, t } of items) {
-        const r = el.getBoundingClientRect()
-        // The top nav only: one row, near the top of the viewport.
-        if (r.top > 120 || r.width < 24 || r.height < 16) continue
-        if (seen.has(t)) continue
-        seen.add(t)
-        out.push({
-          label: t,
-          ...(keyOf(el) ? { key: keyOf(el) } : {}),
-          x: +(r.left / innerWidth).toFixed(5),
-          y: +((r.top + scrollY) / h).toFixed(5),
-          w: +(r.width / innerWidth).toFixed(5),
-          h: +(r.height / h).toFixed(5),
-        })
-      }
-      return out
-    }, !!shot.full)
-
-    nav[shot.name] = box
     await page.screenshot({ path: path.join(OUT, shot.name + '.png'), fullPage: !!shot.full })
-    console.log(`  ok   ${shot.name}  (${box.length} nav items measured)`)
+    console.log(`  ok   ${shot.name}`)
   }
   await ctx.close()
 }
 
 await browser.close()
-await writeFile(path.resolve('data/demo-nav.json'), JSON.stringify(nav, null, 2) + '\n', 'utf8')
-console.log('\ndata/demo-nav.json written')
+console.log(`\n${SHOTS.length} captures in ${path.relative(process.cwd(), OUT)}`)
