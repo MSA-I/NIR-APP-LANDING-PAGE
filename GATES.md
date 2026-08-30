@@ -2254,3 +2254,174 @@ Nobody was asked for a rating, and no number on the page moved. Five people
 saying what changed is not a measurement, which is why [DEBT.md](DEBT.md) §28
 stays open: there is still no original figure on this site that an answer engine
 could cite.
+
+## Round eighteen — the phone the owner reads it on, 30.08.2026
+
+Seven notes, six of them about the phone and one about the English page. Each is
+written up below as what it turned out to be when it was measured, what changed,
+and what measures it now — because five of the seven passed every gate in the
+ledger on the morning they were reported.
+
+### 1. "Two buttons in the top menu, and it is not clear why there are two"
+
+Measured at 320, 390 and 430px, in both editions: the row ended in **two 44px
+circles side by side**, one drawing an arrow and one a door, neither drawing a
+word. They were the free-account action and the way back in. Both carried an
+`aria-label`, so nothing was unnamed to a screen reader and nothing was named to
+an eye.
+
+The way back in moves into the drawer, first item, full width, with its word on
+it. The row keeps the one thing the page is asking for. From 640px up the login
+pill is unchanged.
+
+**G24** keeps the requirement of 28.08.2026 — the way back in is reachable from
+a phone — and moves the measurement to where it now lives: the gate opens the
+drawer, finds `[data-folio-login]` inside it at 44px with a name, **and asserts
+it is not back in the row beside the action**.
+
+### 2. The mark that was not there, 768px to 1023px
+
+Not reported; found on the way in. Below 1024 the brand chip was taken out of
+flow and centred against the row, and a box out of flow pushes nothing — so as
+soon as the row grew another control, the actions were drawn on top of it.
+
+| width | the mark | what was over it |
+|---|---|---|
+| 768px | 327–441 | the language pill, 329–441 — the wordmark was **not visible at all** |
+| 900px | 393–507 | the switch and the language pill |
+| 1000px | 443–557 | the switch |
+| 640px | 271–369 | the language pill, by 22px |
+
+The centring stops at 640 now, which is the width where the login pill joins the
+row; above it the mark is back in the flow at the reading start. The owner's
+placement of 28.08.2026 holds where it was asked for: the phone. Measured clean
+at 360, 420, 480, 560, 600, 640, 700, 720, 767, 768, 820 and 1023.
+
+### 3. The font that only the English page could show
+
+`--font-mono` was Hasubi Mono, declared on the eyebrows, the annotation figures
+and the colophon's rights line — and its `unicode-range` is latin only, on
+purpose, because its Hebrew glyphs are empty. So on the Hebrew page **every one
+of those elements falls back to the reading face and the mono is never actually
+painted**. On `/en/` it is painted, on 26 elements. The page was set in two
+typographic systems, one per language, and the one nobody had looked at was the
+one the owner was reading.
+
+Roboto Mono replaces it, and the choice is a fact rather than a preference:
+Heebo's latin **is** Roboto, which this repository's own licence file states, so
+the annotation face is now the display face's sibling on a fixed advance.
+Rendered against IBM Plex Mono and JetBrains Mono on the page's own strings
+before it was chosen. `scripts/fetch-mono-font.mjs` self-hosts the latin subset;
+`HasubiMono-Variable.woff2` is deleted, both shells preload the new file, and
+**G19** and **G9** name Roboto Mono. G9's ink count stays as it is: the next face
+might claim a script it cannot draw.
+
+### 4. The comparison, on a phone
+
+`.plans-compare__scroll` was 672px of table in a 356px box — five columns and
+fifteen rows, of which a phone showed one column, with nothing on screen saying
+the rest was there. It was the only sideways scroller on the page.
+
+Below 640px the table is not drawn. Each card carries **פרטים נוספים** instead,
+opening its own plan's fifteen rows with their values. Both shapes are in the
+markup at every width, so what a plan includes — the page's most quoted fact —
+is readable either way. **G6** now reports no horizontal overflow and no
+scroller at all at 390.
+
+### 5. The drawer
+
+21st.dev's `drawer` (@coss.com, id 11444), the owner's pick, rebuilt on Motion
+for the reason the colophon was: the published file imports Base UI's drawer,
+checkbox and radio primitives plus `class-variance-authority`, and this repo has
+none of the four. The panel's geometry, its ease and its swipe are the
+catalogue's; the four departures are listed at the top of `Drawer.tsx`.
+
+Two faults were found inside it while it was being built, and both are the kind
+that reads as a slow browser rather than as a bug:
+
+- **The exit never ran.** `AnimatePresence` tracks one keyed child at a time, and
+  its child here was an unkeyed fragment holding the scrim and the panel. The
+  `<dialog>` is closed by `onExitComplete`, so Escape left the panel on screen —
+  four presses in five — with its own state already saying closed.
+- **One press closed two things.** A dialog's Escape is a close request, and the
+  browser processes it only if the keydown was not cancelled. The language
+  control inside the panel closed itself on Escape without cancelling, so the
+  same press took the drawer with it — on the English page reliably, on the
+  Hebrew page not, which is the worse of the two.
+
+The close has a floor under it as well: on a page carrying a live WebGL ground,
+the finished-animating report was measured arriving 600–800ms after a 280ms
+animation, and a modal that is still open is a page that is still inert.
+
+A third fault was found by testing the gesture itself, which no gate does: **the
+swipe did nothing on a touch screen.** The drag was on the whole panel, and the
+list inside it declares `touch-action: pan-y` so it can scroll — a browser handed
+a horizontal move over that list takes the gesture and cancels the pointer
+stream Motion was reading. Measured in both editions: the panel did not move a
+pixel and the release did not close it. The two gestures cannot share a surface,
+so they no longer do: the list scrolls, and the bar down the inner edge — the
+full height of the panel, which is why the catalogue draws one — is what the
+panel is dragged by. Measured after: a 220px drag from the bar leaves the scrim
+at 0.29 and the release closes the drawer, in both editions.
+
+**The language control and the switch are at the top of the panel**, under the
+mark and over everything that navigates — the owner's placement of 30.08.2026,
+moved there from the strip at the bottom where this round first put them.
+
+And one thing the gates themselves were doing wrong. Both phone gates read the
+DOM a fixed number of milliseconds after pressing Escape, which is a race with
+an animation whose length depends on what else is asking for frames: the same
+assertion passed in one edition and failed in the other, and which one moved
+between runs. They wait for the condition now, with a three-second ceiling —
+a ceiling, not a duration.
+
+### 6. The colophon, on a phone
+
+Four groups, **thirteen pills over six rows**. The product column and the
+supporting pages are in the drawer now, and down here the groups fold, with the
+first — the two ways in — left open. Two pills drawn where there were thirteen.
+
+**Nothing is removed from the markup.** This is the only place on the home page
+that links the six supporting pages, and a page nothing links to is a page
+nobody arrives at. Above 640 every group is open and its heading answers neither
+a press nor a Tab, because a control that cannot do anything should not offer to.
+
+### 7. The screen a phone could not pan
+
+The zoom dialog centred a 900px picture in a 390px scroller with
+`place-items: center`, and a centred box wider than its scroller overflows both
+ends — the end past the scroll origin being unreachable by any gesture.
+
+| | before | after |
+|---|---|---|
+| the picture | 900px | 900px |
+| reachable | 645px | 900px |
+| unreachable | **255px (28%)** | 0px |
+
+Measured in both reading directions, and it was a different 28% in each. The fix
+is `safe` alignment, plus `flex: none` on the picture — which stops a flex item
+being shrunk back into the box the scroller exists to escape.
+
+### 8. Two more things the phone was being told
+
+`what.demoHint` says the reader can press the navigation inside the screenshot,
+and below 768px that layer is `display: none`: a promise of an interaction the
+page had deliberately removed. A second sentence, `demoTouchHint` in
+`extra.ts`, is drawn at those widths instead, and the picture carries a chip
+saying it opens.
+
+`NAV_STEP` mapped hotspots to stations by **five Hebrew words**. The screens are
+about to be captured again from an application that now has an English edition,
+and the first English capture would have missed every lookup, filtered every
+hotspot away, and left five screens silently unclickable. It is keyed by route
+now, with the words kept beside the keys for the data measured before the
+capture script recorded one, and `scripts/capture-demo.mjs` records the route
+from here on. **G11** already fails a station with no hotspots, in either
+edition, so this cannot go quiet again.
+
+### What this round did not do
+
+**The screenshots were not retaken.** The owner asked for it, then ruled on
+30.08.2026 — given the measurement — to close the application's own translation
+holes first; the per-screen numbers and what is left are in [DEBT.md](DEBT.md)
+§16. The page's side of it is ready either way, which is what item 8 is.

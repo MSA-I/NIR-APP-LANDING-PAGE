@@ -20,7 +20,8 @@
 // Terms and privacy point at app.inplace.digital: they are routes inside the
 // product, and scripts/gates/g14-figures.mjs fails the build if either moves.
 
-import { ArrowUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowUp, ChevronDown } from 'lucide-react'
 import { Mark } from './Folio'
 import { Cta, Magnetic } from './Cta'
 
@@ -54,6 +55,31 @@ export function SiteFooter({
   topLabel: string
 }) {
   const strip = [...marquee, ...marquee]
+
+  // The colophon's four groups, on a phone, were thirteen pills over six rows
+  // — the owner's note of 30.08.2026 that the footer is carrying too much
+  // there. Two things answer it together: the product column and the
+  // supporting pages are in the drawer now, which is where somebody looks for
+  // them mid-page, and down here the groups fold.
+  //
+  // THEY FOLD, THEY ARE NOT REMOVED. This is the only place on the home page
+  // that links the six supporting pages, and a page nothing links to is a page
+  // nobody arrives at, whatever the sitemap says. Every link stays in the
+  // markup at every width; on a phone the reader opens the one they want.
+  //
+  // `open` by default, and closed by a `key` remount once a phone says so:
+  // the static render in Node has no viewport to ask, so what it writes is the
+  // whole colophon, open, which is also what a crawler should read. The first
+  // group — the two ways in — stays open at every width, because it is the
+  // one somebody who scrolled this far is looking for.
+  const [phone, setPhone] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const read = () => setPhone(mq.matches)
+    read()
+    mq.addEventListener('change', read)
+    return () => mq.removeEventListener('change', read)
+  }, [])
 
   return (
     <div className="footer-reveal">
@@ -95,9 +121,19 @@ export function SiteFooter({
           <p className="footer-tagline">{tagline}</p>
 
           <nav aria-label={cols[0].h} className="footer-nav">
-            {[...cols, ...(more ? [more] : [])].map((c) => (
-              <div key={c.h} className="footer-nav__group">
-                <p className="footer-nav__label">{c.h}</p>
+            {[...cols, ...(more ? [more] : [])].map((c, i) => (
+              <details
+                key={`${c.h}${phone ? '-phone' : ''}`}
+                className="footer-nav__group"
+                open={!phone || i === 0}
+              >
+                {/* Off the tab path where it cannot do anything: above 640 the
+                    group is open and cannot be closed, and a stop that answers
+                    nothing is a stop a keyboard reader pays for twice. */}
+                <summary className="footer-nav__label" tabIndex={phone ? undefined : -1}>
+                  <span>{c.h}</span>
+                  <ChevronDown className="footer-nav__chevron size-4" aria-hidden="true" />
+                </summary>
                 <ul className="footer-pills">
                   {c.links.map((l) => (
                     <li key={l.href}>
@@ -111,7 +147,7 @@ export function SiteFooter({
                     </li>
                   ))}
                 </ul>
-              </div>
+              </details>
             ))}
           </nav>
         </div>

@@ -57,6 +57,7 @@ import {
   Workflow,
   History,
   Sheet,
+  ChevronDown,
 } from 'lucide-react'
 
 import { Cta } from './Cta'
@@ -83,6 +84,7 @@ type Cell = string | boolean
 type Ladder = {
   compareLabel: string
   featuresHeader: string
+  moreLabel: string
   included: string
   absent: string
   contract: string
@@ -376,6 +378,49 @@ export function PlansChapter({
                     )
                   })}
                 </ul>
+
+                {/* THE COMPARISON, ON A PHONE, IS HERE.
+                    The table under the cards is five columns wide and fifteen
+                    rows deep; on a 390px screen it showed ONE column and
+                    scrolled sideways with nothing saying so, which is the
+                    fault the owner named on 30.08.2026. Below 640px the table
+                    is not drawn and this is drawn instead: the same fifteen
+                    rows, the same values, for this card's plan only, behind a
+                    press. Above 640 it is the other way round.
+
+                    Both are in the markup at every width. What a plan includes
+                    is the page's most quoted fact and it is answered here in
+                    two shapes, not moved from one to the other, so a crawler
+                    reading either one reads the whole catalogue. */}
+                <details className="plan-card__more">
+                  <summary aria-label={`${ladder.moreLabel}: ${r.name}`}>
+                    <span>{ladder.moreLabel}</span>
+                    <ChevronDown className="plan-card__more-chevron size-4" aria-hidden="true" />
+                  </summary>
+                  <ul className="plan-card__ladder">
+                    {ladder.rows.map((row) => {
+                      const cell = row.cells[i]
+                      return (
+                        <li key={row.label}>
+                          <span>{row.label}</span>
+                          {cell === true ? (
+                            <span className="plan-card__ladder-yes">
+                              <Check className="size-3.5" strokeWidth={2.5} aria-hidden="true" />
+                              <span className="sr-only">{ladder.included}</span>
+                            </span>
+                          ) : cell === false || cell === 'intro' ? (
+                            <span className="plan-card__ladder-no">
+                              <Minus className="size-3.5" strokeWidth={2.5} aria-hidden="true" />
+                              <span className="sr-only">{ladder.absent}</span>
+                            </span>
+                          ) : (
+                            <span className="plan-card__ladder-num ip-fig">{cell}</span>
+                          )}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </details>
 
                 <div className="plan-card__action">
                   <Cta href={ask.href} variant={featured ? 'primary' : 'ghost'} size="sm" block>

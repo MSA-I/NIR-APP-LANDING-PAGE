@@ -10,8 +10,9 @@
 // rest of the page does rather than in a dialect of its own.
 
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
-import { LogIn, Menu, X } from 'lucide-react'
+import { ChevronRight, Menu } from 'lucide-react'
 import { Cta } from './Cta'
+import { Drawer } from './Drawer'
 
 export function Mark({ className }: { className?: string }) {
   return (
@@ -33,6 +34,7 @@ export function Folio({
   announcement,
   brand,
   links,
+  menuGroups = [],
   ctaLabel,
   ctaHref,
   loginLabel,
@@ -46,6 +48,12 @@ export function Folio({
   announcement?: ReactNode
   brand: string
   links: NavLink[]
+  /**
+   * What the phone drawer carries beside the chapters: the product column and
+   * the supporting pages, which is the half of the colophon the owner asked to
+   * take off the phone footer on 30.08.2026.
+   */
+  menuGroups?: { h: string; links: NavLink[] }[]
   ctaLabel: string
   ctaHref: string
   /** The way in for somebody who already has an account. */
@@ -63,7 +71,6 @@ export function Folio({
   const [lifted, setLifted] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const boxRef = useRef<HTMLElement>(null)
-  const menuRef = useRef<HTMLElement>(null)
   const menuId = useId()
 
   // The folio publishes its own height.
@@ -93,158 +100,177 @@ export function Folio({
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // The phone menu closes the three ways a reader expects it to: Escape, a
-  // press outside it, and the window growing past the width where the chapter
-  // list is in the row anyway. The last one matters on a tablet turned
-  // sideways: without it the panel stays open over a header that is already
-  // showing the same four links.
+  // Escape, the press outside, and the focus trap belong to the <dialog> the
+  // drawer is built on now, and none of the three is re-implemented here. What
+  // is left is the one case a dialog knows nothing about: the window growing
+  // past the width where the chapter list is in the row anyway. It matters on
+  // a tablet turned sideways, where the panel would otherwise stay open over a
+  // header already showing the same links.
   useEffect(() => {
     if (!menuOpen) return
-    const box = boxRef.current
-    menuRef.current?.querySelector<HTMLElement>('[data-folio-menu-item]')?.focus()
-    const onPointer = (event: PointerEvent) => {
-      if (!box?.contains(event.target as Node)) setMenuOpen(false)
-    }
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      // The language control lives inside this panel below 480px, and it
-      // listens for Escape too. Both handlers are on `document`, so one press
-      // closed the language menu AND the panel around it, and the reader was
-      // two steps back from where they meant to be. The innermost open thing
-      // takes the press; the next one takes the next press.
-      if (box?.querySelector('[data-language-trigger][aria-expanded="true"]')) return
-      setMenuOpen(false)
-      box?.querySelector<HTMLButtonElement>('[data-folio-menu-trigger]')?.focus()
-    }
     const wide = window.matchMedia('(min-width: 1024px)')
     const onWide = () => wide.matches && setMenuOpen(false)
-    document.addEventListener('pointerdown', onPointer)
-    document.addEventListener('keydown', onKey)
     wide.addEventListener('change', onWide)
-    return () => {
-      document.removeEventListener('pointerdown', onPointer)
-      document.removeEventListener('keydown', onKey)
-      wide.removeEventListener('change', onWide)
-    }
+    return () => wide.removeEventListener('change', onWide)
   }, [menuOpen])
 
-  return (
-    <header
-      ref={boxRef}
-      data-lifted={lifted ? 'true' : 'false'}
-      className="fixed inset-x-0 top-0 z-[100] transition-[background-color,backdrop-filter,border-color] duration-500"
-      style={{
-        backgroundColor: lifted ? 'color-mix(in srgb, var(--color-onyx) 82%, transparent)' : 'transparent',
-        backdropFilter: lifted ? 'blur(14px)' : 'none',
-        WebkitBackdropFilter: lifted ? 'blur(14px)' : 'none',
-        borderBottom: `1px solid ${lifted ? 'var(--color-onyx-line)' : 'transparent'}`,
-      }}
-    >
-      {announcement}
+  // The press that opened it gets the focus back when it closes, which the
+  // browser only does for a dialog it closed itself.
+  const closeMenu = () => {
+    setMenuOpen(false)
+    boxRef.current?.querySelector<HTMLButtonElement>('[data-folio-menu-trigger]')?.focus()
+  }
 
-      <div className="folio__row wrap flex items-center gap-2 py-3">
-        {/* The chapter menu, at the reading start of the row and outside the
+  const groups = menuGroups.length ? menuGroups : [{ h: menuLabels.label, links }]
+
+  return (
+    <>
+      <header
+        ref={boxRef}
+        data-lifted={lifted ? 'true' : 'false'}
+        className="fixed inset-x-0 top-0 z-[100] transition-[background-color,backdrop-filter,border-color] duration-500"
+        style={{
+          backgroundColor: lifted
+            ? 'color-mix(in srgb, var(--color-onyx) 82%, transparent)'
+            : 'transparent',
+          backdropFilter: lifted ? 'blur(14px)' : 'none',
+          WebkitBackdropFilter: lifted ? 'blur(14px)' : 'none',
+          borderBottom: `1px solid ${lifted ? 'var(--color-onyx-line)' : 'transparent'}`,
+        }}
+      >
+        {announcement}
+
+        <div className="folio__row wrap flex items-center gap-2 py-3">
+          {/* The chapter menu, at the reading start of the row and outside the
             actions group: the owner's placement of 28.08.2026, which is where
             a phone's menu is looked for. Below 1024px the brand beside it is
             taken out of flow and centred, so the row reads menu, mark, actions
             rather than mark, gap, four controls. */}
-        <button
-          type="button"
-          data-folio-menu-trigger=""
-          className="folio__icon lg:hidden"
-          aria-label={menuOpen ? menuLabels.close : menuLabels.open}
-          aria-expanded={menuOpen}
-          aria-controls={menuId}
-          onClick={() => setMenuOpen((value) => !value)}
-        >
-          {menuOpen ? (
-            <X className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
-          ) : (
+          <button
+            type="button"
+            data-folio-menu-trigger=""
+            className="folio__icon lg:hidden"
+            aria-label={menuOpen ? menuLabels.close : menuLabels.open}
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            onClick={() => setMenuOpen((value) => !value)}
+          >
+            {/* One glyph now, where it used to swap to a cross when the panel
+              was open. The drawer carries its own close, and the trigger is
+              behind the scrim while it is open, so a cross up here was a
+              second close nobody could reach. */}
             <Menu className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
-          )}
-        </button>
+          </button>
 
-        {/* The same chip as every other control up here, minus the arrows a
+          {/* The same chip as every other control up here, minus the arrows a
             wordmark does not take. It used to be a hand-rolled anchor with a
             thinner border, a different radius and a hover of its own, sitting
             first in the row: the fault the owner circled on 26.08.2026. */}
-        <a className="brandchip" href="#top" aria-label={brand}>
-          <span className="brandchip__fill" aria-hidden="true" />
-          <Mark className="size-4" />
-          <span>{brand}</span>
-        </a>
+          <a className="brandchip" href="#top" aria-label={brand}>
+            <span className="brandchip__fill" aria-hidden="true" />
+            <Mark className="size-4" />
+            <span>{brand}</span>
+          </a>
 
-        <nav aria-label={brand} className="hidden items-center gap-1.5 lg:flex">
-          {links.map((l) => (
-            <Cta key={l.href} href={l.href} variant="ghost" size="sm">
-              {l.t}
-            </Cta>
-          ))}
-        </nav>
+          <nav aria-label={brand} className="hidden items-center gap-1.5 lg:flex">
+            {links.map((l) => (
+              <Cta key={l.href} href={l.href} variant="ghost" size="sm">
+                {l.t}
+              </Cta>
+            ))}
+          </nav>
 
-        {/* The gap the chapter indicator used to fill. The indicator went on
+          {/* The gap the chapter indicator used to fill. The indicator went on
             27.08.2026 and the row closed up behind it, which put the page's
             navigation and its actions in one undivided run of pills. The space
             was doing work, so it stays without the text. */}
-        <span className="me-auto" aria-hidden="true" />
+          <span className="me-auto" aria-hidden="true" />
 
-        <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
-          {/* The way back in. It was a labelled pill from 640px up and nothing
-              at all below it, so on every phone a reader who already had an
-              account had no door in the running head. The owner asked for an
-              icon there on 28.08.2026; the pill is unchanged above 640. */}
-          <a
-            data-folio-login=""
-            className="folio__icon sm:hidden"
-            href={loginHref}
-            aria-label={loginLabel}
-          >
-            <LogIn className="size-[1.15rem]" aria-hidden="true" strokeWidth={2} />
-          </a>
+          <div className="folio__actions ms-auto flex items-center gap-2 lg:ms-0">
+            {/* THE WAY BACK IN IS NOT IN THIS ROW ON A PHONE, since 30.08.2026.
+              It was an icon circle here from 28.08.2026, beside the action's
+              icon circle, and the owner's reading of the result was the
+              question the pair could not answer: two round wordless controls
+              of the same size, next to each other, and nothing on the screen
+              saying why there were two. The row keeps the ONE the page is
+              asking for; the way back in is the first item in the drawer,
+              where it has its word. The labelled pill from 640px up is
+              unchanged. */}
 
-          {/* The switch is the widest control in the row for the least it says,
+            {/* The switch is the widest control in the row for the least it says,
               and below 768 the row has four other things to hold. It moves
               into the panel there, where it has a label beside it. */}
-          <span className="folio__wide-only">{themeControl}</span>
-          {languageControl}
-          <span className="hidden sm:inline-flex">
-            <Cta href={loginHref} variant="ghost" size="sm">
-              {loginLabel}
+            <span className="folio__wide-only">{themeControl}</span>
+            {languageControl}
+            <span className="hidden sm:inline-flex">
+              <Cta href={loginHref} variant="ghost" size="sm">
+                {loginLabel}
+              </Cta>
+            </span>
+            <Cta href={ctaHref} size="sm" label={ctaLabel}>
+              {ctaLabel}
             </Cta>
-          </span>
-          <Cta href={ctaHref} size="sm" label={ctaLabel}>
+          </div>
+        </div>
+      </header>
+
+      {/* Outside the header, and not only for tidiness: the header carries a
+        `backdrop-filter` when it is lifted, and a filtered ancestor is a
+        containing block for everything under it. The panel is a top-layer
+        dialog and has to be measured against the viewport. */}
+      <Drawer
+        open={menuOpen}
+        onClose={closeMenu}
+        label={menuLabels.label}
+        closeLabel={menuLabels.close}
+        panelId={menuId}
+        head={
+          <a className="drawer__brand" href="#top" onClick={closeMenu}>
+            <Mark className="size-5" />
+            <span>{brand}</span>
+          </a>
+        }
+        tools={
+          <>
+            <span className="drawer__langs">{languageControl}</span>
+            <span className="drawer__theme">{themeControl}</span>
+          </>
+        }
+      >
+        {/* The two asks, first, and both with their word. This is where the
+          login icon went on 30.08.2026. */}
+        <div className="drawer__asks">
+          <Cta href={loginHref} variant="ghost" size="sm" block attrs={{ 'data-folio-login': '' }}>
+            {loginLabel}
+          </Cta>
+          <Cta href={ctaHref} size="sm" block>
             {ctaLabel}
           </Cta>
         </div>
 
-        {/* Placed against the header rather than inside its flow: the box
-            publishes its own height to --folio-h, and a panel that grew that
-            box would move the whole document down every time it opened. */}
-        <nav
-          ref={menuRef}
-          id={menuId}
-          data-folio-menu=""
-          className="folio__menu lg:hidden"
-          aria-label={menuLabels.label}
-          hidden={!menuOpen}
-        >
-          {links.map((l) => (
-            <a
-              key={l.href}
-              data-folio-menu-item=""
-              className="folio__menu-item"
-              href={l.href}
-              onClick={() => setMenuOpen(false)}
-            >
-              {l.t}
-            </a>
-          ))}
-          <div className="folio__menu-foot">
-            <span className="folio__menu-langs">{languageControl}</span>
-            {themeControl}
-          </div>
-        </nav>
-      </div>
-    </header>
+        {groups.map((group) => (
+          <section key={group.h} className="drawer__group">
+            <p className="drawer__label">{group.h}</p>
+            <nav aria-label={group.h}>
+              <ul className="drawer__list">
+                {group.links.map((l) => (
+                  <li key={l.href}>
+                    <a
+                      data-folio-menu-item=""
+                      className="drawer__item"
+                      href={l.href}
+                      onClick={closeMenu}
+                    >
+                      <span>{l.t}</span>
+                      <ChevronRight className="drawer__chevron size-4" aria-hidden="true" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </section>
+        ))}
+      </Drawer>
+    </>
   )
 }

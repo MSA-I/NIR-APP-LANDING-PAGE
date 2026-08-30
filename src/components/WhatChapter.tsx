@@ -13,21 +13,46 @@
 // lands mirrored, which is what the first cut of build 3 did.
 
 import { useEffect, useId, useRef, useState } from 'react'
-import { X } from 'lucide-react'
+import { Maximize2, X } from 'lucide-react'
 import { motion } from 'motion/react'
 import NAV from '@/data/demo-nav.json'
 import { Html, Reveal, SplitHeading, useCalm } from '@/lib/motion'
 
 type Step = { k: string; t: string; p: string; img: string; cap: string }
-type Hot = { label: string; x: number; y: number; w: number; h: number }
+type Hot = { label: string; key?: string; x: number; y: number; w: number; h: number }
 
+/**
+ * Which station a box drawn over the product's own navigation opens.
+ *
+ * KEYED BY ROUTE FIRST, and the reason is dated: this map held five HEBREW
+ * WORDS and nothing else until 30.08.2026. The screenshots are being taken
+ * again from an application that now has an English edition, and the moment a
+ * capture comes back with "Orders" over the same pixels, every lookup here
+ * misses, `panelHots` filters to nothing, and five screens quietly stop being
+ * clickable — no error, no warning, a feature that is simply gone. The route
+ * is the same string in both editions, so the key survives the translation.
+ *
+ * The labels stay beside the keys because the data on disk today was measured
+ * before the capture script recorded a route, and a page that only works after
+ * the next capture is a page that does not work. scripts/gates/g11-demo.mjs
+ * fails the build if any station ends up with no hotspots, in either edition,
+ * so this cannot go quiet again whichever half of the table is doing the work.
+ */
 const NAV_STEP: Record<string, number> = {
+  orders: 0,
+  receiving: 1,
+  invoices: 2,
+  exceptions: 3,
+  'payment-requests': 4,
   הזמנות: 0,
   קבלה: 1,
   חשבוניות: 2,
   בקרה: 3,
   ניהול: 4,
 }
+
+/** The route if the capture recorded one, the printed word if it did not. */
+const stepOf = (n: Hot) => NAV_STEP[n.key ?? ''] ?? NAV_STEP[n.label]
 
 const navKey = (img: string) => img.replace(/^assets\/screen-/, '').replace(/\.webp$/, '')
 
@@ -53,6 +78,7 @@ export function WhatChapter({
   lede,
   stepsLabel,
   demoHint,
+  touchHint,
   steps,
   dir,
   screenAltSuffix,
@@ -65,6 +91,8 @@ export function WhatChapter({
   lede: string
   stepsLabel: string
   demoHint: string
+  /** The same hint, for the widths where the picture is the control. */
+  touchHint: string
   steps: Step[]
   dir: 'rtl' | 'ltr'
   screenAltSuffix: string
@@ -160,7 +188,12 @@ export function WhatChapter({
               })}
             </div>
           </Reveal>
-          <p className="cap mt-3">{demoHint}</p>
+          {/* Two sentences, one drawn. Above 768px the hotspot layer is there
+              and the copy in he.ts is true; below it that layer is off and the
+              picture is the control, so the sentence that is true there is the
+              one about pressing it. See `demoTouchHint` in extra.ts. */}
+          <p className="cap mt-3 demo-hint demo-hint--pointer">{demoHint}</p>
+          <p className="cap mt-3 demo-hint demo-hint--touch">{touchHint}</p>
 
           {/* All five panels are in the document; the four that are not
               selected carry `hidden`.
@@ -181,7 +214,7 @@ export function WhatChapter({
             {steps.map((s, i) => {
               const on = i === at
               const panelHots = ((NAV as Record<string, Hot[]>)[navKey(s.img)] || []).filter(
-                (n) => n.label in NAV_STEP,
+                (n) => stepOf(n) !== undefined,
               )
               const title = s.t.replace(/&nbsp;/g, ' ')
               return (
@@ -243,7 +276,17 @@ export function WhatChapter({
                         className="screen-zoom"
                         aria-label={`${title}. ${zoomLabel}`}
                         onClick={() => setZoom(i)}
-                      />
+                      >
+                        {/* The control was transparent and edge to edge, which
+                            on a phone is a picture that gives no sign it can be
+                            opened. The chip says so once, quietly, in the
+                            corner; it is inside the button, so it is not a
+                            second target. */}
+                        <span className="screen-zoom__chip" aria-hidden="true">
+                          <Maximize2 className="size-3.5" strokeWidth={2} />
+                          {zoomLabel}
+                        </span>
+                      </button>
                       <div className="screen-hots" aria-hidden="true">
                         {panelHots.map((n) => (
                           <button
@@ -251,7 +294,7 @@ export function WhatChapter({
                             type="button"
                             tabIndex={-1}
                             title={n.label}
-                            onClick={() => setAt(NAV_STEP[n.label])}
+                            onClick={() => setAt(stepOf(n) as number)}
                             className="absolute rounded-[4px] border border-transparent transition-[background-color,border-color] duration-300 hover:border-oceanic-deep hover:bg-[color-mix(in_srgb,var(--color-oceanic)_22%,transparent)]"
                             style={{
                               insetInlineStart: `${(

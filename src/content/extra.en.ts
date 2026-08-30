@@ -92,6 +92,7 @@ const extraEn = {
   ladder: {
     compareLabel: 'What every plan includes',
     featuresHeader: 'Features',
+    moreLabel: 'More details',
     included: 'Included',
     absent: 'Not included',
     contract: 'Per contract',
@@ -242,6 +243,8 @@ const extraEn = {
     close: 'Close the menu',
     label: 'Chapters',
   },
+
+  demoTouchHint: 'Tap a screen to open it full size.',
 
   accessibility: {
     screenAltSuffix: 'InPlace product screen',

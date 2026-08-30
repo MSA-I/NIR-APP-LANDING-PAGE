@@ -34,6 +34,17 @@ export function LanguageSwitcher({
     }
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      // CANCELLING THE PRESS IS THE POINT, not a formality. Below 480px this
+      // control lives inside the phone drawer, which is a modal <dialog>, and a
+      // dialog closes on Escape through a close watcher that the browser only
+      // runs if the keydown was NOT cancelled. Without this line one press
+      // closed the language menu and the drawer around it — the reader two
+      // steps back from where they meant to be — and it did so unreliably,
+      // which is worse: whether the drawer went depended on whether React had
+      // committed this component's state before the close request was
+      // processed. Measured 30.08.2026: the Hebrew page survived it and the
+      // English page did not.
+      event.preventDefault()
       setOpen(false)
       ref.current?.querySelector<HTMLButtonElement>('[data-language-trigger]')?.focus()
     }

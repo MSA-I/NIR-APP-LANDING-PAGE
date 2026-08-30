@@ -84,6 +84,7 @@ export function Cta({
   block = false,
   label,
   className,
+  attrs,
 }: {
   href: string
   children: ReactNode
@@ -98,6 +99,10 @@ export function Cta({
       drawn it says nothing new. */
   label?: string
   className?: string
+  /** Data attributes a gate finds this control by. The way back in carries
+      `data-folio-login` wherever it currently lives, and since 30.08.2026 that
+      is inside the phone drawer rather than in the row. */
+  attrs?: Record<string, string>
 }) {
   const cls = [
     'flow',
@@ -110,7 +115,7 @@ export function Cta({
     .join(' ')
 
   return (
-    <a className={cls} href={href} aria-label={label}>
+    <a className={cls} href={href} aria-label={label} {...attrs}>
       <span className="flow__fill" aria-hidden="true" />
       <ArrowLeft className="flow__arrow flow__arrow--lead" aria-hidden="true" strokeWidth={2} />
       <span className="flow__label">{children}</span>

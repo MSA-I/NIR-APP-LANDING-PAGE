@@ -204,6 +204,12 @@ export default {
   ladder: {
     compareLabel: 'מה כלול בכל מסלול',
     featuresHeader: 'יכולות',
+    // The phone's way into the comparison, on the card itself. Below 640px the
+    // table is not drawn at all: it is five columns and fifteen rows, and on a
+    // 390px screen that was one visible column and a sideways scroll with
+    // nothing saying it was there — the owner's note of 30.08.2026. Each card
+    // opens its own plan's fifteen rows instead, with the same values.
+    moreLabel: 'פרטים נוספים',
     // The value a cell carries when the capability is not on that plan, and the
     // one Business carries where a number would be.
     included: 'כלול',
@@ -443,6 +449,17 @@ export default {
     close: 'סגירת התפריט',
     label: 'פרקי העמוד',
   },
+
+  /* Chapter 02's hint, for a reader who has no pointer.
+     `what.demoHint` in he.ts says the reader can press the navigation drawn
+     inside the screen — and below 768px that layer is `display: none`, because
+     a finger landing on one of those boxes would jump to another station
+     instead of opening the screen it pressed. So on those widths the page was
+     promising an interaction it had deliberately removed, in both editions.
+     The sentence that replaces it there is the one that IS true: the picture
+     opens. It lives here and not in he.ts because that file is build 3's copy
+     and G2 fails on a key added to it. */
+  demoTouchHint: 'לחיצה על המסך פותחת אותו בגודל מלא.',
 
   accessibility: {
     screenAltSuffix: 'מסך מתוך InPlace',

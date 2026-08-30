@@ -87,6 +87,25 @@ try {
       c.ok(!(await menu.isVisible()), `${test.name}: Escape did not close the language menu`)
       c.ok(await trigger.evaluate((element) => element === document.activeElement), `${test.name}: focus did not return to the language trigger`)
 
+      /* THE PANEL IS MODAL SINCE 30.08.2026, so it has to be closed before the
+         chain below can be reached at all: the drawer is a top-layer <dialog>
+         and everything behind it is inert, which is the point of it. Escape
+         closes it — the press above went to the language menu inside it, by
+         the innermost-first rule in Drawer.tsx — and this is the second one. */
+      if (onPhone) {
+        await page.keyboard.press('Escape')
+        // WAITED FOR, not slept past. The panel is removed when its exit
+        // finishes, and how long that takes depends on what else is asking for
+        // frames — this page runs a WebGL ground. A fixed sleep here was a
+        // coin toss that came down differently in the two editions and
+        // between runs; three seconds is a ceiling, not a duration.
+        const closed = await page
+          .waitForFunction(() => !document.querySelector('[data-folio-menu]'), { timeout: 3000 })
+          .then(() => true)
+          .catch(() => false)
+        c.ok(closed, `${test.name}: the drawer did not close on Escape`)
+      }
+
       const firstTab = page.locator('[role="tab"]').first()
       await firstTab.focus()
       const before = await page.locator('[role="tab"][aria-selected="true"]').getAttribute('id')
@@ -94,6 +113,16 @@ try {
       await page.waitForTimeout(80)
       const after = await page.locator('[role="tab"][aria-selected="true"]').getAttribute('id')
       c.ok(after !== before, `${test.name}: ${test.forward} did not move the product chain`)
+
+      /* And open again for the two things below that measure the control
+         itself: how tall the target is, and the photograph. On a phone the
+         language control is only drawn inside the drawer, so with the drawer
+         shut there is nothing to measure — the gate would be photographing its
+         own absence. */
+      if (onPhone) {
+        await page.locator('[data-folio-menu-trigger]').click()
+        await page.waitForTimeout(400)
+      }
 
       const state = await page.evaluate(() => ({
         lang: document.documentElement.lang,
