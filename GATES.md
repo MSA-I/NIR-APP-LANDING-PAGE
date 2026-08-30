@@ -2283,6 +2283,19 @@ a colon, a comma, a period or parentheses everywhere the dash was doing the
 work. Both are colons now. No word moved, in any of the five, in either
 language.
 
+### The note above the rail lost its second sentence
+
+It read "התגובות כאן נמסרו על ידי משתמשים במערכת ומצוטטות כלשונן. שמות המשפחה
+מופיעים באות אחת, בצורה שבה נמסרו לנו." The owner struck the second sentence on
+30.08.2026, and he is right that it was doing nothing: a reader who sees איתי ל׳
+under a quote does not need to be told that ל׳ is how the surname arrived. It
+explained a convention that explains itself, and the sentence that carries the
+weight — these are users, and this is their wording — is the first one.
+
+The first sentence stays, and G15 still measures it in the same slot: it is the
+only thing on the page that says whose words these are. The English lost the
+matching sentence with it.
+
 ### The card did not have to be touched
 
 This is what the measured height was built for, one merge earlier. The quotes

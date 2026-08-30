@@ -27,7 +27,7 @@ const extraEn = {
     eyebrow: 'What the change sounds like',
     h2: 'Five users on what&nbsp;changed',
     disclosure:
-      'These responses were given to us by people using the system, and are quoted as they were given. Surnames appear as a single letter, in the form we received them.',
+      'These responses were given to us by people using the system, and are quoted as they were given.',
     items: [
       {
         q: 'What caught me is that I do not have to put the whole order with one supplier. I pick the products, and the system shows me how they can be split between several suppliers, what each one comes to, and where the minimum order changes the picture. Even when I would rather keep it all with one supplier, I can see exactly what that convenience costs me.',
