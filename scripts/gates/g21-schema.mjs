@@ -25,11 +25,15 @@
 //   HowTo               Retired as well, and there are no steps on this page
 //                       waiting to be declared. A schema type is not a reason
 //                       to write copy.
-//   Review              The quotes on this page are marked `placeholder: true`
-//   AggregateRating     in src/content/extra.ts and the page says in its own
-//                       words that they are examples written in-house. Marking
-//                       them up as customer reviews turns an honest disclosure
-//                       into a structured-data violation.
+//   Review              The quotes were examples written in-house until
+//   AggregateRating     30.08.2026, and marking those up as customer reviews
+//                       would have turned an honest disclosure into a
+//                       structured-data violation. They are five real responses
+//                       now, and the prohibition survives its own reason: a
+//                       `Review` needs an author Google can hold to, and these
+//                       carry a first name and one letter. `AggregateRating`
+//                       needs a rating, and nobody was asked for one. Five
+//                       quotes on a page are five quotes on a page.
 
 import { readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'

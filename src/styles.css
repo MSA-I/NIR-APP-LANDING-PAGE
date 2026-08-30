@@ -2262,11 +2262,26 @@ html[dir='rtl'] { --knob: -1; }
   /* Centred on logical margins, not on a transform: a negative
      margin-inline-start pulls the card back by half its own width in EITHER
      direction, which `translate(-50%)` does in only one. The transform is left
-     free for the fan. */
-  inline-size: var(--voice-size);
-  block-size: var(--voice-size);
-  margin-inline-start: calc(var(--voice-size) / -2);
-  margin-block-start: calc(var(--voice-size) / -2);
+     free for the fan.
+
+     TWO MEASUREMENTS, NOT ONE. This was a square: one `--voice-size` set the
+     width, the height, and both negative margins. The card held five written
+     examples of about 165 characters and a square held them.
+
+     The five real responses that replaced them on 30.08.2026 run to 230, and
+     the English translations of those run longer again. In the 340px square, at
+     1440, every one of the ten wanted more card than it had: the Hebrew between
+     365 and 391px, the English between 416 and 489. Under the notched
+     clip-path that is not an overflow, it is two missing lines and a sentence
+     ending mid-clause, looking as deliberate as the rest of the design.
+
+     Nothing was going to be trimmed to protect a square, so the square went:
+     the fan still reads off the width (see the transform in Voices.tsx) and the
+     height is measured from the quotes themselves. */
+  inline-size: var(--voice-w);
+  block-size: var(--voice-h);
+  margin-inline-start: calc(var(--voice-w) / -2);
+  margin-block-start: calc(var(--voice-h) / -2);
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
@@ -2316,11 +2331,15 @@ html[dir='rtl'] { --knob: -1; }
   background: color-mix(in srgb, var(--color-ink) 14%, transparent);
   box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-onyx) 45%, transparent);
 }
+/* The upper bound came down from 1.12rem with the real quotes: at 17.9px the
+   longest English one wanted 450px of card, and the size that had been reading
+   as emphasis on a two-line sentence was reading as shouting on a nine-line
+   one. The floor is untouched, so nothing shrank on the narrow desktop. */
 .voice-card__q {
   font-family: var(--font-display);
-  font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+  font-size: clamp(0.95rem, 1.1vw, 1rem);
   font-weight: 600;
-  line-height: 1.42;
+  line-height: 1.45;
   letter-spacing: -0.01em;
 }
 .voice-card__by {
@@ -3282,7 +3301,10 @@ html[dir='rtl'] { --knob: -1; }
      and uses a compact reading card on narrow phones. */
   .voices-rail { margin-block-start: 0.75rem; }
   .voice-card { padding: 1.55rem; }
-  .voice-card__q { font-size: 1rem; line-height: 1.5; }
+  /* 0.95rem, not 1rem: the phone card is as wide as the phone allows and no
+     wider, and on a 320px screen the longest English quote at 16px runs past
+     the bottom of the card. */
+  .voice-card__q { font-size: 0.95rem; line-height: 1.45; }
   .voice-card:not(.voice-card--centre) .voice-card__mark,
   .voice-card:not(.voice-card--centre) .voice-card__q,
   .voice-card:not(.voice-card--centre) .voice-card__by { opacity: 0; }

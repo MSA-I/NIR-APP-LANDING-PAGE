@@ -14,47 +14,44 @@ const extraEn = {
     items: extraHe.logos.items,
   },
 
+  // Retranslated 30.08.2026, because the Hebrew stopped being ours to write.
+  // These five are the owner's five real responses, translated sentence for
+  // sentence and cut nowhere. The names are transliterated and keep the same
+  // one-letter surname the Hebrew carries; the roles are the roles he gave.
+  //
+  // The disclosure changed with them: it used to say we wrote these, which was
+  // true when we did.
   testimonials: {
-    placeholder: true,
     folioless: true,
     eyebrow: 'What the change sounds like',
-    h2: 'Five examples of what the system&nbsp;changes',
+    h2: 'Five users on what&nbsp;changed',
     disclosure:
-      'These are sample statements written by us, not customer testimonials. Each one describes behaviour that exists in the product today. They will be replaced by verified customer recommendations after launch.',
-    // Retranslated 27.08.2026, because the Hebrew moved. The five English
-    // sentences here were faithful translations of the five Hebrew ones as they
-    // stood that morning, and those were rewritten the same day for a reason
-    // that survives translation: a clean, complete, on-message sentence is the
-    // one thing people do not sound like, and a written example that reads as
-    // marketing copy makes the disclosure above it look like an excuse.
-    //
-    // So these carry the same details that serve no argument, and the same two
-    // admissions that the thing being praised was irritating first.
+      'These responses were given to us by people using the system, and are quoted as they were given. Surnames appear as a single letter, in the form we received them.',
     items: [
       {
-        q: 'I used to find the gap at month end, after I had already paid. Now the invoice gets stuck before the payment and I have to decide what to do with it. In the moment that is annoying. Afterwards it is exactly what I wanted.',
-        who: 'Owner',
-        of: 'Two-location restaurant',
+        q: 'Before InPlace the invoices, the price lists and the orders were scattered between email, WhatsApp and the binders. Today I can see in one place what I ordered, what arrived and what the supplier is asking to be paid for. On the first check alone we found a few gaps that would probably have gone past us before.',
+        who: 'Itai L.',
+        of: 'Restaurant owner',
       },
       {
-        q: 'Every order leaves with a number and a price list. I used to scroll WhatsApp for ten minutes trying to remember what was agreed, and half the time I did not find it.',
-        who: 'Procurement manager',
-        of: 'Coffee shop group',
+        q: 'The part that helps me most is not having to remember by heart where every order stands. I can see whether it went out, what was received and what does not match the invoice. It does not replace my work, but it takes a lot of searching and manual checking out of it.',
+        who: 'Shira M.',
+        of: 'Procurement manager',
       },
       {
-        q: 'I mark what arrived from my phone, at the receiving door, while the driver is still standing there. It used to be a note in my pocket that I remembered on Thursday.',
-        who: 'Operations manager',
-        of: 'Central kitchen',
+        q: 'I used to receive partial documents and chase the missing ones as the payment came due. Now the documents and the gaps are in order before they reach me, and I can look only at the cases that really need checking. The process with the business and with the suppliers became much clearer.',
+        who: 'Ronit A.',
+        of: 'Bookkeeper',
       },
       {
-        q: 'Only approved invoices reach me. I pay, upload the receipt, and that is it. Anything unapproved never gets to me at all, and mostly what that saved me was phone calls.',
-        who: 'Accountant',
-        of: 'External practice',
+        q: 'With several locations it is hard to know whether what we were charged for really matches what arrived at each one. In InPlace you can follow the order, the receipt and the invoice in the same process. When something is short or the price is different, you do not have to start digging through old messages to work out what happened.',
+        who: 'Omer S.',
+        of: 'Operations manager, business group',
       },
       {
-        q: 'The biggest change is that I approve and somebody else transfers. At first it annoyed me that there was no way around it when something was urgent. Today it is the thing I trust most.',
-        who: 'Owner',
-        of: 'Food business',
+        q: 'I was not looking for another system with dozens of screens, I was looking for a simple way to control the money going out to suppliers. Today I see what is waiting for approval, where there is a discrepancy and what needs handling before payment. I have more control without being involved in every small action.',
+        who: 'Alon K.',
+        of: 'Business owner',
       },
     ],
   },

@@ -3,12 +3,28 @@
 // Checked at several scroll positions, not just at the top: the peak scatters
 // cards sideways and a pinned stage only exists part way down the page, so a
 // top-of-page measurement would miss the one act that can actually cause this.
+//
+// AND ONE VERTICAL CASE, added 30.08.2026 with the real quotes: text that runs
+// past the bottom of a voice card. It is here because it is the same failure
+// wearing a different axis, and because it is the one this page cannot show
+// you: the cards carry a notched `clip-path`, so an overflowing quote is not a
+// scrollbar or a ragged edge, it is two missing lines and a sentence that ends
+// mid-clause looking exactly as deliberate as the rest of the design.
+//
+// The card's height is measured from its own contents at runtime (see
+// src/components/Voices.tsx), so this asserts the measure, not a constant, and
+// it asserts it in both locales: the English translations run longer than the
+// Hebrew they come from, and only one of the two is ever looked at by eye.
 
 import { withPage, checker } from './lib.mjs'
 
 const c = checker('G6')
 const WIDTHS = [390, 768, 1024, 1440]
 const STOPS = [0, 0.18, 0.34, 0.5, 0.62, 0.74, 0.88, 1]
+// 320 is in here and not in WIDTHS above because it is the width that breaks
+// the cards: the phone card is as wide as the screen allows, so the narrowest
+// screen sets the longest quote in the fewest characters per line.
+const CARD_WIDTHS = [320, 390, 900, 1440]
 
 for (const width of WIDTHS) {
   await withPage(
@@ -55,6 +71,52 @@ for (const width of WIDTHS) {
     },
     { viewport: { width, height: width < 500 ? 844 : 900 } }
   )
+}
+
+for (const path of ['/', '/en/']) {
+  for (const width of CARD_WIDTHS) {
+    await withPage(
+      async (page) => {
+        // The card transitions `all`, so a height read in the frame after a
+        // style change is a height it is animating away from.
+        await page.addStyleTag({ content: '*{transition:none!important}' })
+        await page.evaluate(() => document.querySelector('#voices')?.scrollIntoView())
+        await page.waitForTimeout(250)
+        const cards = await page.$$eval('.voice-card', (els) =>
+          els.map((el) => {
+            const had = el.style.blockSize
+            el.style.blockSize = 'auto'
+            // offsetHeight, not the bounding rect: the cards are rotated and
+            // the rect returns the box around the rotation.
+            const need = el.offsetHeight
+            el.style.blockSize = had
+            return {
+              have: el.offsetHeight,
+              need,
+              by: el
+                .querySelector('.voice-card__by')
+                .innerText.replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 30),
+            }
+          })
+        )
+        const tag = `${path} at ${width}px`
+        c.ok(cards.length > 0, `${tag}: no voice cards on the page at all`)
+        const cut = cards.filter((v) => v.need > v.have + 1)
+        c.ok(
+          cut.length === 0,
+          `${tag}: ${cut.length} quote(s) clipped by the card: ` +
+            cut.map((v) => `${v.by} needs ${v.need}px, has ${v.have}px`).join('; ')
+        )
+        if (!cut.length) {
+          const slack = Math.min(...cards.map((v) => v.have - v.need))
+          c.note(`${tag}: ${cards.length} cards fit, tightest by ${slack}px`)
+        }
+      },
+      { viewport: { width, height: width < 500 ? 844 : 900 }, path }
+    )
+  }
 }
 
 c.report()

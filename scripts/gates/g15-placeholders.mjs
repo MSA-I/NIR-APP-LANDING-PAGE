@@ -1,22 +1,34 @@
 // G15: nothing on this page pretends to be proof it is not.
 //
-// One section carries content that stands in for content that does not exist
-// yet: five quotes written in-house as examples of what the product does. A
-// logo wall was flagged alongside it for a few hours on 26.08.2026, until the
-// owner supplied six real marks; the gate is written against the FLAG rather
-// than against a count, so that transition needed no change here.
+// TWO SECTIONS HAVE BEEN THROUGH THIS GATE AND BOTH HAVE LEFT IT.
+// The logo wall was flagged `placeholder: true` for a few hours on 26.08.2026,
+// until the owner supplied six real marks. The quotes were flagged from then
+// until 30.08.2026, when he supplied five real responses with names, in
+// NIR-APP-DOCS/תגובות אמיתיות.txt. Nothing in src/content/extra.ts is flagged
+// today, and this gate is written so that is a legal state rather than a
+// failure.
 //
-// The risk is not that they are placeholders. The risk is that the sentence
-// SAYING they are placeholders gets tidied away in a later design pass, and
-// five invented quotes attributed to five roles at five kinds of business
-// silently become testimonials. This gate is what stops that being a quiet
-// change: every block flagged `placeholder: true` in src/content/extra.ts must
-// render a section on the page carrying its disclosure, in the visible text,
-// at a contrast the reader can actually read it at.
+// WHAT IT STILL DOES, and why it was not deleted with the flag:
 //
-// It also asserts the quotes carry no personal name and no company name, which
-// is the line between "here is the kind of thing the product does" and
-// "somebody said this".
+//   1. The machinery. Every block flagged `placeholder: true` must carry a
+//      disclosure of its own and must render it, in visible text, at a size a
+//      reader can actually read. That rule never depended on which block was
+//      flagged, and it is the reason the next stand-in for content the product
+//      does not have yet cannot reach the page in silence.
+//   2. The count. The number of `[data-placeholder]` sections on the page must
+//      equal the number of flagged blocks in the dictionary. When nothing is
+//      flagged that is zero, which is how a flag dropped in the content
+//      WITHOUT its marker being dropped in the component gets caught, and the
+//      other way round.
+//   3. The quotes are still counted and still read. Every one of them must
+//      carry an attribution with a name and a trade in it, which is the
+//      opposite of what this gate asserted for four days and the same idea:
+//      the page has to be honest about what these are. Anonymous examples had
+//      to say so; named responses have to be named.
+//   4. The note above the rail is still measured for size and display. It is
+//      no longer a disclaimer, but it is still the sentence that tells the
+//      reader whose words those are, and a 3% grey under the fold would be no
+//      better here than it was there.
 
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
@@ -33,15 +45,11 @@ const extra = (
 ).default
 
 const flagged = Object.entries(extra).filter(([, v]) => v && v.placeholder === true)
-// The logo wall was flagged until 26.08.2026 and is not any more: the owner
-// supplied six real marks. The quotes still are, and this asserts that by name
-// rather than by count, so dropping the flag from THEM cannot be mistaken for
-// the same kind of change.
-c.ok(
-  flagged.some(([name]) => name === 'testimonials'),
-  `the quotes are no longer flagged as placeholders; flagged: ${flagged.map(([n]) => n).join(', ') || 'nothing'}`
+c.note(
+  flagged.length
+    ? `flagged as placeholder: ${flagged.map(([n]) => n).join(', ')}`
+    : 'nothing in the dictionary is flagged as a placeholder'
 )
-for (const [name] of flagged) c.note(`flagged as placeholder: ${name}`)
 
 for (const [name, block] of flagged) {
   c.ok(
@@ -76,37 +84,41 @@ await withPage(async (page) => {
     c.note(`${name}: disclosure rendered, ${hit.text.length} chars of visible text`)
   }
 
-  // A quote attributed to nobody in particular is an example. A quote
-  // attributed to a person or a company is a testimonial, and this product has
-  // none to show.
+  // The quotes. The count is read off the dictionary, not written down here:
+  // five became three and went back to five on 27.08.2026, and it is the
+  // rendering that is being checked, not the number.
   const attributions = await page.$$eval('#voices .voice-card__by', (els) =>
-    els.map((e) => e.innerText.replace(/\s+/g, ' ').trim())
+    els.map((e) => ({
+      name: (e.querySelector('b')?.innerText || '').replace(/\s+/g, ' ').trim(),
+      full: e.innerText.replace(/\s+/g, ' ').trim(),
+    }))
   )
-  // The count is read off the dictionary, not written down here. Five became
-  // three on 27.08.2026, and what this gate exists to catch is a quote reaching
-  // the page WITHOUT its disclosure, not a particular number of them.
   const expected = extra.testimonials.items.length
   c.ok(
     attributions.length === expected,
     `expected ${expected} quotes, found ${attributions.length}`
   )
-  // Anything that reads as a proper name: a quoted company, a Ltd, or two
-  // capitalised Latin words. The attributions are all role + kind of business.
-  const named = attributions.filter((a) => /בע"מ|בע״מ|"[^"]+"|[A-Z][a-z]+\s+[A-Z]/.test(a))
+  // A response with nobody's name on it and no trade beside it is back to
+  // being an anonymous example, and an anonymous example needs the disclosure
+  // this section no longer carries. Either both halves are there or the flag
+  // belongs back in the dictionary.
+  const bare = attributions.filter((a) => !a.name || a.full.length <= a.name.length + 1)
   c.ok(
-    named.length === 0,
-    `a quote is attributed to a named party, which this page cannot support: ${named.join(' | ')}`
+    bare.length === 0,
+    `a quote is attributed to a name with no trade, or to nobody: ${
+      bare.map((a) => a.full || '(empty)').join(' | ') || '(empty)'
+    }`
   )
-  c.note(`${attributions.length} quotes, attributed by role and trade only: ${attributions.join(' | ')}`)
+  c.note(`${attributions.length} quotes, attributed: ${attributions.map((a) => a.full).join(' | ')}`)
 
-  // And the disclosure has to be readable, not a 3% grey under the fold.
+  // And the note has to be readable, not a 3% grey under the fold.
   const readable = await page.$eval('#voices .voices__note', (el) => {
     const cs = getComputedStyle(el)
     return { color: cs.color, size: parseFloat(cs.fontSize), display: cs.display }
   })
-  c.ok(readable.size >= 13, `the quotes' disclosure is set at ${readable.size}px, too small to count`)
-  c.ok(readable.display !== 'none', 'the quotes’ disclosure is not displayed')
-  c.note(`disclosure: ${readable.size}px, ${readable.color}`)
+  c.ok(readable.size >= 13, `the quotes' note is set at ${readable.size}px, too small to count`)
+  c.ok(readable.display !== 'none', 'the quotes’ note is not displayed')
+  c.note(`note: ${readable.size}px, ${readable.color}`)
 })
 
 c.report()

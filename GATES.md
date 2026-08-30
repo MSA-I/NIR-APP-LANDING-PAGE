@@ -2155,3 +2155,102 @@ costs nothing and a rotation never re-downloads a clip it is already playing.
 The scrub itself was not re-timed. The film's own pacing against the copy is
 what G10 and G18 measure and they are unchanged. What was measured here is which
 picture is in the box, and how much of it survives.
+
+## Round seventeen — the quotes stop being ours, 30.08.2026
+
+The owner supplied five responses from people using the system, with names, in
+`NIR-APP-DOCS/תגובות אמיתיות.txt`. Round eight wrote five sentences to stand in
+their place and built a gate to make sure nobody could pass them off as these.
+This round is that gate's own ending.
+
+### What the section was, and why it was built that way
+
+> הציטוטים כאן הם דוגמאות ניסוח שנכתבו על ידינו, לא לקוחות.
+
+Five examples of what the product does, attributed to a role and a kind of
+business, flagged `placeholder: true` in `src/content/extra.ts`, with **G15**
+asserting that the flag and the sentence stay together: that every flagged block
+renders its disclosure on the page, and that no attribution ever acquires a
+name, a company or a בע"מ.
+
+That was correct for four days and is wrong now. The five are real, they are
+quoted word for word, and they carry names.
+
+### The three places the old arrangement was enforced
+
+Every one of them had to move, and none of them could move quietly.
+
+| Where | Was | Is |
+|---|---|---|
+| `src/content/extra.ts` | `placeholder: true` on `testimonials`, and a disclosure that disclaimed authorship | no flag anywhere in the file, and a note that says who is speaking instead |
+| `src/components/Voices.tsx` | `data-placeholder="testimonials"` on the section | gone; G15 counts marked sections against flagged blocks, and both are zero |
+| `scripts/gates/g15-placeholders.mjs` | asserted the block IS flagged, and that no quote is attributed to a named party | asserts the machinery instead: any block flagged in the content still has to render its disclosure at a readable size, and every quote now has to carry BOTH a name and a trade |
+
+`Review` and `AggregateRating` stay out of the structured data. The reason
+changed and the answer did not: a `Review` wants an author that can be checked
+and these carry a first name and one letter, and an `AggregateRating` wants a
+rating nobody was ever asked for.
+
+### The card was the wrong shape, and it did not say so
+
+The written examples ran about 165 characters. The real ones run about 230, and
+the English translations of them run longer again. The card was a 340px
+**square** — one `--voice-size` set the width, the height and both centring
+margins — under a notched `clip-path`.
+
+| At 1440, in the 340px square | What the five quotes needed | Card had | Clipped |
+|---|---|---|---|
+| Hebrew | 365 to 391px | 340px | five of five |
+| English | 416 to 489px | 340px | five of five |
+
+Clipped, not overflowing: the clip-path cuts the last lines off inside the card
+border and leaves nothing on the page to say it happened. No gate was looking at
+the vertical axis, so a green run would have shipped it.
+
+**The square went.** `--voice-w` and `--voice-h` are separate now, the width is
+still chosen (it sets the fan's step, `w/1.5`, and how much of the outer pair
+the rail shows) and the height is **measured**: the component lays the cards out
+unconstrained once in a layout effect, takes the tallest, and holds every card
+to it. A constant could not do this job — one tall enough for the English leaves
+110px of empty card under every Hebrew quote, and one that suits the Hebrew
+clips the English.
+
+Three things cost a wrong reading before the measure was right: `transition:
+all` on the card means a width written this frame is still animating in the
+next, so the tape reads a height the card is on its way out of; the width has to
+be written before the height is read; and `offsetHeight` rather than the
+bounding rect, because the cards are rotated 2.5deg and the rect returns the box
+around the rotation, about 2% too tall. The measure is repeated on
+`document.fonts.ready`, because the display face sets wider than the fallback.
+
+The quote's own size came down with it, from `clamp(0.95rem, 1.5vw, 1.12rem)` to
+`clamp(0.95rem, 1.1vw, 1rem)`, and to 0.95rem on the phone. At 17.9px the
+longest English quote wanted 450px of card, and a size that read as emphasis on
+a two-line sentence read as shouting on a nine-line one.
+
+### The gate that did not exist
+
+**G6** grew a vertical case. It compares every card's natural height against the
+height it has, at four widths in both locales, and fails on any card whose quote
+is being cut. 320px is in that list and not in G6's horizontal widths, because
+the phone card is as wide as the screen allows: the narrowest screen sets the
+longest quote in the fewest characters per line, and it is the case that breaks
+first.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| Negative control | the square put back (`block-size: var(--voice-w)`), the new G6 case re-run against the rebuilt site: **3 of the 8 locale/width pairs fail, 11 quotes clipped**, each named with its shortfall — `/en/ at 320px: 5 quote(s) clipped by the card: Itai L. Restaurant owner needs 379px, has 296px; …`, and at 1440 `Omer S. needs 380px, has 360px`. The five that pass are the Hebrew at 390 and above, which is exactly the trap: the page the owner looks at is the page the square still fits |
+| After | every card fits at every width in both locales. Tightest fit 0px, which is what a measured height means: the card is exactly as tall as the tallest quote it holds |
+| The five quotes | word for word against the owner's file, in Hebrew. Nothing shortened, tidied or smoothed to fit |
+| The English | retranslated sentence for sentence from the new Hebrew, cut nowhere |
+| Photographed | the section at 1440 and at 390, in both locales |
+| The suite | **26 met, 0 unmet** |
+
+### What this does not claim
+
+Nobody was asked for a rating, and no number on the page moved. Five people
+saying what changed is not a measurement, which is why [DEBT.md](DEBT.md) §28
+stays open: there is still no original figure on this site that an answer engine
+could cite.
