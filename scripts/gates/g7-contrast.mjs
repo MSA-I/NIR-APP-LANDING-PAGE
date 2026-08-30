@@ -335,4 +335,172 @@ await withPage(async (page) => {
   c.note(`control: a near-white line on the card measures ${control.toFixed(2)}:1, correctly below AA`)
 })
 
+// ---- the supporting pages -------------------------------------------------
+// Everything above photographs the frame, because the home page's grounds are a
+// shader, a film and a backdrop-filtered bar, and none of those can be read off
+// a declaration. The supporting pages are the opposite case: every ground on
+// them is an opaque declared colour, so they are graded from the cascade
+// instead. That needs no screenshot and no scroll walk, which is what makes
+// sixteen pages in two views affordable at all — photographed, the same
+// coverage would take minutes.
+//
+// They were not covered at all before 30.08.2026, and that is precisely where a
+// bug lived: these pages carry their own stylesheet, written in page-html.ts,
+// which this gate never loaded. Three rules in it named --color-ink-on-light
+// for the light view — the token that holds the CREAM in that view, because the
+// light view is the two grounds trading places — and the about page's people
+// were painted cream on cream at 1.05:1. A gate that sweeps one page cannot say
+// anything about a stylesheet it never reads.
+const DOC_PATHS = [
+  '/procurement-software/', '/supplier-invoices/', '/invoice-matching/',
+  '/vs-spreadsheet/', '/vs-erp/', '/about/', '/terms/', '/privacy/',
+]
+const ALL_DOCS = [...DOC_PATHS, ...DOC_PATHS.map((p) => '/en' + p)]
+
+await withPage(async (page, { origin }) => {
+  let sampled = 0
+  let worstSeen = { ratio: Infinity, where: '' }
+
+  for (const path of ALL_DOCS) {
+    await page.goto(origin + path, { waitUntil: 'domcontentloaded' })
+
+    // TRANSITIONS OFF BEFORE ANYTHING IS READ.
+    // The buttons carry `transition: color .4s`, and the view is switched from
+    // script here rather than by a reader clicking. Sampling straight after the
+    // switch reads the colour mid-fade: the first run of this section reported
+    // 191 failures at 1.05:1 on .flow__label across every page, which is the
+    // dark view's cream caught halfway to the light view's ink. Every one of
+    // them was the measurement, not the page. Killing the transition makes the
+    // reading deterministic instead of a race against a 400ms fade.
+    await page.addStyleTag({
+      content: '*,*::before,*::after{transition:none!important;animation:none!important}',
+    })
+
+    for (const theme of ['dark', 'light']) {
+      await page.evaluate((t) => {
+        document.documentElement.dataset.theme = t
+      }, theme)
+
+      const rows = await page.evaluate((sels) => {
+        // Painted, not parsed. getComputedStyle hands back oklch() and color()
+        // verbatim on this page too, and the sweep above records what reading
+        // those with an rgb()-shaped regex did to this gate twice.
+        const probe = document.createElement('canvas')
+        probe.width = probe.height = 1
+        const pg = probe.getContext('2d', { willReadFrequently: true })
+        const toRGBA = (str) => {
+          if (!str || str === 'transparent') return null
+          pg.clearRect(0, 0, 1, 1)
+          pg.fillStyle = '#000'
+          const before = pg.fillStyle
+          pg.fillStyle = str
+          if (pg.fillStyle === before && !/^(#000000|black|rgb\(0, ?0, ?0\))$/i.test(str.trim())) return null
+          pg.fillRect(0, 0, 1, 1)
+          const d = pg.getImageData(0, 0, 1, 1).data
+          return [d[0], d[1], d[2], d[3] / 255]
+        }
+        const over = (fg, bg) =>
+          fg[3] >= 0.999
+            ? [fg[0], fg[1], fg[2]]
+            : [0, 1, 2].map((i) => Math.round(fg[i] * fg[3] + bg[i] * (1 - fg[3])))
+
+        const pageGround = toRGBA(getComputedStyle(document.body).backgroundColor) || [0, 0, 0, 1]
+        const out = []
+        for (const el of document.querySelectorAll(sels.join(','))) {
+          const cs = getComputedStyle(el)
+          if (cs.display === 'none' || cs.visibility === 'hidden') continue
+          if (parseFloat(cs.opacity) < 0.85) continue
+          const txt = (el.textContent || '').trim()
+          if (!txt) continue
+          // Leaves only, for the same reason as the sweep above.
+          if ([...el.children].some((ch) => (ch.textContent || '').trim())) continue
+          const r = el.getBoundingClientRect()
+          if (r.width < 8 || r.height < 8) continue
+
+          const fg = toRGBA(cs.color)
+          if (!fg) continue
+          // Ink that paints nothing is not graded as black here either; the
+          // sweep above explains why that reading is a measurement defect.
+          if (fg[3] < 0.02) continue
+
+          // The ground is the nearest ancestor painting an opaque fill, with any
+          // translucent layers above it composited down onto it. Where nothing
+          // opaque is found the body's own ground is the floor.
+          const layers = []
+          for (let n = el; n; n = n.parentElement) {
+            const col = toRGBA(getComputedStyle(n).backgroundColor)
+            if (!col || col[3] === 0) continue
+            layers.push(col)
+            if (col[3] >= 0.999) break
+          }
+          let ground = pageGround.slice(0, 3)
+          if (layers.length && layers[layers.length - 1][3] >= 0.999) ground = layers.pop().slice(0, 3)
+          for (let i = layers.length - 1; i >= 0; i--) ground = over(layers[i], ground)
+
+          const size = parseFloat(cs.fontSize)
+          const weight = parseInt(cs.fontWeight, 10) || 400
+          out.push({
+            fg: fg.slice(0, 3),
+            bg: ground,
+            large: size >= 24 || (size >= 18.66 && weight >= 700),
+            sel: el.className && typeof el.className === 'string'
+              ? '.' + el.className.trim().split(/\s+/)[0]
+              : el.tagName.toLowerCase(),
+            text: txt.slice(0, 34),
+          })
+        }
+        return out
+      }, TARGETS)
+
+      for (const r of rows) {
+        const ratio = contrast(r.fg, r.bg)
+        const need = r.large ? 3 : 4.5
+        sampled++
+        if (ratio < worstSeen.ratio) {
+          worstSeen = { ratio, where: `${path} ${theme} ${r.sel} "${r.text}"` }
+        }
+        c.ok(
+          ratio >= need,
+          `${path} ${theme}: ${ratio.toFixed(2)}:1 (needs ${need}) ${r.sel} "${r.text}"`
+        )
+      }
+    }
+  }
+
+  c.note(`supporting pages: ${sampled} text runs graded across ${ALL_DOCS.length} pages in both views`)
+  c.note(`supporting pages: worst measured ${worstSeen.ratio.toFixed(2)}:1 on ${worstSeen.where}`)
+
+  // ---- positive control, for this path too --------------------------------
+  // The sweep above has its own control and this one needs its own, because it
+  // is a different measurement: the cascade rather than the photograph. Plant
+  // the failure this section was written for — the light view's cream token on
+  // the light ground — and confirm it is caught.
+  await page.goto(origin + '/about/', { waitUntil: 'domcontentloaded' })
+  const docControl = await page.evaluate(() => {
+    document.documentElement.dataset.theme = 'light'
+    const host = document.querySelector('.doc') || document.body
+    const bad = document.createElement('p')
+    bad.style.color = 'var(--color-ink-on-light)'
+    bad.textContent = 'control'
+    host.appendChild(bad)
+    const probe = document.createElement('canvas')
+    probe.width = probe.height = 1
+    const pg = probe.getContext('2d', { willReadFrequently: true })
+    const paint = (str) => { pg.clearRect(0, 0, 1, 1); pg.fillStyle = str; pg.fillRect(0, 0, 1, 1)
+      const d = pg.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2]] }
+    const fg = paint(getComputedStyle(bad).color)
+    const bg = paint(getComputedStyle(document.body).backgroundColor)
+    bad.remove()
+    const lum = (p) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }
+      return 0.2126 * f(p[0]) + 0.7152 * f(p[1]) + 0.0722 * f(p[2]) }
+    const a = lum(fg), b = lum(bg)
+    return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+  })
+  c.ok(
+    docControl < 4.5,
+    `the supporting-page control measured ${docControl.toFixed(2)}:1, so that section cannot detect a failure`
+  )
+  c.note(`control: the light view's cream token on the light ground measures ${docControl.toFixed(2)}:1, correctly below AA`)
+})
+
 c.report()

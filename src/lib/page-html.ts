@@ -628,6 +628,14 @@ const STYLE = `
         margin-block-start: clamp(2.5rem, 6vh, 3.5rem); padding: clamp(1.5rem, 4vw, 2rem);
         border: 1px solid var(--color-onyx-line); border-radius: 16px;
         background: color-mix(in srgb, var(--color-onyx-lift) 82%, transparent); }
+      /* The note under the button is a .cap, and a .cap is drawn in
+         --color-ink-dim, whose light-view value is measured against the page's
+         own wheat ground. This panel is not that ground: it is a lifted plate,
+         a shade darker, and the same ink measured 4.38:1 on it where AA asks
+         4.5. One step up in the same family clears it on both grounds without
+         introducing a colour. Found by G7 on 30.08.2026, the first run after
+         the gate was taught to read these pages. */
+      .doc-cta .cap { color: var(--color-ink-soft); }
       .doc-related, .doc-operator, .doc-foot { margin-block-start: clamp(2.5rem, 6vh, 3.5rem);
         padding-block-start: 1.5rem; border-block-start: 1px solid var(--color-onyx-line); }
       .doc-rail { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-start: 0.9rem; }
