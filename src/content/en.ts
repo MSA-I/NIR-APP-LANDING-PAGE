@@ -149,7 +149,7 @@ const en = {
   plans: {
     folio: 'Chapter 04: plans',
     h2: 'Plans',
-    lede: 'Plans differ by the number of documents the system processes each month. Every other capability is available on every plan.',
+    lede: 'Plans differ by document volume, by how many people work in the system, and by which capabilities open. The table under the cards shows exactly what each one includes.',
     tableLabel: 'Plan comparison',
     headers: { plan: 'Plan', who: 'Best for', docs: 'Documents per month', price: 'Price' },
     rows: [

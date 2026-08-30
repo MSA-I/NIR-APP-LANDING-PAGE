@@ -136,6 +136,25 @@ export default {
     // and Business carries no figure, by decisions #201 and the free tier's
     // own wording.
     yearly: ['ללא עלות', '690 ₪', '2,490 ₪', '4,490 ₪', 'בשיחה'],
+    // The saving badge on the billing control.
+    //
+    // IT DOES NOT MATCH THE CATALOGUE, AND THAT IS THE OWNER'S CALL OF
+    // 28.08.2026. The yearly row in NIR-APP 0184 is TEN months of the monthly
+    // one by construction: 690 against 828, 2,490 against 2,988, 4,490 against
+    // 5,388. Every one of those is 16.67% off, and the badge says 30%. It read
+    // "two months free" until this round, which is the same fact in the
+    // catalogue's own words.
+    //
+    // The two ways to make it true are a change to the yearly prices in that
+    // migration, or a badge that says 17%. Until one of them happens this line
+    // is a claim the prices under it contradict; DEBT.md 24 carries it.
+    //
+    // The yearly billing line lost "12 months for the price of 10" in the same
+    // move, because a card cannot print the real ratio one line under a badge
+    // that disagrees with it.
+    saveLabel: '30% הנחה',
+    billedMonthly: 'חיוב חודשי',
+    billedYearly: 'חיוב שנתי',
   },
 
   // ------------------------------------------------- the plan cards' own asks
@@ -152,6 +171,179 @@ export default {
     paid: 'להתחיל במסלול הזה',
     contact: 'לדבר איתנו',
     contactHref: '#contact',
+  },
+
+  // ------------------------------------------------- what each plan actually is
+  // Round thirteen, 28.08.2026. Until now this page said the plans differ only in
+  // the document count and that every capability is open on every one of them.
+  // That was true of the catalogue as 0184 shipped it, and NIR-APP's 0213
+  // migration reversed it: OPEN-DECISIONS #274 turned the boolean entitlements
+  // into a ladder, and #276 gave a new Free organisation the Basic capability set
+  // for its first thirty days.
+  //
+  // EVERY LINE BELOW IS READ OFF THAT MIGRATION, and off the two read models it
+  // exposes to a browser rather than off the tables behind them:
+  //
+  //   get_public_plan_quotas()   documents.monthly, users.max, branches.max, and
+  //                              nothing else. `storage.bytes` is an internal
+  //                              safety ceiling (#200) and the OCR page dial
+  //                              stopped being a number anyone is sold (0208,
+  //                              #266), so neither is on this page.
+  //   get_public_plan_features() the eleven published capability rows, in the
+  //                              display order and with the public labels the
+  //                              migration itself carries. The wording here is
+  //                              those labels, not a paraphrase of them.
+  //
+  // `assistant_runs.monthly` is decided (0202: 20/40/100/250) and is deliberately
+  // absent: 0210 has the assistant panel switched on by a pre-launch demo grant
+  // that expires, and the provider gate is a DPA decision made outside the plan.
+  // A quota for a feature whose availability is a window is not a plan promise.
+  ladder: {
+    compareLabel: 'מה כלול בכל מסלול',
+    featuresHeader: 'יכולות',
+    // The value a cell carries when the capability is not on that plan, and the
+    // one Business carries where a number would be.
+    included: 'כלול',
+    absent: 'לא כלול',
+    contract: 'לפי חוזה',
+    unlimited: 'ללא הגבלה',
+    // Free does hold the five Basic capabilities, for thirty days from the first
+    // email verification (#276). A cell that said only "not included" would be
+    // wrong for a month, and one that said "included" would be wrong afterwards.
+    introNote: 'המסלול החינמי כולל 20 מסמכים בחודש, משתמש אחד וסניף אחד, את השרשרת המלאה מרכש עד תשלום ואת שלושת התפקידים עם הפרדת סמכויות. בנוסף, ב־30 הימים הראשונים מרגע אימות המייל פתוחות בו גם חמש היכולות של מסלול בסיס: קריאה אוטומטית של מסמכים, היסטוריה מלאה, ייצוא Excel ודוחות לרו״ח, לוח ביצועי ספקים והתראות ואוטומציות במייל.',
+
+    // WHICH ROWS EACH CARD PRINTS, by row key, in the order below.
+    //
+    // Owner, 28.08.2026: Pro, Premium and Business were saying almost the same
+    // thing. They were: every card printed all fifteen rows, and the top three
+    // carry between thirteen and fifteen of them, so three cards stood side by
+    // side with the same fifteen lines and almost the same fifteen ticks.
+    //
+    // So the lists climb now, 5 / 8 / 11 / 13 / 15, and a card prints only what
+    // its plan actually carries. Two rules decide what is dropped rather than a
+    // pair of scissors:
+    //
+    //   NOTHING A PLAN DOES NOT CARRY. The struck-through lines are gone from
+    //   the cards. A card says what a plan IS; the table under it is where an
+    //   absence is stated, and it states every one of them.
+    //
+    //   NEVER ITS OWN RUNG. What a plan is bought FOR always prints. Pro keeps
+    //   the bank, the accountant queue and the consolidated invoices; Premium
+    //   keeps the integrations and the extended support; Business keeps
+    //   everything, because "everything" is what Business is. What gives way in
+    //   the middle of the ladder is the tier below it, which the card above has
+    //   already shown and the table repeats in full.
+    //
+    // The keys are the row keys, so they are the same in every language and the
+    // English dictionary reads this array rather than restating it.
+    cardRows: [
+      ['documents', 'users', 'branches', 'chain', 'roles'],
+      ['documents', 'users', 'branches', 'chain', 'roles', 'automation', 'history', 'export'],
+      [
+        'documents', 'users', 'branches', 'chain', 'roles',
+        'automation', 'history', 'export',
+        'bank', 'payments', 'invoices',
+      ],
+      [
+        'documents', 'users', 'branches', 'chain', 'roles',
+        'automation', 'history', 'export',
+        'bank', 'payments', 'invoices',
+        'api', 'support',
+      ],
+      [
+        'documents', 'users', 'branches', 'chain', 'roles',
+        'automation', 'history', 'export', 'reports', 'mail',
+        'bank', 'payments', 'invoices',
+        'api', 'support',
+      ],
+    ],
+
+    // Every card prints THESE rows, all of them, in this order, with a rule
+    // through the ones its plan does not carry (owner, 28.08.2026). One list
+    // and one order for the cards and for the table under them: a card that
+    // showed only its own wins made five cards impossible to read against each
+    // other, which is the one thing a price table is for.
+    //
+    // The first two are not entitlements and never move: they are what the
+    // product IS, and they are on this page already (chapter 01 and the FAQ).
+    // The rest are the ladder, in the migration's own display order.
+    rows: [
+      {
+        icon: 'documents',
+        label: 'מסמכים בחודש',
+        cells: ['20', '40', '150', '375', 'לפי חוזה'],
+      },
+      {
+        icon: 'users',
+        label: 'משתמשים פעילים',
+        cells: ['1', '5', '15', '30', 'ללא הגבלה'],
+      },
+      {
+        icon: 'branches',
+        label: 'סניפים',
+        cells: ['1', '1', '1', '10', 'ללא הגבלה'],
+      },
+      {
+        icon: 'chain',
+        label: 'שרשרת מלאה מרכש עד תשלום',
+        cells: [true, true, true, true, true],
+      },
+      {
+        icon: 'roles',
+        label: 'שלושה תפקידים והפרדת סמכויות',
+        cells: [true, true, true, true, true],
+      },
+      {
+        icon: 'automation',
+        label: 'קריאה אוטומטית של מסמכים',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'history',
+        label: 'היסטוריה מלאה',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'export',
+        label: 'ייצוא Excel ודוחות לרו״ח',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'reports',
+        label: 'לוח ביצועי ספקים',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'mail',
+        label: 'התראות ואוטומציות במייל',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'bank',
+        label: 'התאמות בנק',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'payments',
+        label: 'תור תשלומים לרואה החשבון',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'invoices',
+        label: 'חשבוניות מרכזות',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'api',
+        label: 'חיבור למערכות אחרות',
+        cells: [false, false, false, true, true],
+      },
+      {
+        icon: 'support',
+        label: 'תמיכה מורחבת',
+        cells: [false, false, false, true, true],
+      },
+    ],
   },
 
   // -------------------------------------------------------------- the eighth

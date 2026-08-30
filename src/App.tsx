@@ -142,7 +142,6 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           h2={t.plans.h2}
           lede={t.plans.lede}
           tableLabel={t.plans.tableLabel}
-          headers={t.plans.headers}
           rows={t.plans.rows}
           priceNote={t.plans.priceNote}
           note={t.plans.note}
@@ -150,8 +149,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           plansCta={x.plansCta}
           billing={x.billing}
           recommendedLabel={x.billing.recommendedLabel}
-          everywhereLabel={x.billing.everywhereLabel}
-          everywhere={x.billing.everywhere}
+          ladder={x.ladder}
         />
 
         {/* Round twelve, 27.08.2026, on the owner's decision. The quotes used
@@ -220,7 +218,6 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         topLabel={t.title_page.folio}
       />
 
-      <div className="grain" aria-hidden="true" />
     </>
   )
 }

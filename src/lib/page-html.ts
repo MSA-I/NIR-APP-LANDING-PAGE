@@ -877,7 +877,6 @@ ${
         </div>
       </footer>
     </div>
-    <div class="grain" aria-hidden="true"></div>
     <script>${themeBody(t.toLight, t.toDark)}
     </script>
   </body>

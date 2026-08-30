@@ -1,39 +1,66 @@
-// Chapter 04. The plans, as tickets.
+// Chapter 04. The plans.
 //
-// The owner supplied a reference image on 26.08.2026 and asked for the cards to
-// look like it. Read off that image, part by part, because the whole point of a
-// reference is that it is more specific than a description:
+// SECOND REFERENCE, 28.08.2026. The owner supplied a pricing page and asked for
+// its UI and its UX in place of the ticket cards this chapter shipped with.
+// Read off that image, part by part:
 //
-//   THE SHAPE   a ticket. Scalloped top and bottom edges, a notch cut into both
-//               sides at the height of the action, a small corner radius. The
-//               scallop and the notches are one mask, not a border.
-//   THE HEAD    a plan code on the reading side (PRO-2026), an icon in a
-//               rounded-square chip on the other. Nothing centred.
-//   THE BODY    plan name, then two lines of description, both centred.
-//   THE RULES   dotted, not solid, and there are three: under the description,
-//               under the action, and above the barcode.
-//   THE PRICE   a small label, the amount large under it, the term under that.
-//               Three lines, centred, in that order.
-//   THE ACTION  a pill, the full width of the card's inner column.
-//   THE COUNT   the document quota with a ticked circle beside it.
-//   THE LIST    three ticked lines, ragged to the reading edge.
-//   THE FOOT    a barcode.
+//   THE SWITCH  a segmented pill with two terms in it and a sliding ground
+//               behind the live one, with a saving badge riding its top edge.
+//   THE CARD    a rounded rectangle with a gradient ground. An icon in a
+//               rounded-square chip, the plan name under it, then the amount
+//               with the term beside it and the billing line under that, a
+//               hairline rule, a list of ticked lines, and the action last.
+//   THE FACES   the plans climb through three hues: the page's own ground, then
+//               teal with a ring, then blue, then violet. The ringed one is the
+//               plan the vendor points at.
+//   THE TABLE   under the cards, a comparison: one row per capability, one
+//               column per plan, a figure or a tick or a cross in each cell.
 //
-// FOUR FACES, also from the image: the recommended plan is cream paper with a
-// badge riding its top edge, one card is deep purple, one is a glossy
-// near-black with a light sweeping across it, and the rest are the page's own
-// onyx. The owner asked for the sweep on ביזנס, which is the top plan, so the
-// glossy card is the top plan and the purple one sits beside it.
+// The ticket silhouette, the perforations, the barcode and the plan codes are
+// gone with it. They were the first reference's anatomy and nothing else on the
+// page depended on them.
 //
-// The billing switch is unchanged — @ruixen.ui/pricing-module's — and
+// WHAT THE TABLE SAYS IS NOT A DESIGN DECISION. Until this round the page said
+// the plans differ only in the document count and that everything else is open
+// everywhere, which is what the catalogue was when NIR-APP's 0184 migration
+// shipped it. 0213 reversed that (OPEN-DECISIONS #274): the boolean
+// entitlements are a ladder now, and #276 lends a new Free organisation the
+// Basic set for thirty days. Every row, every label and every cell below comes
+// from that migration's two public read models; see the `ladder` block in
+// src/content/extra.ts for what those publish and what they deliberately do not.
+//
 // `data-plan-price` is still ALWAYS the monthly amount whatever the switch is
-// showing, because scripts/gates/g14-figures.mjs asserts the published
-// catalogue and not the state of a toggle.
+// showing, and the switch is still one `role="switch"` control, because
+// scripts/gates/g14-figures.mjs asserts the published catalogue and reads it
+// through those two contracts rather than through the layout.
 
 import { useEffect, useId, useRef, useState } from 'react'
-import { Building, Building2, Check, Landmark, Sprout, Store } from 'lucide-react'
+import {
+  Banknote,
+  BarChart3,
+  Building,
+  Building2,
+  Check,
+  FileText,
+  Files,
+  Landmark,
+  LifeBuoy,
+  Mail,
+  Minus,
+  Plug,
+  ScanText,
+  ShieldCheck,
+  Sprout,
+  Store,
+  Users,
+  Wallet,
+  Workflow,
+  History,
+  Sheet,
+} from 'lucide-react'
 
 import { Cta } from './Cta'
+import { PlanShader } from './PlanShader'
 import { Html, Reveal, RevealGroup, RevealItem, SplitHeading, useCalm } from '@/lib/motion'
 
 type Row = { name: string; who: string; docs: string; price: string }
@@ -46,15 +73,31 @@ type Billing = {
   perYear: string
   docsLabel: string
   yearly: string[]
+  saveLabel: string
+  billedMonthly: string
+  billedYearly: string
+}
+
+type Cell = string | boolean
+
+type Ladder = {
+  compareLabel: string
+  featuresHeader: string
+  included: string
+  absent: string
+  contract: string
+  unlimited: string
+  introNote: string
+  cardRows: string[][]
+  rows: { icon: string; label: string; cells: Cell[] }[]
 }
 
 /**
  * The amount on a card, counting between the two catalogues.
  *
- * The owner's note of 26.08.2026: pressing the yearly switch should animate
- * the numbers. It counts rather than crossfades because these two figures are
- * the SAME price at two terms, and a number that travels says that while a
- * number that dissolves into another one does not.
+ * Unchanged from the ticket build, and for the same reason: pressing the yearly
+ * switch shows the SAME price at another term, and a number that travels says
+ * that while a number that dissolves into another one does not.
  *
  * Only the digits move. "ללא עלות" and "בשיחה" carry no figure, so they swap
  * outright, and the thousands separators are re-rendered from the target's own
@@ -104,48 +147,63 @@ function Amount({ value }: { value: string }) {
   return <>{shown}</>
 }
 
-/**
- * The barcode along the bottom edge.
- *
- * Drawn, not fetched: a barcode is a run of bars at three widths, and the
- * widths come from the plan's own name, so the same plan draws the same code
- * every render and no two cards carry the same one. An <img> would be a
- * network request per card for a texture nobody scans.
- */
-function Barcode({ seed }: { seed: string }) {
-  let h = 0
-  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
-  const bars: number[] = []
-  for (let i = 0; i < 46; i++) {
-    h = (h * 1664525 + 1013904223) >>> 0
-    bars.push(1 + ((h >>> 16) % 3))
-  }
-  return (
-    <span className="plan-card__barcode" aria-hidden="true">
-      {bars.map((w, i) => (
-        <span key={i} style={{ inlineSize: `${w}px`, opacity: i % 2 ? 0.16 : 1 }} />
-      ))}
-    </span>
-  )
-}
-
-/** The plan the vendor points at. Third of five, the fullest workflow. */
+/** The plan the vendor points at. Third of five, and the ringed face. */
 const RECOMMENDED = 2
 
 const ICONS = [Sprout, Store, Building2, Building, Landmark]
 
-/** The plan codes, off the reference image: three letters and the year. */
-const CODES = ['FRE', 'BSC', 'PRO', 'PRN', 'BZN']
+/**
+ * Which face each card wears, climbing with the ladder.
+ *
+ * Owner, 28.08.2026, all five named separately:
+ *   PLAIN    the free plan is the page's own ground, so the card is the colour
+ *            of the thing beside it and only its edge says it is a card.
+ *   LIFT     the basic plan is "a little more colour" than that, and no more.
+ *   POINTED  the ring alone. It carried an outer glow and the glow went: what
+ *            marks this plan is the border.
+ *   AZURE    blue, and a gloss travelling across it. It ended in violet
+ *            until 28.08.2026, when the owner said it and the card beside
+ *            it were reading as one colour twice.
+ *   DEEP     a shader of its own; see PlanShader.tsx.
+ */
+const FACE = [
+  'plan-card--plain',
+  'plan-card--lift',
+  'plan-card--pointed',
+  'plan-card--azure',
+  'plan-card--deep',
+]
 
-/** Which face each card wears. Index 4 is ביזנס, which carries the sweep. */
-const FACE = ['', '', 'plan-card--paper', 'plan-card--violet', 'plan-card--gloss']
+/**
+ * The table's row glyphs, keyed by the `icon` in the content.
+ *
+ * A map rather than a component per row: the rows are data now, and a row added
+ * to the catalogue should reach the page by adding a line to extra.ts, not by
+ * editing this file as well.
+ */
+const ROW_ICONS: Record<string, typeof Check> = {
+  documents: Files,
+  users: Users,
+  branches: Building2,
+  chain: Workflow,
+  roles: ShieldCheck,
+  automation: ScanText,
+  history: History,
+  export: Sheet,
+  reports: BarChart3,
+  mail: Mail,
+  bank: Banknote,
+  payments: Wallet,
+  invoices: FileText,
+  api: Plug,
+  support: LifeBuoy,
+}
 
 export function PlansChapter({
   folio,
   h2,
   lede,
   tableLabel,
-  headers,
   rows,
   priceNote,
   note,
@@ -153,14 +211,12 @@ export function PlansChapter({
   plansCta,
   billing,
   recommendedLabel,
-  everywhereLabel,
-  everywhere,
+  ladder,
 }: {
   folio: string
   h2: string
   lede: string
   tableLabel: string
-  headers: { plan: string; who: string; docs: string; price: string }
   rows: Row[]
   priceNote: string
   note: string
@@ -168,8 +224,7 @@ export function PlansChapter({
   plansCta: { free: string; paid: string; contact: string; contactHref: string }
   billing: Billing
   recommendedLabel: string
-  everywhereLabel: string
-  everywhere: string[]
+  ladder: Ladder
 }) {
   const [yearly, setYearly] = useState(false)
   const switchId = useId()
@@ -184,11 +239,15 @@ export function PlansChapter({
           </Reveal>
         </header>
 
+        {/* The segmented control. ONE button, not two: it has two states and a
+            switch is what a two-state control is. The two words inside it are
+            labels on the states rather than controls of their own, so they are
+            hidden from the accessibility tree and the button carries the name.
+            The ground behind the live word travels on a margin, not on a
+            translate, so it moves toward the inline end in either direction. */}
         <Reveal delay={0.12}>
           <div className="plans-switch">
-            <span className={`plans-switch__side ${yearly ? '' : 'is-on'}`} aria-hidden="true">
-              {billing.monthlyLabel}
-            </span>
+            <span className="plans-switch__save">{billing.saveLabel}</span>
             <button
               type="button"
               id={switchId}
@@ -199,15 +258,18 @@ export function PlansChapter({
               onClick={() => setYearly((v) => !v)}
             >
               <span className="plans-switch__thumb" aria-hidden="true" />
+              <span className={`plans-switch__side ${yearly ? 'is-on' : ''}`} aria-hidden="true">
+                {billing.yearlyLabel}
+              </span>
+              <span className={`plans-switch__side ${yearly ? '' : 'is-on'}`} aria-hidden="true">
+                {billing.monthlyLabel}
+              </span>
             </button>
-            <span className={`plans-switch__side ${yearly ? 'is-on' : ''}`} aria-hidden="true">
-              {billing.yearlyLabel}
-            </span>
           </div>
         </Reveal>
 
         <RevealGroup
-          className="plans-tray mt-[clamp(2rem,5vh,3rem)] grid items-stretch gap-4 rounded-[18px] p-4 sm:grid-cols-2 xl:grid-cols-5"
+          className="plans-tray mt-[clamp(2rem,5vh,3rem)] grid items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-5"
           each={0.06}
           aria-label={tableLabel}
         >
@@ -240,82 +302,173 @@ export function PlansChapter({
                 ? { label: plansCta.contact, href: plansCta.contactHref }
                 : { label: plansCta.free, href: ctaHref }
             return (
-              <RevealItem
-                key={r.name}
-                className={['plan-card', FACE[i], featured ? 'on-light' : '']
-                  .filter(Boolean)
-                  .join(' ')}
-              >
-                {/* The sweep. One element, so a card that does not carry it
+              <RevealItem key={r.name} className={['plan-card', FACE[i]].filter(Boolean).join(' ')}>
+                {/* The gloss: one element, so a card that does not carry it
                     costs nothing, and it sits behind everything the card says. */}
-                {FACE[i] === 'plan-card--gloss' && (
-                  <span className="plan-card__sweep" aria-hidden="true" />
+                {FACE[i] === 'plan-card--azure' && (
+                  <span className="plan-card__gloss" aria-hidden="true" />
                 )}
-
-                {featured && <span className="plan-card__badge">{recommendedLabel}</span>}
+                {FACE[i] === 'plan-card--deep' && <PlanShader className="plan-card__field" />}
 
                 <span className="plan-card__head">
-                  <span className="plan-card__code">{CODES[i]}-2026</span>
                   <span className="plan-card__icon" aria-hidden="true">
                     <Icon className="size-[1.15rem]" strokeWidth={1.7} />
                   </span>
+                  {featured && <span className="plan-card__badge">{recommendedLabel}</span>}
                 </span>
 
                 <h3 className="plan-card__name">{r.name}</h3>
-                <p className="plan-card__who">{r.who}</p>
 
-                <span className="plan-card__perf" aria-hidden="true" />
+                <p className="plan-card__pricing">
+                  <span
+                    data-plan-name={r.name}
+                    data-plan-price={r.price}
+                    className={`plan-card__price ${hasAmount ? 'ip-fig' : 'plan-card__price--words'}`}
+                  >
+                    <Amount value={shown} />
+                  </span>
+                  {/* No slash before the term. The reference reads "$29 / month",
+                      and this catalogue's terms are already prepositional
+                      ("לחודש", "per month"), so a slash on top of one of them
+                      would read "/ per month". */}
+                  {hasAmount && (
+                    <span className="plan-card__per">
+                      {yearly ? billing.perYear : billing.perMonth}
+                    </span>
+                  )}
+                </p>
+                <p className="plan-card__billed">
+                  {hasAmount ? (yearly ? billing.billedYearly : billing.billedMonthly) : ' '}
+                </p>
 
-                <p className="plan-card__label">{headers.price}</p>
-                <p
-                  data-plan-name={r.name}
-                  data-plan-price={r.price}
-                  className={`plan-card__price ${hasAmount ? 'ip-fig' : 'plan-card__price--words'}`}
-                >
-                  <Amount value={shown} />
-                </p>
-                <p className="plan-card__term">
-                  {hasAmount ? (yearly ? billing.perYear : billing.perMonth) : ' '}
-                </p>
+                <span className="plan-card__rule" aria-hidden="true" />
+
+                {/* The card prints the rows its own plan names, and they climb:
+                    five, eight, eleven, thirteen, fifteen. Owner, 28.08.2026 —
+                    Pro, Premium and Business were saying almost the same thing,
+                    because every card printed all fifteen rows and the top three
+                    carry nearly all of them.
+
+                    Nothing struck through here any more either. A card says what
+                    a plan IS; the table under it is where an absence is stated,
+                    and it states every one of them, the free plan's thirty-day
+                    introduction included. Which rows each card names is in
+                    `ladder.cardRows`, with the two rules that pick them.
+
+                    NO QUANTITY ON A CARD (same day): the row says which
+                    capability, and the table says how many. `data-plan-docs`
+                    rides the document row all the same, because G14 reads the
+                    published quota off the card as an attribute, never as text. */}
+                <ul className="plan-card__list">
+                  {(ladder.cardRows[i] ?? []).map((key) => {
+                    const row = ladder.rows.find((x) => x.icon === key)
+                    if (!row) return null
+                    return (
+                      <li
+                        key={key}
+                        {...(key === 'documents' ? { 'data-plan-docs': r.docs } : {})}
+                      >
+                        <span className="plan-card__tick" aria-hidden="true">
+                          <Check className="size-3" strokeWidth={2.5} />
+                        </span>
+                        <span className="plan-card__row">{row.label}</span>
+                      </li>
+                    )
+                  })}
+                </ul>
 
                 <div className="plan-card__action">
                   <Cta href={ask.href} variant={featured ? 'primary' : 'ghost'} size="sm" block>
                     {ask.label}
                   </Cta>
                 </div>
-
-                <span className="plan-card__perf" aria-hidden="true" />
-
-                <p className="plan-card__label">{billing.docsLabel}</p>
-                <p className="plan-card__quota">
-                  <span className="plan-card__tick">
-                    <Check className="size-3.5" strokeWidth={2.5} />
-                  </span>
-                  <span data-plan-docs={r.docs} className="ip-fig">
-                    {r.docs}
-                  </span>
-                </p>
-
-                <p className="plan-card__label plan-card__label--gap">{everywhereLabel}</p>
-                <ul className="plan-card__list">
-                  {everywhere.map((f) => (
-                    <li key={f}>
-                      <span className="plan-card__tick plan-card__tick--sm">
-                        <Check className="size-3" strokeWidth={2.5} />
-                      </span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <span className="plan-card__perf plan-card__perf--last" aria-hidden="true" />
-                <Barcode seed={r.name} />
               </RevealItem>
             )
           })}
         </RevealGroup>
 
+        {/* The comparison. A real <table>, because it is one: a reader on a
+            screen reader gets the row and the column read back with the cell,
+            which a grid of <div>s cannot give them. It scrolls inside its own
+            box on a narrow screen rather than widening the page. */}
+        <Reveal delay={0.1}>
+          <div className="plans-compare">
+            <div className="plans-compare__scroll">
+              <table className="plans-compare__table">
+                <caption className="sr-only">{ladder.compareLabel}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{ladder.featuresHeader}</th>
+                    {/* The owner, 28.08.2026: the plan's name in the table
+                        should carry the plan's own effect, not only its colour.
+                        So each name sits in a chip cut from the card's face, and
+                        the two cards that move take their movement with them:
+                        the gloss travels across the violet chip, and the deep
+                        chip carries a slow field. The chip is what is coloured
+                        and the type on it is not, so the ink stays a solid,
+                        measurable colour on a ground that keeps still. */}
+                    {rows.map((r, i) => (
+                      <th key={r.name} scope="col" className={`is-${FACE[i].slice(11)}`}>
+                        <span className="plans-compare__chip">
+                          <span className="plans-compare__chip-name">{r.name}</span>
+                        </span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {ladder.rows.map((row) => {
+                    const RowIcon = ROW_ICONS[row.icon] ?? Check
+                    return (
+                      <tr key={row.label}>
+                        <th scope="row">
+                          <span className="plans-compare__row">
+                            <span className="plans-compare__glyph" aria-hidden="true">
+                              <RowIcon className="size-[1.05rem]" strokeWidth={1.7} />
+                            </span>
+                            <span>{row.label}</span>
+                          </span>
+                        </th>
+                        {row.cells.map((cell, i) => (
+                          <td key={rows[i]?.name ?? i} className={`is-${FACE[i].slice(11)}`}>
+                            {/* `'intro'` DRAWS AS ABSENT, like `false`. Owner,
+                                28.08.2026: the free column should say what the
+                                free plan gets, and five cells reading "30-day
+                                introduction" is not that. The fact is kept in
+                                the data, because it is true and the next reader
+                                needs it, and it is stated once in words in the
+                                note under this table, where it names the five
+                                capabilities outright. */}
+                            {cell === true ? (
+                              <>
+                                <span className="plans-compare__yes">
+                                  <Check className="size-3.5" strokeWidth={2.5} />
+                                </span>
+                                <span className="sr-only">{ladder.included}</span>
+                              </>
+                            ) : cell === false || cell === 'intro' ? (
+                              <>
+                                <span className="plans-compare__no" aria-hidden="true">
+                                  <Minus className="size-3.5" strokeWidth={2.5} />
+                                </span>
+                                <span className="sr-only">{ladder.absent}</span>
+                              </>
+                            ) : (
+                              <span className="plans-compare__num">{cell}</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal delay={0.06} className="plans__notes mt-5">
+          <p className="cap">{ladder.introNote}</p>
           <Html html={priceNote} className="plans__prices cap" />
           <p className="cap">{note}</p>
         </Reveal>

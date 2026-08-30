@@ -74,6 +74,9 @@ const extraEn = {
       'A record of every sensitive financial action',
     ],
     yearly: ['No charge', '$200', '$790', '$1,490', 'Contact us'],
+    saveLabel: '30% off',
+    billedMonthly: 'Billed monthly',
+    billedYearly: 'Billed yearly',
   },
 
   // Each card asks for what it can actually give. The plan with no figure has
@@ -83,6 +86,105 @@ const extraEn = {
     paid: 'Start on this plan',
     contact: 'Talk to us',
     contactHref: '#contact',
+  },
+
+  // The ladder, translated. Its source is NIR-APP's 0213 migration and the two
+  // read models a browser may call; see extra.ts for what is published and what
+  // deliberately is not. The Hebrew labels there are the migration’s own public
+  // labels, so these are translations of those labels rather than new copy.
+  ladder: {
+    compareLabel: 'What every plan includes',
+    featuresHeader: 'Features',
+    included: 'Included',
+    absent: 'Not included',
+    contract: 'Per contract',
+    unlimited: 'Unlimited',
+    introNote: 'The free plan includes 20 documents a month, one user and one location, the full chain from purchase to payment, and the three roles with separation of duties. For the first 30 days from email verification it also opens the five Basic capabilities: automatic document reading, full history, Excel exports and accountant reports, the supplier performance board, and email alerts and automations.',
+
+    // Which rows each card prints. Row keys, so the decision is made once; see
+    // extra.ts for the two rules that pick them.
+    cardRows: extraHe.ladder.cardRows,
+
+    // Every card prints THESE rows, all of them, in this order, with a rule
+    // through the ones its plan does not carry. See extra.ts for why.
+
+    rows: [
+      {
+        icon: 'documents',
+        label: 'Documents per month',
+        cells: ['20', '40', '150', '375', 'Per contract'],
+      },
+      {
+        icon: 'users',
+        label: 'Active users',
+        cells: ['1', '5', '15', '30', 'Unlimited'],
+      },
+      {
+        icon: 'branches',
+        label: 'Locations',
+        cells: ['1', '1', '1', '10', 'Unlimited'],
+      },
+      {
+        icon: 'chain',
+        label: 'Full chain from purchase to payment',
+        cells: [true, true, true, true, true],
+      },
+      {
+        icon: 'roles',
+        label: 'Three roles with separation of duties',
+        cells: [true, true, true, true, true],
+      },
+      {
+        icon: 'automation',
+        label: 'Automatic document reading',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'history',
+        label: 'Full history',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'export',
+        label: 'Excel exports and accountant reports',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'reports',
+        label: 'Supplier performance board',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'mail',
+        label: 'Email alerts and automations',
+        cells: ['intro', true, true, true, true],
+      },
+      {
+        icon: 'bank',
+        label: 'Bank reconciliation',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'payments',
+        label: 'Accountant payment queue',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'invoices',
+        label: 'Consolidated invoices',
+        cells: [false, false, true, true, true],
+      },
+      {
+        icon: 'api',
+        label: 'Integrations with other systems',
+        cells: [false, false, false, true, true],
+      },
+      {
+        icon: 'support',
+        label: 'Extended support',
+        cells: [false, false, false, true, true],
+      },
+    ],
   },
 
   // The eighth question. It lives here rather than in the frozen dictionary,
