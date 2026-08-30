@@ -3336,14 +3336,15 @@ html[dir='rtl'] { --knob: -1; }
     padding-inline-end: 0.25rem;
   }
 
-  /* Four labels on the pricing tickets computed to 11.2px and two plan codes
-     to 10.56px. On a phone held at arm's length that is not small type, it is
-     type a reader gives up on, and one of the four is the sentence that says
-     how many documents the plan actually includes. */
-  .plan-card__label { font-size: 0.78rem; }
-  .plan-card__code { font-size: 0.75rem; }
-  .plan-card__term { font-size: 0.78rem; }
+  /* Nothing on the pricing tickets may compute under 12px on a phone: at arm's
+     length that is not small type, it is type a reader gives up on. The card was
+     rebuilt on 28.08.2026 and the label, code and term this rule used to name are
+     gone with the ticket that carried them; the badge and the discount tab over
+     the billing switch are what is left holding small type. The tab arrived with
+     the rebuilt card at 0.72rem — 11.52px — which is the one thing G24 caught
+     when the two lines of work met. */
   .plan-card__badge { font-size: 0.75rem; }
+  .plans-switch__save { font-size: 0.75rem; }
 
   /* The four headings the colophon's link groups stand under. At 11.2px they
      were the smallest type on the page, and they are the only thing telling a
