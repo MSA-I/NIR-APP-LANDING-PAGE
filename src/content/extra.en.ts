@@ -14,42 +14,43 @@ const extraEn = {
     items: extraHe.logos.items,
   },
 
-  // Retranslated 30.08.2026, because the Hebrew stopped being ours to write.
-  // These five are the owner's five real responses, translated sentence for
-  // sentence and cut nowhere. The names are transliterated and keep the same
+  // Retranslated 30.08.2026 with the owner's second set of responses, which
+  // arrived hours after the first and say what these five people actually do in
+  // the product rather than what it stopped costing them. Translated sentence
+  // for sentence and cut nowhere. The names are transliterated and keep the
   // one-letter surname the Hebrew carries; the roles are the roles he gave.
   //
-  // The disclosure changed with them: it used to say we wrote these, which was
-  // true when we did.
+  // The two colons in the fourth and fifth are em-dashes in the source. See the
+  // note in extra.ts: it is the house rule, and it is the only mark that moved.
   testimonials: {
     folioless: true,
     eyebrow: 'What the change sounds like',
     h2: 'Five users on what&nbsp;changed',
     disclosure:
-      'These responses were given to us by people using the system, and are quoted as they were given. Surnames appear as a single letter, in the form we received them.',
+      'These responses were given to us by people using the system, and are quoted as they were given.',
     items: [
       {
-        q: 'Before InPlace the invoices, the price lists and the orders were scattered between email, WhatsApp and the binders. Today I can see in one place what I ordered, what arrived and what the supplier is asking to be paid for. On the first check alone we found a few gaps that would probably have gone past us before.',
+        q: 'What caught me is that I do not have to put the whole order with one supplier. I pick the products, and the system shows me how they can be split between several suppliers, what each one comes to, and where the minimum order changes the picture. Even when I would rather keep it all with one supplier, I can see exactly what that convenience costs me.',
         who: 'Itai L.',
         of: 'Restaurant owner',
       },
       {
-        q: 'The part that helps me most is not having to remember by heart where every order stands. I can see whether it went out, what was received and what does not match the invoice. It does not replace my work, but it takes a lot of searching and manual checking out of it.',
+        q: 'A change in price used to surface only on the next order, or once the invoice had already arrived. Today I see the previous price against the current one, who put theirs up and who brought theirs down, and how far each offer is from the cheapest. That gives me a real basis to talk to the supplier instead of negotiating on a hunch.',
         who: 'Shira M.',
         of: 'Procurement manager',
       },
       {
-        q: 'I used to receive partial documents and chase the missing ones as the payment came due. Now the documents and the gaps are in order before they reach me, and I can look only at the cases that really need checking. The process with the business and with the suppliers became much clearer.',
+        q: 'Payment requests reach me after they have been checked and approved, with the invoices and the amounts already attached to them. I can see whether there is a credit to set against it, make the transfer and upload the receipt without going hunting through email. The reconciliation against the bank movement then stays in the same process.',
         who: 'Ronit A.',
         of: 'Bookkeeper',
       },
       {
-        q: 'With several locations it is hard to know whether what we were charged for really matches what arrived at each one. In InPlace you can follow the order, the receipt and the invoice in the same process. When something is short or the price is different, you do not have to start digging through old messages to work out what happened.',
+        q: 'Documents reach us from every direction: invoices, delivery notes and files from different suppliers. I upload them to one place and see what the system managed to read, what has been matched already and what still needs somebody to go over it. On a busy day that saves a lot of the time that used to go on hunting for files and typing them in again.',
         who: 'Omer S.',
         of: 'Operations manager, business group',
       },
       {
-        q: 'I was not looking for another system with dozens of screens, I was looking for a simple way to control the money going out to suppliers. Today I see what is waiting for approval, where there is a discrepancy and what needs handling before payment. I have more control without being involved in every small action.',
+        q: 'I do not open the system to go through every order and every invoice one by one. I want to know what needs a decision now: how much money is still open, which payments are coming up, where there is an exception and what has not been reconciled in the bank yet. The dashboard gives me that picture without my having to ask everyone in the business for an update.',
         who: 'Alon K.',
         of: 'Business owner',
       },

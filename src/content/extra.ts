@@ -52,12 +52,26 @@ export default {
 
   // --------------------------------------------------------------- what people
   // Round thirteen, 30.08.2026, and the first one that is not writing. The
-  // owner supplied five responses from people using the system, with names, in
-  // NIR-APP-DOCS/תגובות אמיתיות.txt. They are quoted here as he gave them, word
-  // for word, under the names he gave them under: a first name and one letter
-  // of the surname.
+  // owner supplied responses from people using the system, with names, and they
+  // are quoted here as he gave them, word for word, under the names he gave
+  // them under: a first name and one letter of the surname.
   //
-  // What follows from that is the whole of this change:
+  // TWO SETS, THE SAME DAY. The first five said what the product had stopped
+  // costing them. These five, sent hours later, say what they actually do in
+  // it: the order split between suppliers, the previous price beside the
+  // current one, the payment request that arrives already checked, the
+  // documents landing in one place, the dashboard that answers what needs a
+  // decision now. They run about 280 characters against the first set's 230,
+  // and the card takes it, because the card measures itself (Voices.tsx).
+  //
+  // ONE MARK CHANGED, in two of the five. Both carried an em-dash, and the
+  // house rule at the top of he.ts is that no em-dash appears in visible copy
+  // on this page: Hebrew takes a colon, a comma, a period or parentheses
+  // everywhere the dash was doing the work. Both are colons here. Not one word
+  // moved, and nothing else in any of the five did either.
+  //
+  // What follows from these being real, and it is the whole of the change made
+  // when the first set arrived:
   //
   //   1. `placeholder: true` is gone. It was true while these five were
   //      examples written in-house. A flag reading "invented" over five real
@@ -65,44 +79,43 @@ export default {
   //   2. The disclosure no longer disclaims authorship, because we did not
   //      write these. It says what the reader is looking at instead, and it
   //      still renders in the same slot, where g15 measures it.
-  //   3. scripts/gates/g15-placeholders.mjs was rewritten in the same commit.
+  //   3. scripts/gates/g15-placeholders.mjs was rewritten with the first set.
   //      Two of its assertions had become the wrong assertion: that this block
   //      IS flagged, and that no quote carries a name. What it keeps is the
   //      machinery and the readability of the note.
   //   4. `Review` and `AggregateRating` schema stay absent. The reason moved
   //      and the answer did not; the note in src/entry-static.tsx says why.
   //
-  // Nothing here was shortened, tidied or smoothed to fit. These run about half
-  // again as long as the five they replace, and the card is what gave.
+  // Nothing here was shortened, tidied or smoothed to fit.
   testimonials: {
     folioless: true,
     eyebrow: 'איך זה נשמע כשזה עובד',
     h2: 'חמישה משתמשים מספרים מה&nbsp;השתנה',
     disclosure:
-      'התגובות כאן נמסרו על ידי משתמשים במערכת ומצוטטות כלשונן. שמות המשפחה מופיעים באות אחת, בצורה שבה נמסרו לנו.',
+      'התגובות כאן נמסרו על ידי משתמשים במערכת ומצוטטות כלשונן.',
     items: [
       {
-        q: 'לפני InPlace החשבוניות, המחירונים וההזמנות היו מפוזרים בין המייל, הוואטסאפ והקלסרים. היום אני יכול לראות במקום אחד מה הזמנתי, מה הגיע ועל מה הספק מבקש תשלום. כבר בבדיקה הראשונה מצאנו כמה פערים שפעם כנראה היו עוברים בלי ששמנו לב.',
+        q: 'מה שתפס אותי הוא שאני לא חייב להוציא את כל ההזמנה לספק אחד. אני בוחר את המוצרים, והמערכת מראה לי איך אפשר לפצל אותם בין כמה ספקים, כמה יוצא אצל כל אחד ואיפה מינימום ההזמנה משנה את התמונה. גם כשאני מעדיף לרכז הכול אצל ספק אחד, אני רואה בדיוק כמה הנוחות הזאת עולה לי.',
         who: 'איתי ל׳',
         of: 'בעל מסעדה',
       },
       {
-        q: 'החלק שהכי עוזר לי הוא שלא צריך לזכור בעל פה איפה כל הזמנה עומדת. אני רואה אם היא נשלחה, מה התקבל ומה לא תואם לחשבונית. זה לא מחליף את העבודה שלי, אבל מוריד ממנה הרבה חיפושים ובדיקות ידניות.',
+        q: 'פעם שינוי במחיר היה מתגלה רק בהזמנה הבאה או כשהחשבונית כבר הגיעה. היום אני רואה מחיר קודם מול מחיר נוכחי, מי העלה ומי הוריד, וגם כמה כל הצעה רחוקה מהמחיר הזול ביותר. זה נותן לי בסיס אמיתי לדבר עם הספק ולא לנהל משא ומתן לפי תחושת בטן.',
         who: 'שירה מ׳',
         of: 'מנהלת רכש',
       },
       {
-        q: 'בעבר הייתי מקבלת מסמכים חלקיים ורודפת אחרי השלמות לקראת התשלום. עכשיו המסמכים והפערים כבר מסודרים לפני שהם מגיעים אליי, ואני יכולה להתמקד רק במקרים שבאמת דורשים בדיקה. התהליך מול העסק ומול הספקים נהיה הרבה יותר ברור.',
+        q: 'דרישות התשלום מגיעות אליי אחרי שכבר עברו בדיקה ואישור, עם החשבוניות והסכומים המשויכים אליהן. אני יכולה לראות אם קיים זיכוי שאפשר לקזז, לבצע את ההעברה ולהעלות אסמכתה בלי להתחיל לחפש מידע במיילים. אחר כך גם ההתאמה מול תנועת הבנק נשארת באותו תהליך.',
         who: 'רונית א׳',
         of: 'מנהלת חשבונות',
       },
       {
-        q: 'כשיש כמה סניפים, קשה לדעת אם מה שחויבנו עליו באמת תואם למה שהגיע לכל סניף. ב-InPlace אפשר לעקוב אחרי ההזמנה, הקבלה והחשבונית באותו תהליך. במקרה של חוסר או מחיר שונה, לא צריך להתחיל לחפש הודעות ישנות כדי להבין מה קרה.',
+        q: 'אצלנו מסמכים מגיעים מכל כיוון: חשבוניות, תעודות משלוח וקבצים מספקים שונים. אני מעלה אותם למקום אחד ורואה מה המערכת הצליחה לזהות, מה כבר שויך ומה עדיין צריך שמישהו יעבור עליו. ביום עמוס זה חוסך הרבה זמן שפעם הלך על חיפוש קבצים והקלדה מחדש.',
         who: 'עומר ש׳',
         of: 'מנהל תפעול ברשת עסקים',
       },
       {
-        q: 'לא חיפשתי עוד מערכת עם עשרות מסכים, אלא דרך פשוטה לשלוט בכסף שיוצא לספקים. היום אני רואה מה ממתין לאישור, איפה קיימת חריגה ומה דורש טיפול לפני התשלום. יש לי יותר שליטה בלי להיות מעורב בכל פעולה קטנה.',
+        q: 'אני לא נכנס למערכת כדי לעבור על כל הזמנה וחשבונית בנפרד. אני רוצה לדעת מה דורש החלטה עכשיו: כמה כסף עדיין פתוח, אילו תשלומים מתקרבים, איפה יש חריגה ומה עוד לא הותאם בבנק. הדשבורד נותן לי את התמונה הזאת בלי שאצטרך לבקש עדכון מכל אחד בעסק.',
         who: 'אלון כ׳',
         of: 'בעל עסק',
       },
