@@ -183,10 +183,14 @@ for (const viewport of PHONES) {
           Boolean(m.menu) && m.menu.w >= 44 && m.menu.h >= 44 && m.menu.label.length > 0,
           `${tag}: no phone chapter menu (${m.menu ? `${m.menu.w}x${m.menu.h} "${m.menu.label}"` : 'missing'})`
         )
-        c.ok(
-          Boolean(m.login) && m.login.w >= 44 && m.login.h >= 44 && m.login.label.length > 0,
-          `${tag}: no phone way back in (${m.login ? `${m.login.w}x${m.login.h} "${m.login.label}"` : 'missing'})`
-        )
+        // The way back in is still measured, and it is still the owner's
+        // requirement of 28.08.2026 — "reachable from a phone". WHERE it is
+        // reachable changed on 30.08.2026: it was a wordless icon circle in the
+        // row beside the action's wordless icon circle, and two identical
+        // circles saying nothing was the question the owner could not answer
+        // from the screen. It is the first item in the drawer now, with its
+        // word, so the measurement moved into the block below where the drawer
+        // is open. Here we only assert it is NOT back in the row.
         // The owner's decision of 28.08.2026: on a phone the action is the
         // arrow and nothing else. Three things have to hold together, and the
         // third is the one that would break silently — a 44px circle with the
@@ -250,10 +254,25 @@ for (const viewport of PHONES) {
             if (!panel) return null
             const r = panel.getBoundingClientRect()
             const items = [...panel.querySelectorAll('a[href^="#"]')]
+            const login = panel.querySelector('[data-folio-login]')
+            const loginBox = login?.getBoundingClientRect()
             return {
               visible: r.width > 0 && r.height > 0 && getComputedStyle(panel).visibility !== 'hidden',
               chapters: items.length,
-              firstFocused: document.activeElement === items[0],
+              // The drawer is a modal <dialog> since 30.08.2026, so what has to
+              // be true is that the press moved focus INTO it — which is the
+              // thing this assertion was written to prove. Naming the first
+              // chapter link specifically was naming one implementation of it,
+              // and the panel now opens on its own wordmark.
+              firstFocused: panel.contains(document.activeElement),
+              modal: document.querySelector('dialog.drawer')?.matches(':modal') === true,
+              login: login
+                ? {
+                    w: Math.round(loginBox.width),
+                    h: Math.round(loginBox.height),
+                    label: (login.getAttribute('aria-label') || login.textContent || '').trim(),
+                  }
+                : null,
               appMenuSemantics:
                 panel.getAttribute('role') === 'menu' ||
                 document.querySelector('[data-folio-menu-trigger]')?.getAttribute('aria-haspopup') === 'menu' ||
@@ -266,7 +285,16 @@ for (const viewport of PHONES) {
           })
           c.ok(Boolean(open) && open.visible, `${tag}: the chapter menu does not open`)
           c.ok(Boolean(open) && open.chapters >= 4, `${tag}: the open menu holds ${open?.chapters} chapters, not 4`)
-          c.ok(Boolean(open) && open.firstFocused, `${tag}: opening the chapter navigation does not focus its first link`)
+          c.ok(Boolean(open) && open.firstFocused, `${tag}: opening the chapter navigation does not move focus into it`)
+          c.ok(Boolean(open) && open.modal, `${tag}: the drawer is not a modal dialog, so the page behind it is still live`)
+          c.ok(
+            Boolean(open?.login) && open.login.w >= 44 && open.login.h >= 44 && open.login.label.length > 0,
+            `${tag}: no phone way back in inside the drawer (${open?.login ? `${open.login.w}x${open.login.h} "${open.login.label}"` : 'missing'})`
+          )
+          c.ok(
+            m.login === null,
+            `${tag}: the way back in is in the row again, beside the action, as two wordless circles`
+          )
           c.ok(Boolean(open) && !open.appMenuSemantics, `${tag}: chapter navigation claims application-menu semantics`)
           c.ok(Boolean(open) && open.short === 0, `${tag}: ${open?.short} menu item(s) under 44px`)
           c.ok(Boolean(open) && open.overflow <= 1, `${tag}: the open menu pushes ${open?.overflow}px of horizontal overflow`)
@@ -275,9 +303,15 @@ for (const viewport of PHONES) {
           // control beside it already does. A panel that can only be dismissed
           // by pressing somewhere else is a trap for a keyboard.
           await page.keyboard.press('Escape')
-          await page.waitForTimeout(300)
+          // Waited for rather than slept past: the panel goes when its exit
+          // finishes, and that depends on what else is asking for frames.
+          await page
+            .waitForFunction(() => !document.querySelector('[data-folio-menu]'), { timeout: 3000 })
+            .catch(() => {})
           const afterEsc = await page.evaluate(() => ({
-            hidden: document.querySelector('[data-folio-menu]')?.hasAttribute('hidden'),
+            // Gone from the document, not hidden in it: the panel is mounted
+            // while it is open and unmounted when its exit finishes.
+            hidden: document.querySelector('[data-folio-menu]') === null,
             focused: document.activeElement?.hasAttribute('data-folio-menu-trigger'),
             expanded: document.querySelector('[data-folio-menu-trigger]')?.getAttribute('aria-expanded'),
           }))
@@ -289,13 +323,16 @@ for (const viewport of PHONES) {
           // div with an onClick does not. G13 exists because the catalogue
           // component this page borrowed once did exactly that.
           await page.keyboard.press('Enter')
-          await page.waitForTimeout(300)
-          const byKey = await page.evaluate(() => ({
-            open: document.querySelector('[data-folio-menu]')?.hasAttribute('hidden') === false,
-            focused: document.activeElement?.hasAttribute('data-folio-menu-item'),
-          }))
+          await page
+            .waitForFunction(() => !!document.querySelector('[data-folio-menu]'), { timeout: 3000 })
+            .catch(() => {})
+          await page.waitForTimeout(200)
+          const byKey = await page.evaluate(() => {
+            const panel = document.querySelector('[data-folio-menu]')
+            return { open: panel !== null, focused: panel?.contains(document.activeElement) === true }
+          })
           c.ok(byKey.open, `${tag}: Enter on the trigger does not open the chapter menu`)
-          c.ok(byKey.focused === true, `${tag}: keyboard opening does not focus the first chapter link`)
+          c.ok(byKey.focused === true, `${tag}: keyboard opening does not move focus into the drawer`)
           await page.keyboard.press('Escape')
           await page.waitForTimeout(200)
         }

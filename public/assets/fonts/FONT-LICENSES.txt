@@ -3,9 +3,9 @@ Copyright (c) 2015 The Heebo Project Authors
 (https://github.com/OdedEzer/heebo), Hebrew by Oded Ezer,
 Latin based on Roboto by Christian Robertson.
 
-Hasubi Mono
-Copyright 2022 The Hasubi-Mono Project Authors
-(https://github.com/eliheuer/hasubi-mono)
+Roboto Mono
+Copyright 2015 The Roboto Mono Project Authors
+(https://github.com/googlefonts/robotomono)
 
 Both font families are licensed under the SIL Open Font License, Version 1.1.
 

@@ -44,6 +44,7 @@ await withPage(async (page) => {
         text: (el.textContent || '').trim().slice(0, 40),
         label: (el.getAttribute('aria-label') || '').trim().slice(0, 40),
         href: el.getAttribute('href'),
+        inFaq: Boolean(el.closest('#faq')),
         outline: parseFloat(s.outlineWidth) || 0,
         outlineStyle: s.outlineStyle,
         shadow: s.boxShadow,
@@ -79,7 +80,12 @@ await withPage(async (page) => {
   // Counted off the dictionaries rather than written down here, for the reason
   // in g8-structure.mjs: an eighth question was added on 27.08.2026 and a
   // hard-coded numeral turns that into a gate edit instead of a measurement.
-  const summaries = stops.filter((s) => s.tag === 'summary').length
+  // SCOPED TO THE FAQ, 30.08.2026. This counted every <summary> that took
+  // focus anywhere on the page, which held only while the FAQ was the only
+  // disclosure on it. The colophon's groups fold on a phone now and each
+  // pricing card opens its own row list, so a page-wide count says 12 where
+  // the sentence under it says 8 — and the sentence is the one that matters.
+  const summaries = stops.filter((s) => s.tag === 'summary' && s.inFaq).length
   c.ok(
     summaries === QUESTIONS,
     `all ${QUESTIONS} FAQ questions should be focusable, ${summaries} were`

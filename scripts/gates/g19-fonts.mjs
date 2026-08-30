@@ -10,7 +10,7 @@ const distFontDir = path.join(DIST, 'assets', 'fonts')
 const files = [
   'Heebo-hebrew.woff2',
   'Heebo-latin.woff2',
-  'HasubiMono-Variable.woff2',
+  'RobotoMono-latin.woff2',
 ]
 
 const controlMissing = await stat(path.join(fontDir, 'not-a-real-font.woff2')).then(() => false, () => true)
@@ -27,7 +27,7 @@ for (const file of files) {
 
 const license = await readFile(path.join(fontDir, 'FONT-LICENSES.txt'), 'utf8')
 c.ok(license.includes('The Heebo Project Authors'), 'the Heebo copyright is missing from the license file')
-c.ok(license.includes('Hasubi-Mono Project Authors'), 'Hasubi Mono copyright is missing from the license file')
+c.ok(license.includes('Roboto Mono Project Authors'), 'Roboto Mono copyright is missing from the license file')
 c.ok(license.includes('SIL OPEN FONT LICENSE Version 1.1'), 'SIL OFL 1.1 text is missing')
 
 for (const [name, pathname, sample] of [
@@ -48,7 +48,7 @@ for (const [name, pathname, sample] of [
         }
         return {
           displayLoaded: document.fonts.check(`800 42px "Heebo"`, word),
-          monoLoaded: document.fonts.check('600 18px "Hasubi Mono"', word),
+          monoLoaded: document.fonts.check('600 18px "Roboto Mono"', word),
           displayWidth: width('"Heebo"'),
           missingWidth: width('"No Such InPlace Face"'),
           h1: family('h1'),
@@ -58,11 +58,11 @@ for (const [name, pathname, sample] of [
         }
       }, sample)
       c.ok(measured.displayLoaded, `${name}: Heebo did not load`)
-      c.ok(measured.monoLoaded, `${name}: Hasubi Mono did not load`)
+      c.ok(measured.monoLoaded, `${name}: Roboto Mono did not load`)
       c.ok(Math.abs(measured.displayWidth - measured.missingWidth) > 1, `${name}: Heebo measures like fallback`)
       c.ok(/Heebo/.test(measured.h1), `${name}: h1 uses ${measured.h1}`)
-      c.ok(/Hasubi Mono/.test(measured.eyebrow), `${name}: eyebrow uses ${measured.eyebrow}`)
-      c.ok(/Hasubi Mono/.test(measured.figure), `${name}: figures use ${measured.figure}`)
+      c.ok(/Roboto Mono/.test(measured.eyebrow), `${name}: eyebrow uses ${measured.eyebrow}`)
+      c.ok(/Roboto Mono/.test(measured.figure), `${name}: figures use ${measured.figure}`)
       c.ok(/Noto Sans Hebrew/.test(measured.body), `${name}: body uses ${measured.body}`)
       c.note(`${name}: Heebo ${measured.displayWidth.toFixed(1)}px vs fallback ${measured.missingWidth.toFixed(1)}px`)
     },

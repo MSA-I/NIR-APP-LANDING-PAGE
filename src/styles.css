@@ -67,28 +67,45 @@
                  U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Technical annotations. Hasubi Mono keeps the folio labels and the figures on
-   one measured rhythm.
+/* Technical annotations. The mono keeps the folio labels, the eyebrows and the
+   figures on one measured rhythm.
 
-   THE UNICODE RANGE IS NOT DECORATION. The file maps the Hebrew block and
-   carries advance widths for it, and its Hebrew glyphs are EMPTY: measured on
-   27.08.2026, `אבגדהו` at 48px paints 2,104 ink pixels in Hasubi's latin, 2,294
-   in Noto — and 0 in Hasubi's Hebrew. Every `.eyebrow` on the Hebrew page was
-   therefore laid out, measured, contrast-checked and painted as nothing, the
-   headline kicker on the title page included. Nothing could see it: the font
-   loaded, the family resolved, the text was in the DOM and in the accessibility
-   tree, and only the pixels were missing.
+   IT IS ROBOTO MONO SINCE 30.08.2026, and the swap answers a fault only one of
+   the two editions could show. The face is declared here, on the eyebrows and
+   on the page's annotation figures, in both languages — but the range below is
+   latin only, so on the Hebrew page every eyebrow falls back to the reading
+   face and the mono is never actually painted. On /en/ it is, on 26 elements.
+   The page was being set in two typographic systems, one per language, and the
+   owner was reading the one nobody had looked at.
 
-   Limiting the face to the scripts it can actually draw sends Hebrew to the
-   reading face instead. scripts/gates/g9-typography.mjs counts the ink now. */
+   Roboto Mono rather than another mono, and that is a fact rather than a
+   preference: Heebo IS Roboto under the Hebrew — see FONT-LICENSES.txt in
+   public/assets/fonts, which says so in its first entry — and Roboto Mono is
+   that same skeleton on a fixed advance. Rendered against IBM Plex Mono and
+   JetBrains Mono on this page's own strings before it was chosen.
+   scripts/fetch-mono-font.mjs writes the file.
+
+   THE UNICODE RANGE IS NOT DECORATION, and it is kept from the face this
+   replaces. Hasubi Mono mapped the Hebrew block and carried advance widths for
+   it while its Hebrew glyphs were EMPTY: measured on 27.08.2026, `אבגדהו` at
+   48px painted 2,104 ink pixels in Hasubi's latin, 2,294 in Noto — and 0 in
+   Hasubi's Hebrew. Every `.eyebrow` on the Hebrew page was laid out, measured,
+   contrast-checked and painted as nothing, the title page's kicker included.
+   Nothing could see it: the font loaded, the family resolved, the text was in
+   the DOM and in the accessibility tree, and only the pixels were missing.
+   Roboto Mono has no Hebrew at all, so the fallback is a fallback rather than a
+   trap — and the range is still stated, so nothing about which face draws which
+   script is left to a file's internal tables.
+   scripts/gates/g9-typography.mjs counts the ink either way. */
 @font-face {
-  font-family: "Hasubi Mono";
+  font-family: "Roboto Mono";
   font-style: normal;
-  font-weight: 400 900;
+  font-weight: 400 700;
   font-display: swap;
-  src: url("/assets/fonts/HasubiMono-Variable.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+2074,
-                 U+20AC, U+2122, U+2191-2193, U+2212, U+2215, U+FEFF;
+  src: url("/assets/fonts/RobotoMono-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+                 U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+                 U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* ------------------------------------------------------------------- tokens */
@@ -136,7 +153,7 @@
   --color-alert-deep: #c70036;
 
   --font-display: "Heebo", "Noto Sans Hebrew", Arial, sans-serif;
-  --font-mono: "Hasubi Mono", "Noto Sans Hebrew", ui-monospace, monospace;
+  --font-mono: "Roboto Mono", "Noto Sans Hebrew", ui-monospace, monospace;
   --font-body: "Noto Sans Hebrew", Arial, ui-sans-serif, system-ui, sans-serif;
 
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -460,8 +477,10 @@
   margin: 0;
 }
 
-/* The micro-label above every headline. Hasubi is the bilingual mono chosen
-   for the folio system, so the label keeps the same rhythm in both locales. */
+/* The micro-label above every headline. It asks for the mono, and gets it only
+   where the mono has glyphs: latin. In Hebrew this line has always been drawn
+   by the reading face, which is why the two editions did not look like one
+   system until the mono was changed to Heebo's own sibling on 30.08.2026. */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.775rem;
@@ -1034,13 +1053,35 @@ html:dir(ltr) .flow__arrow { rotate: 180deg; }
   align-items: center;
   gap: 0.7rem;
 }
+/* The group's heading is a <summary> since 30.08.2026, because the group is a
+   <details>: see the note in SiteFooter.tsx for why they fold on a phone and
+   why nothing is taken out of the markup to do it. Above 640 every group is
+   open and cannot be closed, so the heading is dressed back down to the label
+   it has always been — no marker, no chevron, no pointer. */
 .footer-nav__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   margin: 0;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.22em;
   color: var(--color-oceanic);
+  list-style: none;
+  cursor: default;
+  /* Above 640 every group is open and stays open, so the heading must not
+     answer a press: a column that collapsed on a click, on a width where
+     nothing says it can, is a colophon that loses its links to a misfire. */
+  pointer-events: none;
 }
+.footer-nav__label::-webkit-details-marker { display: none; }
+.footer-nav__chevron {
+  display: none;
+  opacity: 0.7;
+  transition: rotate 0.3s var(--ease-out-quint);
+}
+.footer-nav__group[open] .footer-nav__chevron { rotate: 180deg; }
 .footer-pills {
   display: flex;
   flex-wrap: wrap;
@@ -1841,67 +1882,219 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
 }
 .folio__icon:active { scale: 0.96; }
 
-/* --------------------------------------------------------- the phone menu
-   Absolutely placed against the header, never in its flow. The header
-   publishes its own height to --folio-h and the whole document's geometry is
-   measured off that number, so a panel that grew the box would push the page
-   down by its own height every time somebody opened it. */
-.folio__menu {
-  position: absolute;
-  inset-block-start: 100%;
-  inset-inline: 0.75rem;
-  z-index: 40;
-  display: grid;
-  gap: 0.35rem;
-  margin-block-start: 0.4rem;
-  padding: 0.5rem;
-  border: 1px solid var(--color-onyx-line);
-  border-radius: 14px;
-  /* Opaque, not a blurred sheet. The rest of the fixed chrome is translucent
-     because it rides over the page and is meant to; a menu is read, and the
-     first cut of this panel let the hero's headline through it clearly enough
-     to compete with the four chapter names. `backdrop-filter` would have
-     covered that on the devices that have it and nowhere else. */
-  background: var(--color-onyx-lift);
-  box-shadow: 0 26px 60px -30px rgb(0 0 0 / 0.75);
+/* ------------------------------------------------------------- the drawer
+   21st.dev's `drawer` (@coss.com, id 11444), rebuilt on Motion in
+   src/components/Drawer.tsx, which carries the reasoning and the four
+   departures. The numbers below are that component's: the panel is the width
+   of the screen less 3rem and caps at 28rem, the inner edge is rounded 1rem
+   and the outer three are square, a 4px bar rides the inner edge, and the
+   scrim is black at 32% behind a small blur.
+
+   It replaces the panel that hung off the header until 30.08.2026 — a card
+   with four links in it, which the owner read, correctly, as a browser
+   dropdown wearing the page's colours.
+
+   The whole thing is a top-layer <dialog>, so the page behind it is inert and
+   the browser owns Escape and the focus ring. That is also why the dialog's
+   own ::backdrop is transparent: the scrim is a real element here, because its
+   opacity has to follow the swipe, and a ::backdrop cannot be animated by a
+   value that only exists while a finger is down. */
+.drawer {
+  position: fixed;
+  inset: 0;
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: 100%;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
 }
-.folio__menu[hidden] { display: none; }
-.folio__menu-item {
+.drawer::backdrop { background: transparent; }
+
+.drawer__scrim {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgb(0 0 0 / 0.32);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+
+.drawer__panel {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  display: flex;
+  flex-direction: column;
+  inline-size: calc(100% - 3rem);
+  max-inline-size: 28rem;
+  /* THE GROUND IS THE PAGE'S OWN, LIFTED — not `--color-onyx-lift`.
+     That token is the dark view's lifted surface and its light-view value is
+     #f4efe7, a warm beige left over from an older palette and painted nowhere
+     else on this page at that size. On a panel this big it did not read as a
+     lifted surface, it read as a different site: the owner's note of
+     30.08.2026. This is the recipe every other panel here uses — a few percent
+     of the ink over the ground the page is actually on — so it lifts by the
+     same amount in both views and introduces no colour of its own. */
+  background: color-mix(in srgb, var(--color-ink) 5%, var(--color-onyx));
+  color: var(--color-ink);
+  border-inline-end: 1px solid var(--color-onyx-line);
+  border-start-end-radius: 1rem;
+  border-end-end-radius: 1rem;
+  box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.7);
+  /* The panel is dragged, and a drag that scrolls the page under it is the one
+     thing a drawer must not do. The list inside takes its own touch back. */
+  touch-action: none;
+  /* It takes focus when it opens (see Drawer.tsx) and it is not a control, so
+     it does not draw a ring for a press it never answers. */
+  outline: none;
+}
+
+/* The grab bar, on the edge the panel travels toward — and the surface the
+   panel is dragged by. It takes pointer events for that reason: the list beside
+   it scrolls, and a horizontal gesture over a scrolling list belongs to the
+   browser, not to us. See the note beside `useDragControls` in Drawer.tsx. */
+.drawer__bar {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 1.5rem;
   display: flex;
   align-items: center;
+  justify-content: center;
+  touch-action: none;
+  cursor: grab;
+}
+.drawer__bar:active { cursor: grabbing; }
+.drawer__bar::before {
+  content: "";
+  inline-size: 4px;
+  block-size: 3rem;
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--color-ink) 22%, transparent);
+}
+
+.drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.15rem;
+  padding-inline-end: 2rem;
+  border-block-end: 1px solid var(--color-onyx-line);
+}
+.drawer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   min-block-size: 2.75rem;
-  padding-inline: 0.9rem;
+  color: var(--color-ink);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+.drawer__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1.5px solid var(--color-onyx-line);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.drawer__close:hover { border-color: var(--color-oceanic); }
+
+.drawer__body {
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  display: grid;
+  align-content: start;
+  gap: 1.35rem;
+  padding: 1.15rem;
+  padding-inline-end: 2rem;
+}
+
+/* The two asks, at the top, each with its word. The way back in lives here
+   since 30.08.2026; see the note in Folio.tsx. */
+.drawer__asks {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.drawer__label {
+  margin-block: 0 0.5rem;
+  margin-inline: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-dim);
+}
+.drawer__list {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.drawer__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-block-size: 2.75rem;
+  padding-inline: 0.75rem;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 600;
   color: var(--color-ink);
   text-decoration: none;
   transition: background 0.3s var(--ease-out-quint);
 }
-.folio__menu-item:hover,
-.folio__menu-item:focus-visible {
+.drawer__item:hover,
+.drawer__item:focus-visible {
   background: color-mix(in srgb, var(--color-oceanic) 18%, transparent);
 }
-.folio__menu-foot {
-  display: flex;
+/* The chevron points the way the reader is going, which is not the same
+   direction in the two editions. */
+.drawer__chevron {
+  flex: none;
+  opacity: 0.55;
+}
+html:dir(rtl) .drawer__chevron { scale: -1 1; }
+
+.drawer__tools {
+  display: none;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding-block-start: 0.45rem;
-  margin-block-start: 0.15rem;
-  border-block-start: 1px solid var(--color-onyx-line);
+  gap: 0.75rem;
+  padding: 0.85rem 1.15rem;
+  padding-inline-end: 2rem;
+  border-block-end: 1px solid var(--color-onyx-line);
 }
-/* Only below 480px, where the row gives the language control up. Above it the
-   control is in the row and this copy must not be a second one. */
-.folio__menu-langs { display: none; }
-/* The panel has the room the row never did, so the language name is drawn in
-   here even though the row's copy hides it. */
-.folio__menu-langs .language-switcher__name { display: inline; }
-/* The switch is in the row from 768 up and in the panel below it, so exactly
-   one of the two instances is ever drawn. */
-.folio__menu-foot { display: none; }
+/* Exactly one copy of each control is ever drawn. The language control is in
+   the row from 480px up and in here below it; the switch is in the row from
+   768px up and in here below it. Above 768 neither is in here, so neither is
+   the strip that would hold them. */
+.drawer__langs { display: none; }
+.drawer__langs .language-switcher__name { display: inline; }
+.drawer__theme { display: none; }
 @media (max-width: 767px) {
-  .folio__menu-foot { display: flex; }
+  .drawer__tools,
+  .drawer__theme { display: flex; }
   .folio__wide-only { display: none; }
 }
 
@@ -1923,13 +2116,8 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
    attribute together so order can never decide this again. The breakpoints are
    Tailwind's own: lg is 64rem, sm is 40rem. */
 @media (min-width: 64rem) {
-  .folio__icon[data-folio-menu-trigger],
-  .folio__menu[data-folio-menu] { display: none; }
+  .folio__icon[data-folio-menu-trigger] { display: none; }
 }
-@media (min-width: 40rem) {
-  .folio__icon[data-folio-login] { display: none; }
-}
-
 /* The mark in the middle, below the width where the chapters are in the row.
    The owner's placement of 28.08.2026: menu at the reading start, mark in the
    centre, the actions at the end.
@@ -1941,8 +2129,19 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
    phone and moved every time a control was added. Out of flow it is centred
    against the row itself, which is what "in the middle" means, and
    `inset-inline: 0` with `margin-inline: auto` gets there without a signed
-   translate, so the same two lines hold in both reading directions. */
-@media (max-width: 1023px) {
+   translate, so the same two lines hold in both reading directions.
+
+   IT STOPS AT 640px, and the number is measured rather than chosen. A box out
+   of flow does not push anything, so at every width where the row grows another
+   control the actions simply arrive on top of the mark. Measured 30.08.2026,
+   with the mark centred at every width below 1024: at 768px the mark spanned
+   327–441 and the language pill spanned 329–441, so the wordmark was not
+   "crowded", it was drawn UNDER the pill and invisible — at 768, at 900 and at
+   1000. At 640, the width where the login pill joins the row, the overlap was
+   22px. From 640 up the mark goes back into the flow at the reading start,
+   which is where it sat before the phone row was written and where nothing can
+   land on it. The owner's placement holds where it was asked for: the phone. */
+@media (max-width: 639px) {
   .folio__row { position: relative; }
   .folio__row > .brandchip {
     position: absolute;
@@ -1975,8 +2174,44 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   inset: 0;
   z-index: 2;
   border: 0;
+  padding: 0;
   background: transparent;
   cursor: zoom-in;
+}
+/* The one visible thing the control has: a chip in the far corner saying the
+   picture opens. Placed at the block end so it never covers the product's own
+   navigation, which is the part of the screenshot the chapter is pointing at. */
+.screen-zoom__chip {
+  position: absolute;
+  inset-block-end: 0.5rem;
+  inset-inline-end: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 100px;
+  /* This chip sits on a PRODUCT SCREENSHOT, and a screenshot of the
+     application is a light picture in both views. So it does not take the
+     page's ground with it: pinned the way `.cform__submit` and the recommended
+     badge are, because an element whose backdrop never flips must not flip
+     either. In the light view the unpinned version was cream on cream. */
+  --color-onyx: #0a171d;
+  --color-ink: #fbf6ee;
+  background: color-mix(in srgb, var(--color-onyx) 82%, transparent);
+  color: var(--color-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 6px 18px -8px rgb(0 0 0 / 0.6);
+}
+
+/* One of the two chapter-02 hints is drawn, never both: the pointer one where
+   the hotspots exist, the touch one where the picture is the control. The
+   width is the same 768 the hotspot layer is switched at. */
+.demo-hint--touch { display: none; }
+@media (max-width: 767px) {
+  .demo-hint--pointer { display: none; }
+  .demo-hint--touch { display: block; }
 }
 
 .screen-dialog {
@@ -1992,19 +2227,42 @@ html:dir(ltr) .brandchip__fill { translate: -50% -50%; }
   overflow: hidden;
 }
 .screen-dialog::backdrop { background: rgb(0 0 0 / 0.72); }
+/* SAFE centring, and the keyword is the whole rule.
+   This was `display: grid; place-items: center`, and centring a box that is
+   WIDER than its scroller pushes the overflow out of BOTH ends — and a
+   scroller's origin is its start edge, so the half that went past the start
+   cannot be scrolled back to. Measured on 30.08.2026 at 390px: the picture is
+   900px, the scroller reported 645px of content, and 255px of the screen —
+   28% of it, a different 28% in each reading direction — could not be reached
+   by any gesture. The reader pressed a screen to read it and one edge of it
+   simply did not exist.
+
+   `safe` says: centre it while it fits, and align it to the start when it does
+   not, which is the case this box is FOR. Both axes, because a landscape phone
+   overflows the other way. The unprefixed pair stays underneath for anything
+   that does not know the keyword: a centred picture that scrolls badly beats
+   an unaligned one. */
 .screen-dialog__scroll {
   inline-size: 100%;
   block-size: 100%;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-items: safe center;
+  justify-content: safe center;
 }
 /* At its own width inside a scroller, so the reader pans a real screen rather
    than reading a version of it that was fitted to the box again. `min()` keeps
    a desktop from opening a 2000px picture into a 1400px window and calling it
    full size. */
 .screen-dialog__img {
+  /* A flex item shrinks by default, and this one must not: the whole point of
+     the box is that the picture is at its own width and the reader pans it.
+     Without this the 900px screen was fitted back into 390 — the fault the
+     scroller was built to avoid — and the pan had nothing to pan. */
+  flex: none;
   inline-size: min(2000px, max(100%, 900px));
   max-inline-size: none;
   block-size: auto;
@@ -2268,10 +2526,12 @@ html[dir='rtl'] { --knob: -1; }
      width, the height, and both negative margins. The card held five written
      examples of about 165 characters and a square held them.
 
-     The five real responses that replaced them on 30.08.2026 run to 230, and
-     the English translations of those run longer again. In the 340px square, at
-     1440, every one of the ten wanted more card than it had: the Hebrew between
-     365 and 391px, the English between 416 and 489. Under the notched
+     The real responses that replaced them on 30.08.2026 run to 230 in the set
+     that arrived first and 280 in the set that replaced it hours later, and
+     the English translations of both run longer again. In the 340px square, at
+     1440, every one of the first set's ten wanted more card than it had: the
+     Hebrew between 365 and 391px, the English between 416 and 489, and the
+     second set is longer than that in both. Under the notched
      clip-path that is not an overflow, it is two missing lines and a sentence
      ending mid-clause, looking as deliberate as the rest of the design.
 
@@ -2708,6 +2968,63 @@ html[dir='rtl'] { --knob: -1; }
 }
 
 /* --------------------------------------------------------- the comparison */
+/* ------------------------------------------------- what a plan includes
+   Two shapes for one catalogue, and exactly one of them is drawn at any width.
+   Above 640px the table below: five columns read against each other, which is
+   what a comparison is for. Below it, the disclosure on each card — see the
+   note in PlansChapter.tsx. The phone does not get the table at all, because
+   a sideways scroll with no affordance is not a comparison, it is a column. */
+.plan-card__more { display: none; }
+.plan-card__more > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-block-size: 2.75rem;
+  margin-block-start: 0.35rem;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  list-style: none;
+}
+.plan-card__more > summary::-webkit-details-marker { display: none; }
+.plan-card__more-chevron {
+  opacity: 0.7;
+  transition: rotate 0.3s var(--ease-out-quint);
+}
+.plan-card__more[open] .plan-card__more-chevron { rotate: 180deg; }
+.plan-card__ladder {
+  display: grid;
+  gap: 0.1rem;
+  margin-block: 0.6rem 0;
+  margin-inline: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.86rem;
+}
+.plan-card__ladder li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-block: 0.5rem;
+  border-block-end: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+}
+.plan-card__ladder li:last-child { border-block-end: 0; }
+.plan-card__ladder-num { font-weight: 700; }
+.plan-card__ladder-yes { color: var(--color-oceanic); }
+/* The absence is drawn quieter than the presence, and the word is in the
+   accessibility tree beside it either way. */
+.plan-card__ladder-no { opacity: 0.45; }
+
+@media (max-width: 639px) {
+  .plan-card__more { display: block; }
+  .plans-compare { display: none; }
+}
+
 .plans-compare {
   margin-block-start: clamp(2rem, 5vh, 3rem);
   border: 1px solid color-mix(in srgb, var(--color-onyx-line) 80%, transparent);
@@ -2861,16 +3178,18 @@ html[dir='rtl'] { --knob: -1; }
 .plans-compare__table tbody td { color: var(--color-ink-soft); }
 
 /* The figures in the table are set in the DISPLAY face, not the annotation one.
-   Owner, 28.08.2026: change the font of the numbers. Hasubi Mono draws a
-   slashed zero, which is right on a technical annotation beside a screenshot
+   Owner, 28.08.2026: change the font of the numbers. The mono of the day drew
+   a slashed zero, which is right on a technical annotation beside a screenshot
    and wrong on a price table, where a 0 with a line through it reads as a
    correction. Heebo has tabular figures of its own, so the columns still line
-   up. The bidi isolation is kept: a run of digits inside a Hebrew row has to
-   stay a run of digits.
+   up. The decision stands after the mono changed on 30.08.2026: the table's
+   figures belong to the display face now, which is a choice about the table
+   rather than about the face beside it. The bidi isolation is kept: a run of
+   digits inside a Hebrew row has to stay a run of digits.
 
-   ITS OWN NAME, and not `.ip-num`. That class already exists (line 489): it is
-   the page's annotation figure, set in Hasubi on purpose, and G19 measures it
-   by that name. A second declaration under the same name repainted the film's
+   ITS OWN NAME, and not `.ip-num`. That class already exists: it is the page's
+   annotation figure, set in the mono on purpose, and G19 measures it by that
+   name. A second declaration under the same name repainted the film's
    step numbers and the title page's stat as well. */
 .plans-compare__num {
   font-family: var(--font-display);
@@ -3396,7 +3715,17 @@ html[dir='rtl'] { --knob: -1; }
   /* The four headings the colophon's link groups stand under. At 11.2px they
      were the smallest type on the page, and they are the only thing telling a
      reader which four links belong together. */
-  .footer-nav__label { font-size: 0.78rem; }
+  .footer-nav__label {
+    font-size: 0.78rem;
+    min-block-size: 2.75rem;
+    padding-inline: 0.6rem;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  .footer-nav__chevron { display: inline-block; }
+  /* A closed group is a heading and nothing else, so the column gap that was
+     holding a list of pills apart would leave it floating. */
+  .footer-nav__group:not([open]) { gap: 0; }
 
   /* iOS Safari zooms the whole page in whenever a focused field computes under
      16px, and every field on this form computed to 15.68. Tapping "שם מלא" on
@@ -3458,7 +3787,7 @@ html[dir='rtl'] { --knob: -1; }
        where it goes, which is the switch's argument as well. Both keep their
        full names in there, which the row never had room to draw. */
     .folio__actions .language-switcher { display: none; }
-    .folio__menu-langs { display: flex; }
+    .drawer__langs { display: flex; }
 
     .folio__row,
     .folio__actions { gap: 0.375rem; }

@@ -26,7 +26,7 @@ await withPage(async (page) => {
     }
     return {
       display: document.fonts.check('800 3rem "Heebo"', word),
-      mono: document.fonts.check('600 1rem "Hasubi Mono"'),
+      mono: document.fonts.check('600 1rem "Roboto Mono"'),
       body: document.fonts.check('400 1rem "Noto Sans Hebrew"'),
       wDisplay: widthIn('"Heebo"'),
       wBody: widthIn('"Noto Sans Hebrew"'),
@@ -47,7 +47,7 @@ await withPage(async (page) => {
     `measured at 40px: Heebo ${loaded.wDisplay.toFixed(1)}px, Noto ${loaded.wBody.toFixed(1)}px, fallback ${loaded.wMissing.toFixed(1)}px`
   )
   c.ok(loaded.display, 'the display face (Heebo) did not load')
-  c.ok(loaded.mono, 'the annotation face (Hasubi Mono) did not load')
+  c.ok(loaded.mono, 'the annotation face (Roboto Mono) did not load')
   c.ok(loaded.body, 'the body face (Noto Sans Hebrew) did not load')
   c.note(`faces registered: ${loaded.families.join(', ')}`)
 
@@ -83,11 +83,13 @@ await withPage(async (page) => {
 
   // ---- the ink ---------------------------------------------------------------
   // A face can load, resolve, measure and lay out, and still paint nothing.
-  // Hasubi Mono maps the Hebrew block with advance widths and EMPTY glyphs, so
-  // every `.eyebrow` on the Hebrew page — the title page's kicker included —
-  // was invisible while every check here passed: `document.fonts.check` said
-  // yes, `getComputedStyle` said Hasubi, the contrast gate measured a colour
-  // nobody could see, and the text sat in the accessibility tree the whole time.
+  // The mono this page shipped until 30.08.2026, Hasubi Mono, mapped the Hebrew
+  // block with advance widths and EMPTY glyphs, so every `.eyebrow` on the
+  // Hebrew page — the title page's kicker included — was invisible while every
+  // check here passed: `document.fonts.check` said yes, `getComputedStyle` said
+  // the mono, the contrast gate measured a colour nobody could see, and the text
+  // sat in the accessibility tree the whole time. Roboto Mono has no Hebrew to
+  // claim, so the trap is gone; the count stays, because the next face might.
   //
   // So the last question is the reader's: does anything appear. Each string is
   // drawn with the element's OWN computed font stack and the opaque pixels are

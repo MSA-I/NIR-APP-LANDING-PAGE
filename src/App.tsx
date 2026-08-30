@@ -67,6 +67,22 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
       : c
   )
 
+  // The supporting pages, composed once and read twice: the colophon lists
+  // them under its own heading, and since 30.08.2026 the phone drawer carries
+  // the same two columns, which is what took the weight off the phone footer.
+  // The legal two are excluded because the colophon already links them under
+  // their own heading and they exist in Hebrew only; about is excluded because
+  // it is in the product column now, and a list that names the same page twice
+  // is the duplication this footer was cleared of.
+  const morePages = {
+    h: x.moreLabel,
+    links: pages
+      .filter((p) => !p.legal && p.slug !== 'about')
+      .map((p) => ({ t: p.nav, href: pageHref(p.slug) })),
+  }
+  const productCol = footerCols.find((c) => c.links.some((l) => l.href === '#faq'))
+  const drawerGroups = [...(productCol ? [productCol] : []), morePages]
+
   return (
     <>
       <a className="skip" href="#what">
@@ -84,6 +100,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         }
         brand={t.brand}
         links={x.folioNav}
+        menuGroups={drawerGroups}
         ctaLabel={t.ctaPrimary}
         ctaHref={t.ctaPrimaryHref}
         loginLabel={t.footer.cols[0].links[1].t}
@@ -127,6 +144,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           lede={t.what.lede}
           stepsLabel={t.what.stepsLabel}
           demoHint={t.what.demoHint}
+          touchHint={x.demoTouchHint}
           steps={t.what.steps}
           dir={direction}
           screenAltSuffix={x.accessibility.screenAltSuffix}
@@ -225,18 +243,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         tagline={t.footer.tagline}
         rights={t.footer.rights}
         cols={footerCols}
-        // Six supporting pages per edition since 27.08.2026. The legal two are
-        // excluded here because the colophon already links them under its own
-        // heading, and they exist in Hebrew only. About is excluded from
-        // 30.08.2026 because it is in the product column now, and a colophon
-        // that lists the same page twice is the duplication this footer was
-        // just cleared of.
-        more={{
-          h: x.moreLabel,
-          links: pages
-            .filter((p) => !p.legal && p.slug !== 'about')
-            .map((p) => ({ t: p.nav, href: pageHref(p.slug) })),
-        }}
+        more={morePages}
         marquee={t.title_page.index.map((c) => c.t)}
         topLabel={t.title_page.folio}
       />
