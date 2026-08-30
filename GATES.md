@@ -2254,3 +2254,71 @@ Nobody was asked for a rating, and no number on the page moved. Five people
 saying what changed is not a measurement, which is why [DEBT.md](DEBT.md) §28
 stays open: there is still no original figure on this site that an answer engine
 could cite.
+
+## Round seventeen, part two — the second set of responses, 30.08.2026
+
+The owner sent five more, hours after the first five and after the merge, in
+`C:\Users\art1\Desktop\Untitled.txt`: "אלו יותר טובות". Same five people, same
+names, same trades, different quotes. He is right, and what makes him right is
+worth writing down, because it is the difference between a testimonial that
+argues and one that describes.
+
+| | The first set says | The second set says |
+|---|---|---|
+| איתי ל׳ | the invoices used to be scattered between email, WhatsApp and binders | he does not have to put the whole order with one supplier, and he can see what keeping it with one costs him |
+| שירה מ׳ | she no longer has to remember where every order stands | she sees the previous price against the current one, who put theirs up, and how far each offer is from the cheapest |
+| רונית א׳ | she used to chase missing documents | payment requests arrive checked, with the credit to set against them, and the bank reconciliation stays in the same process |
+| עומר ש׳ | with several locations it is hard to know what was charged for | documents land in one place and he sees what the system read, what is matched, and what still needs a person |
+| אלון כ׳ | he wanted control over money going out | he does not open the system to read invoices one by one; he opens it to see what needs a decision now |
+
+The first set is five people saying the product stopped costing them something.
+The second is five people saying what they do in it. The first could have been
+written about any procurement tool. The second could not.
+
+### One mark moved, and nothing else
+
+Two of the five carried an em-dash. `src/content/he.ts` has said since build
+three that no em-dash appears in visible copy on this page, because Hebrew takes
+a colon, a comma, a period or parentheses everywhere the dash was doing the
+work. Both are colons now. No word moved, in any of the five, in either
+language.
+
+### The card did not have to be touched
+
+This is what the measured height was built for, one merge earlier. The quotes
+grew from about 230 characters to about 280, roughly a fifth again, and the only
+change needed in the layout was none: the component measures the tallest card
+and holds the rest to it, so the box grew with the text.
+
+| | Card, first set | Card, second set |
+|---|---|---|
+| Hebrew, 1440 | 357px | 357px |
+| Hebrew, 320 phone | 296x340 | 296x357 |
+| English, 1440 | 403px | 403px |
+| English, 320 phone | 296x402 | 296x424 |
+
+A constant would have failed here twice over: the number that fitted the first
+set clips the second, and a number picked for the second would leave the first
+sitting in an empty box. G6's vertical case passes at all four widths in both
+locales with no change to any constant in the component or the stylesheet.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| The five quotes | word for word against the owner's file, in Hebrew, with the two dashes turned into colons |
+| The English | retranslated sentence for sentence from the new Hebrew, cut nowhere |
+| The card | G6 vertical: 5 of 5 fit at 320, 390, 900 and 1440, in both locales, without a constant being touched |
+| No horizontal overflow | G6 horizontal: clean at all 8 scroll positions at 390, 768, 1024 and 1440 |
+| Photographed | the section at 1440 and 390, in both locales |
+| The suite | **26 met, 0 unmet** |
+
+### What is worth the owner's eye
+
+Two of the five describe work this page does not currently show: splitting one
+order across several suppliers with the minimum-order figure beside it, and a
+price history that names who raised and who lowered. Both are real (they are his
+customers and his product), and neither is claimed anywhere else on the site.
+The page shows the minimum order once, in the alt text of the suppliers screen.
+That is a copy question, not a correctness one: the quotes are the only place a
+reader hears about either feature.
