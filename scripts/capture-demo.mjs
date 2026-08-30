@@ -81,6 +81,16 @@ for (const role of ['office', 'owner']) {
       const items = [...document.querySelectorAll('header a, header button, nav a, nav button')]
         .map((el) => ({ el, t: (el.textContent || '').replace(/\s+/g, ' ').trim() }))
         .filter((x) => x.t && x.t.length < 24)
+      // The ROUTE beside the word, from 30.08.2026. The page maps a box to a
+      // station, and until now it mapped it by the Hebrew word printed in the
+      // nav — which stops existing the moment these screens are captured from
+      // the application's English edition. A route reads the same in both.
+      const keyOf = (el) => {
+        const href = el.getAttribute('href') || ''
+        const path = href.replace(/^https?:\/\/[^/]+/, '').split('?')[0]
+        const last = path.split('/').filter(Boolean).pop()
+        return last && /^[a-z-]+$/.test(last) ? last : undefined
+      }
       const seen = new Set()
       const out = []
       for (const { el, t } of items) {
@@ -91,6 +101,7 @@ for (const role of ['office', 'owner']) {
         seen.add(t)
         out.push({
           label: t,
+          ...(keyOf(el) ? { key: keyOf(el) } : {}),
           x: +(r.left / innerWidth).toFixed(5),
           y: +((r.top + scrollY) / h).toFixed(5),
           w: +(r.width / innerWidth).toFixed(5),
