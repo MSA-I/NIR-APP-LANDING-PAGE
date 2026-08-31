@@ -39,6 +39,7 @@ const pagesEn: Page[] = [
     sections: [
       {
         h2: 'What procurement software is supposed to do',
+        ask: true,
         paras: [
           'Procurement software is not a place to file documents. Its job is to make certain that what you ordered, what you received and what you were asked to pay are the same thing, and to stop whatever does not match before the money leaves.',
           'Everything in InPlace runs in one sequence: suppliers, price lists, orders, goods receipt, invoices, credit notes, payment requests, payments, bank reconciliation and reports. Every document that arrives receives a row, a status and a link to the order it came from.',
@@ -69,6 +70,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Who it is for',
+        ask: true,
         list: {
           label: 'The businesses the system was built for',
           items: [
@@ -83,6 +85,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What happens when something does not match',
+        ask: true,
         paras: [
           'The system compares what you ordered, what you received and what you were asked to pay. When the three disagree, the invoice stops and waits for a decision. It is not deleted, not approved automatically, and not left quietly in a folder until somebody notices it.',
           'The owner sees the mismatch as something that needs attention, not as a line in a monthly report. That is the difference between a system that manages a process and a system that enables a decision: a screen that only displays data is an operational screen, not a decision screen.',
@@ -90,6 +93,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What the overview shows',
+        ask: true,
         paras: [
           'Every screen in the system was built on one principle: that a manager understands within seconds what needs attention, what may cost money, and where the business stands right now. Success is defined plainly — a manager opens the screen and knows within ten seconds what his next three actions are.',
           'Which is why the system carries no invented static figures. A measure with no data behind it shows a dash, not a zero, because a zero is a claim about reality rather than an absence of information.',
@@ -97,6 +101,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What it is not',
+        ask: true,
         list: {
           label: 'Four things the system does not try to be',
           items: [
@@ -109,6 +114,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'How to start',
+        ask: true,
         paras: [
           'You can start with a single supplier. The free plan takes 20 documents a month and every other capability is open on it, because what separates the plans is the number of documents rather than a list of features.',
           'No credit card is needed to begin, and you can move between plans at any point. Accumulated data stays in full even when moving to a lower plan.',
@@ -140,6 +146,7 @@ const pagesEn: Page[] = [
     sections: [
       {
         h2: 'What happens to an invoice from the moment it arrives',
+        ask: true,
         list: {
           label: 'The path of a single invoice',
           items: [
@@ -153,6 +160,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Who sees what',
+        ask: true,
         paras: [
           'Procurement sees the amount, the status and whether the invoice was paid, but does not run payments and sees no bank or financial reports. The accountant sees approved invoices only, with the minimum context of their order and receipt.',
           'This is separation of duties: whoever approves is not whoever transfers, and there is no route around it, however urgent.',
@@ -166,6 +174,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What happens to an invoice that does not match',
+        ask: true,
         paras: [
           'It stops. Not deleted, not approved with a caveat, and not waiting quietly. It is marked as a mismatch and waits for a decision from whoever is authorised to take it.',
           'The difference from ordinary working practice is timing. Without a system, a gap between the order and the invoice surfaces at month end, after the money has gone, and dealing with it means a correspondence with the supplier. With a system it surfaces before payment, and dealing with it is a decision.',
@@ -218,6 +227,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What the system compares',
+        ask: true,
         list: {
           label: 'The three points of comparison',
           items: [
@@ -232,6 +242,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Why it stops before payment and not after',
+        ask: true,
         paras: [
           'Payment always goes through an approved request. There is no emergency route around the approval, and no permission that allows an unchecked invoice to be paid. A mismatch discovered after the transfer is no longer a decision, it is a correspondence.',
         ],
@@ -245,6 +256,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Who decides on a mismatch',
+        ask: true,
         paras: [
           'Not every mismatch is an error. Sometimes the price rose by agreement, sometimes a different quantity arrived by arrangement, and sometimes the supplier is right. The system does not decide for anyone; it puts the gap in front of whoever is authorised to decide, and keeps the decision.',
           'What it does prevent is a route around it. Payment always goes through an approved request, and no permission allows the approval to be skipped. The separation between whoever approves and whoever transfers holds even when it is urgent.',
@@ -252,6 +264,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Why three documents and not two',
+        ask: true,
         table: {
           headers: ['What is compared', 'What it catches'],
           rows: [
@@ -290,12 +303,14 @@ const pagesEn: Page[] = [
     sections: [
       {
         h2: 'What a spreadsheet does well',
+        ask: true,
         paras: [
           'It is available, everybody knows how to use it, and it obliges nobody to learn a system. A business starting out with one supplier and five orders a month needs nothing else.',
         ],
       },
       {
         h2: 'Where it breaks',
+        ask: true,
         list: {
           label: 'The four breaking points',
           items: [
@@ -320,6 +335,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What happens as the business grows',
+        ask: true,
         paras: [
           'A spreadsheet does not break in a day. It breaks slowly: a tab is added, a column is added, a second file appears for the second location, and then somebody sends a version over WhatsApp and from that moment there are two truths.',
           'The clearest sign is not the size of the file but the question “which version are we working from”. Once it is asked, the spreadsheet has already stopped being the source of truth.',
@@ -327,6 +343,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What does not transfer from the spreadsheet',
+        ask: true,
         paras: [
           'The habit of “I will remember to check”. A method that rests on one person’s memory works perfectly until the day he is on holiday, and stops working without announcing it.',
           'InPlace asks nobody to remember. The comparison of order, receipt and invoice runs every time, and an invoice that arrived on a busy day is checked exactly as closely.',
@@ -334,6 +351,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'When it is worth moving',
+        ask: true,
         paras: [
           'When more than one person touches the same purchase. The moment an order passes between procurement, whoever receives the goods and the accountant, the spreadsheet no longer describes reality but only a part of it.',
           'You can start with one supplier and leave the spreadsheet open beside the system. Comparing the two after a month is the most honest test available.',
@@ -365,6 +383,7 @@ const pagesEn: Page[] = [
     sections: [
       {
         h2: 'What InPlace refuses to be',
+        ask: true,
         list: {
           label: 'Four things, from the positioning document',
           items: [
@@ -389,6 +408,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'When an ERP is the right choice',
+        ask: true,
         paras: [
           'When the organisation needs one system for manufacturing, inventory, people, finance and procurement, and when it has the time and the people for an implementation of that size. In that case the ERP’s procurement module works against the same data as the rest of the organisation, and that is worth something.',
           'The businesses InPlace was built for sit on the other side of that line: they need control over procurement now, not a project.',
@@ -403,6 +423,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What happens when you need both',
+        ask: true,
         paras: [
           'It happens. An organisation with an ERP running manufacturing and inventory can still suffer from procurement managed over WhatsApp, because the ERP’s procurement module was never implemented to the end.',
           'In that case the question is not which system wins but where the payment decision is taken. Whichever system holds that decision should also hold the comparison that leads to it.',
@@ -410,6 +431,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What they have in common',
+        ask: true,
         paras: [
           'Both require the work to pass through them. A system somebody bypasses over WhatsApp is not a system, whether it cost a hundred thousand or nothing at all.',
           'The difference is how easy it is to bypass. When the system covers one complete chain and speaks the language of the people working in it, going around it stops being the short way.',
@@ -441,6 +463,7 @@ const pagesEn: Page[] = [
     sections: [
       {
         h2: 'What the system does',
+        ask: true,
         paras: [
           'InPlace is a procurement-to-payment system, written in Hebrew and read right to left, with this English edition beside it. It connects the chain from the supplier to the bank transfer into one source of truth, and surfaces what needs action without becoming another crowded screen.',
         ],
@@ -466,6 +489,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'What the system refuses to be',
+        ask: true,
         list: {
           label: 'Four refusals, from the positioning document',
           items: [
@@ -488,6 +512,7 @@ const pagesEn: Page[] = [
       },
       {
         h2: 'Who stands behind the system',
+        ask: true,
         // The two names and the biography come from src/content/people.ts. See
         // the note on the Hebrew twin of this section.
         paras: [

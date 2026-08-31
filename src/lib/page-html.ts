@@ -188,8 +188,35 @@ const founder = (p: Person) => `
 // carries the substance, `after` closes. The first cut had one `paras` field
 // rendered before the list, which put every closing sentence above the thing it
 // was closing.
+/**
+ * The words of a section, as one string, for the Answer in the graph.
+ *
+ * In reading order: the paragraphs that introduce, the list, then the
+ * paragraphs that close. The first cut of this took `paras` and `after` only,
+ * on the theory that a list is the shape of an answer rather than its words.
+ * The build disagreed immediately: five of the twenty-six questions per
+ * language answer in a list and carry no prose at all, and they are among the
+ * best of them. "מה קורה לחשבונית מהרגע שהיא נכנסת" is answered by the six steps
+ * that happen to it, and a Question declared with an empty Answer is worth less
+ * than no declaration at all.
+ *
+ * The table is still left out. Its rows are two columns that mean something
+ * against each other, and flattened into a sentence they read as a list of
+ * fragments — which is the failure the first theory was actually about.
+ *
+ * `emphasiseBrand` has not run on these yet, so the only markup to strip is
+ * what the dictionary authored by hand.
+ */
+const answerOf = (s: Section) =>
+  [...(s.paras || []), ...(s.list?.items || []), ...(s.after || [])]
+    .join(' ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
 const section = (s: Section, locale: LocaleCode) => `
-        <section class="doc-section">
+        <section class="doc-section"${s.ask ? ` data-faq-q="${attr(s.h2)}"` : ''}>
           <h2>${escape(s.h2)}</h2>
           ${(s.paras || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
           ${
@@ -336,6 +363,15 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
   // the only one. Everywhere else the author alone is declared, because that is
   // the only person those pages name.
   const printsPeople = page.sections.some((s) => s.people)
+  // A section marked `ask` with no prose would declare a Question whose Answer
+  // is empty, which g21-schema fails on the built page. Failing here says which
+  // section, in the file where it is written, instead of which page.
+  const asked = page.sections.filter((s) => s.ask)
+  for (const s of asked) {
+    if (!answerOf(s)) {
+      throw new Error(`${page.slug} (${locale}): section "${s.h2}" is marked ask and has no prose to answer with`)
+    }
+  }
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -402,6 +438,38 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
           { '@type': 'ListItem', position: 2, name: page.eyebrow, item: url },
         ],
       },
+      // The questions this page answers, declared as questions.
+      //
+      // Added 31.08.2026, after the SEO audit found `FAQPage` on the home page
+      // and nowhere else while these six pages were already written as questions
+      // with self-contained answers beneath them. The home page's block is built
+      // the same way in src/entry-static.tsx, out of the same dictionary the page
+      // renders, and for the same reader: ChatGPT, Perplexity and Claude lift a
+      // question and its answer as a unit when they are told the two belong
+      // together. Google retired FAQ rich results on 07.05.2026 and will draw
+      // nothing here, which is not the point and never was.
+      //
+      // Which sections are questions is `ask` in src/content/pages.ts, decided
+      // per section rather than guessed from the heading. The two legal
+      // documents mark none, so this node is absent from them, which is what
+      // g21-schema asserts in both directions: a page that prints questions
+      // declares them, and a page that declares them prints them.
+      ...(asked.length
+        ? [
+            {
+              '@type': 'FAQPage',
+              '@id': `${url}#faq`,
+              name: page.h1,
+              inLanguage: lang,
+              isPartOf: { '@id': `${url}#webpage` },
+              mainEntity: asked.map((s) => ({
+                '@type': 'Question',
+                name: s.h2,
+                acceptedAnswer: { '@type': 'Answer', text: answerOf(s) },
+              })),
+            },
+          ]
+        : []),
       // Who is speaking on this page.
       //
       // The six professional pages are `author`ed by the founder whose working
