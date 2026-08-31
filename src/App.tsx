@@ -135,7 +135,13 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
 
         <LogoCloud eyebrow={x.logos.eyebrow} h2={x.logos.h2} items={x.logos.items} />
 
-        <FilmChapter folio={t.film.folio} caption={t.film.caption} blocks={t.film.blocks} />
+        {/* The English page plays the English render; see FilmChapter. */}
+        <FilmChapter
+          folio={t.film.folio}
+          caption={t.film.caption}
+          blocks={t.film.blocks}
+          film={locale === 'en' ? '-en' : ''}
+        />
 
         <WhatChapter
           folio={t.what.folio}
@@ -154,7 +160,7 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
         <BoardChapter
           h2={t.board.h2}
           p={t.board.p}
-          stats={t.board.stats}
+          stats={x.boardStats}
           img={t.board.img}
           cap={t.board.cap}
           midLine={t.midAsk.line}

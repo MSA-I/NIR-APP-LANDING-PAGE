@@ -433,6 +433,76 @@ function rng(seed) {
 }
 
 // ---------------------------------------------------------------------------
+// THE FILM READS IN TWO LANGUAGES, 31.08.2026.
+//
+// It is a rendered explanation rather than a recording — the "three-way check"
+// panel in act two is a screen the product does not have — but everything
+// printed on the paper IS read off the captured screens, and those screens now
+// exist in English too. So the scene carries a string table instead of literals,
+// and the render script asks for a language in the URL:
+//
+//   world.html            the Hebrew film, exactly as before
+//   world.html?lang=en    the same geometry, the English edition's words
+//
+// WHAT IS TRANSLATED AND WHAT IS NOT. The labels are: the kind of document, the
+// stamp, the three verdicts, the panel's title and its stamp, and the closing
+// tag. The supplier NAMES are translated too, because the owner's decision of
+// 31.08.2026 is that the English edition shows an English business — the same
+// names the English screenshots carry, so the film and the screens below it are
+// the same company. The numbers are not touched: an amount is an amount, and
+// the three-way match this film exists to explain only works if the figures
+// stay the ones the product actually holds.
+// ---------------------------------------------------------------------------
+const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'he'
+
+const SUPPLIER_EN = {
+  'חוות השדה': 'Fieldstone Farm',
+  'דגי הים התיכון': 'Mediterranean Fish Co.',
+  'מחלבות העמק': 'Valley Dairy',
+  'בשר והבן שיווק בשרים': 'Butcher & Son Meats',
+  'חד פעמי אלף': 'Alpha Disposables',
+  'משקאות אור בע״מ': 'Orbit Beverages Ltd',
+  'מאפיית הלחם החם': 'Hot Loaf Bakery',
+  'אריזות הדרום': 'Southbound Packaging',
+}
+
+const STRINGS = {
+  he: {
+    invoice: 'חשבונית',
+    order: 'הזמנה',
+    money: (a) => a + ' ₪',
+    meta: 'InPlace · מסמך ספק',
+    stamp: 'דורשת בירור',
+    against: 'פער לחובתך',
+    matched: 'תואם',
+    inFavour: 'לזכותך',
+    reconTitle: 'בדיקה בשלוש דרכים',
+    reconStamp: 'נעצר לפני תשלום',
+    closing: 'כל דבר במקומו',
+    sup: (s) => s,
+    dir: 'rtl',
+  },
+  en: {
+    invoice: 'Invoice',
+    order: 'Order',
+    money: (a) => a + '$',
+    meta: 'InPlace · supplier document',
+    stamp: 'Needs review',
+    against: 'Gap against you',
+    matched: 'Matched',
+    inFavour: 'In your favour',
+    reconTitle: 'Three-way check',
+    reconStamp: 'Stopped before payment',
+    closing: 'Everything in place',
+    sup: (s) => SUPPLIER_EN[s] || s,
+    dir: 'ltr',
+  },
+}
+const T = STRINGS[LANG]
+document.documentElement.lang = LANG
+document.documentElement.dir = T.dir
+
+// ---------------------------------------------------------------------------
 // Real product data. Every supplier, number and amount below is read off the
 // captured screens in world/screens. Nothing here is invented.
 //   invoices → office-invoices.png     orders → office-orders.png
@@ -441,17 +511,17 @@ function rng(seed) {
 // the product has it flagged דורשת בירור.
 // ---------------------------------------------------------------------------
 const DOCS = [
-  { kind: 'חשבונית', n: '1509',   sup: 'חוות השדה',           amt: '780.00',   to: 'inv' },
-  { kind: 'חשבונית', n: '6633',   sup: 'דגי הים התיכון',       amt: '2,950.00', to: 'inv' },
-  { kind: 'חשבונית', n: '45120',  sup: 'מחלבות העמק',         amt: '3,540.00', to: 'inv' },
-  { kind: 'חשבונית', n: '7702',   sup: 'בשר והבן שיווק בשרים', amt: '4,720.00', to: 'inv', flag: true },
-  { kind: 'חשבונית', n: '888214', sup: 'חד פעמי אלף',         amt: '1,650.60', to: 'inv', flag: true },
-  { kind: 'חשבונית', n: '30125',  sup: 'משקאות אור בע״מ',      amt: '2,832.00', to: 'inv' },
-  { kind: 'חשבונית', n: '11390',  sup: 'מאפיית הלחם החם',     amt: '826.00',   to: 'inv' },
-  { kind: 'חשבונית', n: '3377',   sup: 'אריזות הדרום',        amt: '900.00',   to: 'inv' },
-  { kind: 'הזמנה',   n: '24',     sup: 'בשר והבן שיווק בשרים', amt: '2,884.50', to: 'orders' },
-  { kind: 'הזמנה',   n: '21',     sup: 'דגי הים התיכון',       amt: '2,950.00', to: 'orders' },
-  { kind: 'הזמנה',   n: '20',     sup: 'מחלבות העמק',         amt: '3,540.05', to: 'orders' },
+  { kind: T.invoice, n: '1509',   sup: T.sup('חוות השדה'),           amt: '780.00',   to: 'inv' },
+  { kind: T.invoice, n: '6633',   sup: T.sup('דגי הים התיכון'),       amt: '2,950.00', to: 'inv' },
+  { kind: T.invoice, n: '45120',  sup: T.sup('מחלבות העמק'),         amt: '3,540.00', to: 'inv' },
+  { kind: T.invoice, n: '7702',   sup: T.sup('בשר והבן שיווק בשרים'), amt: '4,720.00', to: 'inv', flag: true },
+  { kind: T.invoice, n: '888214', sup: T.sup('חד פעמי אלף'),         amt: '1,650.60', to: 'inv', flag: true },
+  { kind: T.invoice, n: '30125',  sup: T.sup('משקאות אור בע״מ'),      amt: '2,832.00', to: 'inv' },
+  { kind: T.invoice, n: '11390',  sup: T.sup('מאפיית הלחם החם'),     amt: '826.00',   to: 'inv' },
+  { kind: T.invoice, n: '3377',   sup: T.sup('אריזות הדרום'),        amt: '900.00',   to: 'inv' },
+  { kind: T.order,    n: '24',     sup: T.sup('בשר והבן שיווק בשרים'), amt: '2,884.50', to: 'orders' },
+  { kind: T.order,    n: '21',     sup: T.sup('דגי הים התיכון'),       amt: '2,950.00', to: 'orders' },
+  { kind: T.order,    n: '20',     sup: T.sup('מחלבות העמק'),         amt: '3,540.05', to: 'orders' },
 ]
 
 // ---------------------------------------------------------------------------
@@ -573,7 +643,10 @@ for (const p of PANELS) {
   el.style.width = p.w + 'px'
   el.style.height = p.h + 'px'
   const img = document.createElement('img')
-  img.src = 'screens/' + p.img
+  // The panels are real captures, and there is a set per language: the English
+  // film composites the English edition's screens, the same ones the page shows
+  // under it. See world/screens/en.
+  img.src = 'screens/' + (LANG === 'en' ? 'en/' : '') + p.img
   img.alt = ''
   el.appendChild(img)
   const lit = document.createElement('div'); lit.className = 'lit'; el.appendChild(lit)
@@ -624,10 +697,10 @@ DOCS.forEach((d, i) => {
   el.innerHTML =
     '<div class="k">' + d.kind + ' ' + d.n + '</div>' +
     '<div class="sup">' + d.sup + '</div>' +
-    '<div class="amt">' + d.amt + ' ₪</div>' +
+    '<div class="amt">' + T.money(d.amt) + '</div>' +
     '<div class="rule"></div>' +
-    '<div class="meta">InPlace · מסמך ספק</div>' +
-    '<div class="stamp">דורשת בירור</div>'
+    '<div class="meta">' + T.meta + '</div>' +
+    '<div class="stamp">' + T.stamp + '</div>'
   cam.appendChild(el)
   docEls.push(el)
 
@@ -795,22 +868,22 @@ function setT(t) {
 // office-invoices.png. `diff` is invoice minus order, to the agora.
 const MATCH = [
   {
-    sup: 'בשר והבן שיווק בשרים',
+    sup: T.sup('בשר והבן שיווק בשרים'),
     ord: { n: '24', amt: '2,884.50' },
     inv: { n: '7702', amt: '4,720.00' },
-    diff: '+1,835.50', verdict: 'פער לחובתך', tone: 'is-alert',
+    diff: '+1,835.50', verdict: T.against, tone: 'is-alert',
   },
   {
-    sup: 'דגי הים התיכון',
+    sup: T.sup('דגי הים התיכון'),
     ord: { n: '21', amt: '2,950.00' },
     inv: { n: '6633', amt: '2,950.00' },
-    diff: '0.00', verdict: 'תואם', tone: 'is-flat',
+    diff: '0.00', verdict: T.matched, tone: 'is-flat',
   },
   {
-    sup: 'מחלבות העמק',
+    sup: T.sup('מחלבות העמק'),
     ord: { n: '20', amt: '3,540.05' },
     inv: { n: '45120', amt: '3,540.00' },
-    diff: '−0.05', verdict: 'לזכותך', tone: 'is-done',
+    diff: '−0.05', verdict: T.inFavour, tone: 'is-done',
   },
 ]
 
@@ -845,11 +918,11 @@ const card = document.createElement('div')
 card.className = 'rc-card'
 card.innerHTML =
   '<div class="rc-head">' +
-  '<div class="rc-title">בדיקה בשלוש דרכים</div>' +
+  '<div class="rc-title">' + T.reconTitle + '</div>' +
   '<div class="rc-eyebrow">InPlace</div>' +
   '</div>' +
   '<div class="rc-rule"></div>' +
-  '<div class="rc-stamp">נעצר לפני תשלום</div>'
+  '<div class="rc-stamp">' + T.reconStamp + '</div>'
 reconInner.appendChild(card)
 
 const rowEls2 = []
@@ -860,11 +933,11 @@ for (const m of MATCH) {
   row.className = 'rc-row ' + m.tone
   row.innerHTML =
     '<div class="rc-sup">' + m.sup + '</div>' +
-    '<div class="rc-cell"><div class="rc-k">הזמנה ' + m.ord.n + '</div>' +
-    '<div class="rc-v">' + m.ord.amt + ' ₪</div></div>' +
-    '<div class="rc-cell"><div class="rc-k">חשבונית ' + m.inv.n + '</div>' +
-    '<div class="rc-v">' + m.inv.amt + ' ₪</div></div>' +
-    '<div class="rc-diff"><div class="n">' + m.diff + ' ₪</div>' +
+    '<div class="rc-cell"><div class="rc-k">' + T.order + ' ' + m.ord.n + '</div>' +
+    '<div class="rc-v">' + T.money(m.ord.amt) + '</div></div>' +
+    '<div class="rc-cell"><div class="rc-k">' + T.invoice + ' ' + m.inv.n + '</div>' +
+    '<div class="rc-v">' + T.money(m.inv.amt) + '</div></div>' +
+    '<div class="rc-diff"><div class="n">' + T.money(m.diff) + '</div>' +
     '<div class="t">' + m.verdict + '</div></div>' +
     '<div class="rc-bar"></div>'
   card.appendChild(row)
@@ -883,9 +956,9 @@ MATCH.forEach((m) => {
     const el = document.createElement('div')
     el.className = 'rc-fly' + (which === 'inv' ? ' inv' : '')
     el.innerHTML =
-      '<div class="k">' + (which === 'inv' ? 'חשבונית ' + m.inv.n : 'הזמנה ' + m.ord.n) + '</div>' +
+      '<div class="k">' + (which === 'inv' ? T.invoice + ' ' + m.inv.n : T.order + ' ' + m.ord.n) + '</div>' +
       '<div class="s">' + m.sup + '</div>' +
-      '<div class="a">' + (which === 'inv' ? m.inv.amt : m.ord.amt) + ' ₪</div>'
+      '<div class="a">' + T.money(which === 'inv' ? m.inv.amt : m.ord.amt) + '</div>'
     reconInner.appendChild(el)
     flyEls.push(el)
   }
@@ -894,7 +967,7 @@ MATCH.forEach((m) => {
 const mark = document.createElement('div')
 mark.id = 'reconMark'
 mark.innerHTML = MARK + '<div class="wm">InPlace</div>' +
-  '<div class="tag">כל דבר במקומו</div>'
+  '<div class="tag">' + T.closing + '</div>'
 reconInner.appendChild(mark)
 
 // Where each sheet starts: off the frame, on the side it belongs to, and where

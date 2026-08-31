@@ -76,7 +76,7 @@ const en = {
         t: 'An order leaves with a number, not in WhatsApp',
         p: 'Every supplier order is opened in the system, receives a number and a price list, then gets sent. Its state, whether draft, sent, approved or partially received, lives in one place instead of someone’s memory.',
         img: 'assets/screen-office-orders-en.webp',
-        cap: 'Purchase orders: <b>17 orders</b>, seven still open. Order 24# to Basar VeHaben, 2,884.50 ₪, approved.',
+        cap: 'Purchase orders: <b>17 orders</b>, seven still open. Order 24# to Butcher &amp; Son Meats, 2,884.50$, approved.',
       },
       {
         k: 'Goods received',
@@ -90,7 +90,7 @@ const en = {
         t: 'The invoice is checked before payment',
         p: 'Every incoming invoice receives a row, a review status and a link to its purchase order. An invoice that does not agree cannot continue. It remains under review until somebody decides.',
         img: 'assets/screen-office-invoices-en.webp',
-        cap: 'Invoices: <b>14 invoices</b>. Invoice 7702 from Basar VeHaben, 4,720.00 ₪, requires review.',
+        cap: 'Invoices: <b>16 invoices</b>. Invoice 7702 from Butcher &amp; Son Meats, 4,720.00$, requires review.',
       },
       {
         k: 'Exceptions',
@@ -112,10 +112,16 @@ const en = {
   board: {
     h2: 'And the control centre above&nbsp;it, in full',
     p: 'The control centre gathers queues, open money and alerts into one place, ordered by urgency. Below are the trends: monthly purchasing, what is due this week and where the money is concentrated. These are the first three figures the owner sees.',
+    // NOT READ. The three figures under the control centre live in
+    // `boardStats` in extra.en.ts since 31.08.2026, because they are a reading
+    // of the screenshot printed beside them and that screenshot is retaken:
+    // the Hebrew edition's copy is frozen by G2, so the pair had to move
+    // somewhere both editions could change together. These leaves stay for the
+    // shape the two dictionaries share, and nothing renders them.
     stats: [
-      { v: '13', l: 'open tasks across all queues' },
-      { v: '17,825 ₪', l: 'open invoice balance' },
-      { v: '6', l: 'items requiring attention today' },
+      { v: '15', l: 'open tasks across all queues' },
+      { v: '30,225$', l: 'open invoice balance' },
+      { v: '7', l: 'items requiring attention today' },
     ],
     img: 'assets/screen-owner-dashboard-en.webp',
     cap: 'The full control centre, including trends and charts.',
@@ -152,12 +158,15 @@ const en = {
     lede: 'Plans differ by document volume, by how many people work in the system, and by which capabilities open. The table under the cards shows exactly what each one includes.',
     tableLabel: 'Plan comparison',
     headers: { plan: 'Plan', who: 'Best for', docs: 'Documents per month', price: 'Price' },
+    // `key` is the product's plan key and is deliberately identical to the
+    // Hebrew edition's -- see the note there. It is what joins this page to the
+    // live catalogue; `name` cannot, because `name` is the thing that differs.
     rows: [
-      { name: 'Free', who: 'Start and see the system working on your own business', docs: '20', price: 'No charge' },
-      { name: 'Basic', who: 'A business working with several regular suppliers', docs: '40', price: '$20' },
-      { name: 'Pro', who: 'A business whose accountant works inside the system', docs: '150', price: '$79' },
-      { name: 'Premium', who: 'A business operating more than one location', docs: '375', price: '$149' },
-      { name: 'Business', who: 'An organisation requiring custom quotas and terms', docs: 'Custom', price: 'Contact us' },
+      { key: 'free', name: 'Free', who: 'Start and see the system working on your own business', docs: '20', price: 'No charge' },
+      { key: 'basic', name: 'Basic', who: 'A business working with several regular suppliers', docs: '40', price: '$20' },
+      { key: 'pro', name: 'Pro', who: 'A business whose accountant works inside the system', docs: '150', price: '$79' },
+      { key: 'premium', name: 'Premium', who: 'A business operating more than one location', docs: '375', price: '$149' },
+      { key: 'business', name: 'Business', who: 'An organisation requiring custom quotas and terms', docs: 'Custom', price: 'Contact us' },
     ],
     // The dollar catalogue is not a conversion of the shekel one. Both are
     // published in NIR-APP's 0184 migration, and which one a business is
@@ -199,7 +208,7 @@ const en = {
       },
       {
         q: 'Is the product Hebrew or translated?',
-        a: 'Hebrew is the product’s source language, and the interface was built right to left from the ground up. Since 31.08.2026 the application also reads in English: every screen on this page is a capture of that edition. The data in it stays Israeli — supplier names, shekels, Israeli date order. The businesses using it are Israeli too.',
+        a: 'Hebrew is the product’s source language, and the interface was built right to left from the ground up. The application reads in English as well, and every screen on this page is a capture of that edition — the interface, the suppliers, the amounts and the dates, as an English reader meets them.',
       },
     ],
   },

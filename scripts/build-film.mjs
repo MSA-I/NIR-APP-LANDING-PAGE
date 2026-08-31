@@ -158,5 +158,15 @@ function build({ suffix, w, h, crf, gop, finalCrf }) {
 // `crf` is the bridge, which is two seconds of dissolve between two stills and
 // wants to be clean going into the final pass. `finalCrf` is the pass over the
 // whole assembled clip, and it is the number the table at the top explains.
-build({ suffix: '', w: 1920, h: 1080, crf: 20, gop: 8, finalCrf: 28 })
-build({ suffix: '-m', w: 810, h: 1440, crf: 24, gop: 4, finalCrf: 30 })
+// THE LANGUAGE RIDES ON THE SUFFIX, and the encode does not change with it.
+// The owner's instruction of 31.08.2026 was that the English film is encoded
+// exactly as the Hebrew one is, so the only difference between `film.mp4` and
+// `film-en.mp4` is what the frames say. `--lang en` reads legs `01-en.mp4`…
+// and writes `film-en.mp4`; the numbers below are untouched by it.
+const args = process.argv.slice(2)
+const li = args.indexOf('--lang')
+const LANG = li === -1 ? 'he' : args[li + 1]
+const L = LANG === 'he' ? '' : '-' + LANG
+
+build({ suffix: L, w: 1920, h: 1080, crf: 20, gop: 8, finalCrf: 28 })
+build({ suffix: '-m' + L, w: 810, h: 1440, crf: 24, gop: 4, finalCrf: 30 })

@@ -20,14 +20,52 @@ import { Html, SplitHeading, useCalm } from '@/lib/motion'
 
 type Block = { h: string; p: string }
 
+/**
+ * The four files, written out in full ON PURPOSE.
+ *
+ * They were `/assets/film${film}.mp4` for about an hour, which reads better and
+ * cost the build its own safety net: G19 checks that every media file shipped in
+ * dist is REFERENCED somewhere in the built HTML, CSS or JS, by looking for its
+ * filename. A name assembled at runtime is not a name it can find, so all four
+ * films and both posters were reported as dead weight — 19.8MB of it — and the
+ * gate was right to. Literals here, and the check keeps working.
+ */
+const FILMS: Record<string, { wide: string; phone: string; widePoster: string; phonePoster: string }> = {
+  '': {
+    wide: '/assets/film.mp4',
+    phone: '/assets/film-m.mp4',
+    widePoster: '/assets/film.webp',
+    phonePoster: '/assets/film-m.webp',
+  },
+  '-en': {
+    wide: '/assets/film-en.mp4',
+    phone: '/assets/film-m-en.mp4',
+    widePoster: '/assets/film-en.webp',
+    phonePoster: '/assets/film-m-en.webp',
+  },
+}
+
 export function FilmChapter({
   folio,
   caption,
   blocks,
+  film = '',
 }: {
   folio: string
   caption: string
   blocks: Block[]
+  /**
+   * Which render to play, as a filename suffix: '' for the Hebrew film and
+   * '-en' for the English one.
+   *
+   * The film is not a recording of the interface — the three-way panel in act
+   * two is a screen the product does not have — but everything printed in it
+   * IS read off real screens, and since 31.08.2026 those exist in English too.
+   * So there are two renders of the same geometry, and the page plays the one
+   * its reader is reading. See world/world.html for the string table and
+   * scripts/render-world.mjs for how a language becomes a file.
+   */
+  film?: string
 }) {
   const calm = useCalm()
   const sectionRef = useRef<HTMLElement>(null)
@@ -99,9 +137,12 @@ export function FilmChapter({
       const next = mq.matches ? 'phone' : 'wide'
       if (next === cut) return
       cut = next
-      video.poster = next === 'phone' ? '/assets/film-m.webp' : '/assets/film.webp'
+      // `cut` is already the phone/wide state in this effect, so the file set
+      // is named for what it is.
+      const files = FILMS[film] ?? FILMS['']
+      video.poster = next === 'phone' ? files.phonePoster : files.widePoster
       if (calm) return
-      video.src = next === 'phone' ? '/assets/film-m.mp4' : '/assets/film.mp4'
+      video.src = next === 'phone' ? files.phone : files.wide
       video.load()
       // `load()` drops the playhead to zero and `duration` to NaN. This puts
       // the scroll's own position back the moment the new metadata lands,

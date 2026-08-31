@@ -31,7 +31,14 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const FILMS = ['public/assets/film.mp4', 'public/assets/film-m.mp4']
+// Four since 31.08.2026: the English edition plays its own render of the same
+// geometry, and a film that is laid out badly is laid out badly in any language.
+const FILMS = [
+  'public/assets/film.mp4',
+  'public/assets/film-m.mp4',
+  'public/assets/film-en.mp4',
+  'public/assets/film-m-en.mp4',
+]
 
 /**
  * The order of the top-level boxes in an MP4, read straight off the file.

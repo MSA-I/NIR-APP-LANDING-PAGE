@@ -245,6 +245,12 @@ const extraEn = {
     label: 'Chapters',
   },
 
+  boardStats: [
+    { v: '15', l: 'open tasks across all queues' },
+    { v: '30,225$', l: 'open invoice balance' },
+    { v: '7', l: 'items requiring attention today' },
+  ],
+
   demoHint: 'Press a screen to open it at full size.',
 
   accessibility: {

@@ -22,11 +22,21 @@ import { DIST, checker } from './lib.mjs'
 
 const c = checker('G19')
 
-// Room for the film, its phone cut, both posters, six product screens, the
-// share card, two faces in two subsets each, and the shell. Measured at 21MB
-// the day this was written; the headroom is for a second locale, not for
-// another film.
-const BUDGET_MB = 26
+// Room for the film, its phone cut, both posters, the product screens, the
+// share card, two faces in two subsets each, and the shell.
+//
+// IT WAS 26MB, AND THE HEADROOM SAID "for a second locale, not for another
+// film". On 31.08.2026 it became another film: the English edition plays its
+// own render, because the one thing the reader is being shown is a business
+// working in their language and the film is where that starts. The owner's
+// instruction was that it is encoded exactly as the Hebrew one, so it costs
+// what the Hebrew one costs — about 13.5MB for the pair of cuts.
+//
+// 42 is that, plus the twelve product screens per edition at three widths in
+// two formats, plus the same headroom the old number carried. The point of a
+// budget is not the number, it is that the number is stated and measured; this
+// one moved because what the page ships changed, and it says so.
+const BUDGET_MB = 42
 
 const walk = (dir) => {
   const out = []

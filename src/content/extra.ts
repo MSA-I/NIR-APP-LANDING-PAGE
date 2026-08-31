@@ -472,6 +472,23 @@ export default {
      The sentence that replaces it there is the one that IS true: the picture
      opens. It lives here and not in he.ts because that file is build 3's copy
      and G2 fails on a key added to it. */
+  /* THE CONTROL CENTRE'S THREE FIGURES, and why they are here rather than in
+     he.ts beside the rest of chapter 03.
+     They are not copy. They are a READING of the screenshot printed under them,
+     and on 31.08.2026 the screenshot was taken again: the queues hold 15 tasks
+     now and not 13, the day needs 7 things and not 6, and the open balance is
+     30,225 rather than 17,825. A figure that describes the picture beside it
+     has to move when the picture does, and he.ts is build 3's copy, which G2
+     freezes leaf by leaf. So the keys stay there, unread, and the numbers that
+     match live here. Re-read them from the capture whenever it is retaken.
+     The English edition carries the same three, in the currency its own
+     screenshot is denominated in. */
+  boardStats: [
+    { v: '15', l: 'משימות פתוחות בכל התורים' },
+    { v: '30,225 ₪', l: 'יתרת חשבוניות פתוחות' },
+    { v: '7', l: 'פריטים דורשים טיפול היום' },
+  ],
+
   demoHint: 'לחיצה על המסך פותחת אותו בגודל מלא.',
 
   accessibility: {

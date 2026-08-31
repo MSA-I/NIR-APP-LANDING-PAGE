@@ -36,7 +36,10 @@ const EDITIONS = [
     free: 'ללא עלות',
     business: 'ביזנס',
     // Quoted off the captures, then the catalogue.
-    known: ['2,884.50', '4,720.00', '2,832.00', '17,825', '69', '249', '449', '690', '2,490', '4,490'],
+    // 30,225 replaced 17,825 on 31.08.2026, when the control centre was
+    // captured again: the stat under it is a reading of the picture, so it
+    // moves when the picture does. See `boardStats` in src/content/extra.ts.
+    known: ['2,884.50', '4,720.00', '2,832.00', '30,225', '69', '249', '449', '690', '2,490', '4,490'],
   },
   {
     name: 'en',
@@ -45,11 +48,14 @@ const EDITIONS = [
     yearly: ['200', '790', '1,490'],
     free: 'No charge',
     business: 'Business',
-    // The story's amounts stay in shekels in both editions on purpose: they are
-    // read off Hebrew product screens that the English page shows unchanged, and
-    // a caption that disagrees with the picture beside it is worse than a
-    // caption in another currency.
-    known: ['2,884.50', '4,720.00', '2,832.00', '17,825', '20', '79', '149', '200', '790', '1,490'],
+    // THIS CHANGED ON 31.08.2026. The story's amounts used to stay in shekels
+    // in both editions, because they were read off Hebrew screens the English
+    // page showed unchanged. The English page now shows its own screens, of an
+    // English business in dollars, so the captions moved with them — and the two
+    // in chapter 01 stay in shekels, because chapter 01 captions the FILM and
+    // the film is still the Hebrew render. A caption that disagrees with the
+    // picture beside it is the thing this list exists to prevent.
+    known: ['2,884.50', '4,720.00', '2,832.00', '30,225', '20', '79', '149', '200', '790', '1,490'],
   },
 ]
 

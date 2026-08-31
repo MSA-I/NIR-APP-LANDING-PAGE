@@ -29,9 +29,15 @@ const c = checker('G18')
 
 // Desktop gets film.mp4, phones get film-m.mp4. FilmChapter reads the media
 // query once and assigns src, so each viewport is measured against its own cut.
+// FOUR CUTS SINCE 31.08.2026, not two: the English edition plays its own render
+// of the same geometry, so every claim below — the faststart layout, the byte
+// range a browser actually pulls — has to hold for it as well. A second film
+// that nobody measured is a second film that ships badly laid out.
 const CUTS = [
-  { name: 'film.mp4', viewport: { width: 1440, height: 900 } },
-  { name: 'film-m.mp4', viewport: { width: 390, height: 844 } },
+  { name: 'film.mp4', viewport: { width: 1440, height: 900 }, path: '/' },
+  { name: 'film-m.mp4', viewport: { width: 390, height: 844 }, path: '/' },
+  { name: 'film-en.mp4', viewport: { width: 1440, height: 900 }, path: '/en/' },
+  { name: 'film-m-en.mp4', viewport: { width: 390, height: 844 }, path: '/en/' },
 ]
 
 // ---- the layout of the shipped containers ---------------------------------
@@ -55,9 +61,13 @@ const browser = await chromium.launch({
 })
 
 try {
-  for (const { name, viewport } of CUTS) {
+  for (const cut of CUTS) {
+    const { name, viewport } = cut
     const onDisk = statSync(path.join(DIST, 'assets', name)).size
-    const ctx = await browser.newContext({ viewport, locale: 'he-IL' })
+    const ctx = await browser.newContext({
+      viewport,
+      locale: cut.path === '/en/' ? 'en-US' : 'he-IL',
+    })
     const page = await ctx.newPage()
 
     // What crossed the wire, counted as it crosses.
@@ -84,7 +94,7 @@ try {
       if (ours.has(e.requestId)) pulled += e.encodedDataLength || e.dataLength || 0
     })
 
-    await page.goto(srv.origin + '/', { waitUntil: 'load' })
+    await page.goto(srv.origin + (cut.path || '/'), { waitUntil: 'load' })
     // The clip opens on its own after the page loads; nothing here scrolls,
     // because the number under test is what a reader pays for ARRIVING, before
     // they have asked for a single frame.

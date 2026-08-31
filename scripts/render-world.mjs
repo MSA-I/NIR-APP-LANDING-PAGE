@@ -25,15 +25,23 @@ const arg = (k, d) => { const i = args.indexOf('--' + k); return i === -1 ? d : 
 
 const MOBILE = has('mobile')
 const FAST = has('fast')
+// THE SCENE READS IN TWO LANGUAGES since 31.08.2026: world.html takes `?lang=`
+// and swaps its labels, its supplier names and the folder it composites the
+// product screens from. A rendered leg therefore belongs to a language, and its
+// files carry it — `01-en.mp4` beside `01.mp4` — because the two are different
+// films and one must never overwrite the other.
+const LANG = arg('lang', 'he')
 const W = +arg('w', MOBILE ? 810 : 1920)
 const H = +arg('h', MOBILE ? 1440 : 1080)
 const FPS = +arg('fps', FAST ? 8 : 24)
 const RATE = +arg('rate', 0.215)          // viewport-heights of scroll per second of film
-const SUFFIX = MOBILE ? '-m' : ''
+const LANGSUF = LANG === 'he' ? '' : '-' + LANG
+const SUFFIX = (MOBILE ? '-m' : '') + LANGSUF
 const OUT = path.resolve(arg('out', 'public/assets'))
 const TMP = path.resolve('lab/world/frames' + SUFFIX)
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-const WORLD = pathToFileURL(path.resolve('world/world.html')).href
+const WORLD = pathToFileURL(path.resolve('world/world.html')).href +
+  (LANG === 'he' ? '' : '?lang=' + LANG)
 
 // leg id, label, and the weight in viewport-heights it owns on the scroll track
 const LEGS = [
@@ -77,7 +85,15 @@ await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000
 
 const facesFailed = await page.evaluate(async () => {
   await document.fonts.ready
-  return [...document.fonts].filter((x) => x.status !== 'loaded').map((x) => x.family)
+  // FAILED, not merely unused. A face reports 'unloaded' when nothing on the
+  // page asked for it, and since 31.08.2026 that is a legitimate state: the
+  // English scene has no Hebrew character in it at all — not even the shekel
+  // sign, which was the last one — so the Hebrew subset is never requested and
+  // never loads. Reading that as a missing material failed the English render
+  // outright. A face that was asked for and could not arrive still reports
+  // 'error', and the 404 watch above still catches the file itself going
+  // missing, which is the fault this check was written for.
+  return [...document.fonts].filter((x) => x.status === 'error').map((x) => x.family)
 })
 if (missing.length || facesFailed.length) {
   console.error('the scene could not load its own materials:')
