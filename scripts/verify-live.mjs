@@ -210,6 +210,33 @@ if (!SKIP_WWW) {
   )
 }
 
+// L9 — the analytics beacon is actually being served.
+//
+// This is here for the same reason L8 is. Nothing in the repository mentions
+// analytics: no script in our HTML, no dependency, no build step. Cloudflare
+// Pages injects the beacon on the way out, from a setting on the project, and
+// a setting is exactly the kind of thing that gets switched off by somebody
+// who is not reading this file. The build cannot see it and no local gate can
+// fail on it — the only place the truth exists is the response.
+//
+// Deliberately NOT checked here: whether data arrives in the dashboard. That is
+// Cloudflare's side of the wire, and a check that depends on it would go red
+// for reasons this repository cannot fix.
+{
+  const r = await get(ORIGIN + '/')
+  const body = r.status === 200 ? await r.text().catch(() => '') : ''
+  const tag = (body.match(/<script[^>]*static\.cloudflareinsights\.com\/beacon\.min\.js[^>]*>/) || [])[0] || ''
+  const token = (tag.match(/"token"\s*:\s*"([a-f0-9]{32})"/) || [])[1] || ''
+  // A beacon with no token is a script tag that measures nothing.
+  const ok = Boolean(tag) && Boolean(token)
+  record(
+    'L9',
+    'the analytics beacon is served, with a token',
+    ok,
+    tag ? (token ? `token ${token.slice(0, 8)}…` : 'beacon present but carries no token') : 'no beacon in the document'
+  )
+}
+
 const met = results.filter((r) => r.passed).length
 const unmet = results.length - met
 console.log(`\n${met} met, ${unmet} unmet, of ${results.length} checks against ${HOST}\n`)
