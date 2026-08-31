@@ -196,6 +196,26 @@ export function schema(locale: LocaleCode = 'he') {
         url: ORIGIN,
         logo: `${ORIGIN}/assets/logo.svg`,
         inLanguage: lang,
+        // The company, somewhere other than here.
+        //
+        // DEBT.md §21 was open from 28.08.2026 to 31.08.2026 for one reason: no
+        // company profile existed, and a `sameAs` pointing at an invented or
+        // borrowed address is worse than a missing one. The page exists now.
+        //
+        // WHY THIS FIELD IS WORTH MORE HERE THAN ON MOST SITES
+        // The name is taken twice over. InPlace Software in Australia owns the
+        // English-language entity, and Inplace at inplace.co.il owns the Hebrew
+        // one. `sameAs` is the mechanism by which a knowledge graph and an answer
+        // engine decide which of the three a document is about, and until now
+        // nothing on this site answered that question at all.
+        //
+        // It is the /company/ URL and not the /in/ one. A personal profile was
+        // offered first and refused: an `/in/` URL is a Person in LinkedIn's
+        // model and in Google's, the owner's decision of 28.08.2026 was that no
+        // personal profile is published here, and that profile's stated location
+        // contradicted the address three lines below. LinkedIn's own canonical
+        // form carries no trailing slash, so neither does this.
+        sameAs: ['https://www.linkedin.com/company/inplace-digital'],
         address: {
           '@type': 'PostalAddress',
           streetAddress: 'הרותם 14',

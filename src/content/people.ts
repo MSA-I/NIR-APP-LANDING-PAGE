@@ -31,10 +31,14 @@
 //
 // WHAT IS DELIBERATELY ABSENT
 // `sameAs`. Neither person's profile is published here, by the owner's decision
-// of 28.08.2026: the only external profile this site will carry is the company's
-// own, and it does not exist yet. DEBT.md item 21 holds that. A Person node with
-// no `sameAs` is still worth declaring -- it names who is speaking, which is the
-// part that was missing -- and it says nothing that is not true.
+// of 28.08.2026: the only external profile this site carries is the company's
+// own. That profile exists as of 31.08.2026 and the Organization node declares
+// it, in src/entry-static.tsx and src/lib/page-html.ts; DEBT.md item 21 closed
+// with it. Nothing changes here, because the decision was never about the
+// company page being missing -- it was that a personal profile identifies a
+// person while the field in question identifies a company. A Person node with no
+// `sameAs` is still worth declaring: it names who is speaking, which is the part
+// that was missing, and it says nothing that is not true.
 
 import type { LocaleCode } from './locales'
 

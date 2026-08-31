@@ -1,6 +1,6 @@
 # AI Search Readiness
 
-**Score: 78/100**  (weight 10%)
+**Score: 85/100**  (weight 10%)
 
 Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 
@@ -13,6 +13,7 @@ Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 - PerplexityBot and OAI-SearchBot are not in the Cloudflare block, so Perplexity and ChatGPT search can still reach the site
 - IndexNow already announces every deploy to Bing, Yandex and Naver automatically, so new pages reach those indexes in minutes rather than waiting for a crawl
 - 58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit
+- The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about
 
 ## Findings
 
@@ -40,9 +41,9 @@ Answer engines retrieve against questions. The site answers eight. The sub-page 
 
 **Fix:** Mark up the sub-page Q&As, then open the content hub described under Content Quality.
 
-### [High] The LinkedIn profile supplied for sameAs is a personal profile, not a Company Page
+### [Resolved] A personal profile was offered for sameAs; a Company Page replaced it — RESOLVED
 
-The owner supplied https://www.linkedin.com/in/inplace-734499173/ on 31.08.2026 for the Organization sameAs. It is an /in/ URL, which is a personal member profile, displayed as 'InPlace .' with a trailing full stop because LinkedIn requires a surname. Job title 'Founder & CEO', 48 connections, 54 followers, unverified, company field blank, and its stated location is Ruhama, South District, while the Organization node in the schema publishes HaRotem 14, Kfar Adumim. It was not added, for three reasons. First, sameAs on an Organization is read as a reference to a page about that organization; LinkedIn /in/ URLs are Person entities in both LinkedIn's model and Google's, so the signal would be pointing at the wrong entity type. Second, DEBT.md §21 records an owner decision taken twice on 28.08.2026 that no personal profile would be published on this site and the only external profile it would carry is the company's own, with the closing note that a personal profile identifies a person while the missing field identifies a company. Third, the conflicting location would feed contradictory data into the exact signal that is supposed to resolve who this company is, which matters more now that the name is contested in both languages.
+The owner supplied https://www.linkedin.com/in/inplace-734499173/ on 31.08.2026 for the Organization sameAs. It is an /in/ URL, which is a personal member profile, displayed as 'InPlace .' with a trailing full stop because LinkedIn requires a surname. Job title 'Founder & CEO', 48 connections, 54 followers, unverified, company field blank, and its stated location is Ruhama, South District, while the Organization node in the schema publishes HaRotem 14, Kfar Adumim. It was not added, for three reasons. First, sameAs on an Organization is read as a reference to a page about that organization; LinkedIn /in/ URLs are Person entities in both LinkedIn's model and Google's, so the signal would be pointing at the wrong entity type. Second, DEBT.md §21 records an owner decision taken twice on 28.08.2026 that no personal profile would be published on this site and the only external profile it would carry is the company's own, with the closing note that a personal profile identifies a person while the missing field identifies a company. Third, the conflicting location would feed contradictory data into the exact signal that is supposed to resolve who this company is, which matters more now that the name is contested in both languages. RESOLVED 31.08.2026: the owner created a LinkedIn Company Page at linkedin.com/company/inplace-digital, and that URL, not the personal profile, is what the schema declares.
 
-**Fix:** Create a LinkedIn Company Page for InPlace, which takes a couple of minutes from the same account, and supply that /company/ URL instead. linkedin.com/company/inplace-digital returns 404 and is available; linkedin.com/company/inplace is taken by the Israeli Inplace. Once the page exists the change is one value in two files, src/entry-static.tsx and src/lib/page-html.ts, and it covers all 18 pages. If the owner decides on reflection to publish the personal profile anyway, that reverses a written decision and DEBT.md §21 should be amended to say so rather than the code quietly diverging from it.
+**Fix:** Done. The remaining entity work is external: a Crunchbase entry and Israeli directory listings, each another anchor tying the name to this company rather than to the Australian InPlace Software or the Israeli Inplace.
 

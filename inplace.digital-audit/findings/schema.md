@@ -1,6 +1,6 @@
 # Schema / Structured Data
 
-**Score: 92/100**  (weight 10%)
+**Score: 98/100**  (weight 10%)
 
 Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 
@@ -12,12 +12,13 @@ Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 - Offers are two catalogues rather than one converted at a rate: ILS on Hebrew pages, USD 20/79/149 on English
 - No aggregateRating or review markup anywhere, because the testimonials are in-house examples; publishing rating markup for those would be a manual-action risk
 - FAQPage is now declared on all six supporting pages in both editions, 50 questions in total, each held to the printed page in both directions by g21-schema
+- Organization declares sameAs pointing at the LinkedIn Company Page, on all 18 pages — the anchor that tells a knowledge graph which of the three companies called InPlace this document is about
 
 ## Findings
 
-### [High] Organization has no sameAs
+### [Resolved] Organization had no sameAs — FIXED
 
-The single most consequential schema gap. sameAs is the primary mechanism by which Google's Knowledge Graph and AI answer engines decide which entity a name refers to. Nothing on this site connects the brand to any external profile, while InPlace Software, an Australian ed-tech SaaS founded 2010, owns the English-language entity with a G2 profile and directory listings. NOTE 31.08.2026: this is a known, documented decision rather than an oversight — DEBT.md §21 records that the owner decided on 28.08.2026 that no personal profile would be published and the only external profile the site will carry is the company's own, which did not exist at that date. The owner confirmed on 31.08.2026 that a profile now exists; the URL is still to be supplied, and an invented address would be worse than a missing one.
+The single most consequential schema gap. sameAs is the primary mechanism by which Google's Knowledge Graph and AI answer engines decide which entity a name refers to. Nothing on this site connects the brand to any external profile, while InPlace Software, an Australian ed-tech SaaS founded 2010, owns the English-language entity with a G2 profile and directory listings. NOTE 31.08.2026: this is a known, documented decision rather than an oversight — DEBT.md §21 records that the owner decided on 28.08.2026 that no personal profile would be published and the only external profile the site will carry is the company's own, which did not exist at that date. The owner confirmed on 31.08.2026 that a profile now exists; the URL is still to be supplied, and an invented address would be worse than a missing one. RESOLVED 31.08.2026: a LinkedIn Company Page was created and https://www.linkedin.com/company/inplace-digital is now declared in sameAs on the Organization node in both generators, src/entry-static.tsx and src/lib/page-html.ts, covering all 18 pages. Verified in the built output and live. LinkedIn's own canonical form carries no trailing slash, so neither does the value. The two Person nodes still carry no sameAs, which is the same owner decision rather than an omission: a personal profile identifies a person, and this field identifies a company.
 
 **Fix:** Add sameAs pointing at LinkedIn, Facebook and Crunchbase profiles. If none exist, creating a LinkedIn company page is the prerequisite and the highest-value single action for entity disambiguation.
 

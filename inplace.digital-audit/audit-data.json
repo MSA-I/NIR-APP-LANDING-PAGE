@@ -1,6 +1,6 @@
 {
   "summary": {
-    "health_score": 87,
+    "health_score": 88,
     "business_type": "B2B SaaS — procurement-to-payment, bilingual he-IL / en-US, selling to Israeli SMBs",
     "audit_date": "2026-08-31",
     "site_age_days": 3,
@@ -25,17 +25,17 @@
     ],
     "fixed_during_session": [
       "Cloudflare managed robots.txt turned off — eight AI crawlers unblocked, verified live, guarded by verify-live L8",
-      "FAQPage declared on all six supporting pages in both editions — 50 questions, verified live"
+      "FAQPage declared on all six supporting pages in both editions — 50 questions, verified live",
+      "LinkedIn Company Page created and declared in Organization sameAs on all 18 pages — DEBT.md §21 closed"
     ],
     "still_open": [
-      "Organization sameAs — the URL supplied is a personal LinkedIn profile rather than a Company Page, so it was not added; see the AI Search Readiness findings",
       "Commercial page depth — 388-529 Hebrew words against established incumbents",
       "No content hub",
       "English brand-name collision with InPlace Software",
       "Hebrew share card on the nine English pages",
       "/about/ has one inbound link; all internal anchors are identical and non-contextual"
     ],
-    "score_history": "81 at audit, 87 after the two fixes of 31.08.2026"
+    "score_history": "81 at audit, 87 after the two fixes of 31.08.2026, 88 after sameAs closed the same day"
   },
   "categories": [
     {
@@ -137,7 +137,7 @@
     },
     {
       "name": "Schema / Structured Data",
-      "score": 92,
+      "score": 98,
       "weight": 10,
       "what_works": [
         "Every JSON-LD block on all 18 pages parses with zero errors",
@@ -145,14 +145,16 @@
         "Sub-pages add BreadcrumbList and Person, with WebPage.author linked by @id to a founder",
         "Offers are two catalogues rather than one converted at a rate: ILS on Hebrew pages, USD 20/79/149 on English",
         "No aggregateRating or review markup anywhere, because the testimonials are in-house examples; publishing rating markup for those would be a manual-action risk",
-        "FAQPage is now declared on all six supporting pages in both editions, 50 questions in total, each held to the printed page in both directions by g21-schema"
+        "FAQPage is now declared on all six supporting pages in both editions, 50 questions in total, each held to the printed page in both directions by g21-schema",
+        "Organization declares sameAs pointing at the LinkedIn Company Page, on all 18 pages — the anchor that tells a knowledge graph which of the three companies called InPlace this document is about"
       ],
       "findings": [
         {
-          "title": "Organization has no sameAs",
-          "severity": "High",
-          "description": "The single most consequential schema gap. sameAs is the primary mechanism by which Google's Knowledge Graph and AI answer engines decide which entity a name refers to. Nothing on this site connects the brand to any external profile, while InPlace Software, an Australian ed-tech SaaS founded 2010, owns the English-language entity with a G2 profile and directory listings. NOTE 31.08.2026: this is a known, documented decision rather than an oversight — DEBT.md §21 records that the owner decided on 28.08.2026 that no personal profile would be published and the only external profile the site will carry is the company's own, which did not exist at that date. The owner confirmed on 31.08.2026 that a profile now exists; the URL is still to be supplied, and an invented address would be worse than a missing one.",
-          "recommendation": "Add sameAs pointing at LinkedIn, Facebook and Crunchbase profiles. If none exist, creating a LinkedIn company page is the prerequisite and the highest-value single action for entity disambiguation."
+          "title": "Organization had no sameAs — FIXED",
+          "severity": "Resolved",
+          "description": "The single most consequential schema gap. sameAs is the primary mechanism by which Google's Knowledge Graph and AI answer engines decide which entity a name refers to. Nothing on this site connects the brand to any external profile, while InPlace Software, an Australian ed-tech SaaS founded 2010, owns the English-language entity with a G2 profile and directory listings. NOTE 31.08.2026: this is a known, documented decision rather than an oversight — DEBT.md §21 records that the owner decided on 28.08.2026 that no personal profile would be published and the only external profile the site will carry is the company's own, which did not exist at that date. The owner confirmed on 31.08.2026 that a profile now exists; the URL is still to be supplied, and an invented address would be worse than a missing one. RESOLVED 31.08.2026: a LinkedIn Company Page was created and https://www.linkedin.com/company/inplace-digital is now declared in sameAs on the Organization node in both generators, src/entry-static.tsx and src/lib/page-html.ts, covering all 18 pages. Verified in the built output and live. LinkedIn's own canonical form carries no trailing slash, so neither does the value. The two Person nodes still carry no sameAs, which is the same owner decision rather than an omission: a personal profile identifies a person, and this field identifies a company.",
+          "recommendation": "Add sameAs pointing at LinkedIn, Facebook and Crunchbase profiles. If none exist, creating a LinkedIn company page is the prerequisite and the highest-value single action for entity disambiguation.",
+          "resolved": "2026-08-31"
         },
         {
           "title": "FAQPage schema existed only on the home page — FIXED",
@@ -197,7 +199,7 @@
     },
     {
       "name": "AI Search Readiness",
-      "score": 78,
+      "score": 85,
       "weight": 10,
       "what_works": [
         "llms.txt is published and generated from the build, listing all 18 pages with descriptions, naming the operator and registration number",
@@ -206,7 +208,8 @@
         "The prose is passage-level citable: short, self-contained, declarative paragraphs",
         "PerplexityBot and OAI-SearchBot are not in the Cloudflare block, so Perplexity and ChatGPT search can still reach the site",
         "IndexNow already announces every deploy to Bing, Yandex and Naver automatically, so new pages reach those indexes in minutes rather than waiting for a crawl",
-        "58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit"
+        "58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit",
+        "The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about"
       ],
       "findings": [
         {
@@ -235,10 +238,11 @@
           "recommendation": "Mark up the sub-page Q&As, then open the content hub described under Content Quality."
         },
         {
-          "title": "The LinkedIn profile supplied for sameAs is a personal profile, not a Company Page",
-          "severity": "High",
-          "description": "The owner supplied https://www.linkedin.com/in/inplace-734499173/ on 31.08.2026 for the Organization sameAs. It is an /in/ URL, which is a personal member profile, displayed as 'InPlace .' with a trailing full stop because LinkedIn requires a surname. Job title 'Founder & CEO', 48 connections, 54 followers, unverified, company field blank, and its stated location is Ruhama, South District, while the Organization node in the schema publishes HaRotem 14, Kfar Adumim. It was not added, for three reasons. First, sameAs on an Organization is read as a reference to a page about that organization; LinkedIn /in/ URLs are Person entities in both LinkedIn's model and Google's, so the signal would be pointing at the wrong entity type. Second, DEBT.md §21 records an owner decision taken twice on 28.08.2026 that no personal profile would be published on this site and the only external profile it would carry is the company's own, with the closing note that a personal profile identifies a person while the missing field identifies a company. Third, the conflicting location would feed contradictory data into the exact signal that is supposed to resolve who this company is, which matters more now that the name is contested in both languages.",
-          "recommendation": "Create a LinkedIn Company Page for InPlace, which takes a couple of minutes from the same account, and supply that /company/ URL instead. linkedin.com/company/inplace-digital returns 404 and is available; linkedin.com/company/inplace is taken by the Israeli Inplace. Once the page exists the change is one value in two files, src/entry-static.tsx and src/lib/page-html.ts, and it covers all 18 pages. If the owner decides on reflection to publish the personal profile anyway, that reverses a written decision and DEBT.md §21 should be amended to say so rather than the code quietly diverging from it."
+          "title": "A personal profile was offered for sameAs; a Company Page replaced it — RESOLVED",
+          "severity": "Resolved",
+          "description": "The owner supplied https://www.linkedin.com/in/inplace-734499173/ on 31.08.2026 for the Organization sameAs. It is an /in/ URL, which is a personal member profile, displayed as 'InPlace .' with a trailing full stop because LinkedIn requires a surname. Job title 'Founder & CEO', 48 connections, 54 followers, unverified, company field blank, and its stated location is Ruhama, South District, while the Organization node in the schema publishes HaRotem 14, Kfar Adumim. It was not added, for three reasons. First, sameAs on an Organization is read as a reference to a page about that organization; LinkedIn /in/ URLs are Person entities in both LinkedIn's model and Google's, so the signal would be pointing at the wrong entity type. Second, DEBT.md §21 records an owner decision taken twice on 28.08.2026 that no personal profile would be published on this site and the only external profile it would carry is the company's own, with the closing note that a personal profile identifies a person while the missing field identifies a company. Third, the conflicting location would feed contradictory data into the exact signal that is supposed to resolve who this company is, which matters more now that the name is contested in both languages. RESOLVED 31.08.2026: the owner created a LinkedIn Company Page at linkedin.com/company/inplace-digital, and that URL, not the personal profile, is what the schema declares.",
+          "recommendation": "Done. The remaining entity work is external: a Crunchbase entry and Israeli directory listings, each another anchor tying the name to this company rather than to the Australian InPlace Software or the Israeli Inplace.",
+          "resolved": "2026-08-31"
         }
       ]
     },
@@ -300,7 +304,7 @@
         "name": "Phase 2: High-Impact Improvements",
         "timeframe": "Next",
         "items": [
-          "Add sameAs plus description, foundingDate, email and areaServed to the Organization node. One builder script, propagates to all 18 pages. Creating a LinkedIn company page is the prerequisite if none exists.",
+          "DONE 31.08.2026 — Add sameAs plus description, foundingDate, email and areaServed to the Organization node. One builder script, propagates to all 18 pages. Creating a LinkedIn company page is the prerequisite if none exists.",
           "DONE 31.08.2026 — Generate FAQPage nodes from the existing question-shaped headings on the eight sub-pages across both languages. 16 pages, markup only, content already written.",
           "Roughly double the depth of the five commercial pages across both languages, prioritising /procurement-software/ then /invoice-matching/. Add worked numeric examples, Israeli specifics, annotated screenshots and edge cases.",
           "Render an English OG card via the existing scripts/build-og.mjs and point the nine /en/ pages at it; fix og:image:alt at the same time."

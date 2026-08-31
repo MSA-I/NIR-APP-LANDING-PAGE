@@ -384,6 +384,10 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
         url: ORIGIN,
         logo: `${ORIGIN}/assets/logo.svg`,
         inLanguage: lang,
+        // The same edge the home page declares; see src/entry-static.tsx for why
+        // it is the /company/ URL and not the /in/ one. DEBT.md §21, closed
+        // 31.08.2026.
+        sameAs: ['https://www.linkedin.com/company/inplace-digital'],
         address: {
           '@type': 'PostalAddress',
           streetAddress: 'הרותם 14',
@@ -479,9 +483,11 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
       // text a user consents to, and attributing terms of use to a person as
       // their author is a different statement from the one those pages make.
       //
-      // No `sameAs`. The owner's decision of 28.08.2026 is that no personal
-      // profile is published here and the only external profile this site will
-      // carry is the company's own, which does not exist yet. DEBT.md item 21.
+      // No `sameAs` on the people, still. The owner's decision of 28.08.2026 is
+      // that no personal profile is published here, and it was never contingent
+      // on the company page being absent: a personal profile identifies a person,
+      // and the field identifies a company. The Organization above carries the
+      // company page as of 31.08.2026, which is what closed DEBT.md item 21.
       ...(page.legal ? [] : [personNode(p.nir, AUTHOR_ID)]),
       ...(printsPeople ? [personNode(p.moshe, 'moshe')] : []),
     ],

@@ -1,6 +1,12 @@
 # LinkedIn Company Page — InPlace
 
-Everything needed to create the page, ready to paste. Written 31.08.2026.
+Everything needed to create the page, ready to paste. Written 31.08.2026, revised the same day.
+
+**The product is global, not Israel-only.** The first cut of this copy opened by calling InPlace a
+system "in full Hebrew", which describes the market rather than the product and reads as a limit. It
+now leads with what the system does; the two complete editions and right-to-left support are stated
+as capability, which is what they are. Set the page's primary language to **English** and add Hebrew
+as a second language, rather than the other way round.
 
 Every claim below is taken from what the site already says — `src/content/pages.ts`,
 `src/content/he.ts` and the `Organization` node in the structured data — so the page and the site
@@ -48,7 +54,7 @@ that is true — it is the same principle as the address.
 ## Tagline — Hebrew (120 character limit)
 
 ```
-מערכת רכש עד תשלום בעברית מלאה. מה שלא מתאים בין ההזמנה, הסחורה והחשבונית נעצר לפני שהכסף יוצא.
+רכש עד תשלום בשרשרת אחת. פער בין ההזמנה, הסחורה והחשבונית נעצר לפני שהכסף יוצא.
 ```
 
 ## Tagline — English (120 character limit)
@@ -62,13 +68,15 @@ Procurement to payment in one chain. A gap between the order, the goods and the 
 ## About — Hebrew (2,000 character limit)
 
 ```
-InPlace היא מערכת רכש עד תשלום בעברית מלאה, בכיוון קריאה מימין לשמאל.
+InPlace היא מערכת רכש עד תשלום לעסקים שקונים מספקים באופן קבוע.
 
 שלושה מסמכים מתארים כל רכישה: מה הוזמן, מה הגיע, ומה מבקשים שתשלם. כשאחד מהם לא מסכים עם השניים האחרים, זה בדיוק הרגע שבו עסק מפסיד כסף בלי לדעת. InPlace משווה בין השלושה בעצמה, ומה שלא מתאים נעצר ומחכה להחלטה, במקום להתגלות אחרי שההעברה כבר יצאה.
 
 המערכת מחברת את השרשרת כולה למקור אמת אחד: ספקים, מחירונים, הזמנות רכש, קבלת סחורה שמסומנת מהטלפון ליד דלת הקבלה, חשבוניות, דרישות תשלום והעברות בבנק.
 
 שלושה בעלי תפקידים עובדים בה: בעלים, מנהל רכש ורואה חשבון. אף אחד מהם לא רואה או עושה את מה ששייך לאחר. רואה החשבון הוא מבצע ההעברות היחיד, ותשלום עובר תמיד דרך דרישה מאושרת עם סיבה ותיעוד. אין מסלול חירום שעוקף את האישור.
+
+אנגלית ועברית הן שתי מהדורות מלאות, כולל כיוון קריאה מימין לשמאל, ולא שכבת תרגום שנוספה בסוף. מובייל הוא משטח עבודה ראשי, כי קבלת סחורה קורית ליד הדלת ולא ליד שולחן.
 
 מה שהמערכת מסרבת להיות:
 • לא עוד מסך מדדים בלי החלטה
@@ -78,8 +86,6 @@ InPlace היא מערכת רכש עד תשלום בעברית מלאה, בכיו
 
 הסירובים האלה אינם ענווה. הם מה שמאפשר למערכת לעשות דבר אחד היטב במקום ארבעה דברים בערך.
 
-עברית ומובייל הם אזרחים ראשונים כאן, לא התאמה שנעשתה בסוף.
-
 אפשר להתחיל בחינם, מספק אחד, בלי כרטיס אשראי.
 inplace.digital
 ```
@@ -87,13 +93,15 @@ inplace.digital
 ## About — English (2,000 character limit)
 
 ```
-InPlace is a procurement-to-payment system, written in Hebrew and read right to left, with an English edition beside it.
+InPlace is a procurement-to-payment system for businesses that buy from suppliers regularly.
 
 Three documents describe every purchase: what was ordered, what arrived, and what you are being asked to pay. When one of them disagrees with the other two, that is the moment a business loses money without knowing it. InPlace compares all three on its own, and a gap stops and waits for a decision instead of surfacing after the transfer has already gone out.
 
 The system connects the whole chain into one source of truth: suppliers, price lists, purchase orders, goods receipt marked from a phone at the receiving door, invoices, payment requests and bank transfers.
 
 Three roles work inside it: the owner, the procurement manager and the accountant. None of them sees or does what belongs to another. The accountant is the only one who moves money, and a payment always goes through an approved request with a reason and a record. There is no emergency route around the approval.
+
+English and Hebrew are both complete editions, right to left included, rather than a translation layer added at the end. Mobile is a first-class surface, because goods receipt happens at the door and not at a desk.
 
 What the system refuses to be:
 • Not another metrics screen with no decision in it
@@ -103,9 +111,7 @@ What the system refuses to be:
 
 These refusals are not modesty. They are what lets the system do one thing well instead of four things approximately.
 
-Hebrew and mobile are first-class here, not an adaptation made at the end.
-
-You can start free, with one supplier, without a credit card.
+Start free, with one supplier, without a credit card.
 inplace.digital
 ```
 

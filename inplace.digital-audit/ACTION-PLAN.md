@@ -1,7 +1,7 @@
 # Action Plan — inplace.digital
 
-**Status 31.08.2026.** Phase 1 is done and verified live. Phase 2.2 is done. Phase 2.1 is waiting on
-one URL. Everything else is open.
+**Status 31.08.2026.** Phase 1 is done and verified live. Phases 2.1 and 2.2 are done. Everything
+else is open.
 
 
 Ordered by impact. Scope is given in countable units — files touched, pages affected, entries added —
@@ -48,7 +48,7 @@ step so the gate measures what the internet receives.
 
 ## Phase 2 — High impact
 
-### 2.1 Give the Organization a `sameAs`  ·  needs a Company Page, not a personal profile
+### 2.1 Give the Organization a `sameAs`  ·  DONE 31.08.2026
 
 **Scope:** one schema builder in `scripts/`, propagates to all 18 pages.
 

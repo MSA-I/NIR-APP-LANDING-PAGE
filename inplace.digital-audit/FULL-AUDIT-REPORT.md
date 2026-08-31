@@ -3,24 +3,25 @@
 Audited 31.08.2026. Crawl of all 18 published URLs, live measurement in a real browser,
 schema parsed and validated, competitive check against the Israeli market.
 
-**SEO Health Score: 87 / 100**  —  81 at audit; two findings were fixed and verified live the same day.
+**SEO Health Score: 88 / 100**  —  81 at audit; three findings were fixed and verified the same day.
 
 > **Fixed 31.08.2026, both verified against the live host**
 > 1. Cloudflare's managed robots.txt is off. The eight AI crawlers are unblocked, and a new
 >    check (verify-live L8) parses the *served* file on every deploy, so this cannot come back quietly.
 > 2. `FAQPage` now covers all six supporting pages in both editions — 50 questions, up from 8 site-wide.
+> 3. A LinkedIn **Company Page** was created and `sameAs` declares it on all 18 pages, closing DEBT.md §21.
 >
-> Still open: `sameAs` (a profile now exists; the URL is pending), commercial page depth, the content
-> hub, the English brand collision, the Hebrew share card on the English pages, and internal linking.
+> Still open: commercial page depth, the content hub, the brand collision in both languages, the Hebrew
+> share card on the English pages, and internal linking.
 
 | Category | Weight | Score |
 |---|---|---|
 | Technical SEO | 22% | 95 |
 | Content Quality | 23% | 72 |
 | On-Page SEO | 20% | 94 |
-| Schema / Structured Data | 10% | 92 |
+| Schema / Structured Data | 10% | 98 |
 | Performance (CWV) | 10% | 90 |
-| AI Search Readiness | 10% | 78 |
+| AI Search Readiness | 10% | 85 |
 | Images | 5% | 88 |
 
 Business type: **B2B SaaS**, procurement-to-payment, bilingual (he-IL primary, en-US secondary),
@@ -261,7 +262,7 @@ The only deduction is the share-card language mismatch, recorded under Images.
 
 ---
 
-## Schema / Structured Data — 92
+## Schema / Structured Data — 98
 
 ### What works
 
@@ -285,7 +286,14 @@ those would be a manual-action risk. It was not published. Good.
 
 ### Findings
 
-**[HIGH — pending a URL] `Organization` has no `sameAs`**
+**[RESOLVED 31.08.2026] `Organization` had no `sameAs`**
+
+> Fixed the same day. A LinkedIn Company Page was created and
+> `https://www.linkedin.com/company/inplace-digital` is declared in `sameAs` on the `Organization`
+> node in both generators, covering all 18 pages. Verified in the built output and live. The two
+> `Person` nodes still carry none, which is the same owner decision rather than an omission: a
+> personal profile identifies a person, and this field identifies a company. The record of the gap
+> is kept below.
 
 This is the single most consequential schema gap, because of what the next section describes. `sameAs`
 is the primary mechanism by which Google's Knowledge Graph and AI answer engines decide *which*
@@ -364,7 +372,7 @@ belt and braces. On a fast connection this costs nothing; on 3G it delays the he
 
 ---
 
-## AI Search Readiness (GEO) — 78
+## AI Search Readiness (GEO) — 85
 
 The lowest score, and the one worth the most attention.
 
@@ -422,7 +430,11 @@ already configured and automated, so this is about reporting and diagnostics, no
 index feeds Copilot and parts of ChatGPT search, so being able to read its view of the site is worth
 the one verification.
 
-**[HIGH] The LinkedIn URL supplied for `sameAs` is a personal profile, not a Company Page**
+**[RESOLVED 31.08.2026] A personal profile was offered for `sameAs`; a Company Page replaced it**
+
+> The owner created `linkedin.com/company/inplace-digital` and that URL, not the personal profile,
+> is what the schema declares. The reasoning that led there is kept below, because it is the reason
+> the field is worth anything at all.
 
 On 31.08.2026 the owner supplied `https://www.linkedin.com/in/inplace-734499173/` for the
 Organization `sameAs`. It was **not added**, and the reasons are worth stating plainly because the
