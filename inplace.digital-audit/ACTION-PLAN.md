@@ -48,7 +48,7 @@ step so the gate measures what the internet receives.
 
 ## Phase 2 — High impact
 
-### 2.1 Give the Organization a `sameAs`  ·  waiting on the URL
+### 2.1 Give the Organization a `sameAs`  ·  needs a Company Page, not a personal profile
 
 **Scope:** one schema builder in `scripts/`, propagates to all 18 pages.
 

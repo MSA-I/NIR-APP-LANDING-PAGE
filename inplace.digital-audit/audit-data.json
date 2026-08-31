@@ -20,14 +20,15 @@
       "Add contextual in-body links to /about/, which today has exactly one inbound link"
     ],
     "corrections": [
-      "An earlier pass of this audit reported the site had no IndexNow and flagged public/c6fda1454ac9fb23548f545592b8dda4.txt as an unidentified verification file. Both were wrong: that file is the IndexNow key, and .github/workflows/indexnow.yml already submits the live sitemap after every successful deploy. Technical SEO was rescored 78 to 80 and AI Search Readiness 55 to 58; the overall score moved from 80 to 81."
+      "An earlier pass of this audit reported the site had no IndexNow and flagged public/c6fda1454ac9fb23548f545592b8dda4.txt as an unidentified verification file. Both were wrong: that file is the IndexNow key, and .github/workflows/indexnow.yml already submits the live sitemap after every successful deploy. Technical SEO was rescored 78 to 80 and AI Search Readiness 55 to 58; the overall score moved from 80 to 81.",
+      "An earlier pass of this audit stated that the Hebrew market had no competing InPlace entity. That was wrong: inplace.co.il is an active Israeli company trading as Inplace, and it holds the linkedin.com/company/inplace slug. The brand name is contested in both languages, not only English."
     ],
     "fixed_during_session": [
       "Cloudflare managed robots.txt turned off — eight AI crawlers unblocked, verified live, guarded by verify-live L8",
       "FAQPage declared on all six supporting pages in both editions — 50 questions, verified live"
     ],
     "still_open": [
-      "Organization sameAs — the owner has a profile and the URL is pending",
+      "Organization sameAs — the URL supplied is a personal LinkedIn profile rather than a Company Page, so it was not added; see the AI Search Readiness findings",
       "Commercial page depth — 388-529 Hebrew words against established incumbents",
       "No content hub",
       "English brand-name collision with InPlace Software",
@@ -216,10 +217,10 @@
           "resolved": "2026-08-31"
         },
         {
-          "title": "The brand name is already owned in English",
+          "title": "The brand name is contested in both languages",
           "severity": "High",
-          "description": "Searching for InPlace returns InPlace Software at inplacesoftware.com, an Australian ed-tech SaaS founded 2010, with a G2 profile, a Serchen listing and vendor directory pages. It owns the English-language entity. Two consequences: asking any language model what InPlace is returns student placement software, which is testable now; and the nine /en/ pages compete for generic English procurement terms against Precoro, Procurify, Coupa, Tipalti and Stampli from a domain with no authority under a name attached to a different company. In Hebrew the field is clear, with no competing InPlace entity.",
-          "recommendation": "Treat the Hebrew pages as the realistic near-term surface. Build external anchors that tie the name to this company: sameAs in the schema, a LinkedIn company page, a Crunchbase entry, Israeli directory listings. Defer English content investment until disambiguation lands."
+          "description": "Searching for InPlace returns InPlace Software at inplacesoftware.com, an Australian ed-tech SaaS founded 2010, with a G2 profile, a Serchen listing and vendor directory pages. It owns the English-language entity. Ask any language model what InPlace is and it describes student placement software. The nine /en/ pages also compete for generic English procurement terms against Precoro, Procurify, Coupa and Stampli, from a domain with no authority, under a name attached to a different company. CORRECTION 31.08.2026: an earlier pass of this audit stated that the Hebrew field was clear and no competing InPlace entity existed there. That was wrong. inplace.co.il is an active Israeli company trading as Inplace — today an influencer and content-creator marketing platform for businesses, listed on LinkedIn under Staffing and Recruiting — and it holds both the .co.il domain and the linkedin.com/company/inplace slug. So the name is contested in Hebrew as well as English, by a company selling to the same buyer (Israeli business owners) in an adjacent category.",
+          "recommendation": "Entity disambiguation now matters in both markets, not just English. A LinkedIn Company Page for InPlace, a Crunchbase entry and Israeli directory listings are each an external anchor tying the name to this company; sameAs in the schema is what points at them. Note that the obvious company slugs are taken: linkedin.com/company/inplace belongs to the Israeli Inplace and linkedin.com/company/inplace-digital returns 404 and is free. Whether the name itself is worth revisiting is a business decision this audit does not make, but it should be made knowingly rather than by default."
         },
         {
           "title": "No Bing Webmaster Tools verification",
@@ -232,6 +233,12 @@
           "severity": "Partly resolved",
           "description": "Answer engines retrieve against questions. The site answers eight. The sub-page headings would add roughly twenty more the moment they are marked up, and a content hub would add more still. RESOLVED IN PART 31.08.2026: the sub-page questions are now marked up, taking the site from 8 declared questions to 58. What remains is the content hub, which would add question-shaped pages rather than markup.",
           "recommendation": "Mark up the sub-page Q&As, then open the content hub described under Content Quality."
+        },
+        {
+          "title": "The LinkedIn profile supplied for sameAs is a personal profile, not a Company Page",
+          "severity": "High",
+          "description": "The owner supplied https://www.linkedin.com/in/inplace-734499173/ on 31.08.2026 for the Organization sameAs. It is an /in/ URL, which is a personal member profile, displayed as 'InPlace .' with a trailing full stop because LinkedIn requires a surname. Job title 'Founder & CEO', 48 connections, 54 followers, unverified, company field blank, and its stated location is Ruhama, South District, while the Organization node in the schema publishes HaRotem 14, Kfar Adumim. It was not added, for three reasons. First, sameAs on an Organization is read as a reference to a page about that organization; LinkedIn /in/ URLs are Person entities in both LinkedIn's model and Google's, so the signal would be pointing at the wrong entity type. Second, DEBT.md §21 records an owner decision taken twice on 28.08.2026 that no personal profile would be published on this site and the only external profile it would carry is the company's own, with the closing note that a personal profile identifies a person while the missing field identifies a company. Third, the conflicting location would feed contradictory data into the exact signal that is supposed to resolve who this company is, which matters more now that the name is contested in both languages.",
+          "recommendation": "Create a LinkedIn Company Page for InPlace, which takes a couple of minutes from the same account, and supply that /company/ URL instead. linkedin.com/company/inplace-digital returns 404 and is available; linkedin.com/company/inplace is taken by the Israeli Inplace. Once the page exists the change is one value in two files, src/entry-static.tsx and src/lib/page-html.ts, and it covers all 18 pages. If the owner decides on reflection to publish the personal profile anyway, that reverses a written decision and DEBT.md §21 should be amended to say so rather than the code quietly diverging from it."
         }
       ]
     },

@@ -385,7 +385,7 @@ The lowest score, and the one worth the most attention.
 **[RESOLVED 31.08.2026] Eight AI agents were blocked at robots.txt** — see Technical SEO. Fixed and
 verified live; the deploy now fails if it returns.
 
-**[HIGH] The brand name is already owned in English**
+**[HIGH] The brand name is contested in both languages**
 
 Searching for "InPlace" returns [InPlace Software](https://inplacesoftware.com/), an Australian
 ed-tech SaaS founded in 2010, with a [G2 profile](https://www.g2.com/products/inplace-software-inplace-software/reviews),
@@ -397,8 +397,19 @@ placement software — this is testable right now. And the nine `/en/` pages are
 English procurement terms (Precoro, Procurify, Coupa, Tipalti, Stampli) from a domain with no
 authority, under a name already attached to a different company.
 
-In Hebrew the field is clear — no competing "InPlace" entity exists there. The Hebrew pages are the
-realistic near-term surface; the English ones are a long game that needs the disambiguation work first.
+**Correction, 31.08.2026.** An earlier pass of this report said the Hebrew field was clear and no
+competing InPlace entity existed there. That was wrong. [inplace.co.il](https://www.inplace.co.il) is
+an active Israeli company trading as **Inplace** — today an influencer and content-creator marketing
+platform for businesses, listed on LinkedIn under Staffing and Recruiting — and it holds both the
+`.co.il` domain and the `linkedin.com/company/inplace` slug.
+
+So the name is contested in Hebrew as well: by an Israeli company selling to the same buyer, business
+owners, in an adjacent category. The Hebrew pages are still the realistic near-term surface, because
+the search terms they target are procurement terms rather than the brand name, but the entity work is
+now needed in both markets rather than only in English.
+
+Whether the name itself is worth revisiting is a business decision this audit does not make. It should
+be made knowingly rather than by default.
 
 `sameAs` is the lever. So is a LinkedIn company page, a Crunchbase entry, and any Israeli directory
 listing — each one is an external anchor tying the name to *this* company.
@@ -410,6 +421,38 @@ Webmaster Tools. IndexNow — the mechanism that actually tells Bing about new a
 already configured and automated, so this is about reporting and diagnostics, not discovery. Bing's
 index feeds Copilot and parts of ChatGPT search, so being able to read its view of the site is worth
 the one verification.
+
+**[HIGH] The LinkedIn URL supplied for `sameAs` is a personal profile, not a Company Page**
+
+On 31.08.2026 the owner supplied `https://www.linkedin.com/in/inplace-734499173/` for the
+Organization `sameAs`. It was **not added**, and the reasons are worth stating plainly because the
+field was the audit's single highest-value schema gap.
+
+It is an `/in/` URL — a personal member profile. It displays as "InPlace ." with a trailing full stop,
+because LinkedIn requires a surname. Founder & CEO, 48 connections, 54 followers, unverified, company
+field blank. Its stated location is **Ruhama, South District**, while the `Organization` node on every
+page of this site publishes **HaRotem 14, Kfar Adumim**.
+
+Three reasons not to publish it:
+
+1. **Wrong entity type.** `sameAs` on an `Organization` is read as a reference to a page *about that
+   organization*. A LinkedIn `/in/` URL is a Person entity, in LinkedIn's model and in Google's. The
+   signal would point at the wrong kind of thing.
+2. **It reverses a written decision.** DEBT.md §21 records the owner deciding, twice on 28.08.2026,
+   that no personal profile would be published here and the only external profile this site would
+   carry is the company's own — closing with the note that *a personal profile identifies a person,
+   and the missing field identifies a company*.
+3. **It contradicts the address the site already publishes.** Feeding a conflicting location into the
+   one signal meant to resolve who this company is makes it worse, not better — and that matters more
+   now that the name is contested in both languages.
+
+**What closes it:** a LinkedIn **Company Page**, created from the same account in a couple of minutes.
+`linkedin.com/company/inplace-digital` returns 404 and is free; `linkedin.com/company/inplace` is
+taken by the Israeli Inplace. Once it exists the change is one value in two files —
+`src/entry-static.tsx` and `src/lib/page-html.ts` — and it covers all 18 pages.
+
+If the owner decides on reflection to publish the personal profile anyway, that reverses a recorded
+decision, and DEBT.md §21 should be amended to say so rather than the code quietly diverging from it.
 
 **[MEDIUM] No question-shaped content beyond the eight home-page FAQs**
 
@@ -489,7 +532,11 @@ across 347 elements; competitive SERP checks in Hebrew.
 **Confidence:** high on everything crawled and measured directly; the LCP estimate and the empty
 backlink profile are stated as inference and labelled as such.
 
-**Corrections made during the audit.** An earlier pass reported that the site had no IndexNow, and
+**Corrections made during the audit.** A third: an earlier pass said the Hebrew market had no
+competing InPlace entity. It has one — inplace.co.il, which also holds the
+`linkedin.com/company/inplace` slug. The brand-collision finding now covers both languages.
+
+An earlier pass reported that the site had no IndexNow, and
 flagged `public/c6fda1454ac9fb23548f545592b8dda4.txt` as an unidentified verification file. Both were
 wrong. That file *is* the IndexNow key, and `.github/workflows/indexnow.yml` has been submitting the
 live sitemap after every successful deploy since 28.08.2026. Technical SEO was rescored 78 → 80 and
