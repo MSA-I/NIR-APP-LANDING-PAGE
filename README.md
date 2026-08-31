@@ -171,6 +171,21 @@ npm run preview
 `npm run dev` serves on <http://localhost:4501>, `npm run preview` serves the
 built `dist/` on <http://localhost:4500>. `dist/` is not committed.
 
+## Deploy it
+
+The page is live at <https://inplace.digital>, on the Cloudflare Pages project
+`inplace-landing`. It is a **direct-upload** project, which means pushing to
+`main` publishes nothing. Deploying is an explicit step:
+
+```bash
+npm run deploy
+```
+
+That rebuilds and uploads. It needs `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` in the environment. [DEPLOY.md](DEPLOY.md) is the
+runbook: how it is wired, what was measured, what is still open, and how to
+roll back.
+
 ## Verify it
 
 ```bash
@@ -178,6 +193,15 @@ node scripts/gates/all.mjs
 ```
 
 Twenty gates, about five minutes, non-zero on any failure.
+
+```bash
+npm run verify:live
+```
+
+Seven checks the gates cannot make, because they are properties of the host and
+not of the build: that every page answers, that a wrong address answers 404
+rather than 200, that Cloudflare read `_headers`, that `robots.txt` arrives as
+text. Takes a hostname, and defaults to `inplace.digital`.
 
 | Gate | What it measures |
 |---|---|
@@ -234,6 +258,8 @@ things on this page that nothing measures.
 | `public/assets/` | The film, its poster, the product screens, both typefaces |
 | `world/` | The scene the film is rendered from: the world, its textures, its product captures |
 | `scripts/gates/` | The harness behind [GATES.md](GATES.md) |
+| `scripts/verify-live.mjs` | The seven checks that need a host, behind [DEPLOY.md](DEPLOY.md) §4 |
+| `.node-version` | The Node the build is pinned to, so no build image can pick a different one |
 | `src/content/pages.ts` | The six supporting pages, with the product document each claim comes from |
 | `src/content/people.ts` | The two founders: who wrote the pages, and who built the system |
 | `src/lib/page-html.ts` | Those pages as documents: no client JavaScript, the site's own stylesheet |
