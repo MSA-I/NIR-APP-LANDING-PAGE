@@ -44,6 +44,10 @@ const PAGES = [
   '/en/invoice-matching/',
   '/en/vs-spreadsheet/',
   '/en/vs-erp/',
+  // The guides. Added with the first of them on 01.09.2026; this list is
+  // hardcoded on purpose (see above), so it grows in the commit that adds a page.
+  '/guides/separation-of-duties/',
+  '/en/guides/separation-of-duties/',
 ]
 
 // From public/_headers. Every one of these is declared there, so every one of
