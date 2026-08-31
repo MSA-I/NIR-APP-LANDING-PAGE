@@ -1,7 +1,7 @@
 # Action Plan — inplace.digital
 
-**Status 31.08.2026.** Phase 1 is done and verified live. Phases 2.1, 2.2 and 2.3 are done. Only 2.4,
-the English share card, remains in Phase 2.
+**Status 31.08.2026.** Phase 1 is done and verified live. **Phase 2 is complete.** Phase 3 and the
+content hub remain.
 
 
 Ordered by impact. Scope is given in countable units — files touched, pages affected, entries added —
@@ -97,7 +97,7 @@ Length alone is not the goal. Add the material that is checkable and specific:
 Priority order: `/procurement-software/` (broadest term), `/invoice-matching/` (sharpest differentiator),
 `/supplier-invoices/`, then the two comparison pages.
 
-### 2.4 Build the English share card
+### 2.4 Build the English share card  ·  DONE 31.08.2026
 
 **Scope:** `scripts/build-og.mjs`, one new output, 9 pages switch to it.
 

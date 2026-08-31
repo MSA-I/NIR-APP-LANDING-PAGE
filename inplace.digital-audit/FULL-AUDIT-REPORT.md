@@ -3,7 +3,7 @@
 Audited 31.08.2026. Crawl of all 18 published URLs, live measurement in a real browser,
 schema parsed and validated, competitive check against the Israeli market.
 
-**SEO Health Score: 91 / 100**  —  81 at audit; four findings were fixed and verified the same day.
+**SEO Health Score: 91 / 100**  —  81 at audit; five findings were fixed and verified the same day.
 
 > **Fixed 31.08.2026, both verified against the live host**
 > 1. Cloudflare's managed robots.txt is off. The eight AI crawlers are unblocked, and a new
@@ -12,9 +12,9 @@ schema parsed and validated, competitive check against the Israeli market.
 > 3. A LinkedIn **Company Page** was created and `sameAs` declares it on all 18 pages, closing DEBT.md §21.
 > 4. All five commercial pages deepened in both editions — 15 new sections, +60 to +76 per cent of body
 >    copy each, every claim traced to a source document.
+> 5. The nine English pages got an English share card, rendered from the same template.
 >
-> Still open: the content hub, the brand collision in both languages, the Hebrew share card on the
-> English pages, and internal linking.
+> Still open: the content hub, the brand collision in both languages, and internal linking.
 
 | Category | Weight | Score |
 |---|---|---|
@@ -24,7 +24,7 @@ schema parsed and validated, competitive check against the Israeli market.
 | Schema / Structured Data | 10% | 98 |
 | Performance (CWV) | 10% | 90 |
 | AI Search Readiness | 10% | 88 |
-| Images | 5% | 88 |
+| Images | 5% | 96 |
 
 Business type: **B2B SaaS**, procurement-to-payment, bilingual (he-IL primary, en-US secondary),
 selling to Israeli SMBs. Not a local-service business — no GBP/map-pack surface applies.
@@ -499,7 +499,7 @@ roughly twenty more the moment they are marked up.
 
 ---
 
-## Images — 88
+## Images — 96
 
 Close to flawless on the technical side.
 
@@ -511,7 +511,12 @@ Close to flawless on the technical side.
 
 ### Finding
 
-**[MEDIUM] All nine English pages serve the Hebrew share card**
+**[RESOLVED 31.08.2026] All nine English pages served the Hebrew share card**
+
+> Fixed the same day. One template, rendered twice: `og-template.html` takes the language, the
+> direction, both faces, the headline split at its tint, and the chain; `build-og.mjs` loops over an
+> editions table. Two templates would have drifted the first time a headline changed. Verified live.
+> The record of the finding is kept below.
 
 Every page on the site — both languages — points `og:image` at
 `https://inplace.digital/assets/og-cover.jpg`. That image reads, in Hebrew:
