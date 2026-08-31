@@ -2604,7 +2604,19 @@ that wins.
 
 ### What this round does not claim
 
-The six screens on the supporting pages are still the older captures, taken
-before the navigation was rebuilt. They are not on the home page and no gate
-measures them yet, and they are named in [DEBT.md](DEBT.md) §16 rather than
-quietly left.
+**The home page's six screens, and only those.** Twelve files, two editions, one
+moment. Three things from §16 stay open, and the heading there says "closed in
+part" rather than "closed" because of them:
+
+- **The film was not remade.** It is a rendered animation rather than a capture
+  — invoices falling on a desk, and then a "three-way check" panel that does not
+  exist in the product at all, built to explain the match (owner, 30.08.2026).
+  It is Hebrew, and it plays on `/en/` too. Changing it is a re-render of
+  `world/`, not a screenshot.
+- **The supporting pages' six screens were not captured in either language.**
+  Suppliers, credits, alerts, prices, analytics and the bank are the older
+  captures, from before the navigation was rebuilt, and `pages.en.ts` points at
+  them — so the six English documents show Hebrew screens.
+- **`פרימיום`** is still Hebrew in our capture. It was fixed in NIR-APP at
+  `18e03877`, on a branch that has not reached `main`, so the capture predates
+  it. The control centre will want re-taking in both editions when it lands.
