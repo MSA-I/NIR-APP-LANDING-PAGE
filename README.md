@@ -174,8 +174,13 @@ built `dist/` on <http://localhost:4500>. `dist/` is not committed.
 ## Deploy it
 
 The page is live at <https://inplace.digital>, on the Cloudflare Pages project
-`inplace-landing`. It is a **direct-upload** project, which means pushing to
-`main` publishes nothing. Deploying is an explicit step:
+`inplace-landing`. **A push to `main` publishes it** —
+[.github/workflows/deploy.yml](.github/workflows/deploy.yml) builds, uploads,
+and then asks the live host whether what it published actually works. Cloudflare
+does not build this repository; the workflow does, because the Pages project is
+direct-upload.
+
+To publish without a commit:
 
 ```bash
 npm run deploy
