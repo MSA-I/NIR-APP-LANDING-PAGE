@@ -237,6 +237,47 @@ if (!SKIP_WWW) {
   )
 }
 
+// L10 — the Content-Security-Policy reaches the browser, and covers this page's
+// own inline scripts.
+//
+// The policy is generated per page by scripts/build-csp.mjs and lives only in
+// dist/_headers, which means Cloudflare is the only thing that can prove it was
+// read -- the same reason L3 exists for the other five headers. What this adds
+// over L3 is the second half: a CSP whose script-src has no hash for the inline
+// scripts the page actually carries is a policy that will break the page the
+// day it is enforced, and report-only will not make that obvious to anyone who
+// is not reading reports.
+//
+// So it counts. Every inline <script> without a src needs a matching hash.
+{
+  const r = await get(ORIGIN + '/')
+  const enforcing = r.headers?.get('content-security-policy') || ''
+  const reportOnly = r.headers?.get('content-security-policy-report-only') || ''
+  const csp = enforcing || reportOnly
+  const body = r.status === 200 ? await r.text().catch(() => '') : ''
+
+  const inline = [...body.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)].filter((m) => !/\ssrc=/.test(m[1]))
+  const hashes = (csp.match(/'sha256-[A-Za-z0-9+/=]+'/g) || []).length
+
+  const problems = []
+  if (!csp) problems.push('no CSP header at all')
+  else {
+    if (!/default-src 'self'/.test(csp)) problems.push("no default-src 'self'")
+    if (!/object-src 'none'/.test(csp)) problems.push("no object-src 'none'")
+    // The beacon is injected by Cloudflare, not by this build, so nothing local
+    // can notice a policy that forgets it until analytics quietly stops.
+    if (!csp.includes('static.cloudflareinsights.com')) problems.push('script-src does not allow the analytics beacon')
+    if (hashes < inline.length) problems.push(`${inline.length} inline scripts, ${hashes} hashes`)
+  }
+
+  record(
+    'L10',
+    'the CSP is served and covers every inline script',
+    problems.length === 0,
+    problems.length ? problems.join('; ') : `${enforcing ? 'enforcing' : 'report-only'}, ${hashes} hashes for ${inline.length} inline scripts`
+  )
+}
+
 const met = results.filter((r) => r.passed).length
 const unmet = results.length - met
 console.log(`\n${met} met, ${unmet} unmet, of ${results.length} checks against ${HOST}\n`)

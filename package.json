@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs && node scripts/build-sitemap.mjs && node scripts/build-llms.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs && node scripts/build-sitemap.mjs && node scripts/build-llms.mjs && node scripts/build-csp.mjs",
     "deploy": "npm run build && wrangler pages deploy dist --project-name=inplace-landing --branch=main",
     "verify:live": "node scripts/verify-live.mjs",
     "preview": "vite preview --port 4500",

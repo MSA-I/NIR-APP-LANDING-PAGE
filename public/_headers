@@ -1,11 +1,18 @@
 # Cloudflare Pages reads this file from the root of the published output.
 #
-# No Content-Security-Policy yet, and that is a decision rather than an
-# oversight: motion writes inline styles on every animated element, so a strict
-# style-src would stop the page from animating without stopping the page from
-# loading, which is the worst kind of failure to notice. CSP arrives in stage 4
-# as Content-Security-Policy-Report-Only first, and is only enforced once the
-# reports are empty.
+# The Content-Security-Policy is NOT written here. It is appended to the built
+# copy of this file by scripts/build-csp.mjs, one rule per page, because it
+# carries a hash of every inline script on that page and there are fifty-two of
+# them across nineteen pages. A hash written by hand is a hash that goes stale
+# the first time the script it covers is edited.
+#
+# It ships as Content-Security-Policy-Report-Only, by the plan this file has
+# carried since the first round: motion writes an inline style attribute on
+# every animated element, and a strict style-src would stop the page animating
+# without stopping it loading, which is the worst kind of failure to notice.
+# Report-only browsers evaluate and report; nothing is blocked. `--enforce`
+# switches the header name, and that is the owner's call once the violations
+# are known to be empty.
 #
 # HSTS carries no `preload` token. Preloading is close to irreversible and it
 # covers every subdomain including app.inplace.digital, so it is the owner's
