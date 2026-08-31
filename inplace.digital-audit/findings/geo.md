@@ -1,8 +1,8 @@
 # AI Search Readiness
 
-**Score: 90/100**  (weight 10%)
+**Score: 92/100**  (weight 10%)
 
-Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
+Audited 31.08.2026 against https://inplace.digital.
 
 ## What works
 

@@ -2,7 +2,7 @@
 
 **Score: 95/100**  (weight 22%)
 
-Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
+Audited 31.08.2026 against https://inplace.digital.
 
 ## What works
 
