@@ -2620,3 +2620,95 @@ part" rather than "closed" because of them:
 - **`פרימיום`** is still Hebrew in our capture. It was fixed in NIR-APP at
   `18e03877`, on a branch that has not reached `main`, so the capture predates
   it. The control centre will want re-taking in both editions when it lands.
+
+## Round twenty — the English edition stops sounding translated by a machine, 31.08.2026
+
+The English copy was run through SlopMonster: lint the visible copy for AI tells,
+rewrite, hand the draft to a rival model family, lint again, ship only at 5/5.
+Nine English documents went in. Two came out of the first lint clean and the
+home page scored 1/5.
+
+### The metaphor was the whole finding
+
+`journey` appeared nine times across `en.ts` and `pages.en.ts`, and it is the
+loudest tell in English marketing copy alive today. It was not invented here:
+the Hebrew says מסע, and the English is a faithful translation of it. That is
+exactly what made it worth changing rather than defending. The site already
+carries the author's own plainer word for the same thing — השרשרת, "chain",
+printed in both editions in headings like "Full chain from purchase to payment".
+So the replacement is not a synonym reached for by a model. It is the word the
+page was already using twenty lines further down.
+
+Three other tells went with it: two em-dashes inside one sentence, and the same
+tricolon printed twice — "a severity, owner and opening date" — which now reads
+"a severity, an owner and the date it was opened" in one place and "a severity,
+an owner and a date" in the other, because two sentences that were identical
+should not be.
+
+### The trap: the linter cannot see the line Google prints
+
+`deslop.py` scores what a visitor can SEE. It strips `<script>`, `<style>` and
+every tag before it counts anything, which is correct for a page and blind for a
+document. `<meta name="description">` is a tag attribute. It never reaches the
+scorer, and it is the sentence a person actually reads underneath the blue link.
+
+Linting the source dictionaries instead of the built pages found two tells
+living there. The fix was list punctuation: this copy writes lists without an
+Oxford comma about ten times over — "procurement, invoices and payments",
+"waiting, exception and completion", "owner, procurement and accountant" — and
+five lists disagreed. The extra comma is what turns a plain list into the
+rule-of-three cadence. Commas before a joined clause were left alone; those are
+correct, and there are eighty of them.
+
+### The cleanse was run, and it lost
+
+Step three is not optional and it is not a formality: a different model family
+gets the draft, because a model is bad at hearing its own accent. GPT-5.6 got
+all 211 English strings through `codex exec`, each one labelled with the field
+it came from so it knew a heading from a table cell.
+
+It rewrote 47 of the home page's 60 strings. It invented nothing and it moved no
+figure — checked by script, every number and date survived. And it scored 4/5
+against the draft's 5/5, because it put back the exact tricolon that had just
+been removed and added three more like it. The re-lint is the arbiter here, not
+the model and not the author. The draft shipped.
+
+### Two hits that are not tells
+
+- **`20 / 40 / 150 / 375` beside "Active users"** on the home page. The proof
+  rule is deliberately broad because invented social proof has no route back.
+  These are the plan limits, mirrored leaf for leaf from `extra.ts`
+  (משתמשים פעילים). Real, evidenced, and scored with `--allow-proof`.
+- **"availability, liability and ending the engagement"** in the terms
+  description. The regex catches the tail of what is a six-item list of the
+  contract's actual sections. A legal description is not contorted to satisfy a
+  regex.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| The nine English documents | 2 clean before, **8 clean after** |
+| The home page | 1/5 → **5/5** |
+| Every English string in the source | 6,343 words, **one hit**, and it is the six-item contract list |
+| Titles and meta descriptions | 17 of them, scored for the first time |
+| `journey` | 9 → **0** |
+| The rival model | 4/5 twice, against the draft's 5/5; 0 figures moved |
+| The suite | **26 met, 0 unmet** |
+
+### What this round does not claim
+
+- **The Hebrew edition was not touched.** Nine documents in one language. G2
+  freezes `he.ts` leaf by leaf and it never came near the diff.
+- **The founders' biographies stand as written.** The tricolon in `people.ts`
+  keeps `/en/about/` at 4/5, and it stays: that file's own header records the
+  bios as the two men's answers of 28.08.2026, carried as given. The owner was
+  asked on 31.08.2026 and said to leave it. A gate that goes red for an honest
+  reason is worth more than a green one bought by editing somebody's words.
+- **Four "not X but Y" constructions remain in `pages.en.ts`.** The linter's
+  regex wants a `just` or an `only` and does not see them. In four of the five
+  the first clause names a real alternative the argument is rejecting, and
+  cutting it would delete half the claim; the owner chose to keep them. The
+  fifth said "This is not a convenience barrier but separation of duties", where
+  the first clause carried nothing, and it now says "This is separation of
+  duties".

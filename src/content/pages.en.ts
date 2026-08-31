@@ -41,7 +41,7 @@ const pagesEn: Page[] = [
         h2: 'What procurement software is supposed to do',
         paras: [
           'Procurement software is not a place to file documents. Its job is to make certain that what you ordered, what you received and what you were asked to pay are the same thing, and to stop whatever does not match before the money leaves.',
-          'The full journey through InPlace is one sequence: suppliers, price lists, orders, goods receipt, invoices, credit notes, payment requests, payments, bank reconciliation and reports. Every document that arrives receives a row, a status, and a link to the order it came from.',
+          'Everything in InPlace runs in one sequence: suppliers, price lists, orders, goods receipt, invoices, credit notes, payment requests, payments, bank reconciliation and reports. Every document that arrives receives a row, a status and a link to the order it came from.',
         ],
       },
       {
@@ -132,7 +132,7 @@ const pagesEn: Page[] = [
     nav: 'Supplier invoices',
     title: 'Supplier invoice management, end to end | InPlace',
     description:
-      'Supplier invoice management from arrival to bank transfer: linked to its order, checked against goods received, approved, and filed with its confirmation.',
+      'Supplier invoice management from arrival to bank transfer: linked to its order, checked against goods received, approved and filed with its confirmation.',
     eyebrow: 'Supplier invoices',
     h1: 'Supplier invoices, from arrival to transfer',
     lede:
@@ -155,7 +155,7 @@ const pagesEn: Page[] = [
         h2: 'Who sees what',
         paras: [
           'Procurement sees the amount, the status and whether the invoice was paid, but does not run payments and sees no bank or financial reports. The accountant sees approved invoices only, with the minimum context of their order and receipt.',
-          'This is not a convenience barrier but separation of duties: whoever approves is not whoever transfers, and there is no route around it, however urgent.',
+          'This is separation of duties: whoever approves is not whoever transfers, and there is no route around it, however urgent.',
         ],
       },
       {
@@ -282,11 +282,11 @@ const pagesEn: Page[] = [
     nav: 'InPlace vs a spreadsheet',
     title: 'InPlace vs a spreadsheet for procurement | InPlace',
     description:
-      'A spreadsheet manages a list, not a journey. What a procurement system adds: linked documents, separation of duties, and a stop before the payment goes out.',
+      'A spreadsheet manages a list, not a chain. What a procurement system adds: linked documents, separation of duties and a stop before the payment goes out.',
     eyebrow: 'Comparison',
     h1: 'A spreadsheet against a procurement system',
     lede:
-      'A spreadsheet is a good tool, and that is exactly why it survives long past the point where it stops being enough. It manages a list beautifully. It does not manage a journey.',
+      'A spreadsheet is a good tool, and that is exactly why it survives long past the point where it stops being enough. It manages a list beautifully. It does not manage a chain.',
     sections: [
       {
         h2: 'What a spreadsheet does well',
@@ -357,7 +357,7 @@ const pagesEn: Page[] = [
     nav: 'InPlace vs an ERP',
     title: 'InPlace vs an ERP for procurement | InPlace',
     description:
-      'An ERP covers every department. InPlace does one thing: the journey from order to payment. What the difference is, and when each one is the right choice.',
+      'An ERP covers every department. InPlace does one thing: the chain from order to payment. What the difference is, and when each one is the right choice.',
     eyebrow: 'Comparison',
     h1: 'An ERP against a dedicated procurement system',
     lede:
@@ -380,7 +380,7 @@ const pagesEn: Page[] = [
         table: {
           headers: ['A general ERP', 'InPlace'],
           rows: [
-            ['Every department in the organisation', 'One journey: from the order to the bank transfer'],
+            ['Every department in the organisation', 'One chain: from the order to the bank transfer'],
             ['An implementation project', 'You can start with a single supplier'],
             ['Permissions defined during implementation', 'Three fixed roles, built into the system'],
             ['A procurement module inside a large system', 'The whole product is the procurement'],
@@ -412,7 +412,7 @@ const pagesEn: Page[] = [
         h2: 'What they have in common',
         paras: [
           'Both require the work to pass through them. A system somebody bypasses over WhatsApp is not a system, whether it cost a hundred thousand or nothing at all.',
-          'The difference is how easy it is to bypass. When the system covers one complete journey and speaks the language of the people working in it, going around it stops being the short way.',
+          'The difference is how easy it is to bypass. When the system covers one complete chain and speaks the language of the people working in it, going around it stops being the short way.',
         ],
       },
     ],
@@ -442,7 +442,7 @@ const pagesEn: Page[] = [
       {
         h2: 'What the system does',
         paras: [
-          'InPlace is a procurement-to-payment system, written in Hebrew and read right to left, with this English edition beside it. It connects the journey from the supplier to the bank transfer into one source of truth, and surfaces what needs action without becoming another crowded screen.',
+          'InPlace is a procurement-to-payment system, written in Hebrew and read right to left, with this English edition beside it. It connects the chain from the supplier to the bank transfer into one source of truth, and surfaces what needs action without becoming another crowded screen.',
         ],
       },
       {
@@ -461,7 +461,7 @@ const pagesEn: Page[] = [
       {
         h2: 'The three roles',
         paras: [
-          'Owner, procurement and accountant. All three work on the same journey, and none of them sees or does what belongs to another. The accountant is the only one who executes transfers, and payment always passes through an approved request carrying a reason and a record.',
+          'Owner, procurement and accountant. All three work on the same chain, and none of them sees or does what belongs to another. The accountant is the only one who executes transfers, and payment always passes through an approved request carrying a reason and a record.',
         ],
       },
       {
@@ -483,7 +483,7 @@ const pagesEn: Page[] = [
         h2: 'Character',
         paras: [
           'Clear, dependable, calm. An interface that handles other people’s money and is therefore never loud, never tries to surprise, and never asks for attention on its own account. The tool disappears into the task.',
-          'In practice that means the system carries no animation that does not signal state, no tiny low-contrast text, and no critical action hidden behind a hover.',
+          'In practice that means the system carries no animation that does not signal state, no tiny low-contrast text and no critical action hidden behind a hover.',
         ],
       },
       {
@@ -508,7 +508,7 @@ const pagesEn: Page[] = [
       {
         h2: 'Accessibility',
         paras: [
-          'The target is WCAG 2.1 level AA: text contrast of at least 4.5 to 1, full keyboard navigation, screen-reader labels, and respect for a system preference to reduce motion. The audience includes non-technical users, so every error is written in plain language rather than as a raw database message.',
+          'The target is WCAG 2.1 level AA: text contrast of at least 4.5 to 1, full keyboard navigation, screen-reader labels and respect for a system preference to reduce motion. The audience includes non-technical users, so every error is written in plain language rather than as a raw database message.',
           'Meaning never rests on colour alone. Every status also carries text or a mark, because a reader who does not distinguish a hue still needs to know what requires attention.',
         ],
       },

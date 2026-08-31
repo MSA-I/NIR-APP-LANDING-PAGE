@@ -95,7 +95,7 @@ const en = {
       {
         k: 'Exceptions',
         t: 'What does not match identifies itself',
-        p: 'The system compares the order, goods received and invoice, then marks amount mismatches, suspected duplicate invoices, unknown suppliers and payments without invoices. Every exception has a severity, owner and opening date.',
+        p: 'The system compares the order, goods received and invoice, then marks amount mismatches, suspected duplicate invoices, unknown suppliers and payments without invoices. Every exception carries a severity, an owner and the date it was opened.',
         img: 'assets/screen-owner-exceptions-en.webp',
         cap: 'Exceptions: <b>8 open exceptions</b>, two with high severity.',
       },
@@ -128,10 +128,10 @@ const en = {
   why: {
     folio: 'Chapter 03: why this approach',
     h2: 'Why not a spreadsheet, and why not an&nbsp;ERP',
-    lede: 'Today the work is split between a spreadsheet, WhatsApp, the accountant and a supplier ordering system. InPlace replaces that split with one journey, one source of truth and a clear owner for every step.',
+    lede: 'Today the work is split between a spreadsheet, WhatsApp, the accountant and a supplier ordering system. InPlace replaces that split with one chain, one source of truth and a clear owner for every step.',
     yesLabel: 'What InPlace does',
     yes: [
-      { t: 'One continuous journey', p: 'From suppliers and price lists to payment and bank reconciliation. One chain that does not leave the system halfway through.' },
+      { t: 'One continuous chain', p: 'From suppliers and price lists to payment and bank reconciliation. It does not leave the system halfway through.' },
       { t: 'An exception is a decision', p: 'The system distinguishes information, waiting, exception and completion. What deviates rises to the top instead of being buried in a report.' },
       { t: 'Only real data', p: 'A measure without data shows a dash, not zero. Zero is a statement about reality, and in a financial system that difference costs money.' },
       { t: 'Separated responsibility', p: 'Owner, procurement and accountant. Each person gets exactly what their role requires, and no more.' },
@@ -183,7 +183,7 @@ const en = {
       },
       {
         q: 'What happens when something does not agree?',
-        a: 'The system compares the order, what was actually received and the invoice, then opens an exception for amount mismatches, suspected duplicates, unknown suppliers or payments without invoices. Every exception has a severity, owner and opening date, and it cannot continue until somebody decides.',
+        a: 'The system compares the order, what was actually received and the invoice, then opens an exception for amount mismatches, suspected duplicates, unknown suppliers or payments without invoices. Every exception gets a severity, an owner and a date, and it cannot continue until somebody decides.',
       },
       {
         q: 'Who actually transfers the money?',
@@ -199,7 +199,7 @@ const en = {
       },
       {
         q: 'Is the product Hebrew or translated?',
-        a: 'Hebrew is the product’s source language, and the interface was built right to left from the ground up. Since 31.08.2026 the application also reads in English: every screen on this page is a capture of that edition. The data in it stays Israeli — supplier names, shekels, Israeli date order — because the businesses using it are.',
+        a: 'Hebrew is the product’s source language, and the interface was built right to left from the ground up. Since 31.08.2026 the application also reads in English: every screen on this page is a capture of that edition. The data in it stays Israeli — supplier names, shekels, Israeli date order. The businesses using it are Israeli too.',
       },
     ],
   },
