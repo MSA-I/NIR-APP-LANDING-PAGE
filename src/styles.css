@@ -491,6 +491,21 @@
   margin: 0;
 }
 .eyebrow--on-light { color: var(--color-oceanic-deep); }
+/* AND ONE MEASURED VALUE FOR THE LIGHT VIEW, for the same reason
+   `--color-ink-dim` carries one: the pair this label is made of does not clear
+   AA once the view flips.
+
+   `.eyebrow--on-light` means "on the plate", and in the light view the plate is
+   the DARK one — `--color-wheat-sink` is #12242c there — while
+   `--color-oceanic-deep` resolves to the light teal #5d9096. Measured
+   31.08.2026: 4.485:1 against a 4.5 floor. Two hundredths, on the one label
+   under every chapter heading.
+
+   #639aa0 is that teal lifted until it clears, and no further: 5.07:1 on the
+   sunken plate and 5.31 on the deep one. It is not a new colour in the palette,
+   it is the accent at the lightness the ground demands, and G7 is what says
+   which lightness that is. */
+:root[data-theme='light'] .eyebrow--on-light { color: #639aa0; }
 
 .lede {
   font-size: clamp(1.02rem, 1.35vw, 1.19rem);

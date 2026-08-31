@@ -39,12 +39,21 @@ const OUT = path.resolve('public/assets')
 
 /** capture name → shipped name, and the width the page declares for it. */
 const SHOTS = [
+  // The six the home page walks.
   ['office-orders', 'screen-office-orders', 2000],
   ['office-receiving', 'screen-office-receiving', 2000],
   ['office-invoices', 'screen-office-invoices', 2000],
   ['owner-exceptions', 'screen-owner-exceptions', 2000],
   ['owner-payment-requests', 'screen-owner-payment-requests', 2000],
   ['owner-dashboard-full', 'screen-owner-dashboard', 1800],
+  // And the six the supporting documents print. Their width is the one
+  // src/lib/page-html.ts declares for them, which is the same 2000.
+  ['office-suppliers', 'screen-office-suppliers', 2000],
+  ['office-credits', 'screen-office-credits', 2000],
+  ['office-prices', 'screen-office-prices', 2000],
+  ['owner-alerts', 'screen-owner-alerts', 2000],
+  ['owner-analytics', 'screen-owner-analytics', 2000],
+  ['accountant-bank', 'screen-accountant-bank', 2000],
 ]
 
 const kb = (f) => (statSync(f).size / 1024).toFixed(0)
