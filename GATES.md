@@ -2713,6 +2713,112 @@ the model and not the author. The draft shipped.
   the first clause carried nothing, and it now says "This is separation of
   duties".
 
+---
+
+## Round twenty-one — the outward-looking check stops answering two questions out of eight, 31.08.2026
+
+`check-live-catalogue.mjs` is the only thing in this repository that looks at the
+product rather than at the dictionary beside it. It was asked whether it still
+works. It does, and it always did: it connected, compared, and printed four
+green lines. The finding is what it was not being asked.
+
+### Two of eight
+
+The pricing chapter publishes eight kinds of figure. The script compared two —
+the monthly price and the document quota — and the other six had never been
+looked at by anything: the yearly catalogue, the discount badge, active users,
+locations, the fifteen-row capability ladder, and the whole Business column.
+
+Worse than the gap was how the gap was hidden. The script read `dist/` with a
+regular expression and filtered out whatever was not a digit. The page grew a
+fifth card on 28.08.2026; "בשיחה" and "חוזי" fell out of the arrays before
+anything was compared, and a five-card page went on being lined up against a
+four-plan catalogue **by luck**. Nothing counted the cards. A sixth card, or a
+priced Business, would have shifted every comparison by one and still printed
+`OK` four times.
+
+### What it does now
+
+Reads three live read models, then opens the built page in a real browser —
+both editions, 1440px and 390px — and holds every published figure to the
+product. Joined on `data-plan-key` rather than on a plan's name, because the
+name is the thing that differs between editions; the key is new in `he.ts` and
+`en.ts` and is the first leaf in either that is not copy.
+
+Every figure is read **twice**: once as an attribute, once as the text drawn on
+the screen. A contract-only check cannot see a card whose `data-plan-price` is
+right and whose rendered number is wrong, and that is the failure a reader
+actually meets. The billing switch is pressed and the yearly figures are read
+off the pixels the same way.
+
+Three verdicts, because they need three different actions. `MISMATCH`: the page
+and the product state different figures. `UNVERIFIABLE`: the page states a
+figure the product does not publish at all — no proof either way, usually a
+migration that has not been deployed. `SILENT`: the product publishes a figure
+the page does not show, reported and not failed, because DEBT 31 records three
+of those as owner decisions.
+
+### The report was the second finding
+
+The first working version emitted 96 lines: four plans times twelve rows times
+two editions, each politely restating that one read model is missing. A report
+that says the same thing ninety-six times has buried its own finding. Causes are
+grouped now — 12 lines over 96 cells — and the exit summary counts causes,
+because a cause is what somebody has to fix.
+
+### What it found
+
+- **2 MISMATCH.** The discount badge, in both editions. DEBT 33 already carried
+  it; it is now measured rather than remembered, by dividing the live yearly
+  amount by twelve live monthly ones.
+- **12 UNVERIFIABLE over 96 cells.** Production is on migration `0242`; the
+  application's repository is on `0266`. The whole capability ladder the page
+  sells arrives in `0246`, which has not been deployed — so `users.max` has no
+  number there, `branches.max` does not exist, and
+  `get_public_plan_features()` is not on the database at all. New DEBT 34.
+- **2 SILENT.** `ocr_pages.monthly` and `assistant_runs.monthly`, both already
+  recorded in DEBT 31 as deliberate.
+
+And the direction is the opposite of the usual worry: in production every
+boolean capability is `true` on every plan, so **the page promises less than the
+product currently gives**. A Basic customer signing today gets bank
+reconciliation, the accountant payment queue and consolidated invoices, and the
+page tells them they do not.
+
+### G2 had to grow, and did not have to weaken
+
+The plan key is a new leaf in `he.ts`, and G2 failed every new leaf outright.
+That was right while every leaf in that file was copy. It now carries an
+`ADDED` list with the same discipline as `APPROVED`: an unlisted addition still
+fails, a listed addition whose value moved fails, and an entry describing a leaf
+that is not actually new fails. Both of the first two were run as controls and
+both went red before the list was proved sound.
+
+### Verification
+
+| what | result |
+|---|---|
+| Five faults injected into the catalogue (monthly, yearly, card quota, ladder quota, a priced Business) | all five named individually; the English edition stayed clean |
+| The yearly fault | caught twice — once as an attribute, once as the rendered figure after the switch |
+| G2 controls: an unlisted new leaf; a listed leaf whose value moved | both FAILED, as intended; PASS restored on revert |
+| `npm run build` | typecheck and build clean |
+| The suite | **26 met, 0 unmet** |
+
+### What this round does not claim
+
+- **Nothing was fixed on the page, and nothing should be.** All twelve
+  unverifiable groups are the application being behind, not the page being
+  wrong. The page leads the product, as BRIEF.md §11 already says.
+- **It is still not a gate.** It needs the network and the product's key, so
+  nothing in CI will stop a deploy that skips it. It has to be run by hand
+  before the page goes up, and DEBT 1 says so.
+- **The Business column is unverifiable by construction.** Every public read
+  model excludes it server-side, so the only assertion available is that the
+  card prints no figure — which is asserted.
+- **`chain` and `roles` are not checked against anything.** They are what the
+  product is rather than entitlements, and the mapping says so out loud instead
+  of resolving to undefined and reporting nothing.
+
 ## Round twenty-two — an English business, not a Hebrew one in English, 31.08.2026
 
 Round nineteen shipped the home page's six screens in both languages and wrote
