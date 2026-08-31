@@ -6,3 +6,4 @@ cad_mcp.log
 .unlazy/
 .audit/
 .claude/worktrees/
+.wrangler/
