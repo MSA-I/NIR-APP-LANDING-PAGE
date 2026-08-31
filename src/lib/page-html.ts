@@ -12,7 +12,7 @@
 //
 // Rendered by scripts/prerender.mjs, straight into dist/<slug>/index.html.
 
-import type { Page, Section } from '@/content/pages'
+import pagesHe, { type Page, type Section } from '@/content/pages'
 import type { LocaleCode } from '@/content/locales'
 import { peopleByLocale, fullName, type Person } from '@/content/people'
 import { emphasiseBrand } from '@/lib/motion'
@@ -107,6 +107,11 @@ const MARK =
 const pathOf = (slug: string, locale: LocaleCode) =>
   locale === 'he' ? `/${slug}/` : `/en/${slug}/`
 
+// Every slug this site publishes, read off the Hebrew dictionary because the two
+// editions carry the same set. `linkify` checks against it, so a typo in a link
+// fails the build rather than shipping a 404 inside a sentence.
+const SLUGS = new Set(pagesHe.pages.map((p) => p.slug))
+
 const escape = (s: string) =>
   s.replace(/&(?!(?:[a-zA-Z]+|#\d+);)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
@@ -115,7 +120,34 @@ const escape = (s: string) =>
 const attr = (s: string) =>
   s.replace(/&(?!(?:[a-zA-Z]+|#\d+);)/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
-const copy = (s: string) => emphasiseBrand(s)
+/**
+ * A link to another page of this site, from inside a sentence.
+ *
+ * WHY A NOTATION AND NOT AN <a> IN THE DICTIONARY
+ * The same paragraph exists twice, once per edition, and the two editions live
+ * at different paths: /invoice-matching/ and /en/invoice-matching/. An <a>
+ * written by hand in src/content/pages.en.ts would send an English reader to
+ * the Hebrew page, and it would do it silently. `[[slug|anchor]]` carries the
+ * destination as a slug and lets `pathOf` resolve the edition, so a link
+ * cannot cross editions by accident.
+ *
+ * The SEO audit of 31.08.2026 found the reason this exists: every internal link
+ * on the site came from the further-reading block at the foot of each page, so
+ * every link to /procurement-software/ carried the same four words as its
+ * anchor, and /about/ (which holds both founders and both Person nodes) had
+ * exactly one inbound link on the whole site.
+ */
+const LINK_RE = /\[\[([a-z-]+)\|([^\]]+)\]\]/g
+
+const linkify = (s: string, locale: LocaleCode) =>
+  s.replace(LINK_RE, (_, slug: string, anchor: string) => {
+    if (!SLUGS.has(slug)) {
+      throw new Error(`copy links to "${slug}", which is not a page of this site`)
+    }
+    return `<a class="doc-link" href="${pathOf(slug, locale)}">${anchor}</a>`
+  })
+
+const copy = (s: string, locale: LocaleCode = 'he') => emphasiseBrand(linkify(s, locale))
 
 /**
  * One founder, as 21st.dev's team-member-card.
@@ -147,7 +179,7 @@ const copy = (s: string) => emphasiseBrand(s)
  * the page's own tokens, exactly as the flow button, the plan cards, the FAQ
  * panels and the colophon were.
  */
-const founder = (p: Person) => `
+const founder = (p: Person, locale: LocaleCode) => `
           <div class="doc-member" data-person="${attr(fullName(p))}">
             <p class="doc-member__role">${escape(p.jobTitle)}</p>
             <div class="doc-member__row">${
@@ -178,7 +210,7 @@ const founder = (p: Person) => `
                   p.bio.length
                     ? `
                 <div class="doc-member__bio">
-                  ${p.bio.map((para) => `<p>${copy(para)}</p>`).join('\n                  ')}
+                  ${p.bio.map((para) => `<p>${copy(para, locale)}</p>`).join('\n                  ')}
                 </div>`
                     : ''
                 }
@@ -220,18 +252,18 @@ const answerOf = (s: Section) =>
 const section = (s: Section, locale: LocaleCode) => `
         <section class="doc-section"${s.ask ? ` data-faq-q="${attr(s.h2)}"` : ''}>
           <h2>${escape(s.h2)}</h2>
-          ${(s.paras || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
+          ${(s.paras || []).map((p) => `<p class="body">${copy(p, locale)}</p>`).join('\n          ')}
           ${
             s.people
-              ? `<p class="body">${copy(peopleByLocale[locale].intro)}</p>
-          ${founder(peopleByLocale[locale].nir)}
-          ${founder(peopleByLocale[locale].moshe)}`
+              ? `<p class="body">${copy(peopleByLocale[locale].intro, locale)}</p>
+          ${founder(peopleByLocale[locale].nir, locale)}
+          ${founder(peopleByLocale[locale].moshe, locale)}`
               : ''
           }
           ${
             s.list
               ? `<ul class="doc-list" aria-label="${attr(s.list.label)}">
-            ${s.list.items.map((i) => `<li>${copy(i)}</li>`).join('\n            ')}
+            ${s.list.items.map((i) => `<li>${copy(i, locale)}</li>`).join('\n            ')}
           </ul>`
               : ''
           }
@@ -244,14 +276,14 @@ const section = (s: Section, locale: LocaleCode) => `
                 )}</th></tr></thead>
               <tbody>
                 ${s.table.rows
-                  .map((r) => `<tr><td>${copy(r[0])}</td><td>${copy(r[1])}</td></tr>`)
+                  .map((r) => `<tr><td>${copy(r[0], locale)}</td><td>${copy(r[1], locale)}</td></tr>`)
                   .join('\n                ')}
               </tbody>
             </table>
           </div>`
               : ''
           }
-          ${(s.after || []).map((p) => `<p class="body">${copy(p)}</p>`).join('\n          ')}
+          ${(s.after || []).map((p) => `<p class="body">${copy(p, locale)}</p>`).join('\n          ')}
         </section>`
 
 /**
@@ -592,6 +624,17 @@ const STYLE = `
         line-height: 1.25; color: var(--color-ink); margin-block-end: 0.85rem; text-wrap: balance; }
       .doc-section { margin-block-start: clamp(2.25rem, 5vh, 3.25rem); }
       .doc-section p + p { margin-block-start: 0.9rem; }
+      /* A link inside a sentence. Underlined rather than coloured alone, because
+         the semantic colour language reserves colour for state and a link is not
+         a state; the offset keeps the rule off the Hebrew descenders. */
+      .doc-link { color: inherit; text-decoration: underline;
+        text-decoration-color: var(--color-oceanic);
+        text-decoration-thickness: 1.5px; text-underline-offset: 0.22em;
+        transition: text-decoration-color 0.15s ease, color 0.15s ease; }
+      .doc-link:hover { color: var(--color-oceanic-deep);
+        text-decoration-color: var(--color-oceanic-deep); }
+      html[data-theme="dark"] .doc-link:hover,
+      :root:not([data-theme="light"]) .doc-link:hover { color: var(--color-oceanic); }
       .doc-list { margin-block-start: 1rem; margin-block-end: 1rem; padding-inline-start: 1.15rem;
         display: grid; gap: 0.6rem; list-style: disc; }
       .doc-list li::marker { color: var(--color-oceanic); }
@@ -909,8 +952,8 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
     <div class="wrap doc">
       <main>
         <p class="eyebrow">${escape(page.eyebrow)}</p>
-        <h1>${copy(page.h1)}</h1>
-        <p class="lede">${copy(page.lede)}</p>${page.image ? picture(page.image) : ''}
+        <h1>${copy(page.h1, locale)}</h1>
+        <p class="lede">${copy(page.lede, locale)}</p>${page.image ? picture(page.image) : ''}
 ${page.sections.map((s) => section(s, locale)).join('\n')}
 
 ${
@@ -921,7 +964,7 @@ ${
         </div>`
             : `
         <div class="doc-cta">
-          <p class="body">${copy(t.ctaLine)}</p>
+          <p class="body">${copy(t.ctaLine, locale)}</p>
           ${pill(cta.href, escape(cta.label), 'primary', false)}
           <p class="cap">${escape(cta.note)}</p>
         </div>

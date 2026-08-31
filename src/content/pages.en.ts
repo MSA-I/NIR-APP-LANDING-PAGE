@@ -48,7 +48,7 @@ const pagesEn: Page[] = [
       {
         h2: 'Three roles, duties kept apart',
         paras: [
-          'Separation of duties is not a setting somebody has to remember to switch on. It is the structure of the system, and each role sees and does only what belongs to it.',
+          'Separation of duties is not a setting somebody has to remember to switch on. It is [[about|the structure of the system]], and each role sees and does only what belongs to it.',
         ],
         table: {
           headers: ['Role', 'What they do'],
@@ -87,8 +87,8 @@ const pagesEn: Page[] = [
         h2: 'What happens when something does not match',
         ask: true,
         paras: [
-          'The system compares what you ordered, what you received and what you were asked to pay. When the three disagree, the invoice stops and waits for a decision. It is not deleted, not approved automatically, and not left quietly in a folder until somebody notices it.',
-          'The owner sees the mismatch as something that needs attention, not as a line in a monthly report. That is the difference between a system that manages a process and a system that enables a decision: a screen that only displays data is an operational screen, not a decision screen.',
+          '[[invoice-matching|The system compares what you ordered, what you received and what you were asked to pay]]. When the three disagree, the invoice stops and waits for a decision. It is not deleted, not approved automatically, and not left quietly in a folder until somebody notices it.',
+          'The owner sees the mismatch as something that needs attention, not as a line in a monthly report. That is the difference between a system that manages a process and a system that enables a decision: a screen that only displays data is [[about|an operational screen, not a decision screen]].',
         ],
       },
       {
@@ -162,7 +162,7 @@ const pagesEn: Page[] = [
           items: [
             'Not another metrics screen with no decision on it',
             'Not an expense product that measures value by how much you spent',
-            'Not a general ERP for every department in the organisation',
+            'Not [[vs-erp|a general ERP for every department in the organisation]]',
             'Not a loud or colourful SaaS brand. The system handles other people’s money',
           ],
         },
@@ -206,7 +206,7 @@ const pagesEn: Page[] = [
           label: 'The path of a single invoice',
           items: [
             'The invoice arrives and receives a row, a status and a link to its order',
-            'The system compares what was ordered, what was received and what is being claimed',
+            '[[invoice-matching|The system compares what was ordered, what was received and what is being claimed]]',
             'Whatever does not match stops and waits for a decision, instead of surfacing at month end',
             'After approval, a payment request is created',
             'The accountant executes the approved payment and uploads the confirmation',
@@ -246,7 +246,7 @@ const pagesEn: Page[] = [
         h2: 'The record',
         paras: [
           'Every sensitive financial action is recorded, on every plan, the free one included. A confirmation uploaded after payment stays attached to the invoice and to the order everything started from.',
-          'A record is not an addition for the annual audit. It is what makes it possible to answer “who approved this, and why” without searching somebody else’s inbox.',
+          'A record is not an addition for the annual audit. It is what makes it possible to answer [[about|“who approved this, and why”]] without searching somebody else’s inbox.',
         ],
       },
       {
@@ -271,7 +271,7 @@ const pagesEn: Page[] = [
         h2: 'What is left when someone leaves the business',
         ask: true,
         paras: [
-          'In work split between mail, chat and a spreadsheet, a great deal of the knowledge sits with a person. Who agreed what with the supplier, why that price was approved, where the confirmation is. When the person leaves, it leaves with them.',
+          'In [[vs-spreadsheet|work split between mail, chat and a spreadsheet]], a great deal of the knowledge sits with a person. Who agreed what with the supplier, why that price was approved, where the confirmation is. When the person leaves, it leaves with them.',
           'Here the knowledge sits on the document. The confirmation is filed on the invoice rather than in a separate folder, the reason for an approval is kept with the approval, and a credit note is linked to the invoice it came from. None of it depends on a particular person still being here.',
           'That is what the question “who approved this, and why” means, when it can be answered without searching someone else’s mailbox.',
         ],
@@ -304,7 +304,7 @@ const pagesEn: Page[] = [
         h2: 'Two numbers, one supplier',
         paras: [
           'The purchase order to the supplier said one amount. The invoice from that same supplier asked for another. Without a system, nobody puts the two side by side, and what the invoice says is what gets paid.',
-          'This is not a rare fault. It is the default of work split between a spreadsheet, a WhatsApp group and an email folder.',
+          'This is not a rare fault. It is the default of [[vs-spreadsheet|work split between a spreadsheet, a WhatsApp group and an email folder]].',
         ],
       },
       {
@@ -315,7 +315,7 @@ const pagesEn: Page[] = [
           items: [
             'What was ordered: the purchase order and the price list it was built from',
             'What was received: the goods receipt, marked off from a phone at the receiving door',
-            'What is being claimed: the invoice that arrived from the supplier',
+            'What is being claimed: [[supplier-invoices|the invoice that arrived from the supplier]]',
           ],
         },
         after: [
@@ -382,7 +382,7 @@ const pagesEn: Page[] = [
         ask: true,
         paras: [
           'When someone settles a mismatch, the ruling itself is a record. Who approved it, when, and what the reason was. That is kept with the document rather than in the memory of whoever was there.',
-          'The practical value shows up months later, when the question is why this supplier was paid a different price from the one on their list. The answer sits on the invoice, not in the mailbox of someone who has left.',
+          'The practical value shows up months later, when the question is [[about|why this supplier was paid a different price from the one on their list]]. The answer sits on the invoice, not in the mailbox of someone who has left.',
           'Every sensitive financial action is recorded on every plan, the free one included. A record is not a capability you buy in an upgrade.',
         ],
       },
@@ -444,7 +444,7 @@ const pagesEn: Page[] = [
           headers: ['In a spreadsheet', 'In InPlace'],
           rows: [
             ['A row somebody typed', 'A document with a status and a link to the order it came from'],
-            ['A manual comparison, if somebody remembers', 'An automatic comparison of order, receipt and invoice'],
+            ['A manual comparison, if somebody remembers', '[[invoice-matching|An automatic comparison of order, receipt and invoice]]'],
             ['Anyone who has the link', 'Three roles and separation of duties'],
             ['Partial change history', 'A record of every sensitive financial action'],
           ],
@@ -470,7 +470,7 @@ const pagesEn: Page[] = [
         h2: 'When it is worth moving',
         ask: true,
         paras: [
-          'When more than one person touches the same purchase. The moment an order passes between procurement, whoever receives the goods and the accountant, the spreadsheet no longer describes reality but only a part of it.',
+          'When more than one person touches the same purchase. The moment an order passes between [[about|procurement, whoever receives the goods and the accountant]], the spreadsheet no longer describes reality but only a part of it.',
           'You can start with one supplier and leave the spreadsheet open beside the system. Comparing the two after a month is the most honest test available.',
         ],
       },
@@ -479,7 +479,7 @@ const pagesEn: Page[] = [
         ask: true,
         paras: [
           'This is not a question of how well the spreadsheet is built. You can put formulas in it that turn every gap between two columns red, and it still stops nothing, because the payment does not pass through it. It happens somewhere else: at the bank, on the phone, in a transfer someone made because the supplier called.',
-          'A system stops things because it sits on the route. The payment request is created inside it, the approval is given inside it, and the accountant pays from it. An invoice that was never checked simply has no way to become an approved request.',
+          'A system stops things because it sits on the route. [[supplier-invoices|The payment request is created inside it, the approval is given inside it, and the accountant pays from it]]. An invoice that was never checked simply has no way to become an approved request.',
           'The difference is not between a clever tool and a dim one. It is between a tool that describes reality and a tool that reality passes through.',
         ],
       },
@@ -553,7 +553,7 @@ const pagesEn: Page[] = [
         ask: true,
         paras: [
           'When the organisation needs one system for manufacturing, inventory, people, finance and procurement, and when it has the time and the people for an implementation of that size. In that case the ERP’s procurement module works against the same data as the rest of the organisation, and that is worth something.',
-          'The businesses InPlace was built for sit on the other side of that line: they need control over procurement now, not a project.',
+          'The businesses InPlace was built for sit on the other side of that line: they need [[procurement-software|control over procurement now]], not a project.',
         ],
       },
       {
@@ -568,7 +568,7 @@ const pagesEn: Page[] = [
         ask: true,
         paras: [
           'It happens. An organisation with an ERP running manufacturing and inventory can still suffer from procurement managed over WhatsApp, because the ERP’s procurement module was never implemented to the end.',
-          'In that case the question is not which system wins but where the payment decision is taken. Whichever system holds that decision should also hold the comparison that leads to it.',
+          'In that case the question is not which system wins but [[invoice-matching|where the payment decision is taken]]. Whichever system holds that decision should also hold the comparison that leads to it.',
         ],
       },
       {
@@ -592,7 +592,7 @@ const pagesEn: Page[] = [
         ask: true,
         paras: [
           'In an ERP, permissions are built during implementation, to whatever the organisation asks for. That is flexible, and that is exactly the weakness: a separation of duties somebody configured is a separation somebody can unconfigure, usually under pressure and in the middle of a month.',
-          'Here there are three roles and no more: owner, procurement manager and accountant. They cannot be redefined, and what each of them sees and does is fixed in the structure of the system. The accountant is the only one who moves money, and the procurement manager does not touch payments or the bank at all.',
+          'Here there are three roles and no more: owner, procurement manager and accountant. They cannot be redefined, and what each of them sees and does is [[about|fixed in the structure of the system]]. The accountant is the only one who moves money, and the procurement manager does not touch payments or the bank at all.',
           'The cost is flexibility. What you get for it is that the separation still exists in the third month, when nobody remembers why it was set up that way.',
         ],
       },

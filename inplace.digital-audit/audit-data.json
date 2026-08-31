@@ -1,6 +1,6 @@
 {
   "summary": {
-    "health_score": 91,
+    "health_score": 93,
     "business_type": "B2B SaaS — procurement-to-payment, bilingual he-IL / en-US, selling to Israeli SMBs",
     "audit_date": "2026-08-31",
     "site_age_days": 3,
@@ -28,14 +28,14 @@
       "FAQPage declared on all six supporting pages in both editions — 50 questions, verified live",
       "LinkedIn Company Page created and declared in Organization sameAs on all 18 pages — DEBT.md §21 closed",
       "All five commercial pages deepened in both editions, 15 new sections, roughly +60 to +76 per cent of body copy each, every claim traced to a source document",
-      "English share card rendered from the same template and wired to the nine /en/ pages"
+      "English share card rendered from the same template and wired to the nine /en/ pages",
+      "Internal linking rebuilt: 32 contextual links, /about/ from 1 inbound link to 12, all anchors distinct"
     ],
     "still_open": [
       "No content hub",
-      "English brand-name collision with InPlace Software",
-      "/about/ has one inbound link; all internal anchors are identical and non-contextual"
+      "English brand-name collision with InPlace Software"
     ],
-    "score_history": "81 at audit, then 87, 88, 91 through the day's fixes; 91 with the English share card"
+    "score_history": "81 at audit, then 87, 88, 91 through 31.08.2026; 93 with internal linking rebuilt on 01.09.2026"
   },
   "categories": [
     {
@@ -77,7 +77,7 @@
     },
     {
       "name": "Content Quality",
-      "score": 84,
+      "score": 92,
       "weight": 23,
       "what_works": [
         "The prose is concrete, names the failure it prevents, and does not pad; no AI slop anywhere on the site",
@@ -85,7 +85,8 @@
         "Two founder Person entities carry substantive biographies, and every sub-page WebPage node declares an author linked by @id to one of them",
         "The company publishes a street address, a registration number and two phone numbers",
         "The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews",
-        "The five commercial pages now carry a worked three-way-match example, the four alert types, what is kept from a decision, why there is no route around the approval, what happens after the payment, why an invoice is never deleted, why a spreadsheet cannot stop a payment, and what an ERP does that this does not"
+        "The five commercial pages now carry a worked three-way-match example, the four alert types, what is kept from a decision, why there is no route around the approval, what happens after the payment, why an invoice is never deleted, why a spreadsheet cannot stop a payment, and what an ERP does that this does not",
+        "32 contextual links inside sentences, 16 per edition, with sixteen distinct Hebrew anchors and every destination covered; a build-time check makes a mistyped slug fail the build rather than ship a broken link"
       ],
       "findings": [
         {
@@ -102,16 +103,18 @@
           "recommendation": "Open a Hebrew-first content section with 5-8 pages on topics the founders actually know: three-way matching for small businesses, separation of duties in procurement, what Israel Invoices changed, common supplier payment errors, and migrating from a spreadsheet. Defer English content until the brand disambiguation work lands."
         },
         {
-          "title": "The page carrying the trust signals has one inbound link",
-          "severity": "Medium",
-          "description": "/about/ holds both founder biographies, both portraits and both Person entities. Exactly one internal link points at it, from the home page. The other sixteen pages do not link to it at all.",
-          "recommendation": "Add contextual in-body links from all 16 other pages, anchored where the copy already refers to practical experience or names a founder."
+          "title": "The page carrying the trust signals had one inbound link — FIXED",
+          "severity": "Resolved",
+          "description": "/about/ holds both founder biographies, both portraits and both Person entities. Exactly one internal link points at it, from the home page. The other sixteen pages do not link to it at all. RESOLVED: /about/ now has twelve inbound contextual links, six per edition, placed inside sentences that were already making the point they link on.",
+          "recommendation": "Done.",
+          "resolved": "2026-09-01"
         },
         {
-          "title": "All internal anchor text is identical and non-contextual",
-          "severity": "Medium",
-          "description": "Every link to /procurement-software/ reads 'tochnat rechesh'; every link to /invoice-matching/ reads 'hat'amat cheshbonit'. They all originate in the same further-reading block at the foot of each page. Not one contextual link exists inside a paragraph anywhere on the site.",
-          "recommendation": "Vary the anchor text and place links inside body paragraphs, where they carry more weight and read as editorial rather than navigational."
+          "title": "All internal anchor text was identical and non-contextual — FIXED",
+          "severity": "Resolved",
+          "description": "Every link to /procurement-software/ reads 'tochnat rechesh'; every link to /invoice-matching/ reads 'hat'amat cheshbonit'. They all originate in the same further-reading block at the foot of each page. Not one contextual link exists inside a paragraph anywhere on the site. RESOLVED: 32 contextual links now render across the supporting pages, 16 per edition, and all sixteen Hebrew anchors are distinct. Every destination has inbound contextual links: /about/ 12, /invoice-matching/ 8, /supplier-invoices/ 4, /vs-spreadsheet/ 4, /procurement-software/ 2, /vs-erp/ 2. They are placed by a [[slug|anchor]] notation in the dictionaries rather than by hand-written anchors, because the same paragraph exists in two editions at two different paths and an <a> written into the English file would have sent an English reader to the Hebrew page silently. linkify resolves the path per edition and throws on a slug the site does not publish, so a typo fails the build instead of shipping a 404 inside a sentence.",
+          "recommendation": "Done. No copy was reworded to make room for a link: where a sentence had nothing worth linking, it did not get one.",
+          "resolved": "2026-09-01"
         }
       ]
     },
@@ -319,8 +322,8 @@
         "name": "Phase 3: Content & Authority",
         "timeframe": "Then",
         "items": [
-          "Add contextual in-body links to /about/ from the 16 pages that currently do not link to it.",
-          "Vary internal anchor text and place links inside body paragraphs rather than only in the further-reading block. 18 pages.",
+          "DONE 01.09.2026 — Add contextual in-body links to /about/ from the 16 pages that currently do not link to it.",
+          "DONE 01.09.2026 — Vary internal anchor text and place links inside body paragraphs rather than only in the further-reading block. 18 pages.",
           "Open a Hebrew-first content hub with 5-8 pages on three-way matching, separation of duties, Israel Invoices, common supplier payment errors and migrating from a spreadsheet.",
           "Verify the site in Bing Webmaster Tools for crawl and query reporting. IndexNow is already automated and needs no work. One verification."
         ]

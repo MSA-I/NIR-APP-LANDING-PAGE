@@ -110,14 +110,14 @@ while the image speaks Hebrew.
 
 ## Phase 3 — Content and authority
 
-### 3.1 Link to `/about/` from inside the body copy
+### 3.1 Link to `/about/` from inside the body copy  ·  DONE 01.09.2026
 
 **Scope:** 16 pages, one link each.
 
 `/about/` holds both founder biographies, both portraits and both `Person` entities, and has exactly
 one inbound link. When a page says "מתוך ניסיון מעשי" or names a founder, that is where the link goes.
 
-### 3.2 Vary the anchor text and put links inside paragraphs
+### 3.2 Vary the anchor text and put links inside paragraphs  ·  DONE 01.09.2026
 
 **Scope:** the "להמשך קריאה" block plus in-body links across 18 pages.
 
