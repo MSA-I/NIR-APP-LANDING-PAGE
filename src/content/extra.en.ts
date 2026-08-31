@@ -72,7 +72,11 @@ const extraEn = {
       'A record of every sensitive financial action',
     ],
     yearly: ['No charge', '$200', '$790', '$1,490', 'Contact us'],
-    saveLabel: '30% off',
+    // See the note in extra.ts. The dollar catalogue is built the same way as
+    // the shekel one -- $200 against $240, $790 against $948, $1,490 against
+    // $1,788 -- so this edition can say the same true thing, and the badge no
+    // longer promises a discount the prices under it do not give.
+    saveLabel: 'Two months free',
     billedMonthly: 'Billed monthly',
     billedYearly: 'Billed yearly',
   },

@@ -154,21 +154,25 @@ export default {
     yearly: ['ללא עלות', '690 ₪', '2,490 ₪', '4,490 ₪', 'בשיחה'],
     // The saving badge on the billing control.
     //
-    // IT DOES NOT MATCH THE CATALOGUE, AND THAT IS THE OWNER'S CALL OF
-    // 28.08.2026. The yearly row in NIR-APP 0184 is TEN months of the monthly
-    // one by construction: 690 against 828, 2,490 against 2,988, 4,490 against
-    // 5,388. Every one of those is 16.67% off, and the badge says 30%. It read
-    // "two months free" until this round, which is the same fact in the
-    // catalogue's own words.
+    // It says what the catalogue does, in the catalogue's own words. The yearly
+    // row in NIR-APP 0184 is TEN months of the monthly one by construction:
+    // 690 against 828, 2,490 against 2,988, 4,490 against 5,388, and the dollar
+    // catalogue is built the same way. Two months, exactly, in every row.
     //
-    // The two ways to make it true are a change to the yearly prices in that
-    // migration, or a badge that says 17%. Until one of them happens this line
-    // is a claim the prices under it contradict; DEBT.md 24 carries it.
+    // It said "30% הנחה" from 28.08.2026 until 31.08.2026, and for those three
+    // days the badge promised nearly double what the prices beneath it gave —
+    // a gap any reader with a calculator closes in twenty seconds, on the one
+    // page whose entire job is to be believed about money.
     //
-    // The yearly billing line lost "12 months for the price of 10" in the same
-    // move, because a card cannot print the real ratio one line under a badge
-    // that disagrees with it.
-    saveLabel: '30% הנחה',
+    // Three ways out were put to the owner: drop the yearly prices to a real
+    // 20%, say 17%, or say the thing that was already true. He chose the third,
+    // 31.08.2026. It costs no revenue, needs no migration in the product, and
+    // reads better than either percentage.
+    //
+    // A PERCENTAGE HERE IS A CLAIM ABOUT NIR-APP'S CATALOGUE, NOT A COPY
+    // DECISION. If this line is ever made to quote one again, the number has to
+    // come from those two catalogues and not from a marketing instinct.
+    saveLabel: 'חודשיים חינם',
     billedMonthly: 'חיוב חודשי',
     billedYearly: 'חיוב שנתי',
   },
