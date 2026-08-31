@@ -1,6 +1,6 @@
 # AI Search Readiness
 
-**Score: 88/100**  (weight 10%)
+**Score: 90/100**  (weight 10%)
 
 Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 
@@ -15,6 +15,7 @@ Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 - 58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit
 - The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about
 - 78 questions are declared across the supporting pages, up from 50, each one printed on the page and held to it in both directions by g21-schema
+- The guides add 26 question-and-answer pairs aimed at what a buyer asks before they know the product exists, which is the shape an answer engine retrieves against
 
 ## Findings
 

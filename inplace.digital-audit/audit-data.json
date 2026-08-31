@@ -1,6 +1,6 @@
 {
   "summary": {
-    "health_score": 93,
+    "health_score": 94,
     "business_type": "B2B SaaS — procurement-to-payment, bilingual he-IL / en-US, selling to Israeli SMBs",
     "audit_date": "2026-08-31",
     "site_age_days": 3,
@@ -29,13 +29,14 @@
       "LinkedIn Company Page created and declared in Organization sameAs on all 18 pages — DEBT.md §21 closed",
       "All five commercial pages deepened in both editions, 15 new sections, roughly +60 to +76 per cent of body copy each, every claim traced to a source document",
       "English share card rendered from the same template and wired to the nine /en/ pages",
-      "Internal linking rebuilt: 32 contextual links, /about/ from 1 inbound link to 12, all anchors distinct"
+      "Internal linking rebuilt: 32 contextual links, /about/ from 1 inbound link to 12, all anchors distinct",
+      "Content hub opened at /guides/ with three guides in both editions"
     ],
     "still_open": [
-      "No content hub",
-      "English brand-name collision with InPlace Software"
+      "English brand-name collision with InPlace Software",
+      "Content hub: three of the five to eight guides written"
     ],
-    "score_history": "81 at audit, then 87, 88, 91 through 31.08.2026; 93 with internal linking rebuilt on 01.09.2026"
+    "score_history": "81 at audit, then 87, 88, 91, 93 through 31.08 and 01.09; 94 with the content hub open"
   },
   "categories": [
     {
@@ -77,7 +78,7 @@
     },
     {
       "name": "Content Quality",
-      "score": 92,
+      "score": 94,
       "weight": 23,
       "what_works": [
         "The prose is concrete, names the failure it prevents, and does not pad; no AI slop anywhere on the site",
@@ -86,7 +87,8 @@
         "The company publishes a street address, a registration number and two phone numbers",
         "The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews",
         "The five commercial pages now carry a worked three-way-match example, the four alert types, what is kept from a decision, why there is no route around the approval, what happens after the payment, why an invoice is never deleted, why a spreadsheet cannot stop a payment, and what an ERP does that this does not",
-        "32 contextual links inside sentences, 16 per edition, with sixteen distinct Hebrew anchors and every destination covered; a build-time check makes a mistyped slug fail the build rather than ship a broken link"
+        "32 contextual links inside sentences, 16 per edition, with sixteen distinct Hebrew anchors and every destination covered; a build-time check makes a mistyped slug fail the build rather than ship a broken link",
+        "A content hub at /guides/ with three guides in both editions, 26 declared questions between them, each linked into the product pages and each carrying the limits of its own advice"
       ],
       "findings": [
         {
@@ -97,10 +99,11 @@
           "resolved": "2026-08-31"
         },
         {
-          "title": "There is no content hub",
-          "severity": "High",
-          "description": "Nine pages per language, all of them product or legal. No blog, no guides, no glossary. For a domain with no backlink profile and no history this is the missing growth surface, and question-shaped content is also what AI answer engines retrieve against most readily.",
-          "recommendation": "Open a Hebrew-first content section with 5-8 pages on topics the founders actually know: three-way matching for small businesses, separation of duties in procurement, what Israel Invoices changed, common supplier payment errors, and migrating from a spreadsheet. Defer English content until the brand disambiguation work lands."
+          "title": "There was no content hub — OPENED, three of five to eight guides",
+          "severity": "Partly resolved",
+          "description": "Nine pages per language, all of them product or legal. No blog, no guides, no glossary. For a domain with no backlink profile and no history this is the missing growth surface, and question-shaped content is also what AI answer engines retrieve against most readily. OPENED 01.09.2026 under /guides/, with three guides in both editions: separation of duties (the rule the whole product rests on and no page explained), the five recurring supplier payment mistakes and which comparison catches each, and what to do when a supplier invoice is wrong. The sitemap went from 18 URLs to 24, all paired with hreflang. Nested slugs needed no new machinery. Each guide answers a question somebody types before they have heard of the product, and each ends on the honest limit rather than the pitch: what no check will catch, and that a credit note is a promise until the bank transaction matches it.",
+          "recommendation": "Two to five more guides to reach the original target. The next by value: what to check before paying a new supplier, and how to move off a spreadsheet without stopping the business. Both need care about sourcing, which is what kept the Israeli tax specifics off the commercial pages.",
+          "resolved": "2026-09-01"
         },
         {
           "title": "The page carrying the trust signals had one inbound link — FIXED",
@@ -204,7 +207,7 @@
     },
     {
       "name": "AI Search Readiness",
-      "score": 88,
+      "score": 90,
       "weight": 10,
       "what_works": [
         "llms.txt is published and generated from the build, listing all 18 pages with descriptions, naming the operator and registration number",
@@ -215,7 +218,8 @@
         "IndexNow already announces every deploy to Bing, Yandex and Naver automatically, so new pages reach those indexes in minutes rather than waiting for a crawl",
         "58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit",
         "The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about",
-        "78 questions are declared across the supporting pages, up from 50, each one printed on the page and held to it in both directions by g21-schema"
+        "78 questions are declared across the supporting pages, up from 50, each one printed on the page and held to it in both directions by g21-schema",
+        "The guides add 26 question-and-answer pairs aimed at what a buyer asks before they know the product exists, which is the shape an answer engine retrieves against"
       ],
       "findings": [
         {

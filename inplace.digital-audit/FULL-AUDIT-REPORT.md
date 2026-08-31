@@ -3,7 +3,7 @@
 Audited 31.08.2026. Crawl of all 18 published URLs, live measurement in a real browser,
 schema parsed and validated, competitive check against the Israeli market.
 
-**SEO Health Score: 93 / 100**  —  81 at audit; seven findings fixed and verified.
+**SEO Health Score: 94 / 100**  —  81 at audit; eight findings fixed, one opened and under way.
 
 > **Fixed 31.08.2026, both verified against the live host**
 > 1. Cloudflare's managed robots.txt is off. The eight AI crawlers are unblocked, and a new
@@ -16,16 +16,18 @@ schema parsed and validated, competitive check against the Israeli market.
 >
 > 6. Internal linking rebuilt: 32 contextual links, `/about/` from 1 inbound link to 12.
 >
-> Still open: the content hub, and the brand collision in both languages.
+> 7. The content hub opened at `/guides/` with three guides in both editions.
+>
+> Still open: the rest of the content hub, and the brand collision in both languages.
 
 | Category | Weight | Score |
 |---|---|---|
 | Technical SEO | 22% | 95 |
-| Content Quality | 23% | 92 |
+| Content Quality | 23% | 94 |
 | On-Page SEO | 20% | 94 |
 | Schema / Structured Data | 10% | 98 |
 | Performance (CWV) | 10% | 90 |
-| AI Search Readiness | 10% | 88 |
+| AI Search Readiness | 10% | 90 |
 | Images | 5% | 96 |
 
 Business type: **B2B SaaS**, procurement-to-payment, bilingual (he-IL primary, en-US secondary),
@@ -178,7 +180,7 @@ policy names it, since that page already enumerates sub-processors.
 
 ---
 
-## Content Quality — 92
+## Content Quality — 94
 
 ### What works
 
@@ -247,7 +249,11 @@ that would make them worth ranking above a competitor: a worked numeric example 
 that catches a partial delivery, screenshots annotated with what to look at, the Israeli specifics
 (חשבוניות ישראל, מע״מ, תנאי תשלום שוטף+), and what happens at the edges.
 
-**[HIGH] There is no content hub**
+**[PARTLY RESOLVED 01.09.2026] There was no content hub**
+
+> Opened at `/guides/`, three guides in both editions of a five-to-eight target. The sitemap went from
+> 18 URLs to 24. Each answers a question somebody types before they have heard of the product, and each
+> ends on its own limit rather than a pitch. The record of the finding is kept below.
 
 Nine pages per language, all of them either product or legal. No blog, no guides, no glossary,
 nothing that earns a link or catches a question-shaped search. For a domain with no backlink profile
@@ -406,7 +412,7 @@ belt and braces. On a fast connection this costs nothing; on 3G it delays the he
 
 ---
 
-## AI Search Readiness (GEO) — 88
+## AI Search Readiness (GEO) — 90
 
 The lowest score, and the one worth the most attention.
 
