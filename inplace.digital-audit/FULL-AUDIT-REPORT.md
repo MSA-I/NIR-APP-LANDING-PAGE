@@ -3,25 +3,27 @@
 Audited 31.08.2026. Crawl of all 18 published URLs, live measurement in a real browser,
 schema parsed and validated, competitive check against the Israeli market.
 
-**SEO Health Score: 88 / 100**  —  81 at audit; three findings were fixed and verified the same day.
+**SEO Health Score: 91 / 100**  —  81 at audit; four findings were fixed and verified the same day.
 
 > **Fixed 31.08.2026, both verified against the live host**
 > 1. Cloudflare's managed robots.txt is off. The eight AI crawlers are unblocked, and a new
 >    check (verify-live L8) parses the *served* file on every deploy, so this cannot come back quietly.
 > 2. `FAQPage` now covers all six supporting pages in both editions — 50 questions, up from 8 site-wide.
 > 3. A LinkedIn **Company Page** was created and `sameAs` declares it on all 18 pages, closing DEBT.md §21.
+> 4. All five commercial pages deepened in both editions — 15 new sections, +60 to +76 per cent of body
+>    copy each, every claim traced to a source document.
 >
-> Still open: commercial page depth, the content hub, the brand collision in both languages, the Hebrew
-> share card on the English pages, and internal linking.
+> Still open: the content hub, the brand collision in both languages, the Hebrew share card on the
+> English pages, and internal linking.
 
 | Category | Weight | Score |
 |---|---|---|
 | Technical SEO | 22% | 95 |
-| Content Quality | 23% | 72 |
+| Content Quality | 23% | 84 |
 | On-Page SEO | 20% | 94 |
 | Schema / Structured Data | 10% | 98 |
 | Performance (CWV) | 10% | 90 |
-| AI Search Readiness | 10% | 85 |
+| AI Search Readiness | 10% | 88 |
 | Images | 5% | 88 |
 
 Business type: **B2B SaaS**, procurement-to-payment, bilingual (he-IL primary, en-US secondary),
@@ -174,7 +176,7 @@ policy names it, since that page already enumerates sub-processors.
 
 ---
 
-## Content Quality — 72
+## Content Quality — 84
 
 ### What works
 
@@ -193,7 +195,31 @@ registration number and two phone numbers.
 
 ### Findings
 
-**[HIGH] Commercial pages are thin for the field they are entering**
+**[RESOLVED 31.08.2026] Commercial pages were thin for the field they are entering**
+
+> Fixed the same day, in both editions.
+>
+> | | Hebrew | English |
+> |---|---|---|
+> | `/procurement-software/` | 529 → **905** | 731 → **1290** |
+> | `/invoice-matching/` | 433 → **694** | 588 → **964** |
+> | `/supplier-invoices/` | 388 → **650** | 533 → **899** |
+> | `/vs-spreadsheet/` | 390 → **611** | 526 → **851** |
+> | `/vs-erp/` | 391 → **621** | 537 → **867** |
+>
+> Fifteen new sections. A worked three-way-match example catching a partial delivery; the four alert
+> types the alerts screen raises; what is kept from a decision; why there is no route around the
+> approval; what happens after the payment; why an invoice is never deleted; double payments caught at
+> two points; what is left when someone leaves; why a spreadsheet cannot stop a payment; what an ERP
+> does that this does not; why three fixed roles instead of configurable permissions.
+>
+> **One recommendation was deliberately not acted on.** This report asked for the Israeli specifics no
+> international competitor covers — Israel Invoices, VAT, shotef-plus terms. Nothing in `PRODUCT.md` or
+> the brand documents says the system handles any of them, and the repository's rule is that every
+> capability sentence traces to a source. Writing them would have been an invented capability claim on
+> the page that ranks for the head term. It waits for a source, not for a decision.
+>
+> The record of the original finding is kept below.
 
 | Page | Hebrew words | English words |
 |---|---|---|
@@ -372,7 +398,7 @@ belt and braces. On a fast connection this costs nothing; on 3G it delays the he
 
 ---
 
-## AI Search Readiness (GEO) — 85
+## AI Search Readiness (GEO) — 88
 
 The lowest score, and the one worth the most attention.
 

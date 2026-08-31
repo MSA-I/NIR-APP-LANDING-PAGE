@@ -1,7 +1,7 @@
 # Action Plan — inplace.digital
 
-**Status 31.08.2026.** Phase 1 is done and verified live. Phases 2.1 and 2.2 are done. Everything
-else is open.
+**Status 31.08.2026.** Phase 1 is done and verified live. Phases 2.1, 2.2 and 2.3 are done. Only 2.4,
+the English share card, remains in Phase 2.
 
 
 Ordered by impact. Scope is given in countable units — files touched, pages affected, entries added —
@@ -78,7 +78,7 @@ questions across the site, in the exact shape AI Overviews and answer engines ex
 Generate the `FAQPage` node from the existing headings in the same script that already builds the
 graph, so it cannot drift from the visible copy.
 
-### 2.3 Deepen the five commercial pages
+### 2.3 Deepen the five commercial pages  ·  DONE 31.08.2026
 
 **Scope:** 5 pages × 2 languages. Current: 388–529 Hebrew words. Target: roughly double.
 
