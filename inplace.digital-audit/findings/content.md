@@ -1,6 +1,6 @@
 # Content Quality
 
-**Score: 84/100**  (weight 23%)
+**Score: 92/100**  (weight 23%)
 
 Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 
@@ -12,6 +12,7 @@ Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 - The company publishes a street address, a registration number and two phone numbers
 - The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews
 - The five commercial pages now carry a worked three-way-match example, the four alert types, what is kept from a decision, why there is no route around the approval, what happens after the payment, why an invoice is never deleted, why a spreadsheet cannot stop a payment, and what an ERP does that this does not
+- 32 contextual links inside sentences, 16 per edition, with sixteen distinct Hebrew anchors and every destination covered; a build-time check makes a mistyped slug fail the build rather than ship a broken link
 
 ## Findings
 
@@ -27,15 +28,15 @@ Nine pages per language, all of them product or legal. No blog, no guides, no gl
 
 **Fix:** Open a Hebrew-first content section with 5-8 pages on topics the founders actually know: three-way matching for small businesses, separation of duties in procurement, what Israel Invoices changed, common supplier payment errors, and migrating from a spreadsheet. Defer English content until the brand disambiguation work lands.
 
-### [Medium] The page carrying the trust signals has one inbound link
+### [Resolved] The page carrying the trust signals had one inbound link — FIXED
 
-/about/ holds both founder biographies, both portraits and both Person entities. Exactly one internal link points at it, from the home page. The other sixteen pages do not link to it at all.
+/about/ holds both founder biographies, both portraits and both Person entities. Exactly one internal link points at it, from the home page. The other sixteen pages do not link to it at all. RESOLVED: /about/ now has twelve inbound contextual links, six per edition, placed inside sentences that were already making the point they link on.
 
-**Fix:** Add contextual in-body links from all 16 other pages, anchored where the copy already refers to practical experience or names a founder.
+**Fix:** Done.
 
-### [Medium] All internal anchor text is identical and non-contextual
+### [Resolved] All internal anchor text was identical and non-contextual — FIXED
 
-Every link to /procurement-software/ reads 'tochnat rechesh'; every link to /invoice-matching/ reads 'hat'amat cheshbonit'. They all originate in the same further-reading block at the foot of each page. Not one contextual link exists inside a paragraph anywhere on the site.
+Every link to /procurement-software/ reads 'tochnat rechesh'; every link to /invoice-matching/ reads 'hat'amat cheshbonit'. They all originate in the same further-reading block at the foot of each page. Not one contextual link exists inside a paragraph anywhere on the site. RESOLVED: 32 contextual links now render across the supporting pages, 16 per edition, and all sixteen Hebrew anchors are distinct. Every destination has inbound contextual links: /about/ 12, /invoice-matching/ 8, /supplier-invoices/ 4, /vs-spreadsheet/ 4, /procurement-software/ 2, /vs-erp/ 2. They are placed by a [[slug|anchor]] notation in the dictionaries rather than by hand-written anchors, because the same paragraph exists in two editions at two different paths and an <a> written into the English file would have sent an English reader to the Hebrew page silently. linkify resolves the path per edition and throws on a slug the site does not publish, so a typo fails the build instead of shipping a 404 inside a sentence.
 
-**Fix:** Vary the anchor text and place links inside body paragraphs, where they carry more weight and read as editorial rather than navigational.
+**Fix:** Done. No copy was reworded to make room for a link: where a sentence had nothing worth linking, it did not get one.
 

@@ -3,7 +3,7 @@
 Audited 31.08.2026. Crawl of all 18 published URLs, live measurement in a real browser,
 schema parsed and validated, competitive check against the Israeli market.
 
-**SEO Health Score: 91 / 100**  —  81 at audit; five findings were fixed and verified the same day.
+**SEO Health Score: 93 / 100**  —  81 at audit; seven findings fixed and verified.
 
 > **Fixed 31.08.2026, both verified against the live host**
 > 1. Cloudflare's managed robots.txt is off. The eight AI crawlers are unblocked, and a new
@@ -14,12 +14,14 @@ schema parsed and validated, competitive check against the Israeli market.
 >    copy each, every claim traced to a source document.
 > 5. The nine English pages got an English share card, rendered from the same template.
 >
-> Still open: the content hub, the brand collision in both languages, and internal linking.
+> 6. Internal linking rebuilt: 32 contextual links, `/about/` from 1 inbound link to 12.
+>
+> Still open: the content hub, and the brand collision in both languages.
 
 | Category | Weight | Score |
 |---|---|---|
 | Technical SEO | 22% | 95 |
-| Content Quality | 23% | 84 |
+| Content Quality | 23% | 92 |
 | On-Page SEO | 20% | 94 |
 | Schema / Structured Data | 10% | 98 |
 | Performance (CWV) | 10% | 90 |
@@ -176,7 +178,7 @@ policy names it, since that page already enumerates sub-processors.
 
 ---
 
-## Content Quality — 84
+## Content Quality — 92
 
 ### What works
 
@@ -252,14 +254,20 @@ nothing that earns a link or catches a question-shaped search. For a domain with
 and no history, this is the missing growth surface — and it is also what AI answer engines index most
 readily, because question-shaped content is what they retrieve against.
 
-**[MEDIUM] `/about/` carries the trust signals and has one inbound link**
+**[RESOLVED 01.09.2026] `/about/` carried the trust signals and had one inbound link**
+
+> Fixed. Twelve inbound contextual links now, six per edition.
 
 `/about/` holds both founder biographies, both portraits, and both `Person` entities. Exactly one
 internal link points at it — from the home page. The other sixteen pages do not link to it at all.
 For a three-day-old brand asking businesses to route their payments through it, that is the wrong page
 to bury.
 
-**[MEDIUM] All internal anchor text is identical**
+**[RESOLVED 01.09.2026] All internal anchor text was identical**
+
+> Fixed. 32 contextual links inside sentences, 16 per edition, all sixteen Hebrew anchors distinct, every
+> destination covered. Placed by a `[[slug|anchor]]` notation so a link cannot cross editions and a
+> mistyped slug fails the build.
 
 Every link to `/procurement-software/` reads "תוכנת רכש". Every link to `/invoice-matching/` reads
 "התאמת חשבונית". They all come from the same "להמשך קריאה" block at the foot of each page. There
