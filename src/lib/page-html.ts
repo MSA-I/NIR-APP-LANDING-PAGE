@@ -26,6 +26,7 @@ const CHROME = {
   he: {
     dir: 'rtl',
     ogLocale: 'he_IL',
+    ogImage: 'og-cover.jpg',
     navLabel: 'ניווט ראשי',
     toLight: 'מעבר לתצוגה בהירה',
     toDark: 'מעבר לתצוגה כהה',
@@ -51,6 +52,7 @@ const CHROME = {
   en: {
     dir: 'ltr',
     ogLocale: 'en',
+    ogImage: 'og-cover-en.jpg',
     navLabel: 'Main navigation',
     toLight: 'Switch to the light view',
     toDark: 'Switch to the dark view',
@@ -867,7 +869,7 @@ export function pageHtml(
     <meta property="og:url" content="${url}" />
     <meta property="og:site_name" content="InPlace" />
     <meta property="og:locale" content="${t.ogLocale}" />
-    <meta property="og:image" content="${ORIGIN}/assets/og-cover.jpg" />
+    <meta property="og:image" content="${ORIGIN}/assets/${t.ogImage}" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -875,7 +877,7 @@ export function pageHtml(
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${attr(page.title)}" />
     <meta name="twitter:description" content="${attr(page.description)}" />
-    <meta name="twitter:image" content="${ORIGIN}/assets/og-cover.jpg" />
+    <meta name="twitter:image" content="${ORIGIN}/assets/${t.ogImage}" />
 ${t.fonts
       .map(
         (f) =>

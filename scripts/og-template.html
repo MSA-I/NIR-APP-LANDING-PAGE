@@ -1,11 +1,15 @@
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang="__LANG__" dir="__DIR__">
   <head>
     <meta charset="utf-8" />
     <!--
       The share card, at exactly 1200x630. Rendered by scripts/build-og.mjs,
       which inlines the two faces as data URIs before it takes the picture, so
       this file has no network dependency of any kind.
+
+      One template, two pictures. scripts/build-og.mjs renders it once per
+      edition and substitutes the direction, the faces and the words; an English
+      reader sharing an English page was getting a Hebrew card until 31.08.2026.
 
       The ground is the shader's own ramp, flattened. ShaderBackground paints a
       GrainGradient across #04080b -> #003f47 -> #0d6470 -> #5d9096 -> #cfe3e6,
@@ -127,13 +131,10 @@
     <div class="plate">
       <p class="mark">InPlace</p>
 
-      <h1>כל מה שקורה בין ההזמנה לכסף, <span class="tint">במקום אחד.</span></h1>
+      <h1>__HEAD__ <span class="tint">__HEAD_TINT__</span></h1>
 
       <div class="foot">
-        <p class="chain">
-          <b>ספק</b> <i>◂</i> <b>הזמנה</b> <i>◂</i> <b>קבלה</b> <i>◂</i>
-          <b>חשבונית</b> <i>◂</i> <b>תשלום</b>
-        </p>
+        <p class="chain">__CHAIN__</p>
         <p class="host">inplace.digital</p>
       </div>
     </div>
