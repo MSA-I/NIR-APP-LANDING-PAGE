@@ -92,6 +92,61 @@ const pagesEn: Page[] = [
         ],
       },
       {
+        // See the Hebrew page for why this one carries its own disclaimer.
+        h2: 'An example: a partial delivery caught before payment',
+        paras: [
+          'This is not a customer case. It illustrates the one that costs the most money and is the hardest to catch by eye: paying in full for a partial delivery.',
+        ],
+        table: {
+          headers: ['The document', 'What it says'],
+          rows: [
+            ['The purchase order', '40 crates of tomatoes, at that supplier\u2019s price list'],
+            ['The goods receipt', '34 crates. Six short, marked from a phone at the receiving door'],
+            ['The invoice', '40 crates, the full amount'],
+          ],
+        },
+        after: [
+          'Two comparisons would have missed it. The order and the invoice agree completely: same item, same quantity, same price. Only the third comparison, against what actually arrived, shows that the business is about to pay for goods it never received.',
+          'The invoice stops and waits for a decision. Perhaps the supplier will send the rest, perhaps a credit note follows, and perhaps the quantity was agreed in advance and nothing is wrong. The system does not decide for anyone; it puts the gap in front of the person with the authority to settle it, and keeps the decision.',
+        ],
+      },
+      {
+        h2: 'Why there is no way around the approval',
+        ask: true,
+        paras: [
+          'Most systems have a back door. A special permission, an emergency route, or an option for the owner to pay directly when it is urgent. That door opens at exactly the moments when the control is needed most.',
+          'There is no such route here. A payment always goes through an approved request, with a reason and a record, and not even the owner can step around it. The emergency route existed in the system and was removed from it.',
+          'What that means in practice is simple: when it is urgent, the process is the same process. The separation between the person who approves and the person who moves the money does not rest on the discipline of someone under pressure at the end of a day.',
+        ],
+      },
+      {
+        h2: 'What happens after the payment goes out',
+        ask: true,
+        paras: [
+          'Plenty of procurement systems end the story at the transfer. In practice that is where the part it is easy to lose money in begins: a credit note promised and never received, a double payment nobody compared against the bank, and a confirmation sitting in the mailbox of someone who has left.',
+        ],
+        list: {
+          label: 'What continues after the transfer',
+          items: [
+            'The payment confirmation is filed on the invoice itself, not in a separate folder',
+            'A credit note is a document in its own right, linked to the invoice it came from',
+            'Bank reconciliation runs against the actual transactions, so a payment that never left or left twice surfaces',
+            'The accountant is the only one who does these, and the same record stays visible to the owner',
+          ],
+        },
+        after: [
+          'That is why the journey does not end at the payment but at the bank reconciliation and the reports. An invoice with no confirmation is an invoice nobody can prove was paid.',
+        ],
+      },
+      {
+        h2: 'Where my business ends and another one begins',
+        ask: true,
+        paras: [
+          'The system serves several organisations on one set of infrastructure, and the separation between them is not a feature that can be switched off or forgotten. It is a founding principle of the system: every user belongs to one organisation, and every record is read through that link.',
+          'For anyone weighing up moving their supplier list, price lists and payments in here, that is the question that needs an answer before the question of features.',
+        ],
+      },
+      {
         h2: 'What the overview shows',
         ask: true,
         paras: [
