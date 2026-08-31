@@ -579,18 +579,34 @@ const pagesEn: Page[] = [
           rows: [
             ['Registered name', 'In Place'],
             ['Registration number', '036689081'],
-            ['Address', 'HaRotem 14, Kfar Adumim, Israel'],
-            ['Telephone', '+972-54-254-7074'],
-            ['Second telephone', '+972-52-416-7881'],
           ],
         },
       },
       {
-        h2: 'Accessibility',
+        // The statement, not a description of values. See the note in
+        // src/content/pages.ts: Israeli regulation asks for specific things, and
+        // what stood here was a paragraph and a half lifted from PRODUCT.md's
+        // Accessibility chapter -- true, and about the product rather than about
+        // this site. Every claim in the second paragraph is a gate that runs on
+        // every build.
+        h2: 'Accessibility statement',
         paras: [
-          'The target is WCAG 2.1 level AA: text contrast of at least 4.5 to 1, full keyboard navigation, screen-reader labels and respect for a system preference to reduce motion. The audience includes non-technical users, so every error is written in plain language rather than as a raw database message.',
-          'Meaning never rests on colour alone. Every status also carries text or a mark, because a reader who does not distinguish a hue still needs to know what requires attention.',
+          'InPlace is meant to work for someone using a keyboard alone, a screen reader, or a system preference to reduce motion. Accessibility is built into the code rather than added by a plug-in, and each of the adaptations below is measured on every build and fails it if it stops being true.',
+          'Text contrast is at least 4.5 to 1, measured on the composited image — what the eye actually sees — on both grounds of the page and in both the light and dark views. Anything operable with a mouse is reachable from the keyboard, and the focus indicator is visible at every stop. When the operating system asks for reduced motion, the animations and the moving ground stop. Meaning never rests on colour alone: every status carries text or a mark as well, because a reader who does not distinguish a hue still needs to know what requires attention. Six of the pages on this site read in full with no JavaScript at all.',
+          'Known limitations: the film on the home page is a silent animation with no speech, so it carries no captions; it does carry a text description for a screen reader. The application itself, at app.inplace.digital, is a separate service and this statement does not cover it.',
+          'Found something that is not accessible, or ran into difficulty? We would like to know. Accessibility enquiries reach the address in the table below, and we act on them and reply.',
         ],
+        table: {
+          headers: ['Detail', 'Value'],
+          rows: [
+            ['Standard', 'Israeli Standard 5568, based on WCAG 2.1'],
+            ['Conformance level', 'AA'],
+            ['Tested in', 'Google Chrome'],
+            ['Accessibility enquiries', 'support@inplace.digital'],
+            ['Statement date', '31.08.2026'],
+            ['Last updated', '31.08.2026'],
+          ],
+        },
       },
     ],
     image: {

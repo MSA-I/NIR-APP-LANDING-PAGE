@@ -216,23 +216,28 @@ export function schema(locale: LocaleCode = 'he') {
         // contradicted the address three lines below. LinkedIn's own canonical
         // form carries no trailing slash, so neither does this.
         sameAs: ['https://www.linkedin.com/company/inplace-digital'],
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: 'הרותם 14',
-          addressLocality: 'כפר אדומים',
-          addressCountry: 'IL',
-        },
-        telephone: '+972-54-254-7074',
+        // NO POSTAL ADDRESS AND NO TELEPHONE, by the owner's decision of
+        // 31.08.2026, and this is a reversal of his own decision of 27.08.2026.
+        //
+        // What was here was a street, a locality and two mobile numbers. They
+        // were asked for because an Organization with no address is an
+        // anonymous one, and because "who is behind this" is the first thing a
+        // buyer checks before letting a supplier near his financial system. All
+        // of that is still true.
+        //
+        // What changed is that the site went live and is now crawled. The
+        // address was a home and the numbers were personal, and a structured
+        // -data block is the one place on a site that exists to be machine-read
+        // and republished. The entity is still identified -- legalName, vatID
+        // and the LinkedIn edge below -- and it is still reachable, through the
+        // address printed on /about/ and the contact form.
+        //
+        // If a business address and a business number ever exist, they belong
+        // here, and this comment can go.
         contactPoint: [
           {
             '@type': 'ContactPoint',
-            telephone: '+972-54-254-7074',
-            contactType: 'sales',
-            availableLanguage: ['he', 'en'],
-          },
-          {
-            '@type': 'ContactPoint',
-            telephone: '+972-52-416-7881',
+            email: 'support@inplace.digital',
             contactType: 'customer support',
             availableLanguage: ['he', 'en'],
           },
