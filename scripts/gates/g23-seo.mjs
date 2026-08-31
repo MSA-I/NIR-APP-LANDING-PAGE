@@ -273,11 +273,22 @@ for (const { url, file } of all) {
     c.ok(shots.size === 0, at(`carries ${[...shots].join(', ')}, and it is a legal document`))
     continue
   }
-  if (!c.ok(shots.size > 0, at('carries no picture of the product at all'))) continue
+  // A guide explains a concept rather than a screen. Separation of duties is
+  // not a screen: it is the reason three screens show different things to three
+  // people, and the nearest picture would be one of the six already claimed by
+  // the page that IS about it. The repository has spent a rule on not letting
+  // one file claim two subjects, so a guide is allowed to carry no picture.
+  //
+  // Allowed, not forbidden. The legal documents above are held to zero because a
+  // screenshot there is decoration on a page somebody reads in order to decide
+  // something. A guide is not in that position: if a screen genuinely shows what
+  // a guide is explaining, it should show it, and the checks below still apply.
+  const isGuide = url.startsWith('/guides/') || url.startsWith('/en/guides/')
+  if (!isGuide && !c.ok(shots.size > 0, at('carries no picture of the product at all'))) continue
   for (const shot of shots) {
     c.ok(!homeShots.has(shot), at(`shows ${shot}, which the home page already shows`))
   }
-  docShots++
+  if (shots.size) docShots++
 }
 c.note(`${homeShots.size} screens on the home page, ${docShots} supporting pages with a screen of their own`)
 

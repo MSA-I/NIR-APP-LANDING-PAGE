@@ -48,7 +48,7 @@ const pagesEn: Page[] = [
       {
         h2: 'Three roles, duties kept apart',
         paras: [
-          'Separation of duties is not a setting somebody has to remember to switch on. It is [[about|the structure of the system]], and each role sees and does only what belongs to it.',
+          '[[guides/separation-of-duties|Separation of duties]] is not a setting somebody has to remember to switch on. It is [[about|the structure of the system]], and each role sees and does only what belongs to it.',
         ],
         table: {
           headers: ['Role', 'What they do'],
@@ -284,7 +284,7 @@ const pagesEn: Page[] = [
       alt: 'The credits screen in InPlace: credit requests against suppliers, the reason for each and the invoice it is linked to',
       cap: 'A wrong invoice is not deleted. A credit request opens against it, and stays open until the money comes back.',
     },
-    related: ['invoice-matching', 'procurement-software', 'vs-spreadsheet'],
+    related: ['invoice-matching', 'procurement-software', 'guides/separation-of-duties'],
     source: 'PRODUCT.md (Capability contract, Product Purpose); en.ts (chapter 02, why.yes)',
   },
 
@@ -507,7 +507,7 @@ const pagesEn: Page[] = [
       alt: 'The price list screen in InPlace: current against previous price for every product, with the percentage change and the date it took effect',
       cap: '66 supplier prices, and seven rises it marked by itself. This is the spreadsheet nobody actually keeps up.',
     },
-    related: ['vs-erp', 'invoice-matching', 'procurement-software'],
+    related: ['vs-erp', 'invoice-matching', 'guides/separation-of-duties'],
     source: 'brand/context.md (Alternatives); en.ts (why.yes, why.no, film blocks)',
   },
 
@@ -858,6 +858,100 @@ const pagesEn: Page[] = [
     ],
     related: [],
     source: 'NIR-APP src/pages/Legal.tsx (PrivacyPolicy), English edition',
+  },
+  // --------------------------------------------------------------- guide 1
+  // See the Hebrew file for why the content hub exists and why it sits under
+  // /guides/.
+  {
+    slug: 'guides/separation-of-duties',
+    nav: 'Separation of duties',
+    title: 'Separation of duties in procurement: who approves, who pays | InPlace',
+    description:
+      'Whoever approves a cost is not whoever moves the money. What that rule means in a small business, where it breaks, and how to start when one person does everything.',
+    eyebrow: 'Guide',
+    h1: 'Who approves a supplier payment, and who makes it',
+    lede:
+      'In a small business the same person orders, receives the goods, approves the invoice and moves the money. It works, until it does not. This guide is about the rule that prevents that, and why it matters long before there is a finance department.',
+    sections: [
+      {
+        h2: 'What separation of duties is',
+        ask: true,
+        paras: [
+          'The rule itself is one sentence: whoever approves a cost is not whoever moves the money. Two different people, two different actions, and a record showing who did which.',
+          'The idea comes from audit, and there it sounds like bureaucracy. In a small business it sounds entirely different, because it is not protecting the company from its staff. It is protecting the business from a mistake nobody would catch, and protecting the person from being the only one who can explain what happened.',
+        ],
+      },
+      {
+        h2: 'Why this is not only for large organisations',
+        ask: true,
+        paras: [
+          'In a large organisation separation of duties prevents fraud. In a small business it mostly prevents duller things that are far more common: a double payment, a payment for goods that never arrived, a price that went up unnoticed, a credit note promised and forgotten.',
+          'None of those has a villain in it. Each has a busy person who saw one document rather than three, approved, and paid. When one person does both actions, there is no moment at which somebody else looks.',
+        ],
+      },
+      {
+        h2: 'Three roles, and what each one cannot do',
+        paras: [
+          'The division below is the one [[procurement-software|InPlace is built on]], and it is an example of a division that works. What matters in it is not the names but the second column: what each role cannot do.',
+        ],
+        table: {
+          headers: ['The role', 'What it cannot do'],
+          rows: [
+            ['Owner', 'Does not make payments. They approve the request; the execution belongs to somebody else'],
+            ['Procurement manager', 'Does not run payments, does not touch the bank, does not post credit notes'],
+            ['Accountant', 'Does not change an order, a product or a price list, and sees only invoices already approved'],
+          ],
+        },
+        after: [
+          'Note that none of the three is limited because they have no need. They are limited because the need of one is exactly what would make the other one\u2019s check worthless.',
+        ],
+      },
+      {
+        h2: 'What happens in a business without it',
+        ask: true,
+        paras: [
+          'Nothing happens, for a long time. That is the misleading part. A business can run for years with one person doing everything, and most of the orders genuinely are fine.',
+          'The loss is not one large event but an accumulation: a price that changed, a product that did not arrive, a credit note forgotten, an invoice never checked to the end. Each is too small to justify a check, and together they are the amount nobody saw.',
+          'The sign that it is happening is not a deficit. It is the question “why did we pay this supplier so much this month”, asked at the end of the month with no answer that does not involve opening a mail folder.',
+        ],
+      },
+      {
+        h2: 'Where most businesses break',
+        paras: [
+          'Not at the definition. At the exception to it.',
+          'Almost every system that defines permissions also allows them to be stepped around: an administrator right, an emergency route, or simply a bank transfer made outside the system because the supplier called and it was urgent. The moment that route exists, it opens in exactly the cases where the check was worth the most.',
+          'A separation of duties that can be switched off under end-of-day pressure is not a separation of duties. It is a statement of intent.',
+        ],
+      },
+      {
+        h2: 'How to start when one person does everything',
+        ask: true,
+        paras: [
+          'Nobody needs to be hired. The minimum separation already worth something is between whoever orders and whoever moves the money, and in most small businesses those two are already done by two different people in practice, just without it being written anywhere.',
+        ],
+        list: {
+          label: 'Three steps, in order',
+          items: [
+            'Decide who approves. One person, in writing, even if it is the owner',
+            'Decide that no transfer goes out without that approval, and that the approval is kept with the document rather than in a conversation',
+            'Add the check: [[invoice-matching|a comparison of the order, the goods received and the invoice]] before the approval is given',
+          ],
+        },
+        after: [
+          'The third step is what turns the first two from discipline into a process. An approval without a check is a signature on a document nobody read.',
+        ],
+      },
+      {
+        h2: 'And what about a one-person business',
+        ask: true,
+        paras: [
+          'There you cannot separate people, but you can separate moments. The check happens when the invoice arrives, and the approval is given at a set time rather than in the same breath. It sounds small, and it is the difference between looking at a document and comparing it against two others.',
+          'What stays the same is the record. Even when the approver and the payer are one person, [[about|the answer to “who approved this, and why” has to be kept somewhere]] other than their memory.',
+        ],
+      },
+    ],
+    related: ['invoice-matching', 'procurement-software', 'supplier-invoices'],
+    source: 'PRODUCT.md (Users, Capability contract); brand/positioning.md (proof points)',
   },
 ]
 

@@ -137,7 +137,10 @@ const attr = (s: string) =>
  * anchor, and /about/ (which holds both founders and both Person nodes) had
  * exactly one inbound link on the whole site.
  */
-const LINK_RE = /\[\[([a-z-]+)\|([^\]]+)\]\]/g
+// The slug may carry a slash: the guides live under `guides/`, and nested slugs
+// need no machinery beyond this character class. `linkify` checks it against the
+// set the dictionary publishes either way, so a slash cannot smuggle in a path.
+const LINK_RE = /\[\[([a-z0-9/-]+)\|([^\]]+)\]\]/g
 
 const linkify = (s: string, locale: LocaleCode) =>
   s.replace(LINK_RE, (_, slug: string, anchor: string) => {
@@ -244,6 +247,11 @@ const founder = (p: Person, locale: LocaleCode) => `
 const answerOf = (s: Section) =>
   [...(s.paras || []), ...(s.list?.items || []), ...(s.after || [])]
     .join(' ')
+    // The link notation resolves to markup for the page and to nothing at all
+    // here: an Answer is read, not laid out, and an engine quoting this string
+    // would otherwise quote `[[vs-erp|…]]` at a reader. The anchor text stays,
+    // because it is part of the sentence.
+    .replace(LINK_RE, '$2')
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
     .replace(/\s+/g, ' ')
@@ -305,12 +313,17 @@ const section = (s: Section, locale: LocaleCode) => `
  * and only then. A typo fix is a change; a stylesheet is not.
  */
 const DATES: Record<string, { published: string; updated: string }> = {
-  'procurement-software': { published: '2026-08-27', updated: '2026-08-28' },
-  'supplier-invoices': { published: '2026-08-27', updated: '2026-08-28' },
-  'invoice-matching': { published: '2026-08-27', updated: '2026-08-28' },
-  'vs-spreadsheet': { published: '2026-08-27', updated: '2026-08-28' },
-  'vs-erp': { published: '2026-08-27', updated: '2026-08-28' },
-  about: { published: '2026-08-27', updated: '2026-08-28' },
+  // The five commercial pages were deepened on 31.08.2026 and given contextual
+  // links on 01.09.2026; /about/ took links on the same day. The rule for this
+  // table is that it moves in the commit that changes what the page SAYS, and
+  // both of those did.
+  'procurement-software': { published: '2026-08-27', updated: '2026-09-01' },
+  'supplier-invoices': { published: '2026-08-27', updated: '2026-09-01' },
+  'invoice-matching': { published: '2026-08-27', updated: '2026-09-01' },
+  'vs-spreadsheet': { published: '2026-08-27', updated: '2026-09-01' },
+  'vs-erp': { published: '2026-08-27', updated: '2026-09-01' },
+  about: { published: '2026-08-27', updated: '2026-09-01' },
+  'guides/separation-of-duties': { published: '2026-09-01', updated: '2026-09-01' },
   terms: { published: '2026-08-27', updated: '2026-08-27' },
   privacy: { published: '2026-08-27', updated: '2026-08-27' },
 }
