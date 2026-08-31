@@ -17,6 +17,7 @@
 | כתובת הפרויקט | `inplace-landing.pages.dev` |
 | הדומיין | `inplace.digital` — custom domain על הפרויקט, ‏`status=active`, ‏`cert=active` |
 | הרשומה ב‑DNS | `CNAME inplace.digital → inplace-landing.pages.dev`, proxied |
+| `www` | `CNAME www → inplace.digital` proxied, ו‑Single Redirect שמפנה אותו ב‑301 |
 | שיטת הפריסה | **העלאה ישירה** (`wrangler pages deploy`), לא בנייה אוטומטית מ‑GitHub |
 
 **‏`inplace-landing` הוא פרויקט שני ונפרד מ‑`supplyflow`**, שהוא פרויקט האפליקציה.
@@ -74,11 +75,18 @@ npm run deploy
 | 4 | חיבור `inplace.digital` כ‑custom domain | `status=active`, `cert=active` (Google CA) |
 | 5 | יצירת רשומת ה‑DNS ב‑apex | Cloudflare **לא** יצר אותה לבד, בדיוק כמו במעבר של `app.` — נוצרה ידנית |
 | 6 | אימות מלא על `inplace.digital` | **7 met, 0 unmet** |
+| 7 | חוק ה‑Single Redirect ל‑`www` | ‏ruleset `7b5327d768f5…a8f0`, פעיל |
+| 8 | החזרת רשומת ה‑`www`, **אחרי** שהחוק כבר פעל | `301` לכתובת הראשית, עם הנתיב וה‑query |
+| 9 | אימות מלא עם `www` | **8 met, 0 unmet** |
 
 הסדר אינו שרירותי: האימות המלא רץ על כתובת ה‑`pages.dev` **לפני** שהדומיין הציבורי
 הופנה לשם. אם משהו היה נשבר, הוא היה נשבר בכתובת שאיש לא מכיר.
 
-**‏`www` נוסה ובוטל באותה ישיבה.** ראה §5.
+**‏`www` נסגר באותה ישיבה, בשני סיבובים.** הראשון נדחה בהרשאה ובוטל בתוך דקות;
+השני עבר אחרי שהבעלים הוסיף למפתח את `Zone → Single Redirect → Edit`. גם שם הסדר
+אינו שרירותי: החוק נוצר **לפני** שרשומת ה‑`www` הוחזרה, כדי שלא ייפתח שוב חלון שבו
+הכתובת עונה בלי הפניה. הסיפור המלא, כולל שלוש הדרכים שנבדקו ונדחו,
+ב‑[DEBT.md](DEBT.md) §8.
 
 ---
 
@@ -99,9 +107,12 @@ node scripts/verify-live.mjs inplace-landing.pages.dev
 | L2b | דף ה‑404 נושא `noindex` | **PASS** |
 | L3 | חמש כותרות האבטחה חוזרות | **PASS** — Cloudflare קרא את `public/_headers` |
 | L4 | `robots.txt` מוגש כ‑`text/plain` | **PASS** |
-| L5 | `www` מפנה ל‑apex | **פתוח** — ראה §5 |
+| L5 | `www` מפנה ל‑apex ב‑301 | **PASS** — עם שמירת הנתיב וה‑query |
 | L6 | `http` מפנה ל‑`https` | **PASS** |
 | L7 | ה‑sitemap מונה 18 עמודים על הדומיין הנכון | **PASS** |
+
+**‏8 met, 0 unmet.** ‏`L5` נסגר אחרון, ב‑31.08.2026, אחרי שהבעלים הוסיף למפתח את ההרשאה
+‏`Zone → Single Redirect → Edit` — ראה §5.1.
 
 `L2` הוא הקריטי, והוא זה שלא ניתן היה למדוד קודם. **אסור להוסיף קובץ `_redirects` עם
 ‏`/* /index.html 200`.** הכלל הזה הופך כל כתובת שגויה ל‑`200` עם דף הבית, כלומר מספר
@@ -112,27 +123,7 @@ node scripts/verify-live.mjs inplace-landing.pages.dev
 
 ## 5. מה נשאר פתוח
 
-### 5.1 הפניית `www` — חסום בהרשאה
-
-‏`www.inplace.digital` היה `NXDOMAIN`, ולזה הוא הוחזר.
-
-נוסתה הדרך המלאה: נוצרה רשומת `CNAME www → inplace.digital` proxied, ומיד אחריה
-Single Redirect שיפנה `www` ל‑apex ב‑301. **יצירת חוק ההפניה נדחתה: `Authentication
-error` — לטוקן אין הרשאת עריכה ל‑Rulesets.** בלי החוק, `www` מחזיר `523`.
-
-`523` על כתובת ציבורית גרוע מכתובת שאינה קיימת, ולכן **רשומת ה‑`www` נמחקה** ומצב
-הדומיין הוחזר לקדמותו. אין היום דבר שבור באוויר.
-
-**מה שסוגר:** חוק Redirect Rule אחד בלוח הבקרה של Cloudflare —
-`Rules → Redirect Rules → Create`, עם התנאי `hostname equals www.inplace.digital`
-והיעד `https://inplace.digital` ב‑301, עם שמירת ה‑path וה‑query. אחרי זה יש להחזיר
-את רשומת ה‑`CNAME www → inplace.digital` proxied, ולהריץ `npm run verify:live` כדי
-ש‑`L5` ייסגר. לחלופין: להוסיף לטוקן הרשאת עריכה ל‑Rulesets, והשלב יבוצע מכאן.
-
-זה סעיף 8 ב‑[DEBT.md](DEBT.md), והוא נשאר פתוח מהסיבה שנכתבה שם מלכתחילה: כלל בין
-דומיינים אינו שייך לפרויקט ה‑Pages.
-
-### 5.2 דחיפה ל‑`main` אינה פורסת
+### 5.1 דחיפה ל‑`main` אינה פורסת
 
 ראה §1. ‏[.github/workflows/indexnow.yml](.github/workflows/indexnow.yml) נכתב בהנחה
 ש‑Cloudflare בונה לבד אחרי כל דחיפה, וההנחה הזאת אינה נכונה לפרויקט העלאה ישירה. הוא
@@ -142,12 +133,12 @@ error` — לטוקן אין הרשאת עריכה ל‑Rulesets.** בלי הח�
 **מה שסוגר:** תהליך GitHub Actions שבונה ומעלה בעצמו בדחיפה ל‑`main`. הוא דורש שהטוקן
 של Cloudflare יישמר כסוד בריפו ב‑GitHub — החלטה של הבעלים, לא של הפריסה.
 
-### 5.3 Search Console
+### 5.2 Search Console
 
 לא מחובר. יש להגיש את `https://inplace.digital/sitemap.xml`. בלעדיו אין דרך לדעת מה
 נסרק ומה נכלל באינדקס. סעיף 9 ב‑[DEBT.md](DEBT.md).
 
-### 5.4 מספרי המסלולים
+### 5.3 מספרי המסלולים
 
 ‏[DEBT.md](DEBT.md) §1: שתים‑עשרה קבוצות מספרים בדף אין להן היום מקור חי באפליקציה,
 והכיוון לטובת הלקוח — הדף מבטיח פחות ממה שהמוצר נותן. **הבעלים החליט 31.08.2026 לעלות
@@ -162,6 +153,7 @@ error` — לטוקן אין הרשאת עריכה ל‑Rulesets.** בלי הח�
 | להוריד את הדף מהאוויר | מחיקת רשומת ה‑`CNAME` ב‑apex. הכתובת חוזרת להיות ריקה — מצבה עד 31.08.2026 |
 | לנתק את הדומיין לגמרי | בנוסף, ניתוק ה‑custom domain מהפרויקט |
 | לחזור לפריסה קודמת | כל פריסה ב‑Pages נשמרת ככתובת בפני עצמה; החזרה היא Rollback בלוח הבקרה |
+| לבטל את הפניית ה‑`www` | מחיקת החוק **ואחריה** מחיקת רשומת ה‑`www`. בסדר הזה: רשומה בלי חוק מחזירה `523` |
 
 **האפליקציה אינה מושפעת מאף אחד מהם.** ‏`app.inplace.digital` יושב על פרויקט אחר
 ועל רשומת DNS אחרת.

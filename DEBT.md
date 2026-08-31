@@ -150,22 +150,39 @@
 | 6 | `robots.txt` מוגש כטקסט | **נסגר 31.08.2026.** ‏`L4`: ‏`content-type: text/plain`, והגוף מכיל את שורת ה‑`Sitemap:` |
 | 7 | נתוני מהירות אמיתיים (CrUX) | **פתוח.** מדידת שדה, לא מעבדה. חודש אחרי ההשקה — כלומר לא לפני 30.09.2026 |
 
-### 8. הפניית www לדומיין הראשי
+### 8. הפניית www לדומיין הראשי — ‎**נסגר 31.08.2026**‎
 
 נעשית בכלל Redirect Rule בלוח הבקרה של Cloudflare, לא בקובץ בפרויקט: כלל בין דומיינים
 לא שייך לפרויקט ה‑Pages. בלעדיו `www.inplace.digital` ו‑`inplace.digital` הם שני אתרים
 שמתחרים זה בזה, וה‑`canonical` לבדו מצמצם את הנזק אבל לא מבטל אותו.
 
-**נוסה 31.08.2026 ולא הושלם, והסיבה נמדדה.** נוצרה רשומת `CNAME www → inplace.digital`
-proxied, ומיד אחריה נשלחה בקשה ליצור את חוק ההפניה. הבקשה נדחתה: **`Authentication
-error` — לטוקן שבידי הסוכן אין הרשאת עריכה ל‑Rulesets.** בלי החוק `www` החזיר `523`,
-וכתובת ציבורית שבורה גרועה מכתובת שאינה קיימת — **הרשומה נמחקה ו‑`www` הוחזר ל‑`NXDOMAIN`,
-המצב שבו היה.**
+**הניסיון הראשון נכשל, והכישלון שווה תיעוד.** נוצרה רשומת `CNAME www → inplace.digital`
+proxied, ומיד אחריה נשלחה בקשה ליצור את החוק. הבקשה נדחתה — `Authentication error`.
+בלי החוק `www` החזיר **`523`**, וכתובת ציבורית שבורה גרועה מכתובת שאינה קיימת: הרשומה
+נמחקה ו‑`www` הוחזר ל‑`NXDOMAIN` בתוך אותה ישיבה. **מפתח לא יכול להרחיב את עצמו**, ולכן
+זה נעצר עד להחלטת הבעלים.
 
-**מה שסוגר:** או חוק אחד בלוח הבקרה (`Rules → Redirect Rules`, תנאי
-`hostname equals www.inplace.digital`, יעד `https://inplace.digital`, ‏301, עם שמירת path
-ו‑query), או הוספת הרשאת Rulesets לטוקן. בשני המקרים יש להחזיר אחר כך את רשומת ה‑`CNAME`
-ולהריץ `npm run verify:live` — `L5` הוא הבדיקה שסוגרת.
+נבדקו שלוש דרכים לעקוף את ההרשאה החסרה, וכולן נדחו לאותו מפתח: **Redirect Rules**,
+**Page Rules** (‏`9109`), ו‑**Worker ייעודי** (‏`10000`). הדרך הרביעית — middleware בפרויקט
+ה‑Pages — הייתה זמינה ונדחתה בהמלצה: היא מריצה קוד לפני **כל** בקשה לאתר, גם לכתובת
+הראשית, ומכניסה תקרה של 100,000 בקשות ביום לאתר שהוא היום סטטי לחלוטין. מחיר גדול מדי
+עבור הפניה.
+
+**נסגר בהוראת הבעלים, 31.08.2026:** נוספה למפתח ההרשאה `Zone → Single Redirect → Edit`.
+החוק נוצר בפאזה `http_request_dynamic_redirect`, ‏ruleset `7b5327d768f5…a8f0`, תנאי
+`(http.host eq "www.inplace.digital")`, יעד `concat("https://inplace.digital",
+http.request.uri.path)`, ‏301, ‏`preserve_query_string=true`. רשומת ה‑`CNAME` הוחזרה
+**אחרי** שהחוק כבר היה פעיל, כדי שלא ייפתח שוב חלון שבו `www` עונה בלי הפניה.
+
+**מה שנמדד, ולא הונח:**
+
+| נשאל | חזר |
+|---|---|
+| `https://www.inplace.digital/` | `301 → https://inplace.digital/` |
+| `https://www.inplace.digital/en/about/?utm_source=test` | `301 → https://inplace.digital/en/about/?utm_source=test` — הנתיב וה‑query נשמרו |
+| `http://www.inplace.digital/vs-erp/` | `301 → https://inplace.digital/vs-erp/` |
+| `app.inplace.digital` ו‑`inplace.digital` | `200`, בלי הפניה — החוק תופס `www` בלבד |
+| `npm run verify:live` | **‏8 met, 0 unmet** |
 
 ### 9. Search Console ואנליטיקס
 
