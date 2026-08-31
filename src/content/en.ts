@@ -152,12 +152,15 @@ const en = {
     lede: 'Plans differ by document volume, by how many people work in the system, and by which capabilities open. The table under the cards shows exactly what each one includes.',
     tableLabel: 'Plan comparison',
     headers: { plan: 'Plan', who: 'Best for', docs: 'Documents per month', price: 'Price' },
+    // `key` is the product's plan key and is deliberately identical to the
+    // Hebrew edition's -- see the note there. It is what joins this page to the
+    // live catalogue; `name` cannot, because `name` is the thing that differs.
     rows: [
-      { name: 'Free', who: 'Start and see the system working on your own business', docs: '20', price: 'No charge' },
-      { name: 'Basic', who: 'A business working with several regular suppliers', docs: '40', price: '$20' },
-      { name: 'Pro', who: 'A business whose accountant works inside the system', docs: '150', price: '$79' },
-      { name: 'Premium', who: 'A business operating more than one location', docs: '375', price: '$149' },
-      { name: 'Business', who: 'An organisation requiring custom quotas and terms', docs: 'Custom', price: 'Contact us' },
+      { key: 'free', name: 'Free', who: 'Start and see the system working on your own business', docs: '20', price: 'No charge' },
+      { key: 'basic', name: 'Basic', who: 'A business working with several regular suppliers', docs: '40', price: '$20' },
+      { key: 'pro', name: 'Pro', who: 'A business whose accountant works inside the system', docs: '150', price: '$79' },
+      { key: 'premium', name: 'Premium', who: 'A business operating more than one location', docs: '375', price: '$149' },
+      { key: 'business', name: 'Business', who: 'An organisation requiring custom quotas and terms', docs: 'Custom', price: 'Contact us' },
     ],
     // The dollar catalogue is not a conversion of the shekel one. Both are
     // published in NIR-APP's 0184 migration, and which one a business is
