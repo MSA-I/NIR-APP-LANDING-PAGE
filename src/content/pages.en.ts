@@ -1105,6 +1105,150 @@ const pagesEn: Page[] = [
     related: ['supplier-invoices', 'guides/supplier-payment-mistakes', 'invoice-matching'],
     source: 'PRODUCT.md (Capability contract: credits, bank); pages.ts (/supplier-invoices/ credits)',
   },
+  // --------------------------------------------------------------- guide 4
+  // Scoped on purpose; see the Hebrew file.
+  {
+    slug: 'guides/new-supplier-setup',
+    nav: 'A new supplier',
+    title: 'What to agree with a new supplier before the first order | InPlace',
+    description:
+      'Four things to agree with a new supplier before the first order, and why each becomes expensive exactly when it was never agreed.',
+    eyebrow: 'Guide',
+    h1: 'What to agree with a new supplier before the first order',
+    lede:
+      'Most arrangements with a new supplier are made in one phone call, and most of them are right. What costs money is not what was agreed but what was not, and it surfaces the first time something goes wrong.',
+    sections: [
+      {
+        h2: 'Four things, before the first order',
+        list: {
+          label: 'What to settle',
+          items: [
+            'A price list: not “what does it cost” but a list, in writing, that an invoice can be compared against',
+            'A minimum order: the amount or quantity below which they will not ship, or will ship with a surcharge',
+            'One contact: who receives the order, and who answers when something is short',
+            'What happens when something is short: they complete it, they credit it, or the order closes as delivered',
+          ],
+        },
+        after: [
+          'The first three sound obvious and in most cases genuinely were agreed, just out loud. The fourth is the one almost nobody settles in advance, and the only one of them that gets asked at an inconvenient moment.',
+        ],
+      },
+      {
+        h2: 'Why a written price list rather than a price on a call',
+        ask: true,
+        paras: [
+          'Because an invoice can only be compared against something. With no price list, [[invoice-matching|the comparison of order against invoice]] checks whether the invoice matches what you asked for, not whether it matches what was agreed.',
+          'That sounds like a fine distinction and it is the difference between catching a price that went up and not knowing it did. A price that changed between the order and the invoice is caught either way; a price that changed between the agreement and the order is caught only if the agreement exists as a record.',
+        ],
+      },
+      {
+        h2: 'Why the minimum order belongs here',
+        ask: true,
+        paras: [
+          'Because it changes the behaviour of whoever orders, not the price. A business that does not know the minimum splits orders and discovers delivery surcharges, or orders more than it needs to clear the minimum and then throws part of it away.',
+          'It is also the number most easily forgotten, because it is right until the supplier changes it. Worth recording where whoever orders can see it, rather than in an email from last year.',
+        ],
+      },
+      {
+        h2: 'What to agree about short deliveries, and why in advance',
+        ask: true,
+        paras: [
+          'A short delivery is not a rare fault but a routine event, and it has three reasonable answers: the supplier completes it on the next order, credits what did not arrive, or the order closes at the quantity delivered and the rest is cancelled.',
+          'All three are legitimate, and they differ a great deal in money. The problem is not that there is no default, but that the default gets set in a conversation while the warehouse is busy and the supplier is under pressure.',
+          'Agreeing in advance turns that conversation from a choice into information, and above all it decides which [[guides/wrong-supplier-invoice|request gets sent afterwards]] if the invoice already went out for the full quantity.',
+        ],
+      },
+      {
+        h2: 'The first order is the test',
+        paras: [
+          'You can agree everything well and still find the supplier works differently. So the first order is worth more when it is treated as a measurement rather than only as a delivery.',
+          'Three questions about it answer most of what you need to know: is the price on the invoice the same as the list that was agreed, is what arrived the same as what was ordered, and was the shortfall handled as agreed. Those are exactly [[invoice-matching|the three comparison points]], and on a first order they are a test of the supplier and not only of the delivery.',
+        ],
+      },
+      {
+        h2: 'What this guide does not cover',
+        ask: true,
+        paras: [
+          'The legal and tax side. Withholding-tax certificates, registration status, financial standing and credit terms are a real part of opening a new supplier, and they are out of scope here.',
+          'They were not left out because they matter less. They were left out because they depend on the circumstances of the business and on advice that does not belong on a page like this, and a guide that pretends to cover them is worse than one that says it does not.',
+        ],
+      },
+    ],
+    related: ['guides/wrong-supplier-invoice', 'invoice-matching', 'procurement-software'],
+    source: 'PRODUCT.md (Product Purpose: suppliers, price lists); pages.ts (/procurement-software/ suppliers screen)',
+  },
+  // --------------------------------------------------------------- guide 5
+  {
+    slug: 'guides/leaving-the-spreadsheet',
+    nav: 'Leaving the spreadsheet',
+    title: 'How to move off a spreadsheet without stopping the business | InPlace',
+    description:
+      'Moving off a spreadsheet does not start with importing data. An order of migration that begins with one supplier, and how to tell after a month.',
+    eyebrow: 'Guide',
+    h1: 'How to move off a spreadsheet without stopping the business',
+    lede:
+      'Most migrations fail in the same place: everything is moved at once, it takes a fortnight, and meanwhile the business keeps working in the spreadsheet. What you end up with is two systems and neither of them right.',
+    sections: [
+      {
+        h2: 'Why not to move everything',
+        ask: true,
+        paras: [
+          'Because a full migration requires the business to stop, and it will not stop. Orders keep going out during the move, and each one is a decision about whether to record it in the old spreadsheet or the new system.',
+          'The moment that decision exists it will fall both ways, and that is the worst state of all: neither spreadsheet nor system, but both of them partial.',
+        ],
+      },
+      {
+        h2: 'Start with one supplier',
+        paras: [
+          'The right supplier to start with is not the largest but the one that generates the most movement or the most trouble. In a food business that is usually the produce supplier; elsewhere it is whoever changes their price list most often.',
+          'One supplier is enough for the whole chain to run end to end once: price list, order, goods receipt, invoice, approval and payment. That is what needs to be seen, rather than a complete supplier list nobody has ordered from yet.',
+        ],
+      },
+      {
+        h2: 'What to move, and in what order',
+        table: {
+          headers: ['When', 'What'],
+          rows: [
+            ['First', 'One supplier: details, contact, minimum and their price list'],
+            ['Second', 'New orders from that supplier only. Old ones stay in the spreadsheet'],
+            ['Third', 'Goods receipt, from a phone, on those same orders'],
+            ['Fourth', 'Their invoices, from the first one that arrives after the move'],
+            ['Fifth', 'A second supplier, once the first has been through one full invoice cycle'],
+          ],
+        },
+        after: [
+          'Note what is not in the table: history. Orders already delivered and paid do not need to move, and the time spent moving them comes out of the only thing that matters in a migration, which is that the next cycle works.',
+        ],
+      },
+      {
+        h2: 'What to leave in the spreadsheet deliberately',
+        ask: true,
+        paras: [
+          'The history, as above, and everything that is not procurement. A spreadsheet is a good tool for cutting data in ways you did not plan for, and that is exactly what it will carry on doing: you export to it when there is a new question to ask.',
+          'What it stops being is the place the data lives. [[vs-spreadsheet|That difference is the whole migration]], and it requires deleting no file at all.',
+        ],
+      },
+      {
+        h2: 'How to tell after a month whether it worked',
+        ask: true,
+        paras: [
+          'Not by how comfortable it was. A migration is always less comfortable at first, and that measures the habit rather than the system.',
+          'The honest measure is to ask three questions about that one supplier that used to take time: how much did we pay them this month, was there an invoice that did not match, and where is the confirmation for the last payment. If all three are answered on one screen without searching a mailbox, the migration did what it was for.',
+          'And if one of them still needs a search, that is usually not a failure of the system but a sign that one link in the chain is still happening outside it. Most often it is [[guides/supplier-payment-mistakes|the goods receipt, which is the easiest link to skip]].',
+        ],
+      },
+      {
+        h2: 'And when not to move at all',
+        ask: true,
+        paras: [
+          'When one person orders from one supplier five times a month and pays for it themselves. There the spreadsheet describes reality completely, and a system would add a step without adding control.',
+          'The sign that this has changed is not the size of the business but the number of people who touch the same purchase. The moment an order passes between more than one person, [[guides/separation-of-duties|the spreadsheet stops describing who did what]], and that is the thing it cannot do at any size.',
+        ],
+      },
+    ],
+    related: ['vs-spreadsheet', 'guides/separation-of-duties', 'procurement-software'],
+    source: 'PRODUCT.md (Product Purpose); pages.ts (/vs-spreadsheet/); he.ts (plans: start from one supplier)',
+  },
 ]
 
 export default { pages: pagesEn, cta: CTA_EN }

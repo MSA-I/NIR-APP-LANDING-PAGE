@@ -326,6 +326,8 @@ const DATES: Record<string, { published: string; updated: string }> = {
   'guides/separation-of-duties': { published: '2026-09-01', updated: '2026-09-01' },
   'guides/supplier-payment-mistakes': { published: '2026-09-01', updated: '2026-09-01' },
   'guides/wrong-supplier-invoice': { published: '2026-09-01', updated: '2026-09-01' },
+  'guides/new-supplier-setup': { published: '2026-09-01', updated: '2026-09-01' },
+  'guides/leaving-the-spreadsheet': { published: '2026-09-01', updated: '2026-09-01' },
   terms: { published: '2026-08-27', updated: '2026-08-27' },
   privacy: { published: '2026-08-27', updated: '2026-08-27' },
 }

@@ -52,6 +52,10 @@ const PAGES = [
   '/en/guides/supplier-payment-mistakes/',
   '/guides/wrong-supplier-invoice/',
   '/en/guides/wrong-supplier-invoice/',
+  '/guides/new-supplier-setup/',
+  '/en/guides/new-supplier-setup/',
+  '/guides/leaving-the-spreadsheet/',
+  '/en/guides/leaving-the-spreadsheet/',
 ]
 
 // From public/_headers. Every one of these is declared there, so every one of
