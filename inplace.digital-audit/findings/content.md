@@ -1,6 +1,6 @@
 # Content Quality
 
-**Score: 72/100**  (weight 23%)
+**Score: 84/100**  (weight 23%)
 
 Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 
@@ -11,14 +11,15 @@ Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 - Two founder Person entities carry substantive biographies, and every sub-page WebPage node declares an author linked by @id to one of them
 - The company publishes a street address, a registration number and two phone numbers
 - The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews
+- The five commercial pages now carry a worked three-way-match example, the four alert types, what is kept from a decision, why there is no route around the approval, what happens after the payment, why an invoice is never deleted, why a spreadsheet cannot stop a payment, and what an ERP does that this does not
 
 ## Findings
 
-### [High] Commercial pages are thin for the field they are entering
+### [Resolved] Commercial pages were thin for the field they are entering — FIXED
 
-Hebrew word counts: /procurement-software/ 529, /invoice-matching/ 433, /vs-erp/ 391, /vs-spreadsheet/ 390, /supplier-invoices/ 388. English runs 526-731. Hebrew packs more meaning per word than English because prefixes attach, so 400 Hebrew words reads closer to 520 English; even adjusted these are short. A search for the head term returns established incumbents: StoreNext, Segment, CloudCom reselling Procurify, Mboss, CRTV, Rasner, plus Priority and Hashavshevet resellers with years of index history. Segment makes InPlace's exact core claim of verifying invoices against purchase orders and delivery reports in real time.
+Hebrew word counts: /procurement-software/ 529, /invoice-matching/ 433, /vs-erp/ 391, /vs-spreadsheet/ 390, /supplier-invoices/ 388. English runs 526-731. Hebrew packs more meaning per word than English because prefixes attach, so 400 Hebrew words reads closer to 520 English; even adjusted these are short. A search for the head term returns established incumbents: StoreNext, Segment, CloudCom reselling Procurify, Mboss, CRTV, Rasner, plus Priority and Hashavshevet resellers with years of index history. Segment makes InPlace's exact core claim of verifying invoices against purchase orders and delivery reports in real time. RESOLVED 31.08.2026: all five pages deepened in both editions, 15 new sections in total. Hebrew: procurement-software 529 to 905, invoice-matching 433 to 694, supplier-invoices 388 to 650, vs-spreadsheet 390 to 611, vs-erp 391 to 621. English: 731 to 1290, 588 to 964, 533 to 899, 526 to 851, 537 to 867. Every capability sentence traces to ../NIR-APP/PRODUCT.md or the brand documents, and the one recommendation NOT acted on is recorded below.
 
-**Fix:** Roughly double the depth of all five, prioritising /procurement-software/ then /invoice-matching/. Add checkable specifics rather than length: a worked numeric example of a three-way match catching a partial delivery, the Israeli specifics no international competitor covers (Israel Invoices, VAT, shotef-plus payment terms), annotated screenshots from the 12 already on the site, and the edge cases where the supplier is right.
+**Fix:** Done, with one deliberate exception. This audit recommended adding the Israeli specifics no international competitor covers (Israel Invoices, VAT, shotef-plus terms). Nothing in PRODUCT.md or the brand documents says the system handles any of them, and the repository rule is that every capability sentence is traceable to a source document. Writing them would have been an invented capability claim on the page that ranks for the head term. It waits for a source rather than for a decision.
 
 ### [High] There is no content hub
 

@@ -249,6 +249,33 @@ const pagesEn: Page[] = [
           'A record is not an addition for the annual audit. It is what makes it possible to answer “who approved this, and why” without searching somebody else’s inbox.',
         ],
       },
+      {
+        h2: 'Why an invoice is never deleted',
+        ask: true,
+        paras: [
+          'A wrong invoice is still a document that arrived. Deleting it solves the discomfort and erases the trail: afterwards there is no way to explain why the supplier believes they are owed money and you believe they are not.',
+          'Instead a credit request is opened against it, with the reason, and it stays open until the money comes back. The credit note is a document in its own right, linked to the invoice it came from, and the accountant is the one who posts it.',
+          'The procurement manager sees that the credit exists and what its status is, in the procurement context only. They do not post it themselves.',
+        ],
+      },
+      {
+        h2: 'What happens when an invoice is paid twice',
+        ask: true,
+        paras: [
+          'A double payment is the hardest kind to catch, because each of the two looks correct on its own. Neither is unusual. What is unusual is that there are two.',
+          'Two checks catch it at two different points. Before the payment, the suspected-double-charge alert compares the invoice number against the same supplier. After the payment, bank reconciliation compares against the actual transactions, which surfaces both a payment that went out twice and one that never left at all.',
+          'That reconciliation is why the journey does not end at the transfer. Until the bank transaction has been matched, what is known is that an instruction was sent, not that the money moved.',
+        ],
+      },
+      {
+        h2: 'What is left when someone leaves the business',
+        ask: true,
+        paras: [
+          'In work split between mail, chat and a spreadsheet, a great deal of the knowledge sits with a person. Who agreed what with the supplier, why that price was approved, where the confirmation is. When the person leaves, it leaves with them.',
+          'Here the knowledge sits on the document. The confirmation is filed on the invoice rather than in a separate folder, the reason for an approval is kept with the approval, and a credit note is linked to the invoice it came from. None of it depends on a particular person still being here.',
+          'That is what the question “who approved this, and why” means, when it can be answered without searching someone else’s mailbox.',
+        ],
+      },
     ],
     image: {
       src: 'assets/screen-office-credits-en.webp',
@@ -332,6 +359,41 @@ const pagesEn: Page[] = [
           'Two of the three comparisons catch most cases. Three also catch the one that costs the most money: paying in full for a partial delivery.',
         ],
       },
+      {
+        h2: 'The four alerts this screen raises',
+        paras: [
+          'Not every gap looks like a gap. Some of them look like a perfectly ordinary invoice, and they are caught only because something is being compared against something else.',
+        ],
+        table: {
+          headers: ['The alert', 'What sits behind it'],
+          rows: [
+            ['Suspected double charge', 'Same supplier, same invoice number, twice. In a mail folder nobody would have noticed'],
+            ['A price that went up', 'The invoice asks for more than the price list the order was built from'],
+            ['An invoice with no order', 'A payment request arrived for something nobody ordered through the system'],
+            ['An order not yet approved', 'The goods are on the way or already here, and the approval has not been given'],
+          ],
+        },
+        after: [
+          'The first three are about money that is about to leave. The fourth is about order: an unapproved order is not necessarily a mistake, but it is a state that should close before the invoice for it arrives.',
+        ],
+      },
+      {
+        h2: 'What is kept from the decision',
+        ask: true,
+        paras: [
+          'When someone settles a mismatch, the ruling itself is a record. Who approved it, when, and what the reason was. That is kept with the document rather than in the memory of whoever was there.',
+          'The practical value shows up months later, when the question is why this supplier was paid a different price from the one on their list. The answer sits on the invoice, not in the mailbox of someone who has left.',
+          'Every sensitive financial action is recorded on every plan, the free one included. A record is not a capability you buy in an upgrade.',
+        ],
+      },
+      {
+        h2: 'And if nobody marked the goods receipt',
+        ask: true,
+        paras: [
+          'Then the comparison knows less, and the system says so rather than pretending otherwise. A measure with no data behind it shows a dash and not a zero, because a zero is a claim about reality and a missing mark is an absence of information.',
+          'This is the one point in the chain that depends on a person. Everything else happens by itself: the invoice is linked, the comparison runs, the mismatch stops. The mark at the receiving door is what turns a two-document comparison into a three-document one, and that is the difference that catches the most expensive case.',
+        ],
+      },
     ],
     image: {
       src: 'assets/screen-owner-alerts-en.webp',
@@ -412,6 +474,31 @@ const pagesEn: Page[] = [
           'You can start with one supplier and leave the spreadsheet open beside the system. Comparing the two after a month is the most honest test available.',
         ],
       },
+      {
+        h2: 'Why a spreadsheet cannot stop a payment',
+        ask: true,
+        paras: [
+          'This is not a question of how well the spreadsheet is built. You can put formulas in it that turn every gap between two columns red, and it still stops nothing, because the payment does not pass through it. It happens somewhere else: at the bank, on the phone, in a transfer someone made because the supplier called.',
+          'A system stops things because it sits on the route. The payment request is created inside it, the approval is given inside it, and the accountant pays from it. An invoice that was never checked simply has no way to become an approved request.',
+          'The difference is not between a clever tool and a dim one. It is between a tool that describes reality and a tool that reality passes through.',
+        ],
+      },
+      {
+        h2: 'You can keep exporting to a spreadsheet',
+        ask: true,
+        paras: [
+          'Yes, and it is not a concession. The owner and the accountant see reports and export them, and the monthly export is part of the accountant\u2019s ordinary work alongside reconciliations and credit notes.',
+          'What changes is the direction. The spreadsheet stops being the place the data lives and is kept, and becomes the place you take it to when you want to cut it a different way. That is the use a spreadsheet is genuinely good at.',
+        ],
+      },
+      {
+        h2: 'How much work is it to move the suppliers over',
+        ask: true,
+        paras: [
+          'Less than it looks, because there is no need to move everything. Start with one supplier, usually the one that generates most of the orders or most of the trouble, and leave the rest in the spreadsheet for now.',
+          'The most honest test is to run both side by side for a month. At the end of it the comparison is not between two feature lists but between two pictures of the same business, and one of them caught things the other missed, or it did not.',
+        ],
+      },
     ],
     image: {
       src: 'assets/screen-office-prices-en.webp',
@@ -490,6 +577,31 @@ const pagesEn: Page[] = [
         paras: [
           'Both require the work to pass through them. A system somebody bypasses over WhatsApp is not a system, whether it cost a hundred thousand or nothing at all.',
           'The difference is how easy it is to bypass. When the system covers one complete chain and speaks the language of the people working in it, going around it stops being the short way.',
+        ],
+      },
+      {
+        h2: 'What an ERP does that this does not',
+        ask: true,
+        paras: [
+          'A great deal. Manufacturing, complex inventory, human resources, full bookkeeping, project management and costing. All of it is out of scope here, not because it does not matter but because this product does one thing: the journey from the order to the bank transfer.',
+          'That is said plainly because a feature list is where it is easy to promise more than exists. A business that needs those things will be better served by an ERP, and that is the right answer even when it is not the convenient one.',
+        ],
+      },
+      {
+        h2: 'Why three fixed roles instead of flexible permissions',
+        ask: true,
+        paras: [
+          'In an ERP, permissions are built during implementation, to whatever the organisation asks for. That is flexible, and that is exactly the weakness: a separation of duties somebody configured is a separation somebody can unconfigure, usually under pressure and in the middle of a month.',
+          'Here there are three roles and no more: owner, procurement manager and accountant. They cannot be redefined, and what each of them sees and does is fixed in the structure of the system. The accountant is the only one who moves money, and the procurement manager does not touch payments or the bank at all.',
+          'The cost is flexibility. What you get for it is that the separation still exists in the third month, when nobody remembers why it was set up that way.',
+        ],
+      },
+      {
+        h2: 'What happens to the data if you stop',
+        ask: true,
+        paras: [
+          'It belongs to the customer, and that is written into the terms of use rather than only asserted here. Moving between plans deletes nothing: what has accumulated stays in full even on the way down, because the difference between plans is the number of documents a month and not the list of features.',
+          'That is a question worth asking any software supplier before the implementation rather than after it, and particularly one that holds the payment chain of the business.',
         ],
       },
     ],

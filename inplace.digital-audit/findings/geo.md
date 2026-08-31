@@ -1,6 +1,6 @@
 # AI Search Readiness
 
-**Score: 85/100**  (weight 10%)
+**Score: 88/100**  (weight 10%)
 
 Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 
@@ -14,6 +14,7 @@ Audited 31.08.2026 against https://inplace.digital — all 18 published URLs.
 - IndexNow already announces every deploy to Bing, Yandex and Naver automatically, so new pages reach those indexes in minutes rather than waiting for a crawl
 - 58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit
 - The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about
+- 78 questions are declared across the supporting pages, up from 50, each one printed on the page and held to it in both directions by g21-schema
 
 ## Findings
 
