@@ -1,6 +1,6 @@
 {
   "summary": {
-    "health_score": 88,
+    "health_score": 91,
     "business_type": "B2B SaaS — procurement-to-payment, bilingual he-IL / en-US, selling to Israeli SMBs",
     "audit_date": "2026-08-31",
     "site_age_days": 3,
@@ -26,16 +26,16 @@
     "fixed_during_session": [
       "Cloudflare managed robots.txt turned off — eight AI crawlers unblocked, verified live, guarded by verify-live L8",
       "FAQPage declared on all six supporting pages in both editions — 50 questions, verified live",
-      "LinkedIn Company Page created and declared in Organization sameAs on all 18 pages — DEBT.md §21 closed"
+      "LinkedIn Company Page created and declared in Organization sameAs on all 18 pages — DEBT.md §21 closed",
+      "All five commercial pages deepened in both editions, 15 new sections, roughly +60 to +76 per cent of body copy each, every claim traced to a source document",
+      "English share card rendered from the same template and wired to the nine /en/ pages"
     ],
     "still_open": [
-      "Commercial page depth — 388-529 Hebrew words against established incumbents",
       "No content hub",
       "English brand-name collision with InPlace Software",
-      "Hebrew share card on the nine English pages",
       "/about/ has one inbound link; all internal anchors are identical and non-contextual"
     ],
-    "score_history": "81 at audit, 87 after the two fixes of 31.08.2026, 88 after sameAs closed the same day"
+    "score_history": "81 at audit, then 87, 88, 91 through the day's fixes; 91 with the English share card"
   },
   "categories": [
     {
@@ -77,21 +77,23 @@
     },
     {
       "name": "Content Quality",
-      "score": 72,
+      "score": 84,
       "weight": 23,
       "what_works": [
         "The prose is concrete, names the failure it prevents, and does not pad; no AI slop anywhere on the site",
         "Passages admit the tool is not always right, which is what makes a source both quotable and believable",
         "Two founder Person entities carry substantive biographies, and every sub-page WebPage node declares an author linked by @id to one of them",
         "The company publishes a street address, a registration number and two phone numbers",
-        "The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews"
+        "The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews",
+        "The five commercial pages now carry a worked three-way-match example, the four alert types, what is kept from a decision, why there is no route around the approval, what happens after the payment, why an invoice is never deleted, why a spreadsheet cannot stop a payment, and what an ERP does that this does not"
       ],
       "findings": [
         {
-          "title": "Commercial pages are thin for the field they are entering",
-          "severity": "High",
-          "description": "Hebrew word counts: /procurement-software/ 529, /invoice-matching/ 433, /vs-erp/ 391, /vs-spreadsheet/ 390, /supplier-invoices/ 388. English runs 526-731. Hebrew packs more meaning per word than English because prefixes attach, so 400 Hebrew words reads closer to 520 English; even adjusted these are short. A search for the head term returns established incumbents: StoreNext, Segment, CloudCom reselling Procurify, Mboss, CRTV, Rasner, plus Priority and Hashavshevet resellers with years of index history. Segment makes InPlace's exact core claim of verifying invoices against purchase orders and delivery reports in real time.",
-          "recommendation": "Roughly double the depth of all five, prioritising /procurement-software/ then /invoice-matching/. Add checkable specifics rather than length: a worked numeric example of a three-way match catching a partial delivery, the Israeli specifics no international competitor covers (Israel Invoices, VAT, shotef-plus payment terms), annotated screenshots from the 12 already on the site, and the edge cases where the supplier is right."
+          "title": "Commercial pages were thin for the field they are entering — FIXED",
+          "severity": "Resolved",
+          "description": "Hebrew word counts: /procurement-software/ 529, /invoice-matching/ 433, /vs-erp/ 391, /vs-spreadsheet/ 390, /supplier-invoices/ 388. English runs 526-731. Hebrew packs more meaning per word than English because prefixes attach, so 400 Hebrew words reads closer to 520 English; even adjusted these are short. A search for the head term returns established incumbents: StoreNext, Segment, CloudCom reselling Procurify, Mboss, CRTV, Rasner, plus Priority and Hashavshevet resellers with years of index history. Segment makes InPlace's exact core claim of verifying invoices against purchase orders and delivery reports in real time. RESOLVED 31.08.2026: all five pages deepened in both editions, 15 new sections in total. Hebrew: procurement-software 529 to 905, invoice-matching 433 to 694, supplier-invoices 388 to 650, vs-spreadsheet 390 to 611, vs-erp 391 to 621. English: 731 to 1290, 588 to 964, 533 to 899, 526 to 851, 537 to 867. Every capability sentence traces to ../NIR-APP/PRODUCT.md or the brand documents, and the one recommendation NOT acted on is recorded below.",
+          "recommendation": "Done, with one deliberate exception. This audit recommended adding the Israeli specifics no international competitor covers (Israel Invoices, VAT, shotef-plus terms). Nothing in PRODUCT.md or the brand documents says the system handles any of them, and the repository rule is that every capability sentence is traceable to a source document. Writing them would have been an invented capability claim on the page that ranks for the head term. It waits for a source rather than for a decision.",
+          "resolved": "2026-08-31"
         },
         {
           "title": "There is no content hub",
@@ -199,7 +201,7 @@
     },
     {
       "name": "AI Search Readiness",
-      "score": 85,
+      "score": 88,
       "weight": 10,
       "what_works": [
         "llms.txt is published and generated from the build, listing all 18 pages with descriptions, naming the operator and registration number",
@@ -209,7 +211,8 @@
         "PerplexityBot and OAI-SearchBot are not in the Cloudflare block, so Perplexity and ChatGPT search can still reach the site",
         "IndexNow already announces every deploy to Bing, Yandex and Naver automatically, so new pages reach those indexes in minutes rather than waiting for a crawl",
         "58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit",
-        "The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about"
+        "The Organization is now tied to an external company profile by sameAs, which is what an answer engine reads to decide which InPlace a page is about",
+        "78 questions are declared across the supporting pages, up from 50, each one printed on the page and held to it in both directions by g21-schema"
       ],
       "findings": [
         {
@@ -248,20 +251,22 @@
     },
     {
       "name": "Images",
-      "score": 88,
+      "score": 96,
       "weight": 5,
       "what_works": [
         "30 images on the home page with zero missing alt, zero missing width or height, which is why CLS is 0",
         "AVIF with WebP fallback via picture elements, three widths each at 800, 1440 and 2000, with correct sizes attributes",
         "Alt text is descriptive and real rather than filename mush",
-        "24 images declared in the sitemap under image:image"
+        "24 images declared in the sitemap under image:image",
+        "Each edition has its own share card, rendered from one template so the two cannot drift, and the build fails if a headline falls back to Arial or does not fit the plate"
       ],
       "findings": [
         {
-          "title": "All nine English pages serve the Hebrew share card",
-          "severity": "Medium",
-          "description": "Every page on the site, both languages, points og:image at assets/og-cover.jpg, whose visible text is Hebrew. An English reader sharing /en/procurement-software/ on LinkedIn gets an English title over a Hebrew picture. There is a second mismatch inside it: og:image:alt on the English pages describes the image in English while its visible text is Hebrew. assets/og-cover-en.jpg returns 404.",
-          "recommendation": "Render a second card with scripts/build-og.mjs and scripts/og-template.html, which already exist, and point the nine /en/ pages at it. Fix og:image:alt at the same time."
+          "title": "All nine English pages served the Hebrew share card — FIXED",
+          "severity": "Resolved",
+          "description": "Every page on the site, both languages, points og:image at assets/og-cover.jpg, whose visible text is Hebrew. An English reader sharing /en/procurement-software/ on LinkedIn gets an English title over a Hebrew picture. There is a second mismatch inside it: og:image:alt on the English pages describes the image in English while its visible text is Hebrew. assets/og-cover-en.jpg returns 404. RESOLVED 31.08.2026: scripts/og-template.html now takes five substitutions (language, direction, both faces, the headline split at its tint, and the chain) and scripts/build-og.mjs renders it once per edition. The English card reads left to right, is set in the Latin cuts of the same two faces, and turns the chain arrows round. An `ogImage` field joined the per-locale table in src/lib/page-html.ts beside the `ogAlt` that already described each card correctly, and en/index.html switched its two references. Verified live: /en/ pages serve og-cover-en.jpg and Hebrew pages serve og-cover.jpg. A second build check now fails the build if a headline does not fit the plate, and the launch uses the Chrome the gates use rather than a Playwright download that is not on every machine.",
+          "recommendation": "Done.",
+          "resolved": "2026-08-31"
         },
         {
           "title": "Sub-pages share the home page's card",
@@ -306,8 +311,8 @@
         "items": [
           "DONE 31.08.2026 — Add sameAs plus description, foundingDate, email and areaServed to the Organization node. One builder script, propagates to all 18 pages. Creating a LinkedIn company page is the prerequisite if none exists.",
           "DONE 31.08.2026 — Generate FAQPage nodes from the existing question-shaped headings on the eight sub-pages across both languages. 16 pages, markup only, content already written.",
-          "Roughly double the depth of the five commercial pages across both languages, prioritising /procurement-software/ then /invoice-matching/. Add worked numeric examples, Israeli specifics, annotated screenshots and edge cases.",
-          "Render an English OG card via the existing scripts/build-og.mjs and point the nine /en/ pages at it; fix og:image:alt at the same time."
+          "DONE 31.08.2026 — Roughly double the depth of the five commercial pages across both languages, prioritising /procurement-software/ then /invoice-matching/. Add worked numeric examples, Israeli specifics, annotated screenshots and edge cases.",
+          "DONE 31.08.2026 — Render an English OG card via the existing scripts/build-og.mjs and point the nine /en/ pages at it; fix og:image:alt at the same time."
         ]
       },
       {

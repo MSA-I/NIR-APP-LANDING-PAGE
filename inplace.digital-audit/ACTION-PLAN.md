@@ -1,7 +1,7 @@
 # Action Plan — inplace.digital
 
-**Status 31.08.2026.** Phase 1 is done and verified live. Phases 2.1 and 2.2 are done. Everything
-else is open.
+**Status 31.08.2026.** Phase 1 is done and verified live. **Phase 2 is complete.** Phase 3 and the
+content hub remain.
 
 
 Ordered by impact. Scope is given in countable units — files touched, pages affected, entries added —
@@ -78,7 +78,7 @@ questions across the site, in the exact shape AI Overviews and answer engines ex
 Generate the `FAQPage` node from the existing headings in the same script that already builds the
 graph, so it cannot drift from the visible copy.
 
-### 2.3 Deepen the five commercial pages
+### 2.3 Deepen the five commercial pages  ·  DONE 31.08.2026
 
 **Scope:** 5 pages × 2 languages. Current: 388–529 Hebrew words. Target: roughly double.
 
@@ -97,7 +97,7 @@ Length alone is not the goal. Add the material that is checkable and specific:
 Priority order: `/procurement-software/` (broadest term), `/invoice-matching/` (sharpest differentiator),
 `/supplier-invoices/`, then the two comparison pages.
 
-### 2.4 Build the English share card
+### 2.4 Build the English share card  ·  DONE 31.08.2026
 
 **Scope:** `scripts/build-og.mjs`, one new output, 9 pages switch to it.
 

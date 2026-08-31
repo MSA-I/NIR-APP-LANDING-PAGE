@@ -26,6 +26,7 @@ const CHROME = {
   he: {
     dir: 'rtl',
     ogLocale: 'he_IL',
+    ogImage: 'og-cover.jpg',
     navLabel: 'ניווט ראשי',
     toLight: 'מעבר לתצוגה בהירה',
     toDark: 'מעבר לתצוגה כהה',
@@ -42,7 +43,7 @@ const CHROME = {
     login: 'כניסה למערכת',
     terms: 'תנאי שימוש',
     privacy: 'מדיניות פרטיות',
-    operator: 'מפעילת השירות: In Place, הרותם 14, כפר אדומים. מספר רישום 036689081. טלפון 054-254-7074.',
+    operator: 'מפעילת השירות: In Place, עסק רשום בישראל. מספר רישום 036689081. לפניות: support@inplace.digital.',
     updated: 'עודכן',
     dateFormat: 'he-IL',
     ogAlt: 'InPlace: כל מה שקורה בין ההזמנה לכסף, במקום אחד',
@@ -51,6 +52,7 @@ const CHROME = {
   en: {
     dir: 'ltr',
     ogLocale: 'en',
+    ogImage: 'og-cover-en.jpg',
     navLabel: 'Main navigation',
     toLight: 'Switch to the light view',
     toDark: 'Switch to the dark view',
@@ -67,7 +69,7 @@ const CHROME = {
     login: 'Sign in',
     terms: 'Terms of use',
     privacy: 'Privacy policy',
-    operator: 'Operated by In Place, HaRotem 14, Kfar Adumim, Israel. Registration number 036689081. Telephone +972-54-254-7074.',
+    operator: 'Operated by In Place, a business registered in Israel. Registration number 036689081. Contact: support@inplace.digital.',
     updated: 'Updated',
     dateFormat: 'en-GB',
     ogAlt: 'InPlace: everything between the order and the money, in one place',
@@ -388,13 +390,16 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
         // it is the /company/ URL and not the /in/ one. DEBT.md §21, closed
         // 31.08.2026.
         sameAs: ['https://www.linkedin.com/company/inplace-digital'],
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: 'הרותם 14',
-          addressLocality: 'כפר אדומים',
-          addressCountry: 'IL',
-        },
-        telephone: '+972-54-254-7074',
+        // No postal address and no telephone. See src/entry-static.tsx for the
+        // owner's decision of 31.08.2026 and what it reverses.
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            email: 'support@inplace.digital',
+            contactType: 'customer support',
+            availableLanguage: ['he', 'en'],
+          },
+        ],
         // Only where they are printed, which is /about/ and nowhere else. The
         // Person nodes themselves are below; this is the edge from the company
         // to them, and it is the same rule that keeps an Offer off a page with
@@ -864,7 +869,7 @@ export function pageHtml(
     <meta property="og:url" content="${url}" />
     <meta property="og:site_name" content="InPlace" />
     <meta property="og:locale" content="${t.ogLocale}" />
-    <meta property="og:image" content="${ORIGIN}/assets/og-cover.jpg" />
+    <meta property="og:image" content="${ORIGIN}/assets/${t.ogImage}" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -872,7 +877,7 @@ export function pageHtml(
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${attr(page.title)}" />
     <meta name="twitter:description" content="${attr(page.description)}" />
-    <meta name="twitter:image" content="${ORIGIN}/assets/og-cover.jpg" />
+    <meta name="twitter:image" content="${ORIGIN}/assets/${t.ogImage}" />
 ${t.fonts
       .map(
         (f) =>
