@@ -1,0 +1,906 @@
+[
+ {
+  "u": "/",
+  "status": 200,
+  "ms": 571,
+  "bytes": 211066,
+  "title": "InPlace: בדיקת חשבוניות מול הזמנות, לפני התשלום",
+  "titleLen": 47,
+  "desc": "מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים.",
+  "descLen": 128,
+  "canon": "https://inplace.digital/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "כשההזמנה והחשבונית לא מסכימות, זה נעצר כאן."
+  ],
+  "h2count": 13,
+  "h2s": [
+   "עסקים שמריצים את הרכש שלהם כאן.",
+   "העסק שלך עומד על ערימה",
+   "שני מספרים, ספק אחד",
+   "יש דרך אחת לסדר את זה",
+   "וזאת הבדיקה שמחליפה אותה",
+   "מה InPlace עושה בפועל",
+   "ומרכז הבקרה שמעליה, במלואו",
+   "למה לא גיליון, ולמה לא ERP",
+   "מתחילים בחינם. עולים מסלול כשצריך יותר.",
+   "חמישה משתמשים מספרים מה השתנה",
+   "שאלות שנשאלות לפני שמתחילים",
+   "ארגון עם מכסות והסדר משלו",
+   "הכול במקום."
+  ],
+  "h3n": 11,
+  "hreflang": [
+   "he=https://inplace.digital/",
+   "en=https://inplace.digital/en/",
+   "x-default=https://inplace.digital/en/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "SoftwareApplication",
+   "VideoObject",
+   "WebPage",
+   "FAQPage"
+  ],
+  "ldErr": null,
+  "words": 2412,
+  "imgs": 30,
+  "noAlt": 0,
+  "emptyAlt": 18,
+  "noDims": 0,
+  "noLazy": 25,
+  "links": 36,
+  "internal": 10
+ },
+ {
+  "u": "/about/",
+  "status": 200,
+  "ms": 142,
+  "bytes": 41930,
+  "title": "על InPlace: מה המערכת ומי היא משרתת",
+  "titleLen": 35,
+  "desc": "InPlace היא מערכת שליטה לרכש עד תשלום בעברית מלאה. מה המערכת עושה, לפי אילו עקרונות היא נבנתה, ומי שלושת בעלי התפקידים שעובדים בה.",
+  "descLen": 130,
+  "canon": "https://inplace.digital/about/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "על InPlace"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "מה המערכת עושה",
+   "העקרונות שלפיהם היא נבנתה",
+   "שלושת בעלי התפקידים",
+   "מה המערכת מסרבת להיות",
+   "אופי",
+   "מי עומד מאחורי המערכת",
+   "נגישות"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/about/",
+   "en=https://inplace.digital/en/about/",
+   "x-default=https://inplace.digital/en/about/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 623,
+  "imgs": 3,
+  "noAlt": 0,
+  "emptyAlt": 2,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/terms/",
+  "status": 200,
+  "ms": 143,
+  "bytes": 32206,
+  "title": "תנאי שימוש | InPlace",
+  "titleLen": 20,
+  "desc": "תנאי השימוש במערכת InPlace לניהול רכש, חשבוניות ותשלומים: חשבונות והרשאות, בעלות על נתוני הלקוח, עיבוד אוטומטי של מסמכים, זמינות, אחריות וסיום התקשרות.",
+  "descLen": 151,
+  "canon": "https://inplace.digital/terms/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "תנאי שימוש"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "1. השירות",
+   "2. חשבונות והרשאות",
+   "3. הנתונים של הלקוח",
+   "4. עיבוד אוטומטי של מסמכים",
+   "5. זמינות ואחריות",
+   "6. סיום והתנתקות",
+   "7. שינוי בתנאים ודין"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/terms/",
+   "en=https://inplace.digital/en/terms/",
+   "x-default=https://inplace.digital/en/terms/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList"
+  ],
+  "ldErr": null,
+  "words": 305,
+  "imgs": 0,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 9,
+  "internal": 8
+ },
+ {
+  "u": "/vs-erp/",
+  "status": 200,
+  "ms": 140,
+  "bytes": 37407,
+  "title": "InPlace מול מערכת ERP לניהול רכש | InPlace",
+  "titleLen": 42,
+  "desc": "ERP הוא מערכת לכל מחלקה בארגון. InPlace עושה דבר אחד: את המסע מההזמנה לתשלום. מה ההבדל, ומתי כל אחד מהם הבחירה הנכונה.",
+  "descLen": 118,
+  "canon": "https://inplace.digital/vs-erp/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "מערכת ERP מול מערכת רכש ייעודית"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "מה InPlace מסרבת להיות",
+   "ההבדל המעשי",
+   "מתי ERP הוא הבחירה הנכונה",
+   "עלות ההטמעה, לא עלות הרישיון",
+   "מה קורה כשצריך את שניהם",
+   "מה משותף לשניהם"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/vs-erp/",
+   "en=https://inplace.digital/en/vs-erp/",
+   "x-default=https://inplace.digital/en/vs-erp/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 391,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/privacy/",
+  "status": 200,
+  "ms": 144,
+  "bytes": 33597,
+  "title": "מדיניות פרטיות | InPlace",
+  "titleLen": 24,
+  "desc": "מדיניות הפרטיות של InPlace: מה נאסף ולמה, מי ספקי המשנה, מה קורה אצל ספק מודל הבינה המלאכותית, והזכויות שלך לפי תיקון 13 לחוק הגנת הפרטיות.",
+  "descLen": 139,
+  "canon": "https://inplace.digital/privacy/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "מדיניות פרטיות"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "1. מה נאסף, ולמה",
+   "2. מי מעבד את הנתונים",
+   "3. מה קורה אצל ספק המודל",
+   "4. הפרדת לקוחות ואבטחה",
+   "5. שמירה ומחיקה",
+   "6. הזכויות שלך",
+   "7. עוגיות ואחסון מקומי"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/privacy/",
+   "en=https://inplace.digital/en/privacy/",
+   "x-default=https://inplace.digital/en/privacy/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList"
+  ],
+  "ldErr": null,
+  "words": 520,
+  "imgs": 0,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 9,
+  "internal": 8
+ },
+ {
+  "u": "/vs-spreadsheet/",
+  "status": 200,
+  "ms": 138,
+  "bytes": 37457,
+  "title": "InPlace מול גיליון אקסל לניהול רכש | InPlace",
+  "titleLen": 44,
+  "desc": "גיליון מנהל רשימה, לא מסע. ההבדל בין ניהול רכש בגיליון לבין מערכת: קשר בין מסמכים, הפרדת סמכויות, ועצירה של מה שלא מתאים לפני התשלום.",
+  "descLen": 133,
+  "canon": "https://inplace.digital/vs-spreadsheet/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "גיליון אקסל מול מערכת רכש"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "מה גיליון עושה טוב",
+   "איפה הוא נשבר",
+   "מה מערכת מוסיפה",
+   "מה קורה כשהעסק גדל",
+   "מה לא עובר מהגיליון",
+   "מתי כדאי לעבור"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/vs-spreadsheet/",
+   "en=https://inplace.digital/en/vs-spreadsheet/",
+   "x-default=https://inplace.digital/en/vs-spreadsheet/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 390,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/invoice-matching/",
+  "status": 200,
+  "ms": 132,
+  "bytes": 37631,
+  "title": "התאמת חשבונית להזמנת רכש ולקבלת סחורה | InPlace",
+  "titleLen": 47,
+  "desc": "השוואה אוטומטית בין ההזמנה, קבלת הסחורה והחשבונית. פער בין השלושה נעצר לפני התשלום ומחכה להחלטה, במקום להתגלות אחרי שהכסף יצא.",
+  "descLen": 126,
+  "canon": "https://inplace.digital/invoice-matching/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "התאמת חשבונית להזמנה ולקבלת הסחורה"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "שני מספרים, ספק אחד",
+   "מה המערכת משווה",
+   "למה זה נעצר לפני התשלום ולא אחריו",
+   "קבלת סחורה מהטלפון",
+   "מי מחליט על חריגה",
+   "למה שלושה מסמכים ולא שניים"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/invoice-matching/",
+   "en=https://inplace.digital/en/invoice-matching/",
+   "x-default=https://inplace.digital/en/invoice-matching/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 433,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/supplier-invoices/",
+  "status": 200,
+  "ms": 153,
+  "bytes": 37229,
+  "title": "ניהול חשבוניות ספקים בעברית | InPlace",
+  "titleLen": 37,
+  "desc": "ניהול חשבוניות ספקים מהרגע שהחשבונית נכנסת ועד ההעברה בבנק: קישור להזמנה, בדיקה מול קבלת הסחורה, אישור, דרישת תשלום ואסמכתה מתויקת.",
+  "descLen": 131,
+  "canon": "https://inplace.digital/supplier-invoices/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "ניהול חשבוניות ספקים, מהכניסה ועד ההעברה"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "מה קורה לחשבונית מהרגע שהיא נכנסת",
+   "מי רואה מה",
+   "זיכויים והתאמות בנק",
+   "מה קורה לחשבונית שלא תואמת",
+   "דוחות וייצוא",
+   "תיעוד"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/supplier-invoices/",
+   "en=https://inplace.digital/en/supplier-invoices/",
+   "x-default=https://inplace.digital/en/supplier-invoices/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 388,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/procurement-software/",
+  "status": 200,
+  "ms": 134,
+  "bytes": 38686,
+  "title": "תוכנת רכש לעסקים: מהזמנה ועד תשלום | InPlace",
+  "titleLen": 44,
+  "desc": "תוכנת רכש בעברית מלאה לעסקים קטנים ובינוניים: ספקים, מחירונים, הזמנות, קבלת סחורה, חשבוניות ותשלומים בשרשרת אחת, עם הפרדת סמכויות ותיעוד.",
+  "descLen": 137,
+  "canon": "https://inplace.digital/procurement-software/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "he",
+  "dir": "rtl",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "תוכנת רכש לעסקים, בעברית מלאה"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "מה תוכנת רכש אמורה לעשות",
+   "שלושה תפקידים, סמכויות מופרדות",
+   "למי זה מתאים",
+   "מה קורה כשמשהו לא מתאים",
+   "מה רואים בתמונת המצב",
+   "מה זה לא",
+   "איך מתחילים"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/procurement-software/",
+   "en=https://inplace.digital/en/procurement-software/",
+   "x-default=https://inplace.digital/en/procurement-software/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 529,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/en/",
+  "status": 200,
+  "ms": 155,
+  "bytes": 218768,
+  "title": "InPlace: check invoices against orders, before you pay",
+  "titleLen": 54,
+  "desc": "A procurement-to-payment system that connects purchase orders, goods received and invoices, then stops mismatches before money leaves the business.",
+  "descLen": 147,
+  "canon": "https://inplace.digital/en/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "When the order and invoice do not agree, it stops here."
+  ],
+  "h2count": 13,
+  "h2s": [
+   "Businesses running procurement here.",
+   "Your business stands on a stack",
+   "Two numbers, one supplier",
+   "There is one way to organise it",
+   "This is the check that replaces the stack",
+   "What InPlace does in practice",
+   "And the control centre above it, in full",
+   "Why not a spreadsheet, and why not an ERP",
+   "Plans",
+   "Five users on what changed",
+   "Questions asked before getting started",
+   "An organisation with its own quotas and structure",
+   "Everything in place."
+  ],
+  "h3n": 11,
+  "hreflang": [
+   "he=https://inplace.digital/",
+   "en=https://inplace.digital/en/",
+   "x-default=https://inplace.digital/en/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "SoftwareApplication",
+   "VideoObject",
+   "WebPage",
+   "FAQPage"
+  ],
+  "ldErr": null,
+  "words": 2977,
+  "imgs": 30,
+  "noAlt": 0,
+  "emptyAlt": 18,
+  "noDims": 0,
+  "noLazy": 25,
+  "links": 36,
+  "internal": 10
+ },
+ {
+  "u": "/en/about/",
+  "status": 200,
+  "ms": 142,
+  "bytes": 43868,
+  "title": "About InPlace: what the system is, and who it serves",
+  "titleLen": 52,
+  "desc": "InPlace is a procurement-to-payment control system. What the system does, the principles it was built on, and the three roles that work inside it.",
+  "descLen": 146,
+  "canon": "https://inplace.digital/en/about/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "About InPlace"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "What the system does",
+   "The principles it was built on",
+   "The three roles",
+   "What the system refuses to be",
+   "Character",
+   "Who stands behind the system",
+   "Accessibility"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/about/",
+   "en=https://inplace.digital/en/about/",
+   "x-default=https://inplace.digital/en/about/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 806,
+  "imgs": 3,
+  "noAlt": 0,
+  "emptyAlt": 2,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/en/terms/",
+  "status": 200,
+  "ms": 140,
+  "bytes": 33167,
+  "title": "Terms of use | InPlace",
+  "titleLen": 22,
+  "desc": "The terms of use for InPlace: accounts and permissions, ownership of customer data, automatic document processing, availability, liability and ending the engagement.",
+  "descLen": 165,
+  "canon": "https://inplace.digital/en/terms/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "Terms of use"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "1. The service",
+   "2. Accounts and permissions",
+   "3. The customer’s data",
+   "4. Automatic document processing",
+   "5. Availability and liability",
+   "6. Ending the engagement",
+   "7. Changes to the terms, and governing law"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/terms/",
+   "en=https://inplace.digital/en/terms/",
+   "x-default=https://inplace.digital/en/terms/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList"
+  ],
+  "ldErr": null,
+  "words": 439,
+  "imgs": 0,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 9,
+  "internal": 8
+ },
+ {
+  "u": "/en/vs-erp/",
+  "status": 200,
+  "ms": 135,
+  "bytes": 38875,
+  "title": "InPlace vs an ERP for procurement | InPlace",
+  "titleLen": 43,
+  "desc": "An ERP covers every department. InPlace does one thing: the chain from order to payment. What the difference is, and when each one is the right choice.",
+  "descLen": 151,
+  "canon": "https://inplace.digital/en/vs-erp/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "An ERP against a dedicated procurement system"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "What InPlace refuses to be",
+   "The practical difference",
+   "When an ERP is the right choice",
+   "The cost of implementation, not the cost of the licence",
+   "What happens when you need both",
+   "What they have in common"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/vs-erp/",
+   "en=https://inplace.digital/en/vs-erp/",
+   "x-default=https://inplace.digital/en/vs-erp/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 537,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/en/privacy/",
+  "status": 200,
+  "ms": 139,
+  "bytes": 35076,
+  "title": "Privacy policy | InPlace",
+  "titleLen": 24,
+  "desc": "The InPlace privacy policy: what is collected and why, which sub-processors handle the data, what happens at the AI model provider, and your rights.",
+  "descLen": 148,
+  "canon": "https://inplace.digital/en/privacy/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "Privacy policy"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "1. What is collected, and why",
+   "2. Who processes the data",
+   "3. What happens at the model provider",
+   "4. Customer separation and security",
+   "5. Retention and deletion",
+   "6. Your rights",
+   "7. Cookies and local storage"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/privacy/",
+   "en=https://inplace.digital/en/privacy/",
+   "x-default=https://inplace.digital/en/privacy/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList"
+  ],
+  "ldErr": null,
+  "words": 709,
+  "imgs": 0,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 9,
+  "internal": 8
+ },
+ {
+  "u": "/en/vs-spreadsheet/",
+  "status": 200,
+  "ms": 129,
+  "bytes": 38767,
+  "title": "InPlace vs a spreadsheet for procurement | InPlace",
+  "titleLen": 50,
+  "desc": "A spreadsheet manages a list, not a chain. What a procurement system adds: linked documents, separation of duties and a stop before the payment goes out.",
+  "descLen": 153,
+  "canon": "https://inplace.digital/en/vs-spreadsheet/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "A spreadsheet against a procurement system"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "What a spreadsheet does well",
+   "Where it breaks",
+   "What a system adds",
+   "What happens as the business grows",
+   "What does not transfer from the spreadsheet",
+   "When it is worth moving"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/vs-spreadsheet/",
+   "en=https://inplace.digital/en/vs-spreadsheet/",
+   "x-default=https://inplace.digital/en/vs-spreadsheet/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 526,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/en/invoice-matching/",
+  "status": 200,
+  "ms": 131,
+  "bytes": 39242,
+  "title": "Matching an invoice to its purchase order and goods receipt | InPlace",
+  "titleLen": 69,
+  "desc": "Automatic comparison of the purchase order, the goods received and the invoice. A gap stops before payment, instead of surfacing after the money has left.",
+  "descLen": 154,
+  "canon": "https://inplace.digital/en/invoice-matching/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "Matching the invoice to the order and the goods received"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "Two numbers, one supplier",
+   "What the system compares",
+   "Why it stops before payment and not after",
+   "Goods receipt from a phone",
+   "Who decides on a mismatch",
+   "Why three documents and not two"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/invoice-matching/",
+   "en=https://inplace.digital/en/invoice-matching/",
+   "x-default=https://inplace.digital/en/invoice-matching/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 588,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/en/supplier-invoices/",
+  "status": 200,
+  "ms": 131,
+  "bytes": 38597,
+  "title": "Supplier invoice management, end to end | InPlace",
+  "titleLen": 49,
+  "desc": "Supplier invoice management from arrival to bank transfer: linked to its order, checked against goods received, approved and filed with its confirmation.",
+  "descLen": 153,
+  "canon": "https://inplace.digital/en/supplier-invoices/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "Supplier invoices, from arrival to transfer"
+  ],
+  "h2count": 6,
+  "h2s": [
+   "What happens to an invoice from the moment it arrives",
+   "Who sees what",
+   "Credit notes and bank reconciliation",
+   "What happens to an invoice that does not match",
+   "Reports and export",
+   "The record"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/supplier-invoices/",
+   "en=https://inplace.digital/en/supplier-invoices/",
+   "x-default=https://inplace.digital/en/supplier-invoices/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 533,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ },
+ {
+  "u": "/en/procurement-software/",
+  "status": 200,
+  "ms": 142,
+  "bytes": 40439,
+  "title": "Procurement software for SMBs: from order to payment | InPlace",
+  "titleLen": 62,
+  "desc": "Procurement software for small and mid-sized businesses: suppliers, orders, goods received, invoices and payments in one chain, with separation of duties.",
+  "descLen": 154,
+  "canon": "https://inplace.digital/en/procurement-software/",
+  "robots": "index, follow, max-image-preview:large",
+  "lang": "en",
+  "dir": "ltr",
+  "ogimg": "https://inplace.digital/assets/og-cover.jpg",
+  "h1s": [
+   "Procurement software built around one chain"
+  ],
+  "h2count": 7,
+  "h2s": [
+   "What procurement software is supposed to do",
+   "Three roles, duties kept apart",
+   "Who it is for",
+   "What happens when something does not match",
+   "What the overview shows",
+   "What it is not",
+   "How to start"
+  ],
+  "h3n": 0,
+  "hreflang": [
+   "he=https://inplace.digital/procurement-software/",
+   "en=https://inplace.digital/en/procurement-software/",
+   "x-default=https://inplace.digital/en/procurement-software/"
+  ],
+  "types": [
+   "Organization",
+   "WebSite",
+   "WebPage",
+   "BreadcrumbList",
+   "Person"
+  ],
+  "ldErr": null,
+  "words": 731,
+  "imgs": 1,
+  "noAlt": 0,
+  "emptyAlt": 0,
+  "noDims": 0,
+  "noLazy": 0,
+  "links": 13,
+  "internal": 11
+ }
+]

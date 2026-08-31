@@ -1,0 +1,355 @@
+{
+  "summary": {
+    "health_score": 87,
+    "business_type": "B2B SaaS — procurement-to-payment, bilingual he-IL / en-US, selling to Israeli SMBs",
+    "audit_date": "2026-08-31",
+    "site_age_days": 3,
+    "pages_crawled": 18,
+    "top_findings": [
+      "Cloudflare's managed robots.txt block disallows eight AI crawlers (GPTBot, ClaudeBot, CCBot, Google-Extended, Applebot-Extended, meta-externalagent, Amazonbot, Bytespider), directly contradicting the owner's documented decision and defeating the g17-crawl build gate, which validates the repository file rather than the served one",
+      "The brand name is already owned in English by InPlace Software, an Australian ed-tech SaaS founded 2010 with a G2 profile, and the Organization schema carries no sameAs to disambiguate the two entities",
+      "The five commercial pages run 388-529 Hebrew words against established Israeli incumbents (StoreNext, Segment, CloudCom/Procurify, Mboss, CRTV, Priority and Hashavshevet resellers); Segment makes the identical core claim",
+      "FAQPage schema exists only on the home page while eight sub-pages carry roughly twenty unmarked question-shaped H2s with self-contained answers",
+      "All nine English pages serve the Hebrew share card; og-cover-en.jpg returns 404 and og:image:alt describes the image in English while its visible text is Hebrew"
+    ],
+    "quick_wins": [
+      "Turn off Cloudflare's managed robots.txt block — a dashboard toggle, no code, verifiable with one curl",
+      "Add sameAs to the Organization schema — one builder script, propagates to all 18 pages",
+      "Generate FAQPage nodes from the existing sub-page headings — content already written, markup only",
+      "Render an English OG card via the existing scripts/build-og.mjs and point the nine /en/ pages at it",
+      "Add contextual in-body links to /about/, which today has exactly one inbound link"
+    ],
+    "corrections": [
+      "An earlier pass of this audit reported the site had no IndexNow and flagged public/c6fda1454ac9fb23548f545592b8dda4.txt as an unidentified verification file. Both were wrong: that file is the IndexNow key, and .github/workflows/indexnow.yml already submits the live sitemap after every successful deploy. Technical SEO was rescored 78 to 80 and AI Search Readiness 55 to 58; the overall score moved from 80 to 81."
+    ],
+    "fixed_during_session": [
+      "Cloudflare managed robots.txt turned off — eight AI crawlers unblocked, verified live, guarded by verify-live L8",
+      "FAQPage declared on all six supporting pages in both editions — 50 questions, verified live"
+    ],
+    "still_open": [
+      "Organization sameAs — the owner has a profile and the URL is pending",
+      "Commercial page depth — 388-529 Hebrew words against established incumbents",
+      "No content hub",
+      "English brand-name collision with InPlace Software",
+      "Hebrew share card on the nine English pages",
+      "/about/ has one inbound link; all internal anchors are identical and non-contextual"
+    ],
+    "score_history": "81 at audit, 87 after the two fixes of 31.08.2026"
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 95,
+      "weight": 22,
+      "what_works": [
+        "All four redirect cases correct: http to https 301, www to apex 301, no-slash to slash 308, unknown path to a real 404 carrying noindex at 3.5 KB",
+        "Security headers on every response: HSTS max-age 31536000 includeSubDomains, X-Content-Type-Options nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy closing geolocation, microphone, camera and interest-cohort",
+        "Caching correct by class: hashed /assets/* immutable for a year, robots.txt and sitemap.xml one hour, HTML root max-age 0 must-revalidate",
+        "Every page ships complete server-rendered HTML; no JavaScript is required to read the site",
+        "Sitemap generated from the build, lists all 18 URLs with xhtml:link alternates and 24 image:image entries",
+        "Google Search Console verified by DNS TXT record",
+        "Semantic HTML complete: main, nav, footer, header, section, details and a real table",
+        "IndexNow is configured and fires automatically after every successful deploy (.github/workflows/indexnow.yml), reading the live sitemap rather than a built one so it can only announce what is actually served; the key file is discovered by pattern rather than hardcoded, and a failed deploy announces nothing",
+        "The served robots.txt is now guarded by verify-live L8, which parses the file the host actually returns rather than the one in the repository — the gap that let this regression pass unnoticed"
+      ],
+      "findings": [
+        {
+          "title": "Cloudflare published a robots.txt that blocked eight AI crawlers — FIXED",
+          "severity": "Resolved",
+          "description": "public/robots.txt contains no Disallow and documents in a comment that AI crawlers are deliberately not blocked, and g17-crawl asserts that. The file served at https://inplace.digital/robots.txt opens with a '# BEGIN Cloudflare Managed content' block disallowing Amazonbot, Applebot-Extended, Bytespider, CCBot, ClaudeBot, CloudflareBrowserRenderingCrawler, Google-Extended, GPTBot and meta-externalagent, plus Content-Signal: ai-train=no. Under the robots.txt specification a named group wins over User-agent: *, so each of those agents reads its own Disallow: / and stops. Googlebot matches User-agent: * and is fully allowed, so ordinary Google Search and AI Overviews are unaffected; PerplexityBot and OAI-SearchBot are not named and remain allowed. The gate passed throughout because it validates the repository file, not the served one. RESOLVED 31.08.2026: Cloudflare's managed robots.txt was set to 'Instruct AI bots to not scrape content'; it is now set to 'Disable robots.txt configuration', so public/robots.txt is served exactly as written. Verified live: the anchored Disallow count is 0, and the Content-Signal line is gone. Guarded against regression by a new check L8 in scripts/verify-live.mjs, which parses the SERVED file the way robots.txt is actually read and names every disallowed agent; it runs in the deploy workflow, so the build goes red if this ever comes back.",
+          "recommendation": "Cloudflare dashboard, inplace.digital zone, AI Crawl Control, turn off the managed robots.txt block. Verify with: curl -s https://inplace.digital/robots.txt | grep -c \"^Disallow\", expecting 0 (anchor to the line start: the repo file mentions the word three times in its own comments, so an unanchored count returns 3 even once fixed; it currently returns 9 anchored). Then extend g17-crawl to fetch the live URL post-deploy so the gate measures what the internet receives.",
+          "resolved": "2026-08-31"
+        },
+        {
+          "title": "No Content-Security-Policy",
+          "severity": "Low",
+          "description": "Absent, and deliberately so. public/_headers documents the reasoning: Motion writes inline styles on every animated element, so a strict style-src would stop animation without stopping loading, which is the hardest kind of failure to notice. CSP is scheduled for stage 4 as report-only first.",
+          "recommendation": "No action now. Recorded so the audit does not read as if it were missed."
+        },
+        {
+          "title": "A third-party beacon is injected on every page",
+          "severity": "Info",
+          "description": "static.cloudflareinsights.com/beacon.min.js loads on all 18 pages. It is not in the repository; Cloudflare Web Analytics adds it. It is the only third-party request on the site.",
+          "recommendation": "Confirm the privacy policy names it, since that page already enumerates sub-processors."
+        }
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 72,
+      "weight": 23,
+      "what_works": [
+        "The prose is concrete, names the failure it prevents, and does not pad; no AI slop anywhere on the site",
+        "Passages admit the tool is not always right, which is what makes a source both quotable and believable",
+        "Two founder Person entities carry substantive biographies, and every sub-page WebPage node declares an author linked by @id to one of them",
+        "The company publishes a street address, a registration number and two phone numbers",
+        "The site states in llms.txt that the testimonials are in-house examples, rather than implying they are customer reviews"
+      ],
+      "findings": [
+        {
+          "title": "Commercial pages are thin for the field they are entering",
+          "severity": "High",
+          "description": "Hebrew word counts: /procurement-software/ 529, /invoice-matching/ 433, /vs-erp/ 391, /vs-spreadsheet/ 390, /supplier-invoices/ 388. English runs 526-731. Hebrew packs more meaning per word than English because prefixes attach, so 400 Hebrew words reads closer to 520 English; even adjusted these are short. A search for the head term returns established incumbents: StoreNext, Segment, CloudCom reselling Procurify, Mboss, CRTV, Rasner, plus Priority and Hashavshevet resellers with years of index history. Segment makes InPlace's exact core claim of verifying invoices against purchase orders and delivery reports in real time.",
+          "recommendation": "Roughly double the depth of all five, prioritising /procurement-software/ then /invoice-matching/. Add checkable specifics rather than length: a worked numeric example of a three-way match catching a partial delivery, the Israeli specifics no international competitor covers (Israel Invoices, VAT, shotef-plus payment terms), annotated screenshots from the 12 already on the site, and the edge cases where the supplier is right."
+        },
+        {
+          "title": "There is no content hub",
+          "severity": "High",
+          "description": "Nine pages per language, all of them product or legal. No blog, no guides, no glossary. For a domain with no backlink profile and no history this is the missing growth surface, and question-shaped content is also what AI answer engines retrieve against most readily.",
+          "recommendation": "Open a Hebrew-first content section with 5-8 pages on topics the founders actually know: three-way matching for small businesses, separation of duties in procurement, what Israel Invoices changed, common supplier payment errors, and migrating from a spreadsheet. Defer English content until the brand disambiguation work lands."
+        },
+        {
+          "title": "The page carrying the trust signals has one inbound link",
+          "severity": "Medium",
+          "description": "/about/ holds both founder biographies, both portraits and both Person entities. Exactly one internal link points at it, from the home page. The other sixteen pages do not link to it at all.",
+          "recommendation": "Add contextual in-body links from all 16 other pages, anchored where the copy already refers to practical experience or names a founder."
+        },
+        {
+          "title": "All internal anchor text is identical and non-contextual",
+          "severity": "Medium",
+          "description": "Every link to /procurement-software/ reads 'tochnat rechesh'; every link to /invoice-matching/ reads 'hat'amat cheshbonit'. They all originate in the same further-reading block at the foot of each page. Not one contextual link exists inside a paragraph anywhere on the site.",
+          "recommendation": "Vary the anchor text and place links inside body paragraphs, where they carry more weight and read as editorial rather than navigational."
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 94,
+      "weight": 20,
+      "what_works": [
+        "Exactly one h1 per page across all 18; heading order valid everywhere with no skipped levels",
+        "Titles 20-69 characters, all distinct, none truncating in a SERP",
+        "Meta descriptions 118-165 characters, all distinct and written rather than generated",
+        "Self-referential canonical and index, follow, max-image-preview:large on all 18 pages",
+        "lang and dir correct throughout: he/rtl and en/ltr",
+        "Hreflang complete and reciprocal: he, en and x-default on every page, declared in both the HTML and the sitemap, pointing both directions",
+        "Open Graph and Twitter cards complete on both editions including og:locale:alternate in both directions"
+      ],
+      "findings": [
+        {
+          "title": "Share-card language mismatch",
+          "severity": "Medium",
+          "description": "The only on-page deduction; recorded in full under Images.",
+          "recommendation": "See the Images category."
+        }
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 92,
+      "weight": 10,
+      "what_works": [
+        "Every JSON-LD block on all 18 pages parses with zero errors",
+        "Home page graph: Organization with legalName, vatID, logo, PostalAddress, telephone and two ContactPoints; WebSite; SoftwareApplication with 12 screenshots and offers; VideoObject with duration, uploadDate, thumbnailUrl and contentUrl; WebPage with primaryImageOfPage and dimensions; FAQPage with 8 questions",
+        "Sub-pages add BreadcrumbList and Person, with WebPage.author linked by @id to a founder",
+        "Offers are two catalogues rather than one converted at a rate: ILS on Hebrew pages, USD 20/79/149 on English",
+        "No aggregateRating or review markup anywhere, because the testimonials are in-house examples; publishing rating markup for those would be a manual-action risk",
+        "FAQPage is now declared on all six supporting pages in both editions, 50 questions in total, each held to the printed page in both directions by g21-schema"
+      ],
+      "findings": [
+        {
+          "title": "Organization has no sameAs",
+          "severity": "High",
+          "description": "The single most consequential schema gap. sameAs is the primary mechanism by which Google's Knowledge Graph and AI answer engines decide which entity a name refers to. Nothing on this site connects the brand to any external profile, while InPlace Software, an Australian ed-tech SaaS founded 2010, owns the English-language entity with a G2 profile and directory listings. NOTE 31.08.2026: this is a known, documented decision rather than an oversight — DEBT.md §21 records that the owner decided on 28.08.2026 that no personal profile would be published and the only external profile the site will carry is the company's own, which did not exist at that date. The owner confirmed on 31.08.2026 that a profile now exists; the URL is still to be supplied, and an invented address would be worse than a missing one.",
+          "recommendation": "Add sameAs pointing at LinkedIn, Facebook and Crunchbase profiles. If none exist, creating a LinkedIn company page is the prerequisite and the highest-value single action for entity disambiguation."
+        },
+        {
+          "title": "FAQPage schema existed only on the home page — FIXED",
+          "severity": "Resolved",
+          "description": "The eight sub-pages already carry question-shaped h2 headings with self-contained answers beneath them, roughly twenty additional questions across the site. This is precisely the structure extracted into AI Overviews and quoted by answer engines, and it is unmarked. The content exists; only the markup is missing. RESOLVED 31.08.2026: an opt-in `ask` flag was added to the Section type in src/content/pages.ts, set per section rather than guessed from the heading, and marked on the same 25 sections in both editions. src/lib/page-html.ts prints data-faq-q on those sections and declares a FAQPage node built from them; the Answer text is paragraphs, then the list, then the closing paragraphs, in reading order. schemaFor throws if a marked section has nothing to answer with. Verified live: 50 questions declared and 50 printed across 12 pages, no empty answers, and none on the four legal documents, which carry numbered clauses rather than questions.",
+          "recommendation": "Generate the FAQPage node from the existing headings in the same script that already builds the graph, so the markup cannot drift from the visible copy.",
+          "resolved": "2026-08-31"
+        },
+        {
+          "title": "Organization could carry more attributes",
+          "severity": "Low",
+          "description": "No description, foundingDate, email or areaServed on the Organization node.",
+          "recommendation": "Add all four while editing the node for sameAs. Each is another attribute the Knowledge Graph can attach to the entity."
+        }
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 90,
+      "weight": 10,
+      "what_works": [
+        "CLS is 0 on both desktop and mobile, with no layout shift events recorded at all",
+        "TTFB 80 ms desktop, 283 ms mobile; DOM interactive 151 ms; load 419 ms desktop and 643 ms mobile",
+        "21 requests and 421 KB total transfer; compressed payloads are main JS 107 KB, Motion 46 KB, icons 6 KB, CSS 19 KB, fonts 12-32 KB, all brotli",
+        "Repeated HTML fetches returned in 149-348 ms",
+        "The 10 MB films use preload=metadata, so the bytes are never fetched on page view"
+      ],
+      "findings": [
+        {
+          "title": "Six client logos are preloaded at highest priority",
+          "severity": "Low",
+          "description": "Six link rel=preload as=image hints in the head fetch the trusted-by logo strip, which sits below the hero. They also carry loading=eager and decoding=sync. This places six below-fold images ahead of the LCP element in the fetch queue. On a fast connection it costs nothing; on 3G it delays the headline.",
+          "recommendation": "Drop the preload hints and let the logos load normally, or keep at most one if the strip is genuinely above the fold on desktop."
+        },
+        {
+          "title": "LCP could not be measured and no field data exists",
+          "severity": "Info",
+          "description": "The embedded browser suppresses paint timing entries, so no LCP figure was obtained. CrUX has no data because the site went live 28.08.2026 and is below the reporting threshold. PageSpeed Insights returned a quota error because no GOOGLE_API_KEY is configured. Given CLS of 0, a 419 ms load and server-rendered HTML, LCP is very likely inside the 2.5 s threshold, but this is inference rather than measurement.",
+          "recommendation": "Confirm in PageSpeed Insights once an API key is configured, and watch CrUX once the traffic threshold is met."
+        }
+      ]
+    },
+    {
+      "name": "AI Search Readiness",
+      "score": 78,
+      "weight": 10,
+      "what_works": [
+        "llms.txt is published and generated from the build, listing all 18 pages with descriptions, naming the operator and registration number",
+        "Its Notes section proactively tells a model that the testimonials are in-house examples and the two price lists are separate catalogues, which is unusually honest and exactly what makes a source quotable",
+        "Every page is complete HTML with no JavaScript requirement, the ideal shape for retrieval",
+        "The prose is passage-level citable: short, self-contained, declarative paragraphs",
+        "PerplexityBot and OAI-SearchBot are not in the Cloudflare block, so Perplexity and ChatGPT search can still reach the site",
+        "IndexNow already announces every deploy to Bing, Yandex and Naver automatically, so new pages reach those indexes in minutes rather than waiting for a crawl",
+        "58 questions are now declared across the site in FAQPage form — 8 on the home page and 50 across the supporting pages — which is the structure answer engines lift as a unit"
+      ],
+      "findings": [
+        {
+          "title": "Eight AI agents were blocked at robots.txt — FIXED",
+          "severity": "Resolved",
+          "description": "Resolved 31.08.2026. See Technical SEO. GPTBot, ClaudeBot, CCBot, Google-Extended, Applebot-Extended, meta-externalagent, Amazonbot and Bytespider can all reach the site again, and a live check now fails the deploy if that changes.",
+          "recommendation": "Turn off Cloudflare's managed robots.txt block.",
+          "resolved": "2026-08-31"
+        },
+        {
+          "title": "The brand name is already owned in English",
+          "severity": "High",
+          "description": "Searching for InPlace returns InPlace Software at inplacesoftware.com, an Australian ed-tech SaaS founded 2010, with a G2 profile, a Serchen listing and vendor directory pages. It owns the English-language entity. Two consequences: asking any language model what InPlace is returns student placement software, which is testable now; and the nine /en/ pages compete for generic English procurement terms against Precoro, Procurify, Coupa, Tipalti and Stampli from a domain with no authority under a name attached to a different company. In Hebrew the field is clear, with no competing InPlace entity.",
+          "recommendation": "Treat the Hebrew pages as the realistic near-term surface. Build external anchors that tie the name to this company: sameAs in the schema, a LinkedIn company page, a Crunchbase entry, Israeli directory listings. Defer English content investment until disambiguation lands."
+        },
+        {
+          "title": "No Bing Webmaster Tools verification",
+          "severity": "Low",
+          "description": "No msvalidate.01 meta tag and BingSiteAuth.xml returns 404, so the site is not registered in Bing Webmaster Tools. IndexNow, which is the mechanism that actually tells Bing about new and changed URLs, is already configured and automated — so this is about reporting and diagnostics, not about discovery.",
+          "recommendation": "Verify in Bing Webmaster Tools for crawl and query reporting. Bing feeds Copilot and parts of ChatGPT search, so its view of the site is worth being able to read. No IndexNow work is needed."
+        },
+        {
+          "title": "No question-shaped content beyond the eight home-page FAQs",
+          "severity": "Partly resolved",
+          "description": "Answer engines retrieve against questions. The site answers eight. The sub-page headings would add roughly twenty more the moment they are marked up, and a content hub would add more still. RESOLVED IN PART 31.08.2026: the sub-page questions are now marked up, taking the site from 8 declared questions to 58. What remains is the content hub, which would add question-shaped pages rather than markup.",
+          "recommendation": "Mark up the sub-page Q&As, then open the content hub described under Content Quality."
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 88,
+      "weight": 5,
+      "what_works": [
+        "30 images on the home page with zero missing alt, zero missing width or height, which is why CLS is 0",
+        "AVIF with WebP fallback via picture elements, three widths each at 800, 1440 and 2000, with correct sizes attributes",
+        "Alt text is descriptive and real rather than filename mush",
+        "24 images declared in the sitemap under image:image"
+      ],
+      "findings": [
+        {
+          "title": "All nine English pages serve the Hebrew share card",
+          "severity": "Medium",
+          "description": "Every page on the site, both languages, points og:image at assets/og-cover.jpg, whose visible text is Hebrew. An English reader sharing /en/procurement-software/ on LinkedIn gets an English title over a Hebrew picture. There is a second mismatch inside it: og:image:alt on the English pages describes the image in English while its visible text is Hebrew. assets/og-cover-en.jpg returns 404.",
+          "recommendation": "Render a second card with scripts/build-og.mjs and scripts/og-template.html, which already exist, and point the nine /en/ pages at it. Fix og:image:alt at the same time."
+        },
+        {
+          "title": "Sub-pages share the home page's card",
+          "severity": "Low",
+          "description": "All 18 pages use the same og:image. Acceptable, and a per-page card is a nice-to-have rather than a fix.",
+          "recommendation": "Optional. Consider per-page cards for the five commercial pages once the English card exists."
+        }
+      ]
+    },
+    {
+      "name": "Accessibility (spot check)",
+      "score": 92,
+      "weight": 0,
+      "what_works": [
+        "347 text elements checked against WCAG AA with correct alpha compositing; only 5 fail",
+        "Three of the five are decorative or within rounding of the threshold"
+      ],
+      "findings": [
+        {
+          "title": "Five contrast failures out of 347 elements",
+          "severity": "Low",
+          "description": "The why-card step numbers ('01') at 2.90-3.00 against a required 4.5 are the only real failure. The footer separator glyph at 3.14 is decorative. plan-card__billed at 4.31 and the demo hint at 4.44 are within rounding of the 4.5 threshold. Not an SEO category, reported because it was measured.",
+          "recommendation": "Raise the opacity on the why-card step numbers. The rest are optional."
+        }
+      ]
+    }
+  ],
+  "action_plan": {
+    "note": "Scope is given in countable units — files touched, pages affected, entries added — rather than in days or weeks.",
+    "phases": [
+      {
+        "name": "Phase 1: Critical Fixes",
+        "timeframe": "First",
+        "items": [
+          "DONE 31.08.2026 — Turn off Cloudflare's managed robots.txt block in the AI Crawl Control settings for the inplace.digital zone; verify with curl -s https://inplace.digital/robots.txt | grep -c \"^Disallow\" expecting 0, anchored to the line start because the repo file mentions the word in its comments. One dashboard setting, no code.",
+          "DONE 31.08.2026 — Extend the g17-crawl gate to fetch the live https://inplace.digital/robots.txt post-deploy, so it measures what the internet receives rather than what the repository contains. One gate."
+        ]
+      },
+      {
+        "name": "Phase 2: High-Impact Improvements",
+        "timeframe": "Next",
+        "items": [
+          "Add sameAs plus description, foundingDate, email and areaServed to the Organization node. One builder script, propagates to all 18 pages. Creating a LinkedIn company page is the prerequisite if none exists.",
+          "DONE 31.08.2026 — Generate FAQPage nodes from the existing question-shaped headings on the eight sub-pages across both languages. 16 pages, markup only, content already written.",
+          "Roughly double the depth of the five commercial pages across both languages, prioritising /procurement-software/ then /invoice-matching/. Add worked numeric examples, Israeli specifics, annotated screenshots and edge cases.",
+          "Render an English OG card via the existing scripts/build-og.mjs and point the nine /en/ pages at it; fix og:image:alt at the same time."
+        ]
+      },
+      {
+        "name": "Phase 3: Content & Authority",
+        "timeframe": "Then",
+        "items": [
+          "Add contextual in-body links to /about/ from the 16 pages that currently do not link to it.",
+          "Vary internal anchor text and place links inside body paragraphs rather than only in the further-reading block. 18 pages.",
+          "Open a Hebrew-first content hub with 5-8 pages on three-way matching, separation of duties, Israel Invoices, common supplier payment errors and migrating from a spreadsheet.",
+          "Verify the site in Bing Webmaster Tools for crawl and query reporting. IndexNow is already automated and needs no work. One verification."
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoring & Iteration",
+        "timeframe": "Ongoing",
+        "items": [
+          "Configure Google API credentials so indexation status, impressions, query data, PageSpeed Insights and CrUX become readable. GSC is already verified by DNS TXT; only the OAuth flow is missing.",
+          "Submit the sitemap in Search Console and request indexing for the home page and the five commercial pages. 18 URLs.",
+          "Confirm LCP in PageSpeed Insights once an API key is configured, and watch CrUX once the traffic threshold is met.",
+          "Capture an SEO drift baseline so the class of problem this audit found — deployed artefact diverging from the repository — is caught on every future deploy."
+        ]
+      }
+    ]
+  },
+  "deliberately_unchanged": [
+    "No review or rating markup: the testimonials are in-house examples and the site says so; adding aggregateRating would be a manual-action risk",
+    "Two price catalogues rather than one converted at a rate: ILS on Hebrew, USD on English, as separate Offer sets",
+    "No CSP yet: documented in public/_headers with reasoning and scheduled for stage 4 as report-only first",
+    "preload=metadata on the films: 10 MB files that never load on page view"
+  ],
+  "method": {
+    "measured": [
+      "All 18 URLs fetched and parsed for title, description, canonical, robots, lang, dir, hreflang, OG, Twitter, headings, images and links",
+      "Response headers inspected on the root and on a hashed asset",
+      "robots.txt, sitemap.xml and llms.txt read in full and compared against their repository sources",
+      "Every JSON-LD block parsed and validated",
+      "Redirect behaviour tested for http, www, missing trailing slash, unknown path and query string",
+      "Internal link graph built across all 18 pages with anchor text",
+      "Live browser measurement at 1280x720 and 375x812",
+      "Contrast checked across 347 text elements with correct alpha compositing",
+      "Competitive SERP checks in Hebrew for the head commercial terms and for the brand name"
+    ],
+    "not_available": [
+      "CrUX field data: the site is three days old and below the reporting threshold, so every performance number here is lab data from one location",
+      "PageSpeed Insights: the shared API key hit its daily quota and no GOOGLE_API_KEY is configured",
+      "Search Console data: verified by DNS but no API credentials configured, so impressions, indexation status and query data could not be read. This is the most valuable missing input",
+      "Backlink profile: no Moz or Bing Webmaster credentials configured. For a three-day-old domain the profile is almost certainly empty, but this was not verified"
+    ],
+    "confidence": "High on everything crawled and measured directly. The LCP estimate and the empty backlink profile are stated as inference and labelled as such in the report."
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/",
+    "raw_crawl": "crawl-raw.json"
+  }
+}
