@@ -11,11 +11,21 @@
       edition and substitutes the direction, the faces and the words; an English
       reader sharing an English page was getting a Hebrew card until 31.08.2026.
 
-      The ground is the shader's own ramp, flattened. ShaderBackground paints a
-      GrainGradient across #04080b -> #003f47 -> #0d6470 -> #5d9096 -> #cfe3e6,
-      and those five are what the radials below use. A share card cannot run
-      WebGL, but it can be made of the same colours, which is the part a reader
-      recognises.
+      THE GROUND IS THE ENTRY SCREEN'S OWN, since 01.09.2026.
+      It used to be five radial gradients mixed from the shader's palette, under
+      a note in this file saying a share card cannot run WebGL. It can:
+      build-og.mjs pins the built title plate at 1200x630 and photographs it, so
+      the ground below is the same GrainGradient, the same recipe and the same
+      scrim a reader meets on arrival — not a picture of the same colours.
+      (No placeholder token is spelled out in this comment on purpose: the
+      substitution is a plain String.replace, which takes the FIRST match, and a
+      token named here would swallow a 200KB data URI into a comment and leave
+      the rule below holding the literal string. It did, once.)
+
+      That plate is LIGHT. `[data-theme-flip]` runs the entry screen against the
+      theme switch, so the dark page carries the light ground the design was
+      drawn on, and the type on it is dark. The card follows the plate rather
+      than the page: this is why the words here are onyx and not ink.
     -->
     <style>
       @font-face {
@@ -30,6 +40,9 @@
       }
       * { box-sizing: border-box; margin: 0; }
       html, body { inline-size: 1200px; block-size: 630px; }
+      /* Which way the veil runs: from the edge the words start at. */
+      html[dir='rtl'] { --veil-to: left; }
+      html[dir='ltr'] { --veil-to: right; }
       body {
         position: relative;
         overflow: hidden;
@@ -38,16 +51,37 @@
         -webkit-font-smoothing: antialiased;
       }
 
-      /* The ramp, opened at both ends the way the shader opens it. */
+      /* The entry screen, photographed. See the note above. */
       .ground {
         position: absolute;
         inset: 0;
-        background:
-          radial-gradient(105% 90% at 12% -22%, #cfe3e6 0%, rgba(207, 227, 230, 0) 40%),
-          radial-gradient(90% 85% at 20% 4%, #5d9096 0%, rgba(93, 144, 150, 0) 52%),
-          radial-gradient(120% 130% at 36% -12%, #0d6470 0%, rgba(13, 100, 112, 0) 60%),
-          radial-gradient(150% 150% at 78% 112%, #003f47 0%, rgba(0, 63, 71, 0) 72%),
-          #04080b;
+        background-image: url('__GROUND__');
+        background-size: 1200px 630px;
+        background-position: center;
+      }
+
+      /* A veil on the READING half only.
+         The first cut laid 62% of the plate's light ground across the middle of
+         the card and flattened the picture the card exists to show. The words
+         all sit on one side — the reading start, which is the right in Hebrew
+         and the left in English — so the veil goes there, angled across, and
+         the other half is left as the shader painted it.
+
+         The alphas below are not a taste: build-og.mjs rasterises the finished
+         card, reads the real pixels under every block of type, and refuses to
+         write one whose worst pixel is under the bar that block's size earns —
+         3:1 for the 70px headline, 4.5:1 for the foot. Raising them flattens
+         the picture, lowering them fails the build. Whoever changes one number
+         here has the other one measured for them. */
+      .veil {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to var(--veil-to),
+          rgba(255, 252, 248, 0.58) 0%,
+          rgba(255, 252, 248, 0.44) 38%,
+          rgba(255, 252, 248, 0) 76%
+        );
       }
 
       /* The page paints grain over everything; so does the card. */
@@ -69,13 +103,17 @@
         padding: 68px 74px 60px;
       }
 
+      /* The mark, where the word used to be.
+         The owner, 01.09.2026: the card should carry the logo, not the word
+         INPLACE set in letterspaced caps. It is the same two paths Folio.tsx
+         draws in the running head, at the size the wordmark used to occupy.
+         The name is not lost with it — the domain chip at the foot still says
+         inplace.digital, which is also the thing a reader can act on. */
       .mark {
-        font-family: 'Heebo', Arial, sans-serif;
-        font-weight: 800;
-        font-size: 25px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: #cfe3e6;
+        display: block;
+        inline-size: 58px;
+        block-size: 58px;
+        color: #003f47;
       }
 
       h1 {
@@ -84,12 +122,11 @@
         font-size: 70px;
         line-height: 1.14;
         letter-spacing: -0.015em;
-        color: #fbf6ee;
+        color: #0a171d;
         max-inline-size: 17ch;
         text-wrap: balance;
-        text-shadow: 0 2px 40px rgba(4, 8, 11, 0.45);
       }
-      h1 .tint { color: #9fd0d4; }
+      h1 .tint { color: #00555f; }
 
       .foot {
         display: flex;
@@ -103,12 +140,12 @@
         align-items: center;
         gap: 14px;
         font-size: 25px;
-        color: #dce9ea;
+        color: #24383f;
       }
       .chain b { font-weight: 400; }
       .chain i {
         font-style: normal;
-        color: #9fd0d4;
+        color: #00555f;
         font-size: 20px;
         transform: translateY(-1px);
       }
@@ -117,19 +154,24 @@
         font-family: 'Heebo', Arial, sans-serif;
         font-weight: 800;
         font-size: 26px;
-        color: #cfe3e6;
+        color: #0a171d;
         direction: ltr;
         padding: 12px 22px;
-        border: 2px solid rgba(207, 227, 230, 0.4);
+        border: 2px solid rgba(10, 23, 29, 0.32);
         border-radius: 10px;
       }
     </style>
   </head>
   <body>
     <div class="ground"></div>
+    <div class="veil"></div>
     <div class="grain"></div>
     <div class="plate">
-      <p class="mark">InPlace</p>
+      <!-- The mark from src/components/Folio.tsx, path for path. -->
+      <svg class="mark" viewBox="1659.81 677.84 156.29 156.29" fill="currentColor" aria-hidden="true">
+        <path d="M 1669.44 755.823 L 1710.28 755.879 C 1708.61 767.232 1707.38 778.645 1706.59 790.092 L 1736.02 790.07 C 1736.92 781.041 1737.62 771.993 1738.13 762.934 L 1760.32 763.051 C 1759.51 774.972 1758.47 786.875 1757.2 798.755 L 1754.87 825.177 L 1663.53 825.087 L 1669.44 755.823 z" />
+        <path d="M 1720.4 686.812 L 1812.38 686.801 C 1811.2 709.917 1808.06 732.974 1806.67 756.062 L 1771.75 756.048 C 1770.71 756.05 1767.89 756.114 1767.79 755.436 C 1766.97 749.628 1769.92 723.931 1770.27 718.871 L 1740.77 718.879 C 1739.68 728.796 1739.03 738.754 1737.95 748.673 C 1729.48 748.622 1723.1 748.384 1714.61 749.043 C 1716.84 728.328 1718.77 707.582 1720.4 686.812 z" />
+      </svg>
 
       <h1>__HEAD__ <span class="tint">__HEAD_TINT__</span></h1>
 

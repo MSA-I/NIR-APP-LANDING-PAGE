@@ -272,7 +272,7 @@ things on this page that nothing measures.
 | `scripts/prerender.mjs` | Writes all of that into `dist/` after `vite build` |
 | `scripts/build-sitemap.mjs` | `sitemap.xml`, derived from the pages that were actually built |
 | `scripts/faststart.mjs` | Moves the MP4 index to the front, and proves nothing else moved |
-| `scripts/build-og.mjs` | The share card, drawn in the browser from `og-template.html` |
+| `scripts/build-og.mjs` | The two share cards, drawn in the browser from `og-template.html`. Needs `dist/` first: the ground is the built title plate photographed at 1200x630, so the order is `npm run build`, `npm run og`, `npm run build` |
 | `scripts/build-portraits.mjs` | The two founder portraits, 720x1000, WebP and AVIF |
 | `public/robots.txt`, `_headers`, `404.html` | What the host and the crawlers ask for |
 | `world/renders/` | The numbered world renders. Kept, reproducible, and out of the build |
