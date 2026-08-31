@@ -40,8 +40,28 @@ const SUFFIX = (MOBILE ? '-m' : '') + LANGSUF
 const OUT = path.resolve(arg('out', 'public/assets'))
 const TMP = path.resolve('lab/world/frames' + SUFFIX)
 const CHROME = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
-const WORLD = pathToFileURL(path.resolve('world/world.html')).href +
-  (LANG === 'he' ? '' : '?lang=' + LANG)
+/**
+ * The scene's URL, WITHOUT a query. The query is assembled in one place, at the
+ * `goto` below.
+ *
+ * It was assembled in two places for one day, and the two did not know about
+ * each other: this line appended `?lang=en` and the `goto` appended `?w=…&h=…`
+ * to whatever it was handed, so the English render asked for
+ * `world.html?lang=en?w=1920&h=1080`. That is a legal URL with a single query
+ * string, and `URLSearchParams` reads the first parameter as
+ * `lang = "en?w=1920"` — not `"en"` — so the scene's own test
+ * (`get('lang') === 'en'`) said Hebrew and `get('w')` said nothing at all.
+ *
+ * Both halves of that shipped on 31.08.2026. The four hall legs of `film-en.mp4`
+ * came out in HEBREW, with the Hebrew product screens on the panels and shekels
+ * on the paper, and the phone cut came out laid for a 1920-wide frame inside an
+ * 810-wide viewport — the stack pushed off the left edge with two thirds of the
+ * picture empty desk. Nothing failed: act two is rendered by
+ * `render-recon.mjs`, which builds the same query correctly with `&`, so the
+ * one place the round verified — the three-way panel at t=33s — was English,
+ * and the twenty-five seconds before it were not.
+ */
+const WORLD = pathToFileURL(path.resolve('world/world.html')).href
 
 // leg id, label, and the weight in viewport-heights it owns on the scroll track
 const LEGS = [
@@ -80,7 +100,10 @@ const missing = []
 page.on('requestfailed', (r) => missing.push(r.url()))
 page.on('response', (r) => { if (r.status() >= 400) missing.push(`${r.status()} ${r.url()}`) })
 
-await page.goto(`${WORLD}?w=${W}&h=${H}`, { waitUntil: 'load' })
+// One query, one `?`, and `lang` is always sent — `lang=he` is what the scene
+// defaults to anyway, and sending it unconditionally is what keeps this line
+// from growing a second branch that can disagree with the first.
+await page.goto(`${WORLD}?w=${W}&h=${H}&lang=${LANG}`, { waitUntil: 'load' })
 await page.waitForFunction(() => window.__ready === true, null, { timeout: 60000 })
 
 const facesFailed = await page.evaluate(async () => {

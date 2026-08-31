@@ -112,17 +112,41 @@ captures it hangs on its panels. Render the four legs the film uses, then build
 the clip:
 
 ```bash
-node scripts/render-world.mjs --only 01,02,03,04
+node scripts/render-world.mjs --only 01,02,03,04 --out world/renders
 ```
 
 ```bash
 node scripts/build-film.mjs
 ```
 
-Legs are stream-copied from `public/assets/0{1,2,3,4}.mp4`; only the 1.6s
+Legs are stream-copied from `world/renders/0{1,2,3,4}.mp4`; only the 1.6s
 dissolve at the end is encoded. Re-encoding the whole clip was tried and
 produced 18.6MB of worse pixels, because a dense-GOP pass over already
 compressed video pays twice.
+
+Act two — the reconciliation card and the mark — is not a leg. It comes from
+`scripts/render-recon.mjs`, which writes `world/renders/R.mp4`, and
+`build-film.mjs` concatenates it after the bridge.
+
+The English edition plays its own render of the same geometry. Every script in
+the chain takes `--lang en`, and each language has a wide cut and a phone cut,
+so the hall is two runs before the clip is built:
+
+```bash
+node scripts/render-world.mjs --lang en --only 01,02,03,04 --out world/renders
+```
+
+```bash
+node scripts/render-world.mjs --lang en --mobile --only 01,02,03,04 --out world/renders
+```
+
+```bash
+node scripts/build-film.mjs --lang en
+```
+
+`G18 film-language` checks the result: that the scene answers in English when
+asked in English, at the width it was asked for, and that the English legs on
+disk are not the Hebrew ones under another name.
 
 ---
 

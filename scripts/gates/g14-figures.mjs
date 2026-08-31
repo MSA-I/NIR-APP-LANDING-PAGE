@@ -51,10 +51,17 @@ const EDITIONS = [
     // THIS CHANGED ON 31.08.2026. The story's amounts used to stay in shekels
     // in both editions, because they were read off Hebrew screens the English
     // page showed unchanged. The English page now shows its own screens, of an
-    // English business in dollars, so the captions moved with them — and the two
-    // in chapter 01 stay in shekels, because chapter 01 captions the FILM and
-    // the film is still the Hebrew render. A caption that disagrees with the
-    // picture beside it is the thing this list exists to prevent.
+    // English business in dollars, so the captions moved with them. A caption
+    // that disagrees with the picture beside it is the thing this list exists
+    // to prevent.
+    //
+    // The two amounts in chapter 01 were held back that morning, on the reading
+    // that "chapter 01 captions the FILM and the film is still the Hebrew
+    // render". The film was NOT still the Hebrew render — it was meant to be the
+    // English one, and it came out Hebrew by accident (see
+    // g18-film-language.mjs). With the hall re-rendered that evening the film
+    // says "Butcher & Son Meats 2,884.50$", so the caption beside it says the
+    // same. Nothing was held back any more.
     known: ['2,884.50', '4,720.00', '2,832.00', '30,225', '20', '79', '149', '200', '790', '1,490'],
   },
 ]

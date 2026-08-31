@@ -50,7 +50,7 @@ const en = {
       },
       {
         h: 'Two numbers, one&nbsp;supplier',
-        p: 'The purchase order to Basar VeHaben said <b>2,884.50 ₪</b>. The invoice from the same supplier asked for <b>4,720.00 ₪</b>. Without a system, nobody puts them side by side and the invoice amount gets paid.',
+        p: 'The purchase order to Butcher &amp; Son Meats said <b>2,884.50$</b>. The invoice from the same supplier asked for <b>4,720.00$</b>. Without a system, nobody puts them side by side and the invoice amount gets paid.',
       },
       {
         h: 'There is one way to organise&nbsp;it',

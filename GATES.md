@@ -2998,3 +2998,107 @@ fixed. It is `world/screens/en/accountant-pay.png`, and it is in
 from *before* the product's navigation was rebuilt, so the two films show two
 versions of the same interface. Re-rendering the Hebrew film from the new screens
 is one run, and it was not done this round.
+
+---
+
+## Round twenty-four — the English film was the Hebrew film, 31.08.2026
+
+The owner opened the English edition, scrolled to chapter 01, drew a circle round
+the picture and wrote: *"fix that when I am in English mode the visualisation
+shows documents in Hebrew."* He was right, and the round before this one had
+written down that it was not.
+
+### One character
+
+`render-world.mjs` assembled the scene's URL in two places that did not know
+about each other. One appended the language:
+
+```
+const WORLD = pathToFileURL('world/world.html').href + (LANG === 'he' ? '' : '?lang=' + LANG)
+```
+
+and the other appended the size to whatever it was handed:
+
+```
+await page.goto(`${WORLD}?w=${W}&h=${H}`)
+```
+
+So the English render asked for `world.html?lang=en?w=1920&h=1080`. That is a
+legal URL with ONE query string, and `URLSearchParams` reads the first parameter
+of it as `lang = "en?w=1920"`. Which is not `"en"`. The scene's own test is
+`get('lang') === 'en'`, so it answered in Hebrew — and `get('w')` returned
+nothing at all, so it also answered at its default width.
+
+### What that cost, in two halves
+
+**The words.** The four hall legs of `film-en.mp4` — twenty-five of its
+thirty-five seconds — came out in Hebrew: `חוות השדה ₪780.00` where the English
+edition says `Fieldstone Farm 780.00$`. `03-en.mp4` and `04-en.mp4` were
+**byte-identical** to `03.mp4` and `04.mp4`. Two renders of two languages cannot
+agree to the byte; they were the same render twice.
+
+**The frame.** `w` fell with `lang`, so the phone render laid a 1920-wide scene
+inside an 810-wide viewport. The stack of documents sat against the left edge
+with two thirds of the picture empty desk. Beside the Hebrew phone cut, which is
+centred, it does not read as the same film.
+
+### Why nothing caught it
+
+Act two is not a leg. It comes from `render-recon.mjs`, which builds the same
+query correctly with `&` — so the reconciliation card WAS English. The round's
+verification table has one row for the film, and it reads *"Act two, English
+film, t=33s"*. The one frame anybody looked at was the one frame the fault could
+not reach.
+
+### The caption was held back for a reason that was not true
+
+`g14-figures.mjs` carried this, in the English edition's list of known amounts:
+
+> the two in chapter 01 stay in shekels, because chapter 01 captions the FILM and
+> the film is still the Hebrew render
+
+The film was not *still* the Hebrew render. It was meant to be the English one
+and had come out Hebrew by accident, and the caption was then held back to match
+it. So the English page said **"The purchase order to Basar VeHaben said
+2,884.50 ₪"** beside a picture of the same sheet. Both halves move together now:
+the film says `Butcher & Son Meats 2,884.50$` and so does the sentence next to
+it. It was the last `₪` in the English dictionary.
+
+### The gate
+
+`scripts/gates/g18-film-language.mjs`, which measures both halves of the fault:
+
+- the scene, asked the way the renderer asks it, at **both** sizes the two cuts
+  are shot at: `lang="en"`, `dir="ltr"`, no Hebrew character and no `₪` in
+  anything it prints, `screens/en/` on every panel, and **the frame laid at the
+  width that was requested**. The Hebrew scene is read as a control, because a
+  check that cannot fail is not a check;
+- the legs on disk: `01-en.mp4` … `R-en.mp4` must not be byte-identical to their
+  Hebrew counterparts;
+- the shipped film's provenance. The obvious reading — "the English film does not
+  look like the Hebrew one" — **cannot be made to work**: the two are the same
+  geometry, the same camera and the same paper, and only the words differ. That
+  is 0.08%–2.8% of the pixels in the hall, and the closing mark carries no
+  language at all, so no absolute threshold separates a fallback from the logo.
+  Asking which leg a shipped frame came FROM has no such problem: nearest-leg
+  distance 0.31–0.64, other-language leg 0.60–3.95, closest call 1.7x. Handed the
+  Hebrew film in place of the English one, all 8 readings flip and the gate fails.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| `world.html?lang=en?w=1920&h=1080` | `lang = "en?w=1920"`, `w = null` — the fault, reproduced |
+| The English hall, re-rendered | legs 01-04, wide (693s) and phone (417s), 0 frames recaptured |
+| `film-en.mp4` | 836 frames, 34.88s, **9.9MB**, CRF 28 unchanged |
+| `film-m-en.mp4` | 836 frames, 34.83s, **4.1MB** (was 5.3MB: the corrected framing is mostly dark ground) |
+| Nine frames across the wide cut | English at every one, `Fieldstone Farm 780.00$` … `Three-way check` … the mark |
+| The phone cut against the Hebrew phone cut, t=22s | same composition, different words |
+| The page at the moment the owner circled | `03 / 04 There is one way to organise it`, and `Mediterranean Fish Co. 2,950.00$` beside it |
+| The suite | **27 met, 0 unmet** |
+
+**Still open, and unchanged by this round:** the Hebrew film is still rendered
+from the pre-rebuild captures ([DEBT.md](DEBT.md) §16), and `/pay` in the English
+scene is still the Hebrew panel. Neither is in the film's twenty-five seconds —
+the panels light at t=0.415 of the world and the film ends at t=0.342 — so
+nothing in either clip shows them today.
