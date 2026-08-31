@@ -64,7 +64,10 @@ import { Cta } from './Cta'
 import { PlanShader } from './PlanShader'
 import { Html, Reveal, RevealGroup, RevealItem, SplitHeading, useCalm } from '@/lib/motion'
 
-type Row = { name: string; who: string; docs: string; price: string }
+// `key` is the product's own plan key ('free'...'business'), not a label. It is
+// the join between this page and the live catalogue, and it is published as
+// `data-plan-key` because a name cannot join two languages to one database.
+type Row = { key: string; name: string; who: string; docs: string; price: string }
 
 type Billing = {
   monthlyLabel: string
@@ -249,7 +252,14 @@ export function PlansChapter({
             translate, so it moves toward the inline end in either direction. */}
         <Reveal delay={0.12}>
           <div className="plans-switch">
-            <span className="plans-switch__save">{billing.saveLabel}</span>
+            {/* The badge states a DISCOUNT, which is arithmetic over the two
+                catalogues and not a word: `check-live-catalogue` divides the
+                live yearly amount by twelve monthly ones and holds this number
+                to the answer. It is published rather than parsed out of the
+                sentence so the claim can be checked in any language. */}
+            <span className="plans-switch__save" data-plan-save={billing.saveLabel}>
+              {billing.saveLabel}
+            </span>
             <button
               type="button"
               id={switchId}
@@ -323,8 +333,10 @@ export function PlansChapter({
 
                 <p className="plan-card__pricing">
                   <span
+                    data-plan-key={r.key}
                     data-plan-name={r.name}
                     data-plan-price={r.price}
+                    data-plan-yearly={billing.yearly[i] ?? ''}
                     className={`plan-card__price ${hasAmount ? 'ip-fig' : 'plan-card__price--words'}`}
                   >
                     <Amount value={shown} />
@@ -401,7 +413,12 @@ export function PlansChapter({
                     {ladder.rows.map((row) => {
                       const cell = row.cells[i]
                       return (
-                        <li key={row.label}>
+                        <li
+                          key={row.label}
+                          data-ladder-plan={r.key}
+                          data-ladder-key={row.icon}
+                          data-ladder-value={String(cell)}
+                        >
                           <span>{row.label}</span>
                           {cell === true ? (
                             <span className="plan-card__ladder-yes">
@@ -475,7 +492,13 @@ export function PlansChapter({
                           </span>
                         </th>
                         {row.cells.map((cell, i) => (
-                          <td key={rows[i]?.name ?? i} className={`is-${FACE[i].slice(11)}`}>
+                          <td
+                            key={rows[i]?.name ?? i}
+                            className={`is-${FACE[i].slice(11)}`}
+                            data-ladder-plan={rows[i]?.key ?? ''}
+                            data-ladder-key={row.icon}
+                            data-ladder-value={String(cell)}
+                          >
                             {/* `'intro'` DRAWS AS ABSENT, like `false`. Owner,
                                 28.08.2026: the free column should say what the
                                 free plan gets, and five cells reading "30-day

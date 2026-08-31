@@ -137,6 +137,22 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { ROOT, checker } from './lib.mjs'
 
+// Leaves that are NEW in build 4 rather than changed. Until 31.08.2026 any new
+// leaf failed outright, which was right while every leaf in this file was copy:
+// a sentence nobody approved is a claim nobody approved. `plans.rows[].key` is
+// the first leaf here that is NOT copy -- it is the product's plan key, it is
+// never rendered, and it exists so a check can join this page to the live
+// catalogue in a language-independent way (see the note beside it in he.ts).
+//
+// Same discipline as APPROVED, so this cannot become a hole: an addition that
+// is not listed still fails, a listed addition whose value moved fails, and an
+// entry describing a leaf that is not actually new fails.
+const ADDED = ['free', 'basic', 'pro', 'premium', 'business'].map((key, i) => ({
+  at: `plans.rows[${i}].key`,
+  why: "the product's own plan key, and not copy: it is never rendered. It is what joins a card to the live catalogue in scripts/check-live-catalogue.mjs, which cannot join on a name because the name is the thing that differs between the two editions (31.08.2026)",
+  now: key,
+}))
+
 const c = checker('G2')
 
 const OLD = path.join(ROOT, 'archive', 'build3', 'i18n', 'he.js')
@@ -205,7 +221,16 @@ for (const [k, v] of fa) {
   if (ok.was !== v) problems.push(`${k}: the allowlist's "was" is not what build 3 says`)
   if (ok.now !== fb.get(k)) problems.push(`${k}: the allowlist's "now" is not what build 4 says`)
 }
-for (const k of fb.keys()) if (!fa.has(k)) problems.push(`added in build 4: ${k}`)
+const addedByPath = new Map(ADDED.map((a) => [a.at, a]))
+for (const k of fb.keys()) {
+  if (fa.has(k)) continue
+  const ok = addedByPath.get(k)
+  if (!ok) {
+    problems.push(`added in build 4: ${k}`)
+    continue
+  }
+  if (ok.now !== fb.get(k)) problems.push(`${k}: the addition list's "now" is not what build 4 says`)
+}
 
 // An entry that no longer describes a difference is an entry nobody is reading.
 for (const a of APPROVED) {
@@ -213,9 +238,16 @@ for (const a of APPROVED) {
     problems.push(`${a.at} is allowlisted but no longer differs; drop the entry`)
   }
 }
+for (const a of ADDED) {
+  if (fa.has(a.at)) problems.push(`${a.at} is listed as new, and build 3 already had it; drop the entry`)
+  else if (!fb.has(a.at)) problems.push(`${a.at} is listed as new, and build 4 does not have it; drop the entry`)
+}
 
 c.ok(problems.length === 0, `copy drifted from build 3: ${problems.slice(0, 8).join('; ')}`)
-c.note(`${fb.size} leaf values compared, ${APPROVED.length} approved change(s)`)
+c.note(
+  `${fb.size} leaf values compared, ${APPROVED.length} approved change(s), ${ADDED.length} approved addition(s)`
+)
 for (const a of APPROVED) c.note(`  approved  ${a.at}  ${a.why}`)
+if (ADDED.length) c.note(`  added     ${ADDED[0].at}..${ADDED[ADDED.length - 1].at}  ${ADDED[0].why}`)
 
 c.report()

@@ -195,12 +195,17 @@ export default {
     lede: 'המסלולים נבדלים בכמות המסמכים בחודש, במספר האנשים שעובדים במערכת וביכולות שנפתחות. הטבלה שמתחת לכרטיסים מראה בדיוק מה כלול בכל אחד.',
     tableLabel: 'השוואת מסלולים',
     headers: { plan: 'מסלול', who: 'למי זה מתאים', docs: 'מסמכים בחודש', price: 'מחיר' },
+    // `key` IS THE PRODUCT'S OWN PLAN KEY, and it is the only field here that is
+    // not language. `name` is what the reader sees and it differs per edition,
+    // so a check that joins the page to the live catalogue on the NAME can only
+    // ever work in one language. scripts/check-live-catalogue.mjs joins on this,
+    // and PlansChapter publishes it as `data-plan-key`.
     rows: [
-      { name: 'חינם',     who: 'להתחיל ולראות את המערכת רצה על העסק שלך', docs: '20',   price: 'ללא עלות' },
-      { name: 'בסיס',     who: 'עסק שעובד מול כמה ספקים קבועים',          docs: '40',   price: '69 ₪' },
-      { name: 'פרו',      who: 'עסק שרואה החשבון שלו עובד בתוך המערכת',   docs: '150',  price: '249 ₪' },
-      { name: 'פרימיום',  who: 'עסק עם יותר מסניף אחד',                    docs: '375',  price: '449 ₪' },
-      { name: 'ביזנס',    who: 'ארגון שצריך מכסות והסדר משלו',            docs: 'חוזי', price: 'בשיחה' },
+      { key: 'free',    name: 'חינם',     who: 'להתחיל ולראות את המערכת רצה על העסק שלך', docs: '20',   price: 'ללא עלות' },
+      { key: 'basic',   name: 'בסיס',     who: 'עסק שעובד מול כמה ספקים קבועים',          docs: '40',   price: '69 ₪' },
+      { key: 'pro',     name: 'פרו',      who: 'עסק שרואה החשבון שלו עובד בתוך המערכת',   docs: '150',  price: '249 ₪' },
+      { key: 'premium', name: 'פרימיום',  who: 'עסק עם יותר מסניף אחד',                    docs: '375',  price: '449 ₪' },
+      { key: 'business',name: 'ביזנס',    who: 'ארגון שצריך מכסות והסדר משלו',            docs: 'חוזי', price: 'בשיחה' },
     ],
     priceNote: 'כל המחירים לפני מע״מ.',
     note: 'אפשר לעבור בין מסלולים בכל שלב. נתונים שנצברו נשארים במלואם גם אם מורידים מסלול.',
