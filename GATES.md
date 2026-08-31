@@ -2712,3 +2712,183 @@ the model and not the author. The draft shipped.
   fifth said "This is not a convenience barrier but separation of duties", where
   the first clause carried nothing, and it now says "This is separation of
   duties".
+
+## Round twenty-two — an English business, not a Hebrew one in English, 31.08.2026
+
+Round nineteen shipped the home page's six screens in both languages and wrote
+down the owner's decision that the Hebrew demo data stays: the screenshot shows
+the system can be WORKED in English, not that it is an American product.
+
+That decision was reversed the next morning, in one sentence: *"the English
+screens need English suppliers, because we are doing a global launch."* This
+round is that reversal, and the six documents' screens, which had never been
+captured in either language.
+
+### Twelve screens, two languages, one moment
+
+| | Hebrew | English |
+|---|---|---|
+| the five stations and the control centre | re-taken | re-taken |
+| suppliers, credits, prices, alerts, analytics, bank | **first capture ever** | **first capture ever** |
+
+Both sets at 20.07.2026 09:40, the moment the demo data is current at. Nine of
+the twelve English screens come back with **no Hebrew at all** — not one string.
+
+### Translating a live financial dataset, and what it costs
+
+The interface was already English. What was left was content, so the demo
+organisation itself was translated for the length of the capture: 15 suppliers
+with their contacts, addresses, payment terms and notes, 46 products, 6
+categories, 8 exception titles, 7 bank lines, five people and the business's own
+name. Then currency: ILS to USD, and what was already USD to EUR, so the
+two-currency supplier the dashboard uses — the balance that refuses to be summed
+— is still two currencies afterwards.
+
+**The system refused this three times, and each refusal was right.** The keys
+that tie a row's currency to its parent's are composite and NOT deferrable, so
+any second statement is caught mid-flight. `payments.bank_currency` is generated
+and cannot be written at all. And a business guard refuses new commerce for a
+supplier that is no longer active — correct about a real write, wrong about a
+rename. So every currency column moves in ONE statement, with
+`session_replication_role` suspended for that connection only.
+
+Nothing was edited without a copy first: every column went into a
+`capture_backup` schema keyed by id, and the restore is a join back from it.
+Verified after: a column-by-column diff against the backup returned **0
+differences across six tables**, and the schema was dropped. The demo
+organisation is exactly as it was found.
+
+**One bug in my own translation, worth naming because it reported success.** The
+first pass keyed contact_name, address, payment_terms and notes on the
+SUPPLIER's name and then matched `where contact_name = <supplier name>`. No row
+can satisfy that, so four columns stayed Hebrew while every UPDATE reported
+rows. It was caught by the capture's own count — `office-suppliers` came back
+with 14 Hebrew strings — and not by reading the script.
+
+### The date order, which is not a capture
+
+The owner asked for American date order in the English screenshots. `fmtDate` is
+pinned to `he-IL` in both languages, and whether it should follow the reader is
+an open decision in the application's own register. The screenshots were taken
+with the formatter pinned to `en-US` for the length of the run, and the change
+reverted immediately.
+
+That is the one thing on this page that is not a faithful capture of what the
+product does, and it is written into [DEBT.md](DEBT.md) §16 rather than left for
+somebody to notice. It closes when the application closes its open decision.
+
+### Three screens still carrying interface Hebrew
+
+`/prices` (2), `/alerts` (2) and `/bank` (7 column headers) are not data — they
+are the wiring backlog again, in three files that already carry 76 to 83 `t()`
+calls each. They are on the supporting pages rather than the home page. Named in
+§16.
+
+### And one contrast miss the new pictures made visible
+
+**G7 failed on `.eyebrow--on-light`: 4.485:1 against a 4.5 floor.** Not caused by
+this round — the pair has been in `main` since the voices merge, and the gate
+walks the page, so which elements it reaches depends on how tall the page is.
+New screenshots changed the height and the walk reached it.
+
+`.eyebrow--on-light` means "on the plate", and in the light view the plate is the
+dark one: `--color-wheat-sink` is #12242c there while `--color-oceanic-deep`
+resolves to the light teal #5d9096. Two hundredths short, on the label under
+every chapter heading. It carries a measured value in the light view now —
+#639aa0, 5.07:1 — for the same reason `--color-ink-dim` carries one.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| English interface strings on the twelve | 0 on nine of them; 11 on three, all named |
+| The demo organisation afterwards | 0 differences against the backup, across six tables |
+| Both editions | same instant, same figures, every chart drawn |
+| Payload | 24 screenshots, 72 widths, AVIF 38% under WebP |
+| The suite | **26 met, 0 unmet** |
+
+
+## Round twenty-three — the film reads in English, and the page stops quoting shekels at it, 31.08.2026
+
+The owner, looking at `/en/`: the page says **17,825 ₪** under a screenshot that
+says **30,225$**. One sentence, two faults — a figure read off a screenshot that
+had since been retaken, and a currency the English edition stopped being in the
+morning before.
+
+### The three figures are a reading of the picture, so they moved into the picture's file
+
+13 tasks → **15**, 6 items → **7**, 17,825 ₪ → **30,225$**. They live in
+`boardStats` in `extra.ts` / `extra.en.ts` now, not in the chapter's own copy.
+
+The reason is G2. `he.ts` is build 3's copy and G2 freezes it leaf by leaf — and a
+number that *describes a screenshot* cannot be frozen against the screenshot it
+describes. The `board.stats` leaves stay in both dictionaries, unread, carrying
+the same values, so nobody who reads them reads a contradiction; the comment
+above them says so. G14 checks the published figure, and it checks `30,225` now.
+
+Chapter 02's two English captions moved with them: the page says
+**"Butcher & Son Meats, 2,884.50$"** because that is what the picture under the
+caption says.
+
+### And the film reads in English
+
+It is a rendered explanation rather than a recording — the "three-way check"
+panel in act two is a screen the product does not have — but everything printed
+in it *is* read off real screens, and those exist in English now. So
+`world/world.html` carries a string table instead of literals and takes
+`?lang=`: ten labels, the supplier names, and the currency. **The geometry does
+not move.** It also composites nine real screens into the scene, so there is a
+set per language in `world/screens/en` — the same captures the page shows below.
+
+`--lang` runs through `render-world`, `render-recon` and `build-film`, and the
+files carry it: `01-en.mp4`, `R-en.mp4`, `film-en.mp4`. The encode is untouched,
+on the owner's instruction that the English film is encoded exactly as the Hebrew
+one is — CRF 28 wide, CRF 30 phone. The only difference between the two films is
+what the frames say.
+
+| | wide | phone |
+|---|---|---|
+| `film-en.mp4` | 836 frames, 34.88s, **9.6MB** | `film-m-en.mp4` 836 frames, 34.83s, **5.3MB** |
+
+### Three gates had to be told the truth before they would pass
+
+**G19 called the films dead weight — 19.8MB of it.** The moment the filename
+became `/assets/film${lang}.mp4`, the reference check could not find it: a name
+assembled at runtime is not a name. `FilmChapter` holds a literal table of the
+four filenames now, keyed by the suffix, and the check finds all four.
+
+**The renderers refused the English scene** — *"could not load its own materials:
+font NotoHe"*. They treated any `@font-face` not in state `loaded` as a missing
+material, and the all-English scene contains **no Hebrew character at all**, not
+even the shekel sign, so the Hebrew subset is never requested and never leaves
+`unloaded`. The check reads `=== 'error'` now, which is the fault it was written
+for. The 404 watch beside it is untouched.
+
+**The payload budget was 26MB, with headroom reserved "for a second locale, not
+for another film".** It became another film. 42MB, and the reason is written
+where the number is. `dist` is 37MB.
+
+### One panel is knowingly the old capture
+
+`/pay` returns `Could not embed because more than one relationship was found for
+'payment_requests' and 'payment_request_invoices'` on `main` today, in **both**
+languages, so there is no English capture of it to take. The owner's call was to
+render with the Hebrew one and swap that single panel when the application is
+fixed. It is `world/screens/en/accountant-pay.png`, and it is in
+[DEBT.md](DEBT.md) §16 rather than left for somebody to find in a frame.
+
+### Verification
+
+| Asked | Answer |
+|---|---|
+| Act two, English film, t=33s | "Three-way check · Butcher & Son Meats 2,884.50$ / 4,720.00$ / +1,835.50$ Gap against you · Matched · In your favour · Stopped before payment" |
+| Encode against the Hebrew film | identical settings; 836 frames both |
+| Faststart | all four films |
+| The published figure | `30,225` in both dictionaries and in G14 |
+| Payload | dist 37MB of a 42MB budget |
+| The suite | **26 met, 0 unmet** |
+
+**Still open, and named:** the Hebrew film's nine scene screens are the captures
+from *before* the product's navigation was rebuilt, so the two films show two
+versions of the same interface. Re-rendering the Hebrew film from the new screens
+is one run, and it was not done this round.
