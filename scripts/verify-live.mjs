@@ -48,6 +48,10 @@ const PAGES = [
   // hardcoded on purpose (see above), so it grows in the commit that adds a page.
   '/guides/separation-of-duties/',
   '/en/guides/separation-of-duties/',
+  '/guides/supplier-payment-mistakes/',
+  '/en/guides/supplier-payment-mistakes/',
+  '/guides/wrong-supplier-invoice/',
+  '/en/guides/wrong-supplier-invoice/',
 ]
 
 // From public/_headers. Every one of these is declared there, so every one of

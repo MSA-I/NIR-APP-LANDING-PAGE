@@ -953,6 +953,158 @@ const pagesEn: Page[] = [
     related: ['invoice-matching', 'procurement-software', 'supplier-invoices'],
     source: 'PRODUCT.md (Users, Capability contract); brand/positioning.md (proof points)',
   },
+  // --------------------------------------------------------------- guide 2
+  {
+    slug: 'guides/supplier-payment-mistakes',
+    nav: 'Supplier payment mistakes',
+    title: 'Common mistakes in paying suppliers, and how to catch them | InPlace',
+    description:
+      'The five mistakes that keep recurring in supplier payments, why each is invisible on its own, which check catches it, and what no check will ever catch.',
+    eyebrow: 'Guide',
+    h1: 'Common mistakes in paying suppliers',
+    lede:
+      'A business almost never loses money to one large mistake. It loses to an accumulation of mistakes, each too small to justify a check on its own, which together are an amount nobody ever saw.',
+    sections: [
+      {
+        h2: 'The five that keep recurring',
+        list: {
+          label: 'What actually happens',
+          items: [
+            'A double payment: the same invoice paid twice, usually because the supplier sent it again and it looked new',
+            'Paying for goods that never arrived: forty ordered, thirty-four delivered, forty paid',
+            'A price that went up quietly: the invoice asks for more than the price list the order was built from',
+            'A credit note forgotten: the supplier admitted the error, promised a credit, and nobody followed it',
+            'Paying for something never ordered: a payment request for an item nobody ordered through the system',
+          ],
+        },
+        after: [
+          'None of the five is rare, and none of them requires a villain. All of them require a busy person.',
+        ],
+      },
+      {
+        h2: 'Why these five in particular',
+        ask: true,
+        paras: [
+          'Because each of them looks entirely correct when you look at one document. An invoice for forty crates is a valid invoice. The price on it is a real price from that supplier. The second payment looks exactly like the first.',
+          'The mistake is not in the document but in its relationship to another document, which makes it invisible to any process that checks documents one at a time. That is why they recur in well-run businesses: people do check, they are simply checking the wrong thing.',
+        ],
+      },
+      {
+        h2: 'Which check catches which',
+        paras: [
+          'This table is the practical half of the guide. Note that the second column mentions no software: these are comparisons that can be made by hand, and the only question is whether somebody makes them every time.',
+        ],
+        table: {
+          headers: ['The mistake', 'What catches it'],
+          rows: [
+            ['A double payment', 'Comparing the invoice number against the same supplier, and after payment matching against bank transactions'],
+            ['Goods that never arrived', 'Comparing the goods receipt against the invoice, rather than the order against the invoice'],
+            ['A price that went up', 'Comparing the invoice against the price list the order was built from'],
+            ['A forgotten credit note', 'A credit that stays open until the money returns, rather than a list somebody remembers'],
+            ['Something never ordered', 'An invoice with no order linked to it'],
+          ],
+        },
+        after: [
+          'Three of the five are caught only by [[invoice-matching|comparing three documents rather than two]]. That is why the goods receipt is the link people are tempted to skip, and also the link without which the other two comparisons lose most of their value.',
+        ],
+      },
+      {
+        h2: 'What no check will catch',
+        ask: true,
+        paras: [
+          'Not every gap is a mistake, and that is worth saying in a guide about catching mistakes. A price can rise by agreement on a phone call. A quantity can change by arrangement. A supplier can send a substitute that was agreed.',
+          'An automatic check will flag all three exactly as it flags an error, because it sees the same gap. What it cannot know is that somebody agreed.',
+          'So [[guides/separation-of-duties|the ruling stays with a person]], and the job of the check is not to decide but to bring the gap to the table before the money leaves, and to keep the decision made about it.',
+        ],
+      },
+      {
+        h2: 'When to check',
+        ask: true,
+        paras: [
+          'Before the payment, not at the end of the month. The difference is not in the amount of work but in the kind of action available at the end of it.',
+          'A gap found before the transfer is a decision: pay in part, ask for a credit, or approve it knowingly. The same gap found after the transfer is a correspondence with a supplier who already has the money, and anyone who has run one knows what it costs.',
+          'It is also why [[supplier-invoices|the confirmation is filed on the invoice]] rather than in a separate folder: when it turns out two months later that the credit never came, the first question will be what exactly was paid, and when.',
+        ],
+      },
+    ],
+    related: ['invoice-matching', 'supplier-invoices', 'guides/separation-of-duties'],
+    source: 'PRODUCT.md (Product Purpose); pages.ts (/invoice-matching/ alerts); brand/audience.md',
+  },
+  // --------------------------------------------------------------- guide 3
+  {
+    slug: 'guides/wrong-supplier-invoice',
+    nav: 'A wrong invoice',
+    title: 'What to do when a supplier invoice is wrong | InPlace',
+    description:
+      'A wrong invoice is not deleted, and not quietly part-paid. Credit note or reissue, what to ask the supplier for, and how to know the money really came back.',
+    eyebrow: 'Guide',
+    h1: 'What to do when a supplier invoice is wrong',
+    lede:
+      'The first temptation is to delete it and ask for a new one. The second is to pay only the correct part and move on. Both cost money later, and for the same reason.',
+    sections: [
+      {
+        h2: 'Why not to delete it',
+        ask: true,
+        paras: [
+          'A wrong invoice is still a document that arrived. Deleting it solves the discomfort and erases the trail, and then there is no way to explain why the supplier believes they are owed money and you believe they are not.',
+          'The supplier deleted nothing at their end. There the invoice exists, numbered and recorded. When the two of you disagree about what happened, whoever holds the record runs the conversation.',
+        ],
+      },
+      {
+        h2: 'And why not to pay only the correct part',
+        ask: true,
+        paras: [
+          'A partial payment with no document explaining it looks like an open debt at the supplier\u2019s end. It stays on their ledger, comes up in the next collections call, and eventually somebody pays it to close the matter.',
+          'The partial payment is not the problem. The problem is a partial payment with no document beside it saying why.',
+        ],
+      },
+      {
+        h2: 'What to do instead: a credit note',
+        paras: [
+          'A credit note is a document in its own right, linked to the invoice it came from, with the reason it was opened. It stays open until the money returns or until it is offset against the next invoice.',
+        ],
+        list: {
+          label: 'What it needs to carry',
+          items: [
+            'The number of the original invoice it refers to',
+            'The reason, in language that will still make sense in six months',
+            'The amount, and if it is partial, exactly what for',
+            'Who approved it at your end',
+          ],
+        },
+        after: [
+          'The first three are what the supplier needs. The fourth is what you will need, and [[guides/separation-of-duties|it is the same record that turns an approval into a process]] rather than into one person\u2019s discipline.',
+        ],
+      },
+      {
+        h2: 'What to ask the supplier for',
+        ask: true,
+        paras: [
+          'It depends what is wrong. If the price or quantity is wrong and the invoice is already recorded at their end, the request is a credit note. If it has not been recorded yet, it is sometimes simpler to ask them to cancel and reissue.',
+          'The difference is not only technical. A credit note leaves both documents in the record and the history intact; a cancel and reissue leaves one clean document, and also erases the fact that there was an error. The third time the same supplier makes the same mistake, that history is worth something.',
+        ],
+      },
+      {
+        h2: 'How to know the money really came back',
+        ask: true,
+        paras: [
+          'This is the question that most often falls through, because a credit note feels like the end of the process and it is only the promise of one.',
+          'A closed credit is one whose money was seen: either returned by transfer, or offset against a later payment you can point to. Until then it is open, even if the supplier has already said they dealt with it.',
+          'That is why bank reconciliation is not an accounting chore at the end of the month but the part that closes the loop. A payment, a credit or an offset that has not been matched against a real transaction is still a promise.',
+        ],
+      },
+      {
+        h2: 'And if it keeps happening',
+        ask: true,
+        paras: [
+          'Then it is no longer a mistake but a pattern, and it is handled somewhere else: in the price list and the order, not in the invoice.',
+          'A supplier who repeatedly charges above the list is usually working from a more recent list than yours. A supplier whose deliveries are repeatedly short is usually packing to availability rather than to the order. Both are solved by one conversation about the expectation, rather than five conversations about five invoices.',
+        ],
+      },
+    ],
+    related: ['supplier-invoices', 'guides/supplier-payment-mistakes', 'invoice-matching'],
+    source: 'PRODUCT.md (Capability contract: credits, bank); pages.ts (/supplier-invoices/ credits)',
+  },
 ]
 
 export default { pages: pagesEn, cta: CTA_EN }
