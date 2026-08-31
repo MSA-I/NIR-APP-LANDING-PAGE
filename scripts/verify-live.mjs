@@ -1,4 +1,4 @@
-// The seven things that can only be measured on a host, not on a build.
+// The eight things that can only be measured on a host, not on a build.
 //
 // `npm run gates` measures the page. It cannot measure the SERVER: whether a
 // wrong address really answers 404 rather than 200 with the home page, whether
@@ -149,6 +149,64 @@ if (!SKIP_WWW) {
     `sitemap.xml lists ${PAGES.length} pages, all on inplace.digital`,
     ok,
     `status ${r.status}, ${locs.length} urls, ${foreign.length} foreign`
+  )
+}
+
+// L8 — nothing is disallowed in the robots.txt this host SERVES.
+//
+// WHY THIS IS NOT g17-crawl
+// g17 asserts that no Disallow appears in public/robots.txt, and it has passed
+// every time. The audit of 31.08.2026 found nine Disallow directives on the live
+// site anyway: Cloudflare's AI Crawl Control prepends a "# BEGIN Cloudflare
+// Managed content" block on the way out, blocking GPTBot, ClaudeBot, CCBot,
+// Google-Extended, Applebot-Extended, meta-externalagent, Amazonbot, Bytespider
+// and its own rendering crawler. The owner's decision of 27.08.2026 was that
+// none of them would be blocked, and the gate that guards that decision was
+// reading the wrong file: the one in the repository, not the one the internet
+// receives.
+//
+// A named group beats `User-agent: *` in the robots.txt specification, so each
+// of those agents reads its own `Disallow: /` and stops; the `Allow: /` further
+// down never reaches them. This is exactly the class of failure this file exists
+// for, and it can only ever be measured here.
+//
+// The pattern is anchored to the line start on purpose. public/robots.txt
+// discusses the word `Disallow` three times in its own comments, so an
+// unanchored count reports three even when nothing is blocked.
+{
+  const r = await get(ORIGIN + '/robots.txt')
+  const body = r.status === 200 ? await r.text().catch(() => '') : ''
+
+  // Walk the file as robots.txt is actually read: a run of User-agent lines,
+  // then the rules that belong to all of them.
+  const blocked = []
+  let agents = []
+  let inRules = false
+  for (const raw of body.split('\n')) {
+    const line = raw.replace(/#.*$/, '').trim()
+    if (!line) continue
+    const ua = line.match(/^User-agent\s*:\s*(.+)$/i)
+    if (ua) {
+      if (inRules) agents = []
+      agents.push(ua[1].trim())
+      inRules = false
+      continue
+    }
+    inRules = true
+    // `Disallow:` with an empty value means "nothing is disallowed". Only a
+    // value makes it a rule.
+    const dis = line.match(/^Disallow\s*:\s*(\S.*)$/i)
+    if (dis) for (const a of agents) blocked.push(`${a} → ${dis[1].trim()}`)
+  }
+
+  const ok = r.status === 200 && blocked.length === 0
+  record(
+    'L8',
+    'the served robots.txt disallows nothing',
+    ok,
+    blocked.length
+      ? `${blocked.length} disallowed: ${blocked.join(', ')}`
+      : `status ${r.status}, no Disallow directive served`
   )
 }
 

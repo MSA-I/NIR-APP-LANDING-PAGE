@@ -1,0 +1,70 @@
+# Build the page and publish it, on every push to main.
+#
+# The Pages project is DIRECT UPLOAD, not git-connected: Cloudflare does not
+# watch this repository and does not build anything by itself. Until this file
+# existed, a push published nothing and `npm run deploy` from a laptop was the
+# only way the live site ever changed. That is a deploy step that can be
+# forgotten, and a page that silently lags its own repository.
+#
+# So the upload happens here instead. The build is the same one measured before
+# the first deploy — `npm ci` then `npm run build`, on a clean checkout, on the
+# Node in `.node-version` — and nothing in it reads a secret.
+#
+# WHY IT VERIFIES AFTERWARDS
+# `wrangler pages deploy` exiting 0 means the files reached Cloudflare. It does
+# not mean the site works. `scripts/verify-live.mjs` asks the live host the
+# eight questions that only a host can answer, and a red build here means the
+# thing that is actually being served is wrong — which is the only moment that
+# information is worth anything.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  # So a deploy can be forced without inventing a commit — a rollback, or a
+  # re-publish after something was changed in the Cloudflare dashboard.
+  workflow_dispatch:
+
+# One deploy at a time, and never two uploads racing to be the production
+# deployment. Not cancel-in-progress: a half-finished upload that gets killed is
+# worse than a queued one.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build, upload, and ask the live host
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dist --project-name=inplace-landing --branch=main
+
+      # Cloudflare switches the production alias to the new deployment a moment
+      # after the upload returns. Twenty seconds is margin, not a measurement;
+      # if the verification below ever goes flaky, this is the number to raise.
+      - name: Let the deployment become the live one
+        run: sleep 20
+
+      - name: Verify the live host
+        run: node scripts/verify-live.mjs

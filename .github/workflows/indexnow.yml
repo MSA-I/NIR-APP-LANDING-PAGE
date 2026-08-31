@@ -1,14 +1,22 @@
 # Tell Bing, Yandex and Naver that the site changed, after every deploy.
 #
-# The owner's decision of 28.08.2026 was that this must fire by itself. It
-# therefore runs on a push to main and waits before it calls, because
-# Cloudflare Pages starts its own build from the same push and this must not
-# announce pages the deploy has not finished publishing.
+# The owner's decision of 28.08.2026 was that this must fire by itself.
 #
 # It reads the LIVE sitemap rather than building one, so it can only ever
-# announce what is actually being served. If the site is not up — as of
-# 28.08.2026 the domain does not resolve at all — the script says so and exits
-# 0. A notification that did not go out is not a broken build.
+# announce what is actually being served. If the site is not up, the script says
+# so and exits 0. A notification that did not go out is not a broken build.
+#
+# WHY THIS WAITS FOR THE DEPLOY RATHER THAN SLEEPING
+# Until 31.08.2026 this ran on a push to main and then slept four minutes,
+# because Cloudflare was expected to build the site from the same push and there
+# was no way to know when it had finished. Both halves of that were wrong: the
+# Pages project is direct upload, so a push built nothing, and the sleep was a
+# guess dressed as a safeguard.
+#
+# `deploy.yml` now does the publishing, so the answer is no longer a guess. This
+# runs when that workflow finishes, and only when it succeeded — which means it
+# announces the deployment that has already been verified against the live host,
+# never one that failed or one that is still uploading.
 #
 # Google does not participate in IndexNow. Nothing here changes anything in
 # Google Search.
@@ -16,10 +24,11 @@
 name: IndexNow
 
 on:
-  push:
-    branches: [main]
-  # So it can be fired by hand the first time the domain goes live, without
-  # having to invent a commit for it.
+  workflow_run:
+    workflows: [deploy]
+    types: [completed]
+  # So it can be fired by hand without a deploy — after a dashboard change, or
+  # to re-announce.
   workflow_dispatch:
 
 # One at a time, and never two announcements of the same site racing each other.
@@ -27,21 +36,20 @@ concurrency:
   group: indexnow
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   ping:
+    # A failed deploy has nothing to announce. Manual runs are always allowed.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      # Four minutes. Cloudflare Pages builds this site in about ninety seconds
-      # from a cold cache; the margin is there so the sitemap this reads is the
-      # one the push produced and not the one before it.
-      - name: Wait for the deploy to land
-        run: sleep 240
+          node-version-file: .node-version
 
       # No `npm ci`: the script uses nothing but Node's own fetch and fs.
       - name: Submit the live sitemap to IndexNow
