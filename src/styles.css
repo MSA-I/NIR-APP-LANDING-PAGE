@@ -1606,6 +1606,11 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
   object-fit: cover;
 }
 
+/* The dim the in-view observer asks for. It arrives as a number on the block,
+   not as `opacity`, so a media query can decline it — see the note in
+   FilmChapter's FilmBlock. */
+.film-block { opacity: var(--film-block-dim, 1); }
+
 @media (max-width: 767px) {
   .film-video {
     /* The phone cut's own 9:16. Height first, width from the ratio, so the
@@ -1622,7 +1627,18 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
      than under it. */
   .film-lay:not(.film-lay--calm) .film-fig--stick {
     position: sticky;
-    inset-block-start: 5.25rem;
+    /* The folio's VISIBLE bottom edge, which by the time a reader is in this
+       chapter is the folio ROW: the notice above it has slid away, and the row
+       is the 60px still on the screen. It was 5.25rem here, then 4.35rem, both
+       of them constants chosen near the number rather than from it, and both
+       of them left a window between the folio's edge and the film's top edge.
+       The travelling copy showed through it — half a line of a paragraph, cut
+       through the middle, hanging behind the three round controls. It is the
+       one thing in this chapter a reader cannot explain to themselves, and the
+       fix is not a better constant: the folio measures its row and publishes
+       it, so the two edges are the same edge at any type size and whether or
+       not the notice was ever dismissed. */
+    inset-block-start: var(--folio-row-h, 3.75rem);
     z-index: 2;
     /* The figure is transparent between the plate and the caption; the
        colour under it is the page's own ground, so the copy disappears
@@ -1632,10 +1648,41 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
     margin-block-end: 1.5rem;
   }
 
+  /* The edge the copy passes under, softened.
+     An opaque figure over travelling copy cuts every heading through the
+     middle of its letters at some point in its travel, and a heading cut that
+     way does not read as "sliding under" — it reads as broken type. The band
+     is the figure's own ground fading out over 4.5rem, so a line dissolves
+     into the film's lower edge instead of meeting it. It is anchored to the
+     figure and therefore travels with it, and since the copy is always
+     directly under the film in this layout, it is always over the copy's
+     leading edge and never over anything else. */
+  .film-lay:not(.film-lay--calm) .film-fig--stick::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 100%;
+    block-size: 4.5rem;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      var(--color-onyx) 0%,
+      color-mix(in srgb, var(--color-onyx) 72%, transparent) 42%,
+      transparent 100%
+    );
+  }
+
   /* One block at a time in what the film leaves: viewport, less the folio,
      less the film and its caption. */
   .film-lay:not(.film-lay--calm) .film-block {
     min-block-size: 38svh;
+    /* No dim on a phone. The observer that raises it is centred on the
+       VIEWPORT, and on a phone the middle of the viewport is behind the film.
+       So the block it lights is the hidden one and the block the reader is
+       looking at is the one held at 0.26 — which on this ground is barely
+       there. The desktop keeps the dim; there the copy column is beside the
+       film, not under it, and the observer is pointing at what it thinks. */
+    opacity: 1;
   }
 }
 
@@ -3403,7 +3450,12 @@ html[dir='rtl'] { --knob: -1; }
       backdrop-filter 0.5s,
       border-color 0.5s;
   }
-  header[data-lifted='true'] { translate: 0 -2.75rem; }
+  /* Only if there IS a strip to slide away. The rule used to lift every
+     header by the strip's height, including one a reader had just dismissed:
+     a folio 60px tall moved up 44px, and what was left on the screen was the
+     bottom 16px of three round controls, cut through the middle, for the rest
+     of the visit. Dismissing the notice broke the navigation. */
+  header[data-lifted='true']:has(.announce) { translate: 0 -2.75rem; }
 
   .announce {
     min-block-size: 2.75rem;
@@ -3578,11 +3630,18 @@ html[dir='rtl'] { --knob: -1; }
   #faq > .plate { padding-block: 3rem 3.5rem; }
 
   /* Film: keep enough frame on screen to read the scene, but leave a real copy
-     window below it. The sticky offset follows the measured folio. */
+     window below it. The sticky offset follows the measured folio.
+
+     THE COPY WINDOW IS A BUDGET, and it was overdrawn. Measured at 375x812:
+     folio 104 + figure 435 = 539, leaving 273px under the film for a block
+     276px tall. A paragraph could therefore never be whole on the screen —
+     every one of them was cut by the film's lower edge for the whole of its
+     scroll. The film gives the width back: 38svh instead of 46 leaves 339px
+     for a 276px block, which is the first arrangement in which a phone reader
+     sees a heading and its paragraph at the same time. */
   .film-lay { gap: 1.75rem; }
-  .film-video { block-size: min(46svh, 124vw); }
+  .film-video { block-size: min(38svh, 100vw); }
   .film-lay:not(.film-lay--calm) .film-fig--stick {
-    inset-block-start: 4.35rem;
     margin-block-end: 1.25rem;
   }
   .film-lay:not(.film-lay--calm) .film-block {

@@ -82,14 +82,27 @@ export function Folio({
   // circled on 26.08.2026. It also has to survive the strip being dismissed,
   // which changes the height back again at runtime, so a second constant would
   // have been wrong half the time too.
+  //
+  // It publishes the ROW's height as well, and that is the number anything
+  // pinned below the folio actually wants. Past a scroll of 40px the header
+  // slides up by the strip's own height, so the box is 104px tall while only
+  // its last 60px are on the screen. Chapter 01's film was pinned at 6.5rem
+  // off `--folio-h` and left a 44px window between the folio's visible edge and
+  // its own top edge, through which the travelling copy could be read: two
+  // lines of a paragraph, cut off at both ends, hanging over the film.
   useEffect(() => {
     const box = boxRef.current
     if (!box) return
-    const publish = () =>
-      document.documentElement.style.setProperty('--folio-h', `${Math.round(box.offsetHeight)}px`)
+    const row = box.querySelector<HTMLElement>('.folio__row')
+    const publish = () => {
+      const style = document.documentElement.style
+      style.setProperty('--folio-h', `${Math.round(box.offsetHeight)}px`)
+      if (row) style.setProperty('--folio-row-h', `${Math.round(row.offsetHeight)}px`)
+    }
     publish()
     const ro = new ResizeObserver(publish)
     ro.observe(box)
+    if (row) ro.observe(row)
     return () => ro.disconnect()
   }, [])
 

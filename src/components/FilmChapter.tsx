@@ -14,7 +14,7 @@
 // frame and the first product screen in chapter 02 are deliberately the same
 // screen, so the film does not cut at the end, it hands over.
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 import { useInView, useScroll } from 'motion/react'
 import { Html, SplitHeading, useCalm } from '@/lib/motion'
 
@@ -245,7 +245,15 @@ function FilmBlock({
           ? 'mb-14'
           : 'film-block flex flex-col justify-center transition-opacity duration-700'
       }
-      style={calm ? undefined : { opacity: active ? 1 : 0.26 }}
+      /* The dim is published as a custom property rather than as `opacity`
+         itself, so the phone can decline it in the stylesheet. An inline
+         `opacity` cannot be overridden by a media query without `!important`,
+         and on a phone the rule has to go: the film is pinned ACROSS the
+         copy there, so the block the reader can actually see is the one below
+         the film, while the one this observer lights is the one hidden BEHIND
+         it. Measured at 375x812, scrollY 2650: block 02 sat at 216–492 with
+         the film covering 70–505 — lit, and invisible. */
+      style={calm ? undefined : ({ '--film-block-dim': active ? 1 : 0.26 } as CSSProperties)}
     >
       <p className="eyebrow mb-4">
         <span className="ip-num">
