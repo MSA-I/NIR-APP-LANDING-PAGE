@@ -312,7 +312,7 @@ const pages: Page[] = [
       alt: 'מסך הספקים ב‑InPlace: רשימת הספקים עם קטגוריה, איש קשר, מינימום הזמנה והתראות פתוחות',
       cap: 'כל ספק במקום אחד, עם מה שצריך לדעת עליו לפני שמזמינים ממנו.',
     },
-    related: ['supplier-invoices', 'invoice-matching', 'vs-erp'],
+    related: ['supplier-invoices', 'invoice-matching', 'vs-erp', 'guides', 'guides/new-supplier-setup'],
     source:
       'PRODUCT.md (Users, Capability contract, Product Purpose, Design Principles); brand/positioning.md (proof points, refusals); he.ts (plans)',
   },
@@ -640,7 +640,7 @@ const pages: Page[] = [
       alt: 'מסך המחירונים ב‑InPlace: מחיר נוכחי מול מחיר קודם לכל מוצר, עם אחוז השינוי והתאריך שממנו הוא בתוקף',
       cap: '66 מחירי ספקים, ושבע התייקרויות שסומנו לבד. זה הגיליון שאף אחד לא באמת מתחזק.',
     },
-    related: ['vs-erp', 'invoice-matching', 'guides/separation-of-duties'],
+    related: ['vs-erp', 'invoice-matching', 'guides/separation-of-duties', 'guides/leaving-the-spreadsheet'],
     source: 'brand/context.md (Alternatives); he.ts (why.yes, why.no, film blocks)',
   },
 

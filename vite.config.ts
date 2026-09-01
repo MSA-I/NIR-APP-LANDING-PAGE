@@ -22,7 +22,12 @@ function supportingPagesInDev(): Plugin {
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const url = (req.url || '').split('?')[0]
-        const match = /^\/(en\/)?([a-z][a-z-]*)\/$/.exec(url)
+        // One segment, or two. The guides live under `guides/`, and the single
+        // -segment form answered `/guides/separation-of-duties/` with the SPA
+        // fallback — 200, home page, wrong title, no sections — for all five
+        // guides in both editions. They are correct in `dist`, so only the dev
+        // surface lied, which is the failure this plugin exists to prevent.
+        const match = /^\/(en\/)?([a-z][a-z-]*(?:\/[a-z][a-z-]*)?)\/$/.exec(url)
         if (!match) return next()
         const locale = match[1] ? 'en' : 'he'
         try {

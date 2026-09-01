@@ -38,6 +38,8 @@ const CHROME = {
       ['/#faq', 'שאלות'],
       ['/guides/', 'מדריכים'],
     ],
+    contentsLabel: 'בעמוד הזה',
+    skipToContent: 'דילוג לתוכן',
     readOn: 'להמשך קריאה',
     readOnLabel: 'עמודים נוספים',
     ctaLine: 'מתחילים מספק אחד, ורואים את השרשרת עובדת על העסק שלך.',
@@ -66,6 +68,8 @@ const CHROME = {
       ['/en/#faq', 'Questions'],
       ['/en/guides/', 'Guides'],
     ],
+    contentsLabel: 'On this page',
+    skipToContent: 'Skip to content',
     readOn: 'Read on',
     readOnLabel: 'More pages',
     ctaLine: 'Start with one supplier, and watch the chain work on your own business.',
@@ -261,9 +265,63 @@ const answerOf = (s: Section) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-const section = (s: Section, locale: LocaleCode) => `
+/**
+ * An address for a heading.
+ *
+ * Every one of the fourteen documents was a run of flat h2 with no id and no
+ * anchor: `main a[href^="#"]` and `main [id]` both measured 0 across all 28
+ * URLs. Terms of use has seven numbered clauses and support could not send a
+ * customer to one of them, and the FAQPage questions the schema declares had
+ * no address on the page declaring them.
+ *
+ * The slug is derived from the heading rather than authored, so it needs no
+ * new field in the dictionaries and no new words in either language. Hebrew
+ * has no case and its letters are not URL-safe, so a Hebrew heading yields
+ * `s-<n>` and the index carries the reading; a Latin heading keeps its words.
+ */
+const headingId = (h2: string, index: number) => {
+  const latin = h2
+    .replace(/&nbsp;/g, ' ')
+    .replace(/<[^>]+>/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  return latin.length >= 3 ? `${latin.slice(0, 60)}-${index}` : `s-${index}`
+}
+
+/**
+ * The contents of a long document, above its first section.
+ *
+ * Every page in this set is a flat run of h2 — eleven of them on
+ * /procurement-software/, across 4,987px — with no way to see the shape or to
+ * skip to the part the search result was about. Rendered only from six
+ * sections up, because below that the headings are already visible together
+ * and a list of four would be furniture.
+ *
+ * The heading is the one the chrome already carries for a list of links, so
+ * this adds no new visible words in either language.
+ */
+const contents = (page: Page, locale: LocaleCode) => {
+  const items = page.sections.filter((s) => s.h2)
+  if (items.length < 6) return ''
+  const label = CHROME[locale].contentsLabel
+  return `
+        <nav class="doc-toc" aria-label="${attr(label)}">
+          <p class="eyebrow">${escape(label)}</p>
+          <ol class="doc-toc__list">
+            ${items
+              .map(
+                (s, i) =>
+                  `<li><a class="doc-link" href="#${attr(headingId(s.h2, i))}">${escape(s.h2)}</a></li>`
+              )
+              .join('\n            ')}
+          </ol>
+        </nav>`
+}
+
+const section = (s: Section, locale: LocaleCode, index = 0) => `
         <section class="doc-section"${s.ask ? ` data-faq-q="${attr(s.h2)}"` : ''}>
-          <h2>${escape(s.h2)}</h2>
+          <h2 id="${attr(headingId(s.h2, index))}">${escape(s.h2)}</h2>
           ${(s.paras || []).map((p) => `<p class="body">${copy(p, locale)}</p>`).join('\n          ')}
           ${
             s.people
@@ -572,11 +630,15 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
    on them, and between them they are the whole of their state. */
 const THEME_HEAD = `
       try {
-        if (localStorage.getItem('inplace.theme') === 'light') {
-          document.documentElement.dataset.theme = 'light'
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fffcf8')
-        }
-      } catch (e) {}`
+        var stored = localStorage.getItem('inplace.theme')
+        var theme = stored === 'dark' ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute('content', theme === 'dark' ? '#0a171d' : '#fffcf8')
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }`
 
 /* The switch itself, as markup rather than as a component.
    Same class names as src/components/ThemeToggle.tsx, so it inherits the whole
@@ -597,9 +659,9 @@ const SUN = themeIcon(
     '<path d="m19.07 4.93-1.41 1.41"/>'
 )
 
-const themeToggle = (toLight: string) =>
-  `<button type="button" class="theme-toggle" data-theme-state="dark"
-          aria-pressed="false" aria-label="${attr(toLight)}">
+const themeToggle = (toDark: string) =>
+  `<button type="button" class="theme-toggle" data-theme-state="light"
+          aria-pressed="true" aria-label="${attr(toDark)}">
           <span class="theme-toggle__track">
             <span class="theme-toggle__knob">${MOON}${SUN}</span>
             <span class="theme-toggle__ghost">${SUN}${MOON}</span>
@@ -660,14 +722,42 @@ const STYLE = `
       /* A link inside a sentence. Underlined rather than coloured alone, because
          the semantic colour language reserves colour for state and a link is not
          a state; the offset keeps the rule off the Hebrew descenders. */
+      /* Visible only when it has focus, which is the only time it is useful.
+         Placed before the header so it is the first stop on the page. */
+      /* An anchor lands under a sticky header unless the document says how tall
+         it is. Measured at 1440: 104px in Hebrew, 144px in English, because the
+         bar wraps to three rows there. 9rem clears both. */
+      html { scroll-padding-block-start: 9rem; }
+      .doc-skip { position: absolute; inset-block-start: 0.5rem; inset-inline-start: 0.5rem;
+        z-index: 60; padding: 0.6rem 1rem; border-radius: 8px;
+        background: var(--color-onyx-lift); color: var(--color-ink);
+        border: 1px solid var(--color-onyx-line); transform: translateY(-150%); }
+      .doc-skip:focus-visible { transform: none; }
+      /* The shape of a long document, before the reader commits to scrolling it.
+         Numbered, because the headings answer questions in an order. */
+      .doc-toc { margin-block-start: clamp(2rem, 4vh, 2.75rem);
+        padding-block: 1.25rem; border-block: 1px solid var(--color-onyx-line); }
+      .doc-toc__list { margin: 0.75rem 0 0; padding-inline-start: 1.35rem;
+        display: grid; gap: 0.45rem; }
+      .doc-toc__list li { color: var(--color-ink-soft); }
+      .doc-toc__list ::marker { color: var(--color-ink-dim); }
       .doc-link { color: inherit; text-decoration: underline;
         text-decoration-color: var(--color-oceanic);
         text-decoration-thickness: 1.5px; text-underline-offset: 0.22em;
         transition: text-decoration-color 0.15s ease, color 0.15s ease; }
-      .doc-link:hover { color: var(--color-oceanic-deep);
-        text-decoration-color: var(--color-oceanic-deep); }
-      html[data-theme="dark"] .doc-link:hover,
-      :root:not([data-theme="light"]) .doc-link:hover { color: var(--color-oceanic); }
+      /* ONE TOKEN, BOTH THEMES. The oceanic and oceanic-deep custom properties
+         SWAP with the ground (see the light block in src/styles.css): oceanic
+         is #003f47 in light and #5d9096 in dark, which is in both cases the
+         one that reads on the ground the page is currently on. So the accent
+         role is the oceanic property in either theme, and the second rule was
+         never needed — it existed to correct a hover that had picked the
+         other one.
+         What it cost: light hovered to #5d9096 on cream, 3.48:1, on a link
+         resting at 7.66:1 — pointing at a link made it fainter, on every
+         in-body link of all fourteen documents, in the view that became the
+         default on 01.09.2026. Now 11.39:1 in light, 5.11:1 in dark. */
+      .doc-link:hover { color: var(--color-oceanic);
+        text-decoration-color: var(--color-oceanic); }
       .doc-list { margin-block-start: 1rem; margin-block-end: 1rem; padding-inline-start: 1.15rem;
         display: grid; gap: 0.6rem; list-style: disc; }
       .doc-list li::marker { color: var(--color-oceanic); }
@@ -931,7 +1021,7 @@ export function pageHtml(
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>${attr(page.title)}</title>
     <meta name="description" content="${attr(page.description)}" />
-    <meta name="theme-color" content="#0a171d" />
+    <meta name="theme-color" content="#fffcf8" />
     <script>${THEME_HEAD}
     </script>
     <link rel="canonical" href="${url}" />${alternates}
@@ -968,6 +1058,9 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
     </script>
   </head>
   <body>
+    <!-- Seven tab stops stood between a keyboard reader and the document,
+         on every one of the fourteen pages, with nothing to skip them. -->
+    <a class="doc-skip" href="#doc-main">${escape(t.skipToContent)}</a>
     <header class="doc-top">
       <div class="wrap doc-top__in">
         <a class="brandchip" href="${locale === 'he' ? '/' : '/en/'}" aria-label="InPlace">
@@ -978,16 +1071,17 @@ ${JSON.stringify(schemaFor(page, locale), null, 2).replace(/<\//g, '<\\/')}
         <nav aria-label="${attr(t.navLabel)}">
           ${t.nav.map(([href, label]) => pill(href, escape(label))).join('\n          ')}
         </nav>
-        ${themeToggle(t.toLight)}
+        ${themeToggle(t.toDark)}
       </div>
     </header>
 
     <div class="wrap doc">
-      <main>
+      <main id="doc-main">
         <p class="eyebrow">${escape(page.eyebrow)}</p>
         <h1>${copy(page.h1, locale)}</h1>
         <p class="lede">${copy(page.lede, locale)}</p>${page.image ? picture(page.image) : ''}
-${page.sections.map((s) => section(s, locale)).join('\n')}
+${contents(page, locale)}
+${page.sections.map((s, i) => section(s, locale, i)).join('\n')}
 
 ${
           page.legal

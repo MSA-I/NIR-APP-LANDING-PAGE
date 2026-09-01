@@ -183,7 +183,7 @@ const pagesEn: Page[] = [
       alt: 'The suppliers screen in InPlace: every supplier with its category, contact, minimum order and open alerts',
       cap: 'Every supplier in one place, with what you need to know about them before you order.',
     },
-    related: ['supplier-invoices', 'invoice-matching', 'vs-erp'],
+    related: ['supplier-invoices', 'invoice-matching', 'vs-erp', 'guides', 'guides/new-supplier-setup'],
     source: 'PRODUCT.md (Users, Capability contract, Product Purpose); en.ts (plans)',
   },
 
@@ -507,7 +507,7 @@ const pagesEn: Page[] = [
       alt: 'The price list screen in InPlace: current against previous price for every product, with the percentage change and the date it took effect',
       cap: '66 supplier prices, and seven rises it marked by itself. This is the spreadsheet nobody actually keeps up.',
     },
-    related: ['vs-erp', 'invoice-matching', 'guides/separation-of-duties'],
+    related: ['vs-erp', 'invoice-matching', 'guides/separation-of-duties', 'guides/leaving-the-spreadsheet'],
     source: 'brand/context.md (Alternatives); en.ts (why.yes, why.no, film blocks)',
   },
 

@@ -230,6 +230,8 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           submit={x.contact.submit}
           fineprint={x.contact.fineprint}
           optional={x.contact.optional}
+          states={x.contact.states}
+          locale={locale}
         />
 
         <CloseChapter

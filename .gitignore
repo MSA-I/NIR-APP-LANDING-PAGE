@@ -7,3 +7,4 @@ cad_mcp.log
 .audit/
 .claude/worktrees/
 .wrangler/
+.impeccable/hook.cache.json

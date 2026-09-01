@@ -410,7 +410,9 @@ export default {
     eyebrow: 'מסלול ביזנס',
     h2: 'ארגון עם מכסות והסדר&nbsp;משלו',
     lede: 'המסלול הזה נבנה מול העסק ולא נרכש מהמדף. השאירו פרטים ונחזור אליכם עם הצעה שמתאימה לכמות המסמכים ולמבנה ההרשאות שלכם.',
-    action: 'mailto:support@inplace.digital',
+    // The Pages Function, not a mailto:. See functions/api/contact.ts for
+    // why, and for what CONTACT_WEBHOOK has to be set to before it delivers.
+    action: '/api/contact',
     fields: {
       name: 'שם מלא',
       business: 'שם העסק',
@@ -421,6 +423,15 @@ export default {
     },
     submit: 'שליחה',
     fineprint: 'הפרטים משמשים אותנו רק כדי לחזור אליכם. אין כאן רשימת דיוור.',
+    // The three things that can happen after the press, which the form had
+    // no way of saying while it was a mailto:. Approved by the owner on
+    // 01.09.2026; they live here rather than in the frozen he.ts.
+    states: {
+      sending: 'שולח…',
+      sent: 'קיבלנו. נחזור אליכם תוך יום עסקים אחד.',
+      failed: 'השליחה נכשלה. אפשר לכתוב לנו ישירות:',
+      failedAddress: 'support@inplace.digital',
+    },
     optional: 'לא חובה',
   },
 

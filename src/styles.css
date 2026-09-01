@@ -195,7 +195,17 @@
      third step below its soft, and the light view had only two. This is that
      third step, and it is a measured value, not a chosen one: G7 walks the page
      in both views and holds it to 4.5:1 on the wheat ground. */
-  --color-ink-dim: #63737a;
+  /* Deepened from #63737a on 01.09.2026. The old value cleared 4.5 on the flat
+     wheat — 4.82 — and G7 walked exactly that ground, so it passed. But the
+     body carries two `background-attachment: fixed` radial gradients, and
+     every paragraph scrolls through them: measured under the second one, the
+     small type reached 3.55:1 at 1250px and 3.27:1 at 375px, where the
+     gradient's percentage radii put the whole reading column near its centre.
+     /about/ states that contrast is measured "on the composited image — that
+     is, on what the eye actually sees", so the page was publishing a
+     guarantee the default view did not meet. #525f68 measures 4.77:1 against
+     the gradient's worst stop and 6.47:1 on the flat ground. */
+  --color-ink-dim: #525f68;
   --color-ink-on-light: #fbf6ee;    /* was --color-ink */
   --color-ink-on-light-soft: #a2b3b8;/* was --color-ink-soft */
 
@@ -527,6 +537,30 @@
    size excuses. */
 :root { --tint: var(--color-oceanic); }
 .on-light { --tint: var(--color-oceanic-deep); }
+
+/* THE RING FOLLOWS THE GROUND, NOT THE THEME.
+   `.on-light` and `[data-theme-flip]` mean the same thing — this plate carries
+   the OTHER ground — but only the second one redeclared the focus ring, so
+   when light became the default on 01.09.2026 the ring stayed at the light
+   token while the plate under it went dark. Measured at the three chapters
+   that use `.on-light`: #what 1.56:1, #voices 1.37:1, #faq 1.37:1, against
+   WCAG 1.4.11's 3:1. In dark, where the same plates are cream, they had been
+   5.68 and 5.08.
+
+   A keyboard reader could not see focus on five tabs, eight accordion
+   summaries and a carousel — on the default view of the page.
+
+   Written both ways round rather than only for light, so the plate is correct
+   whichever ground the page is on and neither direction can drift again.
+
+   The light value is #5d9096 and not the #03707c that `[data-theme-flip]`
+   carries, because these three plates are not all the same dark. #what sits on
+   --color-onyx and #voices and #faq on --color-onyx-lift, and measured against
+   the lift #03707c gives 2.75:1 — under the bar it was brought in to clear.
+   #5d9096 is the oceanic the flip block already uses for type on exactly this
+   ground, and it measures 4.42:1 there and 5.05:1 on the onyx. */
+:root[data-theme='light'] .on-light { --color-focus-ring: #5d9096; }
+:root:not([data-theme='light']) .on-light { --color-focus-ring: #003f47; }
 .text-tint { color: var(--tint); }
 
 /* Latin figures inside Hebrew copy: keep them LTR and tabular so a column of
@@ -1841,7 +1875,17 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
 .flow--ghost:hover { color: var(--color-onyx); }
 
 .flow--primary .flow__fill { background: var(--color-focus-ring); }
-.flow--primary:hover { color: var(--color-ink); }
+/* The label has to be legible on the FILL, not on the page. `--color-ink` is
+   the page's ink, and on the dark ground it happened to also be the cream that
+   reads on this fill — so the rule was right for one theme by coincidence.
+   With light the default, dark ink met the dark teal fill at 1.56:1 and the
+   label vanished on hover, on the only conversion control the fourteen
+   supporting documents carry.
+
+   `--color-ink-on-light` is the ink for a light-on-dark plate, which is what
+   this fill is in both themes: #fbf6ee over #003f47 in light (10.6:1) and
+   #0a171d over #03707c in dark (5.4:1). */
+.flow--primary:hover { color: var(--color-ink-on-light); }
 
 /* On the cream plate a ghost button cannot open cream. It keeps the dark fill
    it always had, which on that ground is the same move: the button departs
@@ -2453,6 +2497,40 @@ html:dir(rtl) .drawer__chevron { scale: -1 1; }
    so anything nested inside them follows too. */
 .cform__submit {
   --color-ink: #fbf6ee;
+}
+.cform__submit[disabled] { cursor: progress; opacity: 0.72; }
+
+/* The answer to the press. One region for all three outcomes, so a screen
+   reader has one place to listen and the layout does not jump between them.
+   It takes no room while the form is idle: an empty live region that already
+   occupies space reads to a sighted visitor as something that failed to load. */
+.cform__status {
+  margin-block-start: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.cform__status[data-state='idle'],
+.cform__status[data-state='sending'] { display: none; }
+.cform__status[data-state='sent'] { color: var(--color-oceanic); }
+.cform__status[data-state='failed'] { color: var(--color-alert); }
+.cform__status-mail {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* The honeypot. Off the page rather than `display: none`, because some bots
+   skip what is not rendered; `aria-hidden` and `tabindex="-1"` on the markup
+   keep it away from everyone else. */
+.cform__trap {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ------------------------------------------------------------- theme control */
@@ -3565,12 +3643,27 @@ html[dir='rtl'] { --knob: -1; }
     gap: 0;
     padding-block: 0 2.25rem;
   }
+  /* The first screen used to be exactly one screen: a full-height floor with
+     the type centred inside it. On a phone that floor was buying air rather
+     than composition — the eyebrow, headline, two actions and fineprint
+     measure 669px together and were being held inside 1,057, so a reader paid
+     388px of nothing before the page moved.
+
+     The floor comes off and the type packs to the top. The hero still opens on
+     its own screen; it stops reserving one.
+
+     A capture of the product briefly sat under the fineprint here, to answer
+     the report that the page takes too long to reach the product. It was
+     removed on the owner's read of it: chapter 02's screens are 2000px wide
+     and a phone draws them at 329, which is the same reason `zoomScreen`
+     exists further down the page. The note in extra.ts said so before this was
+     tried. A phone-sized proof shot would have to be a phone-sized render, and
+     none exists. */
   .title-hero__main {
     display: flex;
-    min-block-size: calc(100svh - var(--folio-h, 6.375rem) - 0.75rem);
     flex-direction: column;
-    justify-content: center;
-    padding-block: 2.25rem;
+    justify-content: flex-start;
+    padding-block: 1.25rem;
   }
   .title-hero__main .eyebrow { margin-block-end: 1.25rem; }
   .title-hero__actions {
@@ -3601,33 +3694,44 @@ html[dir='rtl'] { --knob: -1; }
     line-height: 1.75;
   }
 
-  .title-index {
-    padding-block-start: 2.75rem;
-    padding-block-end: 1rem;
-  }
-  .title-index__row {
-    grid-template-columns: 2.2rem minmax(0, 1fr);
-    gap: 0.35rem 0.75rem;
-    padding-block: 1.1rem;
-  }
-  .title-index__row > :last-child {
-    grid-column: 2;
-    line-height: 1.5;
-  }
+  /* The contents index is the book's, and on a desk it earns its page: six
+     chapters announced before the first one opens. On a phone it was measured
+     at 630px — 0.8 of a screen — and it is the last thing between the reader
+     and the product. Four of its six links are already in the folio nav above
+     it and all six are in the drawer, so what is dropped here is duplication,
+     not navigation.
+
+     Readers reported the page as long and slow to reach the product, and this
+     is the largest block on the phone that carries no argument. It stays whole
+     above 768px, where it costs a fraction of the view and reads as the
+     frontispiece it is. */
+  .title-index { display: none; }
 
   /* Editorial rhythm: phone sections need fewer empty desktop view-heights,
-     while the headings and reading copy retain breathing room. */
-  [data-film] { padding-block: 3rem; }
-  #what { padding-block-start: 2rem; }
-  .board { padding-block: 3.75rem; }
-  #why { padding-block: 3.75rem; }
-  #voices { padding-block: 1.5rem; }
+     while the headings and reading copy retain breathing room.
+
+     Readers reported the page as long, and the phone measured 20.3 screens
+     against the desk's 18.1 — the small screen was paying the larger toll. The
+     rhythm was still carrying desk-sized air between sections: a reader on a
+     phone crossed roughly 700px of nothing between the first heading and the
+     last. These values are the same intervals, taken in one step down. The
+     breathing room inside a section — between a heading and its paragraph —
+     is untouched; only the gaps between them close.
+
+     #plans keeps its 3.75rem by the owner's decision: the pricing tray is the
+     one place on this page that is meant to stand apart, and it is the largest
+     block on the phone precisely because five cards are shown whole. */
+  [data-film] { padding-block: 2rem; }
+  #what { padding-block-start: 1.5rem; }
+  .board { padding-block: 2.5rem; }
+  #why { padding-block: 2.5rem; }
+  #voices { padding-block: 1rem; }
   #plans { padding-block: 3.75rem; }
-  #faq { padding-block: 1.5rem 2.75rem; }
+  #faq { padding-block: 1rem 2rem; }
 
   #what > .plate,
   #voices > .plate,
-  #faq > .plate { padding-block: 3rem 3.5rem; }
+  #faq > .plate { padding-block: 2rem 2.25rem; }
 
   /* Film: keep enough frame on screen to read the scene, but leave a real copy
      window below it. The sticky offset follows the measured folio.
@@ -3640,15 +3744,46 @@ html[dir='rtl'] { --knob: -1; }
      for a 276px block, which is the first arrangement in which a phone reader
      sees a heading and its paragraph at the same time. */
   .film-lay { gap: 1.75rem; }
-  .film-video { block-size: min(38svh, 100vw); }
+  /* THE FRAME IS AS WIDE AS THE COPY WINDOW WILL PAY FOR.
+     The clip is a 9/16 portrait render, so height and width are one number:
+     at 38svh the frame drew 174x309 on a 375px screen — 46% of the column —
+     and beat 04 names a red figure and a green one that were about 4px tall.
+     48svh spends the slack the shorter copy blocks freed (they came down from
+     34svh to 27svh, so the window is 404px against a 219px block) and draws
+     219x390 instead: 64% of the column, and the window still clears the
+     tallest beat by about 100px. G5 measures that per beat.
+
+     This is the ceiling for CSS. Going wider costs the reading window the
+     34svh arrangement was fixed to protect, and the figures inside the frame
+     would still be small: they are legible only from a render made at phone
+     scale, which is an asset this repository does not have. */
+  .film-video { block-size: min(48svh, 100vw); }
   .film-lay:not(.film-lay--calm) .film-fig--stick {
     margin-block-end: 1.25rem;
   }
+  /* THE FLOOR IS NOT THE WINDOW. 34svh was set as a floor under each beat so
+     the copy could never be taller than the room beneath the film, and it did
+     that job — but it was also holding four blocks open past their contents.
+     Measured at 375x812: the boxes were 276px each while the copy inside them
+     ran 153, 153, 153 and 180, so 305px of the film's scroll length was floor,
+     not text.
+
+     27svh gives the floor back to the tallest beat and no more: block 04 is
+     220px of content and padding, the window under the pinned figure is 358px,
+     so a heading and its paragraph still arrive together — with more clearance
+     than the 34svh arrangement had, not less. G5 measures this per beat. */
   .film-lay:not(.film-lay--calm) .film-block {
-    min-block-size: 34svh;
+    min-block-size: 27svh;
     padding-block: 1.25rem;
   }
-  .film-lay:not(.film-lay--calm) .film-copy { padding-block-end: 50svh; }
+  /* The tail is what keeps the figure pinned until the clip's last frame, and
+     it was set by eye at 50svh — 406px of empty room. The clip reaches its end
+     well before the pin releases, so the tail was paying for a margin nobody
+     was spending. 25svh is the shortest value that still passes G4 (the film
+     at >= 34.3s of 34.83 when the figure lets go) with room to spare; it is a
+     measured value and it is the one thing here that must be re-measured
+     rather than reasoned about if the film's timing ever changes. */
+  .film-lay:not(.film-lay--calm) .film-copy { padding-block-end: 25svh; }
 
   /* Product chain: two generous controls per row, followed by one focused
      screen. Hover remains enhancement only. */
