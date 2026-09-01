@@ -1249,6 +1249,69 @@ const pagesEn: Page[] = [
     related: ['vs-spreadsheet', 'guides/separation-of-duties', 'procurement-software'],
     source: 'PRODUCT.md (Product Purpose); pages.ts (/vs-spreadsheet/); he.ts (plans: start from one supplier)',
   },
+  // --------------------------------------------------------- the guides index
+  {
+    slug: 'guides',
+    nav: 'Guides',
+    title: 'Guides: procurement, suppliers and payments | InPlace',
+    description:
+      'Five guides on working with suppliers: separation of duties, recurring payment mistakes, a wrong invoice, a new supplier, and leaving the spreadsheet.',
+    eyebrow: 'Guides',
+    h1: 'Guides',
+    lede:
+      'Five guides on working with suppliers, from the first arrangement to the bank transfer. They are not product documentation; they answer questions that get asked whether or not you have heard of InPlace.',
+    sections: [
+      {
+        h2: 'The five guides',
+        list: {
+          label: 'The guides, in a suggested reading order',
+          items: [
+            '[[guides/separation-of-duties|Who approves a supplier payment, and who makes it]]: the rule everything else rests on, and why it matters long before there is a finance department',
+            '[[guides/supplier-payment-mistakes|Common mistakes in paying suppliers]]: five that recur, which comparison catches each, and what no check will ever catch',
+            '[[guides/wrong-supplier-invoice|What to do when a supplier invoice is wrong]]: why not to delete it, why not to quietly part-pay, and how to know the money really came back',
+            '[[guides/new-supplier-setup|What to agree with a new supplier before the first order]]: four things, one of which almost nobody settles in advance',
+            '[[guides/leaving-the-spreadsheet|How to move off a spreadsheet without stopping the business]]: an order of migration that starts with one supplier, and when not to move at all',
+          ],
+        },
+        after: [
+          'That order is a suggestion rather than a sequence. Each guide stands on its own, and the first is first because it explains the idea the other four assume.',
+        ],
+      },
+      {
+        h2: 'Where to start, by what is happening now',
+        list: {
+          label: 'Four ways in',
+          items: [
+            'If you work alone and it still feels like it works: [[guides/leaving-the-spreadsheet|when to move and when not to]]',
+            'If you have just found a double payment or an odd charge: [[guides/supplier-payment-mistakes|which check would have caught it]]',
+            'If there is an invoice on the desk and you are not sure what to do with it: [[guides/wrong-supplier-invoice|a credit note or a reissue]]',
+            'If you are opening a new supplier this week: [[guides/new-supplier-setup|what to agree before the first order]]',
+          ],
+        },
+        after: [
+          'And if you are not sure which of the four you are, [[guides/separation-of-duties|the first one]] explains the idea the rest assume.',
+        ],
+      },
+      {
+        h2: 'Who they are for',
+        ask: true,
+        paras: [
+          'A business owner who buys from suppliers regularly, and whoever works alongside them: a procurement manager, whoever receives the goods, an external accountant. They assume you know how your business works, and assume no knowledge of systems at all.',
+          'They were written from the same point of view the product was built from, and you can read [[about|who is behind them]]. That is relevant here because a guide about money is worth exactly as much as the experience it was written from.',
+        ],
+      },
+      {
+        h2: 'What they are not',
+        ask: true,
+        paras: [
+          'They are not product documentation. Anyone looking for what the system does will find it on the [[procurement-software|procurement software page]], and each guide links to the product page that belongs to it.',
+          'And they are not legal or tax advice. Withholding-tax certificates, registration status and credit terms are a real part of working with suppliers, and they depend on the circumstances of the business and on advice that does not belong on a page like this. A guide that pretends to cover them is worse than one that says it does not.',
+        ],
+      },
+    ],
+    related: ['procurement-software', 'invoice-matching', 'about'],
+    source: 'pages.en.ts (the five guides)',
+  },
 ]
 
 export default { pages: pagesEn, cta: CTA_EN }

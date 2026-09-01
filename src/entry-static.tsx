@@ -215,6 +215,17 @@ export function schema(locale: LocaleCode = 'he') {
         // personal profile is published here, and that profile's stated location
         // contradicted the address three lines below. LinkedIn's own canonical
         // form carries no trailing slash, so neither does this.
+        // WHICH InPlace THIS IS
+        // The name is taken twice over: InPlace Software in Australia owns the
+        // English-language entity, and Inplace at inplace.co.il owns the Hebrew
+        // one. The owner's decision of 01.09.2026 is that the product keeps its
+        // name and the CATEGORY travels with it wherever a machine has to
+        // decide which of the three a document is about. This is that field.
+        //
+        // `alternateName` rather than `name`, deliberately. The product is
+        // called InPlace on every screen it has, and a graph that called it
+        // something the page never says would be the drift g21 exists to catch.
+        alternateName: 'InPlace Procurement',
         sameAs: ['https://www.linkedin.com/company/inplace-digital'],
         // NO POSTAL ADDRESS AND NO TELEPHONE, by the owner's decision of
         // 31.08.2026, and this is a reversal of his own decision of 27.08.2026.

@@ -1401,6 +1401,74 @@ const pages: Page[] = [
     related: ['vs-spreadsheet', 'guides/separation-of-duties', 'procurement-software'],
     source: 'PRODUCT.md (Product Purpose); pages.ts (/vs-spreadsheet/); he.ts (plans: start from one supplier)',
   },
+  // --------------------------------------------------------- the guides index
+  // Five guides shipped on 01.09.2026 with no way to find the second one after
+  // reading the first: no index, no nav entry, reachable only from a related
+  // rail or from a search engine. This is the page that fixes that, and it is
+  // built like any other page rather than as a special template, because a list
+  // of five links does not need machinery.
+  {
+    slug: 'guides',
+    nav: 'מדריכים',
+    title: 'מדריכים: רכש, ספקים ותשלומים | InPlace',
+    description:
+      'חמישה מדריכים על העבודה מול ספקים: הפרדת סמכויות, טעויות שחוזרות בתשלום, חשבונית שגויה, ספק חדש, ומעבר מגיליון.',
+    eyebrow: 'מדריכים',
+    h1: 'מדריכים',
+    lede:
+      'חמישה מדריכים על העבודה מול ספקים, מהסיכום הראשון ועד ההעברה בבנק. הם לא תיעוד של המוצר; הם עונים על שאלות שנשאלות בין אם שמעתם על InPlace ובין אם לא.',
+    sections: [
+      {
+        h2: 'חמשת המדריכים',
+        list: {
+          label: 'המדריכים לפי סדר קריאה מומלץ',
+          items: [
+            '[[guides/separation-of-duties|מי מאשר תשלום לספק, ומי מבצע אותו]]: הכלל שכל השאר נשען עליו, ולמה הוא רלוונטי הרבה לפני שיש מחלקת כספים',
+            '[[guides/supplier-payment-mistakes|טעויות נפוצות בתשלום לספקים]]: חמש שחוזרות, איזו השוואה תופסת כל אחת, ומה ששום בדיקה לא תתפוס',
+            '[[guides/wrong-supplier-invoice|מה עושים כשחשבונית מספק שגויה]]: למה לא למחוק, למה לא לשלם חלקית בשקט, ואיך יודעים שהכסף באמת חזר',
+            '[[guides/new-supplier-setup|מה להסכים עם ספק חדש לפני ההזמנה הראשונה]]: ארבעה דברים, ואחד מהם כמעט אף פעם לא מסוכם מראש',
+            '[[guides/leaving-the-spreadsheet|איך עוברים מגיליון בלי לעצור את העסק]]: סדר העברה שמתחיל מספק אחד, ומתי עדיף לא לעבור בכלל',
+          ],
+        },
+        after: [
+          'הסדר הזה הוא המלצה ולא רצף. כל מדריך עומד בפני עצמו, והראשון הוא הראשון מפני שהוא מסביר את המושג שהארבעה האחרים מניחים.',
+        ],
+      },
+      {
+        h2: 'מאיפה להתחיל, לפי מה שקורה אצלכם עכשיו',
+        list: {
+          label: 'ארבע נקודות כניסה',
+          items: [
+            'אם אתם עובדים לבד ומרגישים שזה עדיין עובד: [[guides/leaving-the-spreadsheet|מתי כדאי לעבור ומתי לא]]',
+            'אם הרגע גיליתם תשלום כפול או חיוב מוזר: [[guides/supplier-payment-mistakes|איזו בדיקה הייתה תופסת אותו]]',
+            'אם חשבונית פתוחה על השולחן ואתם לא בטוחים מה לעשות איתה: [[guides/wrong-supplier-invoice|זיכוי או תיקון]]',
+            'אם אתם פותחים ספק חדש השבוע: [[guides/new-supplier-setup|מה לסכם לפני ההזמנה הראשונה]]',
+          ],
+        },
+        after: [
+          'ואם אתם לא בטוחים לאיזו מהארבע אתם שייכים, [[guides/separation-of-duties|הראשון]] הוא זה שמסביר את המושג שכל השאר מניחים.',
+        ],
+      },
+      {
+        h2: 'למי הם נכתבו',
+        ask: true,
+        paras: [
+          'לבעל עסק שמזמין מספקים באופן קבוע, ולמי שעובד לצידו: מנהל רכש, מקבל סחורה, רואה חשבון חיצוני. הם מניחים שאתם יודעים איך העסק שלכם עובד, ולא מניחים שום ידע במערכות.',
+          'הם נכתבו מתוך אותה נקודת מבט שממנה נבנה המוצר, ואפשר לקרוא [[about|מי עומד מאחוריהם]]. זה רלוונטי כאן מפני שמדריך על כסף שווה בדיוק כמו הניסיון שממנו הוא נכתב.',
+        ],
+      },
+      {
+        h2: 'מה הם לא',
+        ask: true,
+        paras: [
+          'הם אינם תיעוד של המוצר. מי שמחפש מה המערכת עושה ימצא את זה ב[[procurement-software|עמוד תוכנת הרכש]], וכל מדריך מקשר לעמוד המוצר שרלוונטי לו.',
+          'והם אינם ייעוץ משפטי או מיסויי. אישור ניכוי מס במקור, סטטוס עוסק ותנאי אשראי הם חלק אמיתי מעבודה מול ספקים, והם תלויים בנסיבות של העסק ובייעוץ שאינו שייך לעמוד כזה. מדריך שמעמיד פנים שהוא מכסה אותם גרוע ממדריך שאומר שהוא לא.',
+        ],
+      },
+    ],
+    related: ['procurement-software', 'invoice-matching', 'about'],
+    source: 'pages.ts (the five guides)',
+  },
 ]
 
 export default { pages, cta: CTA }

@@ -27,6 +27,7 @@ const CHROME = {
     dir: 'rtl',
     ogLocale: 'he_IL',
     ogImage: 'og-cover.jpg',
+    ogSite: 'InPlace',
     navLabel: 'ניווט ראשי',
     toLight: 'מעבר לתצוגה בהירה',
     toDark: 'מעבר לתצוגה כהה',
@@ -35,6 +36,7 @@ const CHROME = {
       ['/#why', 'למה דווקא זה'],
       ['/#plans', 'מסלולים'],
       ['/#faq', 'שאלות'],
+      ['/guides/', 'מדריכים'],
     ],
     readOn: 'להמשך קריאה',
     readOnLabel: 'עמודים נוספים',
@@ -53,6 +55,7 @@ const CHROME = {
     dir: 'ltr',
     ogLocale: 'en',
     ogImage: 'og-cover-en.jpg',
+    ogSite: 'InPlace Procurement',
     navLabel: 'Main navigation',
     toLight: 'Switch to the light view',
     toDark: 'Switch to the dark view',
@@ -61,6 +64,7 @@ const CHROME = {
       ['/en/#why', 'Why this approach'],
       ['/en/#plans', 'Plans'],
       ['/en/#faq', 'Questions'],
+      ['/en/guides/', 'Guides'],
     ],
     readOn: 'Read on',
     readOnLabel: 'More pages',
@@ -328,6 +332,7 @@ const DATES: Record<string, { published: string; updated: string }> = {
   'guides/wrong-supplier-invoice': { published: '2026-09-01', updated: '2026-09-01' },
   'guides/new-supplier-setup': { published: '2026-09-01', updated: '2026-09-01' },
   'guides/leaving-the-spreadsheet': { published: '2026-09-01', updated: '2026-09-01' },
+  guides: { published: '2026-09-01', updated: '2026-09-01' },
   terms: { published: '2026-08-27', updated: '2026-08-27' },
   privacy: { published: '2026-08-27', updated: '2026-08-27' },
 }
@@ -438,6 +443,17 @@ const schemaFor = (page: Page, locale: LocaleCode) => {
         // The same edge the home page declares; see src/entry-static.tsx for why
         // it is the /company/ URL and not the /in/ one. DEBT.md §21, closed
         // 31.08.2026.
+        // WHICH InPlace THIS IS
+        // The name is taken twice over: InPlace Software in Australia owns the
+        // English-language entity, and Inplace at inplace.co.il owns the Hebrew
+        // one. The owner's decision of 01.09.2026 is that the product keeps its
+        // name and the CATEGORY travels with it wherever a machine has to
+        // decide which of the three a document is about. This is that field.
+        //
+        // `alternateName` rather than `name`, deliberately. The product is
+        // called InPlace on every screen it has, and a graph that called it
+        // something the page never says would be the drift g21 exists to catch.
+        alternateName: 'InPlace Procurement',
         sameAs: ['https://www.linkedin.com/company/inplace-digital'],
         // No postal address and no telephone. See src/entry-static.tsx for the
         // owner's decision of 31.08.2026 and what it reverses.
@@ -927,7 +943,7 @@ export function pageHtml(
     <meta property="og:description" content="${attr(page.description)}" />
     <meta property="og:type" content="article" />
     <meta property="og:url" content="${url}" />
-    <meta property="og:site_name" content="InPlace" />
+    <meta property="og:site_name" content="${t.ogSite}" />
     <meta property="og:locale" content="${t.ogLocale}" />
     <meta property="og:image" content="${ORIGIN}/assets/${t.ogImage}" />
     <meta property="og:image:type" content="image/jpeg" />
