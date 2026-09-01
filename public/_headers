@@ -25,7 +25,15 @@
   Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
   X-Frame-Options: SAMEORIGIN
 
-# Vite hashes every filename under /assets, so these can never go stale.
+# Vite hashes every filename it emits under /assets, so those can never go
+# stale. The files copied in from public/assets are named by hand and are NOT
+# hashed, so `immutable` is a promise only their names can keep: whoever
+# changes the CONTENT of one must change its NAME in the same commit.
+# The share cards learned this the hard way on 01.09.2026. The card was
+# redrawn to carry the mark instead of the word INPLACE, the deploy went out,
+# and Cloudflare kept serving the old English card from the edge with a year
+# left on its clock. Nothing purges an object a header pinned; only a new URL
+# reaches past it. Hence the -v2 suffix. The next redraw is -v3.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 

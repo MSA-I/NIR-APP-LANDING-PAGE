@@ -12,15 +12,19 @@
       name="description"
       content="A procurement-to-payment system that connects purchase orders, goods received and invoices, then stops mismatches before money leaves the business."
     />
-    <meta name="theme-color" content="#0a171d" />
+    <meta name="theme-color" content="#fffcf8" />
     <!-- The view, before the first paint. See the note in the Hebrew index.html. -->
     <script>
       try {
-        if (localStorage.getItem('inplace.theme') === 'light') {
-          document.documentElement.dataset.theme = 'light'
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fffcf8')
-        }
-      } catch (e) {}
+        var stored = localStorage.getItem('inplace.theme')
+        var theme = stored === 'dark' ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute('content', theme === 'dark' ? '#0a171d' : '#fffcf8')
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }
     </script>
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
@@ -47,7 +51,7 @@
       on it is Hebrew, which is a card worth generating in English once there is
       an English template to generate it from.
     -->
-    <meta property="og:image" content="https://inplace.digital/assets/og-cover-en.jpg" />
+    <meta property="og:image" content="https://inplace.digital/assets/og-cover-en-v2.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -61,7 +65,7 @@
       name="twitter:description"
       content="A procurement-to-payment system that connects purchase orders, goods received and invoices, then stops mismatches before money leaves the business."
     />
-    <meta name="twitter:image" content="https://inplace.digital/assets/og-cover-en.jpg" />
+    <meta name="twitter:image" content="https://inplace.digital/assets/og-cover-en-v2.jpg" />
     <link
       rel="preload"
       as="font"

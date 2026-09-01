@@ -11,7 +11,7 @@
       name="description"
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
-    <meta name="theme-color" content="#0a171d" />
+    <meta name="theme-color" content="#fffcf8" />
     <!--
       The view, before the first paint.
       Which of the page's two grounds is underneath is one attribute on <html>
@@ -23,11 +23,28 @@
     -->
     <script>
       try {
-        if (localStorage.getItem('inplace.theme') === 'light') {
-          document.documentElement.dataset.theme = 'light'
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fffcf8')
-        }
-      } catch (e) {}
+        // Light is the home state as of 01.09.2026. The stylesheet still writes
+        // the dark tokens on the bare `:root`, because that is where Tailwind's
+        // own layer lands and the light set outranks it from
+        // `:root[data-theme='light']`. So the default is expressed here, as an
+        // attribute written before the first paint, rather than by moving two
+        // hundred tokens between two blocks: everything is light unless the
+        // reader has chosen dark.
+        // Written in BOTH branches, not only the light one. The bare `:root`
+        // still carries the dark tokens, so a dark page renders correctly with
+        // no attribute at all — but `readTheme()` in src/lib/theme.ts reads the
+        // attribute, and an absent one reads as the default. Leaving it off for
+        // dark told the toggle and the shader ground that the page was light
+        // while the page was black.
+        var stored = localStorage.getItem('inplace.theme')
+        var theme = stored === 'dark' ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+        document
+          .querySelector('meta[name="theme-color"]')
+          .setAttribute('content', theme === 'dark' ? '#0a171d' : '#fffcf8')
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }
     </script>
     <!--
       One page, one address.
@@ -67,7 +84,7 @@
       so the picture that represents this page in a chat window is reviewable and
       rebuildable rather than a binary somebody exported once.
     -->
-    <meta property="og:image" content="https://inplace.digital/assets/og-cover.jpg" />
+    <meta property="og:image" content="https://inplace.digital/assets/og-cover-v2.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -81,7 +98,7 @@
       name="twitter:description"
       content="מערכת רכש עד תשלום בעברית מלאה. כל הזמנה, קבלת סחורה וחשבונית בשרשרת אחת, עם בדיקה אוטומטית שעוצרת את מה שלא מתאים לפני שמשלמים."
     />
-    <meta name="twitter:image" content="https://inplace.digital/assets/og-cover.jpg" />
+    <meta name="twitter:image" content="https://inplace.digital/assets/og-cover-v2.jpg" />
     <link
       rel="preload"
       as="font"

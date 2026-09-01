@@ -1,4 +1,4 @@
-// Build the two share cards: public/assets/og-cover.jpg and og-cover-en.jpg.
+// Build the two share cards: public/assets/og-cover-v2.jpg and og-cover-en-v2.jpg.
 //
 // The audit of 27.08.2026 found no og:image at all, which means every share of
 // this link, in WhatsApp or LinkedIn or anywhere else, renders as a bare URL.
@@ -37,7 +37,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 // the tint lands on the clause that closes it, in both languages.
 const EDITIONS = [
   {
-    out: 'public/assets/og-cover.jpg',
+    out: 'public/assets/og-cover-v2.jpg',
     lang: 'he',
     dir: 'rtl',
     heebo: 'public/assets/fonts/Heebo-hebrew.woff2',
@@ -50,7 +50,7 @@ const EDITIONS = [
     ].join('\n          '),
   },
   {
-    out: 'public/assets/og-cover-en.jpg',
+    out: 'public/assets/og-cover-en-v2.jpg',
     lang: 'en',
     dir: 'ltr',
     heebo: 'public/assets/fonts/Heebo-latin.woff2',

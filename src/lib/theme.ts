@@ -24,8 +24,12 @@ export type Theme = 'dark' | 'light'
 /** Same shape as the locale key the language switcher writes. */
 export const THEME_KEY = 'inplace.theme'
 
-/** The design's home state. A reader who has never chosen gets the dark page. */
-export const DEFAULT_THEME: Theme = 'dark'
+/** The design's home state. A reader who has never chosen gets the light page.
+    Changed from dark on 01.09.2026. The stylesheet is unmoved: the dark tokens
+    still sit on the bare `:root`, where Tailwind's layer lands, and the light
+    set still outranks them from `:root[data-theme='light']`. What changed is
+    which attribute the head scripts write before the first paint. */
+export const DEFAULT_THEME: Theme = 'light'
 
 /** The two grounds, for the browser chrome that sits above the page.
     `--color-onyx` as each theme resolves it; see the tokens block in
@@ -37,7 +41,7 @@ const EVENT = 'inplace:theme'
 /** What <html> currently says, which the head script has already decided. */
 export function readTheme(): Theme {
   if (typeof document === 'undefined') return DEFAULT_THEME
-  return document.documentElement.dataset.theme === 'light' ? 'light' : DEFAULT_THEME
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : DEFAULT_THEME
 }
 
 export function applyTheme(theme: Theme) {
@@ -95,5 +99,5 @@ export function useTheme(): [Theme, () => void] {
     return () => window.removeEventListener(EVENT, sync)
   }, [])
 
-  return [theme, () => applyTheme(readTheme() === 'dark' ? 'light' : 'dark')]
+  return [theme, () => applyTheme(readTheme() === 'light' ? 'dark' : 'light')]
 }

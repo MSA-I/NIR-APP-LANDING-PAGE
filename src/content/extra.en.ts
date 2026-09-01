@@ -268,7 +268,9 @@ const extraEn = {
     eyebrow: 'Business plan',
     h2: 'An organisation with its own quotas&nbsp;and structure',
     lede: 'This plan is built around the business rather than bought off the shelf. Leave your details and we will come back with a proposal that fits your document volume and your permission structure.',
-    action: 'mailto:support@inplace.digital',
+    // The Pages Function, not a mailto:. See functions/api/contact.ts for
+    // why, and for what CONTACT_WEBHOOK has to be set to before it delivers.
+    action: '/api/contact',
     fields: {
       name: 'Full name',
       business: 'Business name',
@@ -279,6 +281,15 @@ const extraEn = {
     },
     submit: 'Send',
     fineprint: 'We use these details only to get back to you. There is no mailing list here.',
+    // The three things that can happen after the press, which the form had
+    // no way of saying while it was a mailto:. Approved by the owner on
+    // 01.09.2026; they live here rather than in the frozen he.ts.
+    states: {
+      sending: 'Sending…',
+      sent: 'Got it. We will come back to you within one business day.',
+      failed: 'That did not send. You can write to us directly:',
+      failedAddress: 'support@inplace.digital',
+    },
     optional: 'optional',
   },
 

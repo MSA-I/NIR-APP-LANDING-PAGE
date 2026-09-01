@@ -8,16 +8,28 @@
 // Input, Textarea, Select, Label and Button; this project has none of those and
 // should not acquire a component kit to ask four questions.
 //
-// No JavaScript runs this form. It is a native <form> with native validation
-// and a native submit, so it works with the bundle blocked, it is keyboard and
-// screen-reader operable without any work from us, and there is no state to get
-// out of sync. A controlled React form here would buy nothing and cost the
-// no-JS path.
+// The form is still NATIVE. The inputs are uncontrolled, validation is the
+// browser's, and with the bundle blocked the element still submits to `action`
+// on its own — a controlled React form would buy nothing and cost that path.
+// What JavaScript adds here is only the two things a native submit to another
+// origin cannot give: the request goes to an endpoint that reports whether it
+// arrived, and the reader is told which of the three things happened.
 //
-// Where a submission GOES is `x.contact.action`, and it is the one claim on
-// this page that the repository cannot verify. See the note there.
+// Before 01.09.2026 `action` was a mailto: address. On a machine without a
+// registered mail handler the press did nothing and the page said nothing, so
+// a delivered enquiry and a lost one looked identical. See functions/api/contact.ts.
 
+import { useRef, useState } from 'react'
 import { Reveal, RevealGroup, RevealItem, SplitHeading } from '@/lib/motion'
+
+type Status = 'idle' | 'sending' | 'sent' | 'failed'
+
+type States = {
+  sending: string
+  sent: string
+  failed: string
+  failedAddress: string
+}
 
 type Fields = {
   name: string
@@ -37,6 +49,8 @@ export function ContactChapter({
   submit,
   fineprint,
   optional,
+  states,
+  locale,
 }: {
   eyebrow: string
   h2: string
@@ -46,7 +60,11 @@ export function ContactChapter({
   submit: string
   fineprint: string
   optional: string
+  states: States
+  locale: string
 }) {
+  const [status, setStatus] = useState<Status>('idle')
+  const formRef = useRef<HTMLFormElement>(null)
   // No `data-folio`. The running head numbers the printed chapters, and this is
   // not one of them: it is where the ביזנס card lands. The quotes section is
   // folioless for the same reason.
@@ -71,10 +89,46 @@ export function ContactChapter({
             </Reveal>
           </header>
 
-          {/* method="post" and text/plain, because the action is a mailto:
-              address: without them the fields arrive percent-encoded on one
-              line and nobody can read the enquiry they were sent. */}
-          <form className="cform" action={action} method="post" encType="text/plain">
+          {/* `action` and `method` stay on the element so a reader with the
+              bundle blocked still submits somewhere. When JavaScript is
+              running, onSubmit takes over and posts JSON instead. */}
+          <form
+            ref={formRef}
+            className="cform"
+            action={action}
+            method="post"
+            onSubmit={async (e) => {
+              e.preventDefault()
+              const form = e.currentTarget
+              const data = new FormData(form)
+              const pick = (label: string) => String(data.get(label) ?? '')
+              setStatus('sending')
+              try {
+                const res = await fetch(action, {
+                  method: 'POST',
+                  headers: { 'content-type': 'application/json; charset=utf-8' },
+                  body: JSON.stringify({
+                    name: pick(fields.name),
+                    business: pick(fields.business),
+                    email: pick(fields.email),
+                    phone: pick(fields.phone),
+                    message: pick(fields.message),
+                    company_website: pick('company_website'),
+                    locale,
+                  }),
+                })
+                if (!res.ok) throw new Error(String(res.status))
+                setStatus('sent')
+                form.reset()
+              } catch {
+                // Every failure lands here and says so. The address is shown
+                // as selectable text in the message, because a reader who has
+                // just typed five fields deserves a way through that does not
+                // depend on us.
+                setStatus('failed')
+              }
+            }}
+          >
             <RevealGroup className="cform__grid" each={0.05}>
               <RevealItem className="cform__row">
                 <label className="cform__label" htmlFor="c-name">
@@ -151,14 +205,38 @@ export function ContactChapter({
               </RevealItem>
             </RevealGroup>
 
+            {/* Not a real field. Hidden from the layout and from assistive
+                technology, and left out of the tab order, so only a bot fills
+                it; functions/api/contact.ts drops anything that arrives in it. */}
+            <div className="cform__trap" aria-hidden="true">
+              <label htmlFor="c-company-website">Company website</label>
+              <input id="c-company-website" name="company_website" type="text" tabIndex={-1} autoComplete="off" />
+            </div>
+
             <Reveal delay={0.12}>
               <div className="cform__foot">
-                <button className="cform__submit" type="submit">
-                  {submit}
+                <button className="cform__submit" type="submit" disabled={status === 'sending'}>
+                  {status === 'sending' ? states.sending : submit}
                 </button>
                 <p className="fineprint">{fineprint}</p>
               </div>
             </Reveal>
+
+            {/* One region for all three outcomes, polite rather than assertive:
+                the reader pressed the button, so the answer is expected and
+                does not need to interrupt what they are doing. It carries the
+                status role so it is announced without moving focus. */}
+            <p className="cform__status" role="status" aria-live="polite" data-state={status}>
+              {status === 'sent' ? states.sent : null}
+              {status === 'failed' ? (
+                <>
+                  {states.failed}{' '}
+                  <a className="cform__status-mail" href={`mailto:${states.failedAddress}`}>
+                    {states.failedAddress}
+                  </a>
+                </>
+              ) : null}
+            </p>
           </form>
         </div>
       </div>
