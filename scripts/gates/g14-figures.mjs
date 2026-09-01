@@ -244,7 +244,21 @@ for (const ed of EDITIONS) {
   // No other amount anywhere on the page. Everything with a currency mark is
   // either a plan price, the yearly note, or one of the product figures the copy
   // quotes off a real screen.
-  const known = new Set(ed.known)
+  // THE TWO DERIVED FIGURES, ROUND 20. Each card prints a struck monthly total
+  // and a saving in the yearly term, and both are arithmetic the component does
+  // over the two catalogues rather than copy anyone typed. They are DERIVED HERE
+  // TOO, from this gate's own `monthly` and `yearly` lists, and not appended to
+  // `known` as literals: a list of literals would have to be edited by hand
+  // whenever a price moves, which is the class of mistake this whole gate is
+  // here to catch. If the page ever prints a struck figure that is not twelve
+  // monthly charges, or a saving that is not the difference, it lands in
+  // `strays` and this fails.
+  const derived = ed.monthly.flatMap((m, i) => {
+    const n = Number(String(m).replace(/[^\d]/g, ''))
+    const y = Number(String(ed.yearly[i]).replace(/[^\d]/g, ''))
+    return [(n * 12).toLocaleString('en-US'), (n * 12 - y).toLocaleString('en-US')]
+  })
+  const known = new Set([...ed.known, ...derived])
   const strays = amounts.filter((a) => !known.has(a))
   c.ok(strays.length === 0, `${ed.name}: unrecognised amount(s) on the page: ${strays.join(', ')}`)
   c.note(`${ed.name}: ${amounts.length} distinct amounts, all accounted for`)

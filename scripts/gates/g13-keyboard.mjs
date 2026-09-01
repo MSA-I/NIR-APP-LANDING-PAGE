@@ -122,14 +122,16 @@ await withPage(async (page) => {
   c.note(`${hotStops} hotspots present, none of them on the tab path`)
 
   // Arrow keys move along the chain, which is how a tablist is meant to work.
+  // `#what`, explicitly: chapter 04 has a tablist of its own since round 20 and
+  // "the chain" is this one.
   await page.evaluate(() => {
-    document.querySelector('[role="tab"]').focus()
+    document.querySelector('#what [role="tab"]').focus()
   })
   const firstTab = await page.evaluate(() => document.activeElement.getAttribute('id'))
   await page.keyboard.press('ArrowLeft')
   await page.waitForTimeout(300)
   const selected = await page.evaluate(() =>
-    document.querySelector('[role="tab"][aria-selected="true"]').getAttribute('id')
+    document.querySelector('#what [role="tab"][aria-selected="true"]').getAttribute('id')
   )
   c.ok(selected !== firstTab, 'the arrow keys do not move along the chain')
   c.note(`arrow key: ${firstTab} -> ${selected}`)

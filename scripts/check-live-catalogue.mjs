@@ -577,12 +577,32 @@ for (const ed of EDITIONS) {
       if (opened !== m.detailsCount) {
         mismatch.push(at(ed.name, `phone: ${m.detailsCount} ladders, only ${opened} hold any rows when opened`))
       }
-      const blank = await page.evaluate(
-        () =>
+
+      // ONE TAB AT A TIME, SINCE ROUND 20. The catalogue is behind two tabs
+      // now and the closed one is `hidden`, so its rows have no boxes — asked
+      // of the whole page at once this reported fifteen blank rows for a plan
+      // that draws perfectly the moment its tab is pressed. Every plan is
+      // still checked; it is checked in the tab it lives in.
+      const tabs = await page.$$('.plans-tabs__tab')
+      let blank = 0
+      for (const tab of tabs.length ? tabs : [null]) {
+        if (tab) {
+          await tab.click()
+          await page.waitForTimeout(300)
+          await page.evaluate(() =>
+            document.querySelectorAll('.plan-card__more').forEach((d) => d.setAttribute('open', ''))
+          )
+        }
+        blank += await page.evaluate(() =>
           [...document.querySelectorAll('.plan-card__ladder li[data-ladder-key]')].filter(
-            (li) => li.getClientRects().length === 0
+            // A row in the tab that is NOT open has no box by design, and
+            // `closest('body')` would match every row on the page, which is a
+            // filter that filters nothing. The question is only about rows in
+            // the live tab.
+            (li) => li.getClientRects().length === 0 && !li.closest('[role="tabpanel"][hidden]')
           ).length
-      )
+        )
+      }
       if (blank > 0) mismatch.push(at(ed.name, `phone: ${blank} ladder rows are open and draw nothing`))
     },
     { path: ed.path, viewport: { width: 390, height: 844 } }

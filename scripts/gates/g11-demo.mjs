@@ -23,7 +23,13 @@ await withPage(async (page) => {
   await page.evaluate(() => document.querySelector('#what').scrollIntoView())
   await page.waitForTimeout(500)
 
-  const tabCount = await page.$$eval('[role="tab"]', (els) => els.length)
+  // SCOPED TO `#what` SINCE ROUND 20. Chapter 04 grew a tablist of its own
+  // (individual plans / business plans), so an unscoped `[role="tab"]` counts
+  // seven stations on a chain that has five, and an unscoped
+  // `[role="tabpanel"]:not([hidden])` finds two open panels on a page where
+  // each tablist correctly has exactly one. This gate is about the product
+  // chain; it now says so.
+  const tabCount = await page.$$eval('#what [role="tab"]', (els) => els.length)
   c.ok(tabCount === 5, `the chain should have five stations, it has ${tabCount}`)
 
   // Clicks go through the DOM rather than through Playwright's actionability
@@ -31,7 +37,7 @@ await withPage(async (page) => {
   // stable" for most of the half second after every switch, and waiting for
   // stability here would be waiting for the animation this gate exists to allow.
   const clickTab = (i) =>
-    page.evaluate((n) => document.querySelectorAll('[role="tab"]')[n].click(), i)
+    page.evaluate((n) => document.querySelectorAll('#what [role="tab"]')[n].click(), i)
 
   // Every panel is in the document since 27.08.2026, and the four that are not
   // selected carry `hidden`. Before that only one existed at a time, so this
@@ -39,7 +45,7 @@ await withPage(async (page) => {
   // to say so. That change is the point of the SELECTOR constant: if the page
   // ever goes back to destroying panels, this gate keeps working, and if it
   // ever leaves two visible at once, the wait below fails.
-  const SELECTOR = '[role="tabpanel"]:not([hidden])'
+  const SELECTOR = '#what [role="tabpanel"]:not([hidden])'
 
   const settleOn = (i) =>
     page.waitForFunction(

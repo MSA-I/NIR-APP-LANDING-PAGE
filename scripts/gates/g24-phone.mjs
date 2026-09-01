@@ -128,7 +128,21 @@ for (const viewport of PHONES) {
             plans: (() => {
               const tray = document.querySelector('.plans-tray')
               if (!tray) return null
-              const cards = [...tray.querySelectorAll('.plan-card')]
+              // THE SLOT, NOT THE CARD, WHERE THERE IS ONE.
+              //
+              // What this assertion is for is the RAIL: a ticket held to 72% of
+              // the line with the next one peeking in, which the owner struck
+              // out on 28.08.2026. What it must not fail on is a card that is
+              // deliberately inset inside its own frame — פרו wears a white
+              // surround since 01.09.2026 and its card is 9.6px narrower than
+              // its slot because of it, which read here as a 246.4px ticket on
+              // a 256px line.
+              //
+              // The plan's FOOTPRINT is the slot. Measuring that keeps the
+              // assertion exactly as strong — a rail would shrink the slot too
+              // — and stops it failing on 4.8px of frame.
+              const cards = [...tray.querySelectorAll('.plan-slot')]
+              if (!cards.length) cards.push(...tray.querySelectorAll('.plan-card'))
               const s = getComputedStyle(tray)
               return {
                 count: cards.length,
@@ -226,11 +240,20 @@ for (const viewport of PHONES) {
           c.ok(!m.row.actionsOverlapBrand, `${tag}: the actions overlap the mark`)
         }
 
-        // The five tickets, one under the next.
+        // The tickets, one under the next.
+        //
+        // FOUR AND NOT FIVE SINCE ROUND 20, 01.09.2026, and the count moved
+        // because the chapter did rather than because the assertion softened:
+        // the owner split the catalogue into two tabs, so the tray this
+        // measures is the INDIVIDUAL one and ביזנס is a tray of its own. The
+        // business tray is measured below on the same terms, so all five plans
+        // are still held to the column; none of them is merely no longer
+        // looked at. The whole catalogue is still in the markup at every width,
+        // which is what G14 counts.
         c.ok(Boolean(m.plans), `${tag}: the pricing tray could not be measured`)
         if (m.plans) {
-          c.ok(m.plans.count === 5, `${tag}: ${m.plans.count} pricing tickets, not 5`)
-          c.ok(m.plans.tops === 5, `${tag}: the 5 tickets sit on ${m.plans.tops} rows, not 5`)
+          c.ok(m.plans.count === 4, `${tag}: ${m.plans.count} pricing tickets, not 4`)
+          c.ok(m.plans.tops === 4, `${tag}: the 4 tickets sit on ${m.plans.tops} rows, not 4`)
           c.ok(
             m.plans.travel <= 1,
             `${tag}: the pricing tray still travels ${m.plans.travel}px sideways`
@@ -244,6 +267,81 @@ for (const viewport of PHONES) {
             `${tag}: the narrowest ticket is ${m.plans.narrowest}px of an available ${m.plans.available}px`
           )
         }
+
+        // THE OTHER TAB, ON THE SAME TERMS. ביזנס moved into a tray of its own
+        // in round 20, and a tab that is never pressed is a tab nobody
+        // measured: this presses it and holds the plan behind it to the same
+        // column, the same absence of sideways travel, and the same full width.
+        // A BASELINE FIRST, and the reason is a footer that moves. The page
+        // carries two marquees (`.logos__run`, `.footer-strip__run`) that run
+        // wider than the line inside their own clip, and at 320px on /en/ the
+        // footer one reports 8px of document width at some phases of its
+        // animation and none at others. Asked as an absolute, this assertion
+        // failed about half its runs on a chapter it does not touch. Asked as a
+        // DELTA it measures the thing it was written for: what pressing the
+        // business tab adds.
+        const overflowBefore = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+        )
+        await page.click('.plans-tabs__tab:nth-child(2)')
+        await page.waitForTimeout(350)
+        const biz = await page.evaluate(() => {
+          const trays = [...document.querySelectorAll('.plans-tray')]
+          const tray = trays.find((t) => t.getClientRects().length)
+          if (!tray) return null
+          const cards = [...tray.querySelectorAll('.plan-slot')]
+          const st = getComputedStyle(tray)
+          return {
+            count: cards.length,
+            travel: tray.scrollWidth - tray.clientWidth,
+            narrowest: cards.length
+              ? +Math.min(...cards.map((el) => el.getBoundingClientRect().width)).toFixed(1)
+              : 0,
+            available: +(
+              tray.clientWidth -
+              parseFloat(st.paddingLeft) -
+              parseFloat(st.paddingRight)
+            ).toFixed(1),
+            pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+            // WHAT is over the edge, not just that something is. A bare pixel
+            // count sent this round chasing the wrong element twice; the widest
+            // offender is the one fact that shortens the search to nothing.
+            widest: (() => {
+              const limit = document.documentElement.clientWidth
+              let worst = null
+              for (const el of document.querySelectorAll('body *')) {
+                if (el.closest('.plans-compare__scroll, .logos__run')) continue
+                const r = el.getBoundingClientRect()
+                if (!r.width && !r.height) continue
+                const over = Math.max(r.right - limit, -r.left)
+                if (over > 0.5 && (!worst || over > worst.over)) {
+                  worst = {
+                    over: +over.toFixed(1),
+                    what: el.tagName.toLowerCase() + '.' + (el.className?.toString?.() || '').split(' ')[0],
+                  }
+                }
+              }
+              return worst
+            })(),
+          }
+        })
+        c.ok(Boolean(biz), `${tag}: the business tray could not be measured`)
+        if (biz) {
+          c.ok(biz.count === 1, `${tag}: ${biz.count} business tickets, not 1`)
+          c.ok(biz.travel <= 1, `${tag}: the business tray travels ${biz.travel}px sideways`)
+          c.ok(
+            biz.narrowest >= biz.available - 1,
+            `${tag}: the business ticket is ${biz.narrowest}px of an available ${biz.available}px`
+          )
+          const added = biz.pageOverflow - overflowBefore
+          c.ok(
+            added <= 1,
+            `${tag}: the business tab widens the page by ${added}px` +
+              (biz.widest ? ` — widest over the edge: ${biz.widest.what} by ${biz.widest.over}px` : '')
+          )
+        }
+        await page.click('.plans-tabs__tab:nth-child(1)')
+        await page.waitForTimeout(250)
 
         // the menu actually opens and holds the four chapters
         if (m.menu) {

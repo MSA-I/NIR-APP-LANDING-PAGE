@@ -193,6 +193,112 @@ export default {
     contactHref: '#contact',
   },
 
+  // ------------------------------------------------------- the plans, round 20
+  // 01.09.2026. The owner supplied four screenshots of higgsfield.ai's pricing
+  // page and asked for that anatomy in place of the one this chapter shipped
+  // with. Four things in those images this dictionary did not have a word for:
+  //
+  //   THE TABS    the reference sells to two audiences behind two buttons. Here
+  //               that is the four self-serve plans and ביזנס, which is the one
+  //               plan sold in a conversation rather than off the page.
+  //   THE PANEL   the reference's credits box: the quota in a headline, two
+  //               quieter lines under it, a ticked chip on its floor.
+  //   THE BLOCKS  the reference groups the capabilities under titles instead of
+  //               printing one flat list. Three groups, named by the owner: the
+  //               quota panel, the work, the money.
+  //   THE SAVING  the reference strikes the monthly total and states the
+  //               difference. Both figures are ARITHMETIC over the two
+  //               catalogues and are computed in PlansChapter; only the words
+  //               they sit in are here.
+  //
+  // NO PERCENTAGE IS PRINTED ON THIS CHAPTER. The owner was offered a `17%`
+  // badge beside the struck figure on 01.09.2026 and chose the struck figure
+  // alone, so that every number on a card can be checked against the two
+  // catalogues with nothing taken on trust. The one discount word on the page
+  // is still `billing.saveLabel`, which states what the catalogue does rather
+  // than a rate.
+  plansUi: {
+    tabsLabel: 'סוג המסלול',
+    tabIndividual: 'מסלולים אישיים',
+    tabBusiness: 'מסלול עסקי',
+
+    // The two pointers. `recommendedLabel` above is still the vendor pointing
+    // at a plan; these are the reference's two strips, and they say the same
+    // kind of thing about two different plans.
+    popular: 'הכי פופולרי',
+    bestValue: 'הכי משתלם',
+
+    // The quota panel, one entry per plan, in the catalogue's order.
+    //
+    // WRITTEN OUT RATHER THAN COMPOSED from the ladder's own figures, and that
+    // is a fact about Hebrew rather than laziness: a noun here agrees with its
+    // number, so a template that concatenates a figure to a plural label prints
+    // "1 משתמשים פעילים" on the first card in the row. The figures are the
+    // ladder's, row for row — documents, users, branches — and G14 still reads
+    // the quota off `data-plan-docs` rather than off this text.
+    quota: [
+      {
+        head: '20 מסמכים בחודש',
+        lines: ['משתמש פעיל אחד', 'סניף אחד'],
+        chip: 'מכסה קבועה, בלי חיוב לפי שימוש',
+      },
+      {
+        head: '40 מסמכים בחודש',
+        lines: ['5 משתמשים פעילים', 'סניף אחד'],
+        chip: 'מכסה קבועה, בלי חיוב לפי שימוש',
+      },
+      {
+        head: '150 מסמכים בחודש',
+        lines: ['15 משתמשים פעילים', 'סניף אחד'],
+        chip: 'מכסה קבועה, בלי חיוב לפי שימוש',
+      },
+      {
+        head: '375 מסמכים בחודש',
+        lines: ['30 משתמשים פעילים', 'עד 10 סניפים'],
+        chip: 'מכסה קבועה, בלי חיוב לפי שימוש',
+      },
+      {
+        head: 'מכסה לפי חוזה',
+        lines: ['משתמשים ללא הגבלה', 'סניפים ללא הגבלה'],
+        chip: 'המכסה נקבעת מול העסק',
+      },
+    ],
+
+    // The two blocks under the price. Which ladder rows fall into each one is
+    // in PlansChapter's `GROUPS`, because it is a partition of the row keys and
+    // the keys are the same in every language; these are the titles over them.
+    blockWork: 'עבודה ואוטומציה',
+    blockWorkNote: 'מה שהמערכת עושה על המסמכים',
+    blockMoney: 'כספים וחיבורים',
+    blockMoneyNote: 'הסט המלא כלול',
+    // The grey twin of the block above, on the two cards that carry none of it.
+    // The reference draws exactly this on its first card, and it names the plan
+    // the capability opens on; `{name}` is filled with the first plan in the
+    // catalogue that carries the group, so the sentence cannot go stale.
+    blockMoneyNone: 'אין גישה לכספים וחיבורים',
+    blockMoneyFrom: 'נפתח במסלול {name}',
+
+    // The tag on a row the free plan holds for thirty days and then loses. It
+    // is the reference's `7-day unlimited` chip, and the fact behind it is
+    // already in `ladder.rows` as the cell value `'intro'`.
+    introTag: 'רק 30 יום ראשונים',
+
+    // The saving. `{n}` is the difference between twelve monthly charges and
+    // the yearly one, computed in the component from the two catalogues.
+    was: 'המחיר בחיוב חודשי',
+    save: 'חוסך {n} לעומת חיוב חודשי',
+    saveNone: 'אין הפרש לעומת חיוב חודשי',
+
+    // The comparison, behind a press since this round.
+    compareOpen: 'השוואה מלאה',
+    hideLabel: 'להסתיר',
+
+    // The phone. The circle in the corner of each card selects, and one action
+    // under the list follows the selection — the owner's choice of the three
+    // put to him on 01.09.2026.
+    selectLabel: 'לבחור את מסלול {name}',
+  },
+
   // ------------------------------------------------- what each plan actually is
   // Round thirteen, 28.08.2026. Until now this page said the plans differ only in
   // the document count and that every capability is open on every one of them.

@@ -47,6 +47,14 @@ for (const viewport of VIEWPORTS) {
           'a.announce__link',
           'button.announce__close',
           'button.plans-switch__track',
+          // Round 20's controls. A gate that measures every target on the page
+          // except the ones a round just added is measuring the round before
+          // it: the tabs, the phone's select circle, the expander on each card
+          // and the comparison button are all pressed with a thumb.
+          'button.plans-tabs__tab',
+          'button.plan-pick',
+          '.plan-card__more > summary',
+          '.plans-compare > summary',
           'button.language-switcher__trigger',
           '#what [role="tab"]',
           '.voices-rail__controls button',
@@ -122,7 +130,13 @@ for (const viewport of VIEWPORTS) {
               parseFloat(plansStyle?.paddingLeft || '0') -
               parseFloat(plansStyle?.paddingRight || '0')
             : 0,
-          planCardWidth: plans?.querySelector('.plan-card')?.getBoundingClientRect().width || 0,
+          // The slot rather than the card: פרו is inset inside a white surround
+          // since 01.09.2026, so its card is 9.6px narrower than the line it
+          // fills. The plan's footprint is the slot, and a rail would shrink
+          // that too — see the note in g24-phone.mjs.
+          planCardWidth:
+            (plans?.querySelector('.plan-slot') || plans?.querySelector('.plan-card'))
+              ?.getBoundingClientRect().width || 0,
           targets,
           escapedText,
         }

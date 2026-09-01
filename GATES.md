@@ -3102,3 +3102,74 @@ from the pre-rebuild captures ([DEBT.md](DEBT.md) §16), and `/pay` in the Engli
 scene is still the Hebrew panel. Neither is in the film's twenty-five seconds —
 the panels light at t=0.415 of the world and the film ends at t=0.342 — so
 nothing in either clip shows them today.
+
+---
+
+## Round 20 — the pricing chapter, rebuilt on the Higgsfield anatomy (01.09.2026)
+
+The owner supplied four screenshots of higgsfield.ai's pricing page and asked
+for its anatomy in place of the one chapter 04 shipped with, naming five things
+in the images: the two-tab split, the three colours outside the product's
+palette, the grouped capability blocks inside the card, the phone shape, and how
+tightly the reference packs a card. Every decision below was put to him and
+answered in the same session; they are marked **[owner]** where they were.
+
+### What is asked of the round, before it is built
+
+| # | Gate | How it is measured |
+|---|---|---|
+| A | Two tabs, both trays in the DOM at every width | `#plans [data-plan-name]` still counts **5** with the business tab closed |
+| B | The catalogue is untouched | G14 passes with `he.ts` prices unedited; `data-plan-key/price/yearly/docs` unchanged |
+| C | The struck figure and the saving are arithmetic, never typed | both computed in the component from the monthly figure and the yearly one; G14's amount list derives them rather than listing them |
+| D | No percentage anywhere on the chapter **[owner]** | grep of the rendered text for `%` inside `#plans` |
+| E | Four cards, one column, no sideways travel at 390px | G16 and G24, re-aimed from five to four, plus a business-tab pass |
+| F | The three new colours carry legible type in BOTH views | G7's contrast walk, dark and light |
+| G | The comparison survives behind the button | `check-live-catalogue`'s `data-ladder-*` contract intact in the table and in the card ladder |
+| H | Both editions move together | G2 parity, G18-i18n, G20 locale UI |
+| I | The whole ledger | `npm run gates` — met/unmet counted, not asserted |
+
+### Evidence
+
+The round ran to **five passes**, four of them the owner reading the built page
+and sending it back. What each pass changed is in
+[PRICING-REDESIGN-PLAN.md](PRICING-REDESIGN-PLAN.md) §9; what it is held to is
+here.
+
+| Asked | Answer |
+|---|---|
+| A — two tabs, both trays in the DOM | `#plans [data-plan-name]` counts **5** with the business tab closed; G14 and G18-i18n both read five plans on both editions |
+| B — the catalogue untouched | `he.ts` and `en.ts` prices unedited; `data-plan-key/price/yearly/docs` and `data-ladder-*` unchanged; G14 PASS |
+| C — the derived figures are arithmetic | G14 derives the struck total and the saving from its own `monthly`/`yearly` lists rather than listing them, so a hand-typed figure lands in `strays` |
+| D — no percentage on the chapter | none rendered; the two discount pills read `חודשיים חינם` / `Two months free` |
+| E — the column at 320 and 390 | G24 and G16 PASS on both editions, measuring the **slot** (פרו is inset inside its frame) and the business tab's **own** contribution to page width |
+| F — the new colours in both views | G7 PASS, 185/187 text runs sampled across ten scroll positions per view |
+| G — the comparison behind the button | `data-ladder-*` intact in the table and in each card's ladder; `check-live-catalogue` walks one tab at a time |
+| H — both editions together | G2, G18-i18n, G20 locale-UI all PASS |
+| I — the whole ledger | **27 met, 0 unmet, of 27 runnable gates** |
+
+### What measurement caught that a screenshot did not
+
+| Fault | How it was found | Fix |
+|---|---|---|
+| פרימיום's button crossed white onto cream on hover — 1.05:1, the label gone | owner reported; then measured | the label crosses to the card's darkest stop |
+| The same inversion on all three filled buttons | `CSS.forcePseudoState` over CDP, photographed | a hover DEEPENS the plan's colour, never inverts it |
+| The phone's pinned action was cream on a cream page in the light view | owner's arrow; measured at ~1:1 against the page | its accent follows the view, 16.9:1 and 17.8:1 |
+| The pinned action painted the card's slate behind itself | owner photographed the block | it carries `data-face`, not the face class |
+| The struck price changed hue between views | owner asked why | one hue held, lightness moved; 5.5 / 6.2 / 6.7:1 |
+| פרו's head wrapped on /en/, dropping its price row 30px | English shot | the duplicated `Recommended` pill removed — the strip already says it |
+
+### A wrong answer, corrected
+
+G24 reported `320px /en/: the business tab widens the page by 8px`, and the
+diagnostic named `div.footer-strip__run`. **That attribution was wrong and was
+stated to the owner as fact before it was checked.** The diagnostic reports the
+widest box past the edge, and every marquee is past the edge by design and
+clipped — it says nothing about `scrollWidth`. Measured directly, at 320 and 390
+on both editions, at five scroll positions across ten seconds of animation, with
+and without `contain: paint`: **0px in every cell**. The footer strip does not
+widen the page and nothing was changed there.
+
+The 8px never reproduced in sixty-odd samples. What was wrong was the assertion:
+it read an absolute page width, which includes everything else on the page at
+that instant. It measures the **delta across the tab press** now, which is what
+it was written to ask.

@@ -152,6 +152,36 @@
   --color-alert: #ff8ea6;
   --color-alert-deep: #c70036;
 
+  /* ---- the three colours the pricing chapter carries, and nothing else does
+     Round 20, 01.09.2026. The owner supplied higgsfield.ai's pricing page and
+     asked for its three accents by name: the lime on the recommended card, the
+     magenta on the top card, the blue on the block inside every card. None of
+     the three is a product token, and that is the point — the product's teal
+     says "this is InPlace" everywhere else on the page, and these three say
+     "this is the plan you are looking at" inside one chapter.
+
+     THEY DO NOT TURN WITH THE VIEW. A card that is amber because amber is what
+     that rung looks like would not be that card in the light view, so the two
+     coloured faces pin their own ink exactly as the old violet card did.
+
+     פרו CARRIES NO HUE AT ALL any more. It was lime, then amber, and on the
+     owner's third pass it became the reference's ENTERPRISE card: a white
+     surround, a slate body and a white button. That is the loudest card on the
+     reference page and the only one with no colour of its own, which is why it
+     survives sitting beside a magenta one.
+
+     THE MAGENTA IS DARKER THAN THE REFERENCE'S, AND THAT IS MEASURED. The
+     screenshot's stop is around #e0357f, which carries white type at 4.2:1 and
+     fails the 4.5:1 this page holds every string to (G7). #cf2670 is the same
+     hue at 5.05:1, and the second stop #8f22c4 at 7.0:1. The instruction was
+     the colour; the stop is arithmetic.
+
+     THE BLUE IS GONE. It was the third colour and it lived on the money block
+     inside the cards; the owner replaced it with the fourth screenshot's glass
+     panel on the same pass. Two colours and a translucency, not three hues. */
+  --color-plan-magenta: #cf2670;
+  --color-plan-magenta-2: #8f22c4;
+
   --font-display: "Heebo", "Noto Sans Hebrew", Arial, sans-serif;
   --font-mono: "Roboto Mono", "Noto Sans Hebrew", ui-monospace, monospace;
   --font-body: "Noto Sans Hebrew", Arial, ui-sans-serif, system-ui, sans-serif;
@@ -1392,89 +1422,100 @@ html:dir(ltr) .announce__link:hover .announce__cta svg { transform: translateX(0
    <button role="switch"> and the two words in it are labels rather than
    controls; the a11y name is on the button.
    ========================================================================= */
+/* THE BILLING TOGGLE, round 20's second pass.
+   ----------------------------------------------------------------------------
+   The owner pointed at the reference and said this should be a switch: two
+   words with a small slider between them, not a segmented pill with the live
+   word lit. Both shapes are one `role="switch"` with two states; only the
+   drawing changed.
+
+   THE BUTTON IS 44px AND THE RAIL IS 26px, and they are separate elements for
+   that reason. G16 holds every target on this page to 44px and a 26px rail is
+   what the reference draws, so the rail is what is seen and the button around
+   it is what is pressed.
+
+   THE THUMB TRAVELS ON A MARGIN. An absolutely positioned box with
+   `inset-inline-start` set moves toward the inline END as its inline-start
+   margin grows, in either direction, and a margin transitions. `translateX` is
+   a physical axis and would send it the wrong way in Hebrew.
+   ========================================================================= */
 .plans-switch {
   position: relative;
   display: flex;
-  inline-size: fit-content;
-  margin-inline: auto;
-  margin-block-start: clamp(2rem, 5vh, 2.75rem);
-}
-.plans-switch__track {
-  position: relative;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
   align-items: center;
-  isolation: isolate;
-  padding: 0.3rem;
-  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 90%, transparent);
-  border-radius: 9999px;
-  background: color-mix(in srgb, var(--color-onyx-lift) 78%, var(--color-onyx));
+  gap: 0.55rem;
+  inline-size: fit-content;
+  margin-inline: 0;
+  margin-block-start: 0;
+}
+
+/* The two terms. Labels on the states rather than controls, so they are out of
+   the accessibility tree and the button carries the name. */
+.plans-switch__word {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1;
+  color: var(--color-ink-dim);
+  transition: color 0.35s var(--ease-out-quint);
+}
+.plans-switch__word.is-on { color: var(--color-ink); }
+
+.plans-switch__track {
+  display: grid;
+  place-content: center;
+  inline-size: 3.4rem;
+  block-size: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
   cursor: pointer;
 }
 .plans-switch__track:focus-visible {
   outline: 2px solid var(--color-focus-ring);
-  outline-offset: 3px;
+  outline-offset: -4px;
+  border-radius: 9999px;
 }
-.plans-switch__side {
+
+.plans-switch__rail {
   position: relative;
-  z-index: 1;
-  min-inline-size: 7.5rem;
-  /* 0.7rem and not 0.55rem: the track is the sum of its two labels, and at the
-     smaller figure it stood 43px tall, one pixel under the 44px G16 holds a
-     touch target to. */
-  padding-block: 0.7rem;
-  padding-inline: 1.25rem;
-  text-align: center;
-  font-size: 0.92rem;
-  font-weight: 650;
-  line-height: 1;
-  color: var(--color-ink-soft);
-  transition: color 0.35s var(--ease-out-quint);
+  display: block;
+  inline-size: 3rem;
+  block-size: 1.65rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 90%, transparent);
+  background: color-mix(in srgb, var(--color-onyx-lift) 78%, var(--color-onyx));
+  transition: background-color 0.35s var(--ease-out-quint),
+    border-color 0.35s var(--ease-out-quint);
 }
-.plans-switch__side.is-on { color: var(--color-ink); }
-/* The ground behind the live word. Half the track, travelling on a MARGIN and
-   not on a translate: an absolutely positioned box with `inset-inline-start`
-   set moves toward the inline END as its inline-start margin grows, in either
-   direction, and a margin transitions. `translateX` is a physical axis and
-   would send it the wrong way in Hebrew. */
+/* Checked is YEARLY, and the rail lights in the product's own accent when it
+   is: the switch is the page's control, not any one plan's, so it does not
+   take a plan's colour. */
+.plans-switch__track[aria-checked='true'] .plans-switch__rail {
+  background: var(--color-oceanic-deep);
+  border-color: var(--color-oceanic-deep);
+}
+
 .plans-switch__thumb {
   position: absolute;
-  z-index: 0;
-  inset-block: 0.3rem;
-  inset-inline-start: 0.3rem;
-  inline-size: calc(50% - 0.3rem);
-  margin-inline-start: calc(50% - 0.3rem);
-  border-radius: 9999px;
-  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 14%, transparent);
-  transition: margin-inline-start 0.42s var(--ease-spring);
-}
-/* Checked is YEARLY, and yearly is the first segment, so the ground goes home. */
-.plans-switch__track[aria-checked='true'] .plans-switch__thumb { margin-inline-start: 0; }
-
-/* The badge rides the pill's top edge, clear of the segments. */
-/* The badge is the ground turned over. Owner, 28.08.2026: on the dark view it
-   should be light and on the light view dark. Two tokens do that on their own
-   and no media query is needed: `--color-ink` and `--color-onyx` TRADE PLACES
-   when the view turns, so a chip painted ink and lettered onyx is light on dark
-   and dark on light by construction. It also puts the badge at the far end of
-   the contrast range in both views, which is what a discount ought to be. */
-.plans-switch__save {
-  position: absolute;
-  z-index: 2;
-  inset-block-start: -0.7rem;
-  inset-inline-start: 0.75rem;
-  white-space: nowrap;
+  inset-block: 0.18rem;
+  inset-inline-start: 0.18rem;
+  inline-size: 1.15rem;
   border-radius: 9999px;
   background: var(--color-ink);
-  padding: 0.22rem 0.66rem;
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: var(--color-onyx);
+  margin-inline-start: 0;
+  transition: margin-inline-start 0.42s var(--ease-spring);
 }
+.plans-switch__track[aria-checked='true'] .plans-switch__thumb {
+  margin-inline-start: calc(3rem - 1.15rem - 0.36rem - 2px);
+}
+
+/* THE BADGE IS NOT DRAWN HERE ANY MORE. It rode this control until the owner's
+   third pass on 01.09.2026, where he pointed out that a saving beside the
+   switch says something about the switch. It is a pill on each priced card now
+   — see `.plan-card__badge--save` — and what stays here is the published claim
+   itself, carried by an `sr-only` span so `check-live-catalogue` can still read
+   it in either term. */
 
 /* `.cap` is unlayered and sets `margin: 0`, which beats Tailwind's `mx-auto`
    in the cascade. The plans' two notes are centred under a centred chapter,
@@ -2719,26 +2760,100 @@ html[dir='rtl'] { --knob: -1; }
    ========================================================================= */
 
 /* --------------------------------------------------------------- the plans
-   Read off the owner's second reference of 28.08.2026, which replaced the
-   ticket cards: a row of rounded cards on gradient grounds, climbing from the
-   page's own onyx to violet, with a comparison table under them.
+   ROUND 20, 01.09.2026. Read off four screenshots of higgsfield.ai supplied by
+   the owner, who asked for that page's anatomy in place of the five-card row
+   this chapter shipped with. Part by part, and what each part answers:
 
-   THE FIVE FACES. Two carry the page's ground and turn with the view. Three
-   carry a colour of their own and do NOT turn: a card that is violet because
-   violet is what that rung looks like would not be that card in the light
-   view. Pinning the ground means pinning the type, token by token rather than
-   property by property, so every rule inside the card follows.
+     THE TABS    the reference sells to two audiences behind two buttons. Here
+                 that is the four self-serve plans and ביזנס, the one plan sold
+                 in a conversation. BOTH TRAYS STAY IN THE DOM at every width;
+                 the closed one is `hidden`, so a crawler and G14 read the whole
+                 catalogue whichever tab is live.
+     THE PANEL   the reference's credits box, inset into the card's own ground:
+                 the quota in a headline, two quieter lines, a ticked chip.
+     THE BLOCKS  the capabilities grouped under titles rather than printed as
+                 one flat list. Two blocks under the price, and the quota panel
+                 above it is the third.
+     THE PHONE   the reference's stacked list: a label strip on the card's own
+                 edge, a select circle, a price chip at the far edge, two
+                 summary lines, and a press that opens the rest.
+
+   SPACING IS THE POINT OF THE ROUND, not a side effect. The owner's last
+   instruction was to notice how tightly the reference packs a card. Every
+   padding here is smaller than the one it replaces (1.15rem against 1.6rem),
+   the rows are set at 0.8rem, and the fifteen-row accordion that used to ride
+   every card is now one shared table behind one button.
+
+   THREE OF THE FIVE FACES CARRY A COLOUR AND DO NOT TURN WITH THE VIEW, which
+   means pinning the ink token by token rather than property by property, so
+   every rule inside the card follows. The two that follow the view are the two
+   that ARE the view: חינם is the ground beside it, בסיס is that ground lifted.
    ========================================================================= */
 
-.plans-tray { align-items: stretch; }
+/* ---- the head: the tabs on one side, the billing switch on the other ----- */
+.plans-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-block-start: clamp(2rem, 5vh, 2.75rem);
+}
 
+.plans-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 90%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-onyx-lift) 78%, var(--color-onyx));
+}
+.plans-tabs__tab {
+  /* 2.75rem, not the type's natural height: G16 holds every touch target on
+     this page to 44px and the switch beside it learned the same lesson. */
+  min-block-size: 2.75rem;
+  padding-inline: 1.15rem;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 650;
+  line-height: 1;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  transition: background-color 0.35s var(--ease-out-quint), color 0.35s var(--ease-out-quint);
+}
+.plans-tabs__tab:hover { color: var(--color-ink); }
+.plans-tabs__tab[aria-selected='true'] {
+  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 14%, transparent);
+  color: var(--color-ink);
+}
+.plans-tabs__tab:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* The switch was centred under a centred heading; it sits at the far end of
+   the head row now, which is where the reference puts it and where it stops
+   competing with the tabs for the middle of the page. */
+.plans-switch { margin-inline: 0; margin-block-start: 0; }
+
+/* ---- the tray ------------------------------------------------------------ */
+.plans-tray { align-items: stretch; }
+/* One plan in the business tab, and a card built for a quarter of a row would
+   be a stripe. It is held to a readable measure and centred instead. */
+.plans-tray--business { max-inline-size: 34rem; margin-inline: auto; }
+
+/* ---- the card ------------------------------------------------------------ */
 .plan-card {
   position: relative;
   display: flex;
   flex-direction: column;
   isolation: isolate;
   overflow: hidden;
-  padding: 1.6rem 1.4rem;
+  padding: 1.15rem 1.1rem;
   text-align: start;
   color: var(--color-ink);
   border-radius: 18px;
@@ -2755,27 +2870,46 @@ html[dir='rtl'] { --knob: -1; }
      property and the loser changed between frames. */
   transition: translate 0.45s var(--ease-out-quint), box-shadow 0.45s var(--ease-out-quint);
 }
-.plan-card:hover { translate: 0 -5px; }
+@media (min-width: 768px) {
+  .plan-card:hover { translate: 0 -5px; }
+}
 
-/* ---- the five faces -------------------------------------------------------
-   Named one by one by the owner, 28.08.2026. The first two follow the view,
-   because they ARE the view: the free plan is the ground beside it and the
-   basic plan is that ground lifted a little. The other three keep a colour of
-   their own in both views, because they are objects rather than surfaces, and
-   keeping the ground means pinning the type, token by token rather than
-   property by property, so every rule inside the card follows.
+/* ---- the five faces ------------------------------------------------------ */
+
+/* THE GRADIENT BELONGS TO THREE OF THE FIVE — פרו, פרימיום and ביזנס — and the
+   owner drew that line on the fourth pass of 01.09.2026, having asked for it on
+   every card on the second. Both instructions are right about their own half:
+   a flat opaque fill on a coloured card reads as a rectangle of paint, and a
+   gradient on the two cards that ARE the page's ground makes them objects they
+   are not. חינם is the ground and בסיס is that ground lifted one step.
+
+   EVERY FACE ALSO DECLARES `--plan-accent` AND `--plan-accent-ink`, and that
+   pair is the whole colour system of this chapter. The tick, the button, the
+   button's hover fill, the ring, the phone's select circle, the strip above the
+   card, the selection highlight inside the card and the phone's pinned action
+   all read those two variables and nothing else. A face is five lines, and a
+   sixth colour would be five more.
    ========================================================================= */
 
-/* The free plan. The page's own ground, so only the edge says it is a card. */
+/* חינם. The page's own ground, so only the edge says it is a card.
+
+   NO GRADIENT. It carried one for a single pass — the owner asked for a
+   gradient on every card and then, seeing it, drew the line where it belongs:
+   the three plans that are objects on this page get depth, and the two that ARE
+   the page do not. A free plan painted like a product is a free plan pretending
+   to be one. */
 .plan-card--plain {
+  --plan-accent: var(--color-oceanic);
+  --plan-accent-ink: var(--color-onyx);
   background-color: var(--color-onyx);
   background-image: none;
 }
 
-/* The basic plan: "a little more colour", and no more. One step of lift and a
-   breath of the accent through it, which is the smallest difference that still
-   reads as a difference at arm's length. */
+/* בסיס. One step of lift and a breath of the product's own accent through it,
+   which is the smallest difference that still reads as a difference. */
 .plan-card--lift {
+  --plan-accent: var(--color-oceanic);
+  --plan-accent-ink: var(--color-onyx);
   background-color: color-mix(in srgb, var(--color-onyx-lift) 62%, var(--color-onyx));
   background-image: linear-gradient(
     170deg,
@@ -2784,130 +2918,277 @@ html[dir='rtl'] { --knob: -1; }
   );
 }
 
-.plan-card--pointed,
-.plan-card--azure,
-.plan-card--deep {
+/* The three faces that keep their colour in both views pin their ink here,
+   once, so nothing below has to think about which view it is in. */
+.plan-card--framed,
+.plan-card--magenta,
+.plan-card--slate {
   --color-ink: #fbf6ee;
-  --color-ink-soft: #c3d2d6;
-  --color-ink-dim: #9fb2b8;
+  --color-ink-soft: #d6d2c8;
+  --color-ink-dim: #b3aea3;
   color: var(--color-ink);
 }
 
-/* The plan the vendor points at. THE RING AND NOTHING ELSE: it carried an outer
-   glow and the owner had it removed, so the whole of its emphasis is one and a
-   half pixels of the page's accent around a ground that is otherwise quiet. */
-.plan-card--pointed {
-  background-color: #06222b;
-  background-image: linear-gradient(170deg, #0a3540 0%, #06222b 70%, #072830 100%);
-  box-shadow: inset 0 0 0 1.6px color-mix(in srgb, #5d9096 85%, transparent);
+/* פרו, the plan the vendor points at — the reference's ENTERPRISE card.
+   A cool slate body, and the emphasis carried entirely by the WHITE SURROUND it
+   sits in (see `.plan-slot--framed`) and the white button at the bottom of it.
+   No hue: this is the one card on the reference page that stands out without a
+   colour, which is exactly why it can sit beside a magenta one. */
+.plan-card--framed {
+  --plan-accent: #fbf6ee;
+  --plan-accent-ink: #0a171d;
+  --color-ink-soft: #c8d3da;
+  --color-ink-dim: #a4b2bb;
+  background-color: #16222c;
+  background-image: linear-gradient(168deg, #40566a 0%, #22323f 34%, #141f29 72%, #0b1218 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #cfe3e6 20%, transparent);
 }
 
-/* The premium plan. BLUE, and blue all the way down: it used to end in violet
-   and the card beside it is violet, so the two read as one colour twice. */
-.plan-card--azure {
-  background-color: #113a7a;
-  background-image: linear-gradient(160deg, #1d4ed8 0%, #163a92 56%, #0e2456 100%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #93c5fd 34%, transparent);
-}
-
-/* The gloss. A wide diagonal highlight crossing the card and starting again.
-   It is the one CSS animation on this tray, so it is slow: eight seconds
-   across, then a long rest before it comes round. */
-.plan-card__gloss {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+/* פרימיום, the top self-serve plan. The reference's ULTRA card, at stops that
+   carry white type — see the token block for the measurement. */
+.plan-card--magenta {
+  --plan-accent: var(--color-plan-magenta);
+  --plan-accent-ink: #ffffff;
+  --color-ink-soft: #f3dae8;
+  --color-ink-dim: #e2bed2;
+  background-color: #3d0f2c;
   background-image: linear-gradient(
-    115deg,
-    transparent 38%,
-    color-mix(in srgb, var(--color-ink) 8%, transparent) 44%,
-    color-mix(in srgb, var(--color-ink) 44%, transparent) 50%,
-    color-mix(in srgb, var(--color-ink) 8%, transparent) 56%,
-    transparent 62%
+    158deg,
+    #e8357f 0%,
+    var(--color-plan-magenta) 26%,
+    #7a1f5f 60%,
+    #3b0f3e 84%,
+    #1d0722 100%
   );
-  background-size: 300% 100%;
-  background-repeat: no-repeat;
-  background-position: 130% 0;
-  animation: plan-gloss 7s cubic-bezier(0.45, 0, 0.4, 1) infinite;
-}
-@keyframes plan-gloss {
-  0%   { background-position: 130% 0; }
-  55%  { background-position: -30% 0; }
-  100% { background-position: -30% 0; }
+  box-shadow: inset 0 0 0 1.6px color-mix(in srgb, var(--color-plan-magenta) 70%, transparent);
 }
 
-/* The business plan. Its ground is a shader of its own; the gradient below is
-   what the card is before the field arrives and what it falls back to where
-   there is no GL context at all, so the two are the same violet. */
-.plan-card--deep {
-  background-color: #2e1065;
-  background-image: linear-gradient(160deg, #4c1d95 0%, #2e1065 66%, #1e0b45 100%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, #c4b5fd 30%, transparent);
-}
-.plan-card__field {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: block;
-  pointer-events: none;
-  /* The field is a bright object and the card carries six lines of type. Held
-     under half, it reads as movement in the ground rather than as a picture
-     behind the words, and G7 measures the type on what is composited. */
-  opacity: 0.72;
+/* ביזנס. It is alone in its tab and the three colours are spoken for, so it is
+   the reference's ENTERPRISE card: the page's own deep ground inside a bright
+   ring, which reads as the considered one rather than the loudest one.
+
+   IT NO LONGER RUNS A WebGL FIELD. The violet card used to carry a shader of
+   its own behind a ground nobody reads a price on; a second GL context for one
+   card in a closed tab is a cost with no reader. */
+/* ביזנס — the reference's TEAM card. A plain dark plate, a hairline, and a
+   white button: the emphasis is on the ASK, not on the plate. The bright ring
+   it wore for two passes made the quietest plan on the page the loudest thing
+   in its tab. */
+.plan-card--slate {
+  --plan-accent: #fbf6ee;
+  --plan-accent-ink: #0a171d;
+  --color-ink-soft: #c8d3da;
+  --color-ink-dim: #a4b2bb;
+  /* DARKER AGAIN, 01.09.2026. The plate was reading as a lit card and this plan
+     is the quiet one in its own tab; the white button is the only thing on it
+     that should carry light. */
+  background-color: #080f14;
+  background-image: linear-gradient(168deg, #16222b 0%, #0c141a 46%, #070d12 78%, #04080b 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent);
 }
 
-/* ---- the anatomy --------------------------------------------------------- */
+/* THE CARD FILLS ITS SLOT. The tray stretches the slots and the slots are
+   columns, but the card inside one took its natural height — so the free card,
+   whose rows wrap, stood taller than the one beside it and the row of four
+   stepped. That step is the "jump" the owner circled on 01.09.2026. */
+.plan-slot > .plan-card { flex: 1 1 auto; }
 
+/* ---- the strip above the card, on the card's own edge -------------------- */
+/* The reference's "Most Popular" / "Best Value" bar. It is the card's colour
+   with the card's radius, and the card tucks under it, so the two read as one
+   object rather than as a label sitting on a card. */
+.plan-slot { display: flex; flex-direction: column; }
+.plan-slot__strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-block-size: 1.9rem;
+  padding-inline: 0.9rem;
+  border-start-start-radius: 18px;
+  border-start-end-radius: 18px;
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+.plan-slot--pointed .plan-card {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+/* THE SURROUND. פרו's whole emphasis is this: the slot itself is painted, the
+   pointer's word sits on that paint, and the card is inset inside it — which is
+   how the reference draws ENTERPRISE. Pinned rather than tokenised, because a
+   frame that inverted with the view would stop being a frame in the light one:
+   there it would be a white card on a white page. */
+/* GREY, NOT WHITE. Owner, 01.09.2026: on the light view a cream frame on a
+   cream page was a frame nobody could see. #8fa3ad is a mid slate — it stands
+   off the onyx ground and off the wheat one, which no near-white and no
+   near-black can both do — and it carries the pointer's word at 6.6:1. */
+.plan-slot--framed {
+  background-color: #8fa3ad;
+  background-image: linear-gradient(168deg, #b4c3ca 0%, #8fa3ad 46%, #6f858f 100%);
+  border-radius: 20px;
+  /* Logical, not `padding: 0 0.3rem 0.3rem`: a three-value shorthand is
+     top/inline/bottom and this stylesheet carries direction on logical
+     properties only — g4-rtl fails the physical form. */
+  padding-block: 0 0.3rem;
+  padding-inline: 0.3rem;
+  box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.55);
+}
+.plan-slot--framed .plan-slot__strip {
+  background: transparent;
+  color: #0a171d;
+}
+/* Inset on all four sides, so the card keeps its own radius rather than tucking
+   under a strip the way the magenta one does. */
+.plan-slot--framed .plan-card {
+  border-radius: 16px;
+}
+/* COLOUR AND GRADIENT DECLARED SEPARATELY, exactly as the card faces do it. As
+   a `background` shorthand this strip had a gradient and a TRANSPARENT colour,
+   so G7's contrast walk read the ground four ancestors up: in the light view
+   that is the page's own wheat, and the white type on it measured 1.02:1 for a
+   strip that is magenta on screen. */
+.plan-slot--magenta .plan-slot__strip {
+  background-color: var(--color-plan-magenta);
+  background-image: linear-gradient(100deg, var(--color-plan-magenta) 0%, var(--color-plan-magenta-2) 100%);
+  color: #ffffff;
+}
+/* A card with no pointer keeps the strip's height so the four cards' heads sit
+   on one line, and says nothing in it. */
+.plan-slot__strip--blank { background: transparent; }
+
+/* ---- the card's head ----------------------------------------------------- */
 .plan-card__head {
   position: relative;
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-block-end: 1.1rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
-.plan-card__icon {
-  display: grid;
-  place-content: center;
-  inline-size: 2.6rem;
-  block-size: 2.6rem;
-  flex: none;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
-  background: color-mix(in srgb, var(--color-ink) 9%, transparent);
-  color: var(--color-ink);
-}
-.plan-card__badge {
-  white-space: nowrap;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--color-ink) 24%, transparent);
-  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
-  padding: 0.22rem 0.66rem;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--color-ink);
-}
-
 .plan-card__name {
-  position: relative;
-  z-index: 2;
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.35rem;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.05;
   letter-spacing: -0.02em;
 }
 
-/* One height on every card. The amounts are set at the display size and the two
-   plans priced in WORDS ("ללא עלות", "בשיחה") are set smaller, so a row of
-   baselines put the rule, the list and every line under it four pixels higher
-   on those two cards than on the other three. The block is given the display
-   size as a floor and its contents sit on the bottom of it, so the words and
-   the figures share one edge and everything below starts level. */
+.plan-card__badge {
+  white-space: nowrap;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 26%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 13%, transparent);
+  padding: 0.18rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+}
+/* THE DISCOUNT PILL. Owner, third pass of 01.09.2026: the saving belongs on the
+   cards and not beside the switch. It says what the catalogue DOES rather than
+   a rate — the reference's `20% OFF` in this catalogue's own words.
+
+   IT IS THE GROUND TURNED OVER, and that is the fourth pass: light on a dark
+   card, dark on a light one. Two variables do it with no media query and no
+   `[data-theme]` rule, because `--color-ink` and `--color-onyx` TRADE PLACES
+   when the view turns — so a chip painted ink and lettered onyx is light on
+   dark and dark on light by construction, and lands at the far end of the
+   contrast range in both, which is what a saving ought to be.
+
+   The three coloured faces pin `--color-ink` to cream because their ground is
+   dark in BOTH views, so they pin the pill's ink to match rather than letting
+   it follow a `--color-onyx` that would go light underneath them. It was red,
+   then gold, and both were a third signal on a card that already has one. */
+.plan-card { --deal-bg: var(--color-ink); --deal-ink: var(--color-onyx); }
+.plan-card--framed,
+.plan-card--magenta,
+.plan-card--slate { --deal-ink: #0a171d; }
+.plan-card__badge--save {
+  border-color: transparent;
+  background: var(--deal-bg);
+  color: var(--deal-ink);
+}
+/* On the framed card the head sits on the slate body, so the pill needs no
+   special case — but the strip above it is white, and a red pill there would
+   read as a warning on the pointer's own word. */
+.plan-slot--framed .plan-slot__strip { font-weight: 800; }
+/* The plan's one line about who it is for. `who` has been in he.ts since build
+   3, and until this round nothing on the page printed it. */
+.plan-card__who {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  margin-block-start: 0.3rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--color-ink-soft);
+  /* TWO LINES WHETHER IT NEEDS THEM OR NOT. Three of the four descriptions in
+     each catalogue wrap and one does not, so without a floor the card whose
+     line is short starts its quota panel 22px above the other three and the
+     whole row steps down it — visible immediately on /en/, where "A business
+     operating more than one location" is the short one. */
+  min-block-size: 2.7em;
+}
+
+/* ---- the quota panel ----------------------------------------------------- */
+/* The reference's credits box: an inset plate on the card's own ground with
+   the plan's quota in a headline, the two figures that go with it under it in
+   a quieter colour, and a ticked chip on its floor stating the terms. */
+.plan-quota {
+  position: relative;
+  z-index: 2;
+  margin-block-start: 0.85rem;
+  padding-block: 0.7rem 0.6rem;
+  padding-inline: 0.75rem;
+  border-radius: 13px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+}
+.plan-quota__head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1.2;
+}
+.plan-quota__glyph { flex: none; opacity: 0.85; }
+.plan-quota__lines {
+  margin: 0;
+  margin-block-start: 0.35rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.1rem;
+}
+.plan-quota__lines li {
+  font-size: 0.76rem;
+  line-height: 1.4;
+  /* SOFT, NOT DIM. The dim step is the page's third and it is measured against
+     the page ground; on this panel's own tinted plate it measured 4.32:1 dark
+     and 3.99:1 light, under the 4.5:1 G7 holds every string to. */
+  color: var(--color-ink-soft);
+}
+.plan-quota__chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-block-start: 0.55rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--color-ink) 7%, transparent);
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--color-ink-soft);
+}
+.plan-quota__chip svg { flex: none; }
+
+/* ---- the price ----------------------------------------------------------- */
 .plan-card__pricing {
   position: relative;
   z-index: 2;
@@ -2916,107 +3197,75 @@ html[dir='rtl'] { --knob: -1; }
   align-items: flex-end;
   gap: 0.4rem;
   margin: 0;
-  margin-block-start: 0.7rem;
-  min-block-size: clamp(1.95rem, 2.8vw, 2.4rem);
+  margin-block-start: 0.85rem;
+  /* One height on every card. The two plans priced in WORDS are set smaller,
+     so without a floor a row of baselines put everything below them four
+     pixels higher on those two cards than on the other three. */
+  min-block-size: clamp(1.8rem, 2.6vw, 2.2rem);
 }
+/* The monthly total, struck. It is what the yearly price is a discount OFF, and
+   it is computed in the component from the monthly figure rather than typed, so
+   a price change in he.ts cannot leave a stale number here. */
+.plan-card__was {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  color: var(--was-ink);
+  white-space: nowrap;
+  unicode-bidi: isolate;
+}
+
+/* ONE HUE IN BOTH VIEWS, and this is why it is not `--color-alert`.
+   ----------------------------------------------------------------------------
+   That token is the page's ALARM colour and it is built to swap: #ff8ea6 on the
+   dark view and #c70036 on the light one, which are a pink and a crimson. On a
+   struck price that swap reads as the number changing colour when the page
+   does, which the owner noticed on 01.09.2026 — and he is right that a former
+   price has no business being two different colours.
+
+   It cannot be one literal, either. Two of the five cards follow the view, so
+   their ground is near-black in one and near-white in the other, and no
+   saturated red clears 4.5:1 on both (a mid red measures about 3.5:1 either
+   way). What is held constant is the HUE — 342°–348° throughout — and only the
+   lightness moves, which reads as the same red rather than as another one.
+
+   Measured: 5.5:1 on the dark card, 6.2:1 on the light one, 6.7:1 on the
+   magenta gradient. */
+.plan-card { --was-ink: #ff5c7c; }
+:root[data-theme='light'] .plan-card--plain,
+:root[data-theme='light'] .plan-card--lift { --was-ink: #b3082f; }
+.plan-card--magenta { --was-ink: #ffc2d4; }
 .plan-card__price {
   font-family: var(--font-display);
-  font-size: clamp(1.95rem, 2.8vw, 2.4rem);
+  font-size: clamp(1.8rem, 2.6vw, 2.2rem);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.03em;
   white-space: nowrap;
 }
-.plan-card__price--words { font-size: clamp(1.3rem, 2vw, 1.6rem); }
+.plan-card__price--words { font-size: clamp(1.2rem, 1.9vw, 1.5rem); }
 .plan-card__per {
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   color: color-mix(in srgb, var(--color-ink) 62%, transparent);
 }
 .plan-card__billed {
   position: relative;
   z-index: 2;
   margin: 0;
-  margin-block-start: 0.45rem;
+  margin-block-start: 0.3rem;
   min-block-size: 1.1em;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: color-mix(in srgb, var(--color-ink) 56%, transparent);
 }
 
-.plan-card__rule {
-  position: relative;
-  z-index: 2;
-  display: block;
-  block-size: 1px;
-  margin-block: 1.1rem;
-  background: color-mix(in srgb, var(--color-ink) 16%, transparent);
-}
-
-/* Every card prints every row, so the list is a spec sheet rather than a sales
-   list: mark, label, and the figure at the far edge where the eye can run down
-   a column of them. A row the plan does not carry keeps its line and loses its
-   emphasis, which is what makes an absence visible at all. */
-.plan-card__list {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 0.55rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  text-align: start;
-}
-.plan-card__list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
-  font-size: 0.83rem;
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--color-ink) 82%, transparent);
-}
-.plan-card__row { flex: 1 1 auto; }
-/* NO QUANTITIES ON A CARD. Owner, 28.08.2026: the figures belong in the table
-   under the cards and nowhere else, so the card keeps the row and drops the
-   number at the end of it. The rows themselves stay, because the same owner
-   asked for one list on every card; a card says WHICH capabilities a plan
-   carries and the table says HOW MANY. */
-.plan-card__list li.is-absent {
-  color: color-mix(in srgb, var(--color-ink) 40%, transparent);
-}
-.plan-card__list li.is-absent .plan-card__row { text-decoration: line-through; }
-
-.plan-card__tick {
-  display: grid;
-  place-content: center;
-  inline-size: 1.15rem;
-  block-size: 1.15rem;
-  flex: none;
-  margin-block-start: 0.1rem;
-  border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--color-oceanic) 45%, transparent);
-  background: color-mix(in srgb, var(--color-oceanic) 14%, transparent);
-  color: var(--color-oceanic);
-}
-.plan-card--pointed .plan-card__tick,
-.plan-card--azure .plan-card__tick,
-.plan-card--deep .plan-card__tick {
-  border-color: color-mix(in srgb, var(--color-ink) 36%, transparent);
-  background: color-mix(in srgb, var(--color-ink) 15%, transparent);
-  color: var(--color-ink);
-}
-/* The absent mark is the same ring with nothing in it but a rule. */
-.plan-card__list li.is-absent .plan-card__tick {
-  border-color: color-mix(in srgb, var(--color-ink) 18%, transparent);
-  background: transparent;
-  color: color-mix(in srgb, var(--color-ink) 42%, transparent);
-}
-
-/* The action sits on the card's floor, so five cards of different lengths still
-   put their buttons on one line. */
+/* ---- the ask ------------------------------------------------------------- */
 .plan-card__action {
   position: relative;
   z-index: 2;
-  margin-block-start: auto;
-  padding-block-start: 1.4rem;
+  padding-block-start: 0.8rem;
 }
 /* The reference's buttons are solid pills rather than hairlines, so inside a
    card the ghost button carries a ground. It still opens the same fill on
@@ -3025,30 +3274,311 @@ html[dir='rtl'] { --knob: -1; }
   background: color-mix(in srgb, var(--color-ink) 10%, transparent);
   border-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
 }
-.plan-card--pointed .flow--primary {
-  background: var(--color-action-solid);
-  border-color: var(--color-action-solid);
+/* EVERY CARD'S BUTTON IS THAT CARD'S COLOUR — resting, hovered, and pressed.
+   Owner, 01.09.2026: hovering a plan's button opened the PAGE's action colour
+   over it, so for the length of the hover every card's button was the same
+   teal and the plan you were pointing at stopped being the plan you were
+   pointing at.
+
+   `.flow` opens a circle (`.flow__fill`) out of its own centre on hover and
+   crosses its label to the fill's ink. Both are keyed to `--plan-accent` here,
+   so the hover is the SAME colour arriving rather than a different one: the
+   card's accent fills, and the label crosses to that accent's own ink.
+
+   The two faces on the page's own ground keep the product's teal as their
+   accent, so nothing about חינם or בסיס changes. */
+.plan-card__action .flow {
+  background-color: color-mix(in srgb, var(--plan-accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--plan-accent) 55%, transparent);
+  color: var(--color-ink);
+}
+.plan-card__action .flow .flow__fill { background: var(--plan-accent); }
+.plan-card__action .flow:hover { color: var(--plan-accent-ink); }
+
+/* The plan being pointed at, and the plan above it, carry the accent FILLED at
+   rest — the reference does the same with its two paid cards. */
+.plan-card--framed .plan-card__action .flow,
+.plan-card--slate .plan-card__action .flow {
+  background-color: var(--plan-accent);
+  background-image: none;
+  border-color: transparent;
+  color: var(--plan-accent-ink);
+}
+.plan-card--magenta .plan-card__action .flow {
+  background-color: var(--color-plan-magenta);
+  background-image: linear-gradient(100deg, var(--color-plan-magenta) 0%, var(--color-plan-magenta-2) 100%);
+  border-color: transparent;
+  color: var(--plan-accent-ink);
+}
+/* A HOVER DEEPENS THE PLAN'S OWN COLOUR. IT NEVER INVERTS IT.
+   ----------------------------------------------------------------------------
+   The three filled buttons opened their OPPOSITE for two passes — the magenta
+   went cream, the two white ones went near-black — and the owner's note was
+   that hovering a plan should stay that plan's colour. Photographed with the
+   pseudo-state forced (scripts/probe-hover.mjs), it is worse than a preference:
+   the button you are pointing at is the only one on the row that stops looking
+   like its own card, and on פרימיום the label crossed to white over cream at
+   1.05:1 and disappeared outright.
+
+   Every fill below is the resting colour taken one step down, and every label
+   keeps the ink it already had. Same hue, more of it, and nothing to read
+   through a colour change. The two faces on the page's own ground already
+   worked this way — their fill is the accent they rest at a tint of. */
+
+/* פרימיום: the same magenta, deeper. White on it measures 7.5:1. */
+.plan-card--magenta .plan-card__action .flow .flow__fill {
+  background: #a01d5c;
+}
+.plan-card--magenta .plan-card__action .flow:hover {
+  color: var(--plan-accent-ink);
 }
 
-/* --------------------------------------------------------- the comparison */
-/* ------------------------------------------------- what a plan includes
-   Two shapes for one catalogue, and exactly one of them is drawn at any width.
-   Above 640px the table below: five columns read against each other, which is
-   what a comparison is for. Below it, the disclosure on each card — see the
-   note in PlansChapter.tsx. The phone does not get the table at all, because
-   a sideways scroll with no affordance is not a comparison, it is a column. */
-.plan-card__more { display: none; }
-.plan-card__more > summary {
+/* פרו and ביזנס: the same near-white, one step down. The dark ink they rest on
+   stays, at 13.9:1. */
+.plan-card--framed .plan-card__action .flow .flow__fill,
+.plan-card--slate .plan-card__action .flow .flow__fill {
+  background: #dde5e8;
+}
+.plan-card--framed .plan-card__action .flow:hover,
+.plan-card--slate .plan-card__action .flow:hover {
+  color: var(--plan-accent-ink);
+}
+
+/* SELECTING TEXT INSIDE A CARD HIGHLIGHTS IT IN THAT CARD'S COLOUR. Same note,
+   same day: the page's teal block on the magenta card was the one colour on it
+   that belonged to something else. */
+/* Both forms, and both are needed: the descendant selector catches text inside
+   the card's children and the element form catches text in the card itself. */
+.plan-card ::selection,
+.plan-card::selection {
+  background: var(--plan-accent);
+  color: var(--plan-accent-ink);
+}
+
+/* The saving line under the button. The empty case still holds a line's height,
+   so the blocks under it start level across the row. */
+.plan-card__save {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  margin-block-start: 0.5rem;
+  text-align: center;
+  font-size: 0.74rem;
+  line-height: 1.3;
+  min-block-size: 1.3em;
+  color: var(--color-ink-dim);
+}
+.plan-card__save b {
+  font-weight: 800;
+  color: var(--color-ink);
+  unicode-bidi: isolate;
+}
+
+/* One card in the business tray means no row to level, so the two lines the
+   other tray reserves under the price — the billing term and the saving, both
+   empty on a plan priced in a conversation — reserve nothing here. */
+.plans-tray--business .plan-card__billed:empty,
+.plans-tray--business .plan-card__save { min-block-size: 0; margin-block-start: 0; }
+.plans-tray--business .plan-card__pricing { min-block-size: 0; margin-block-start: 1rem; }
+
+/* ---- the capability blocks ----------------------------------------------- */
+/* The reference groups what a plan carries under titles instead of printing one
+   flat list, and it draws the group a plan does NOT carry as a grey twin of the
+   same block rather than as a gap. Both shapes are here. */
+.plan-block {
+  position: relative;
+  z-index: 2;
+  margin-block-start: 0.7rem;
+  padding-block: 0.65rem 0.55rem;
+  padding-inline: 0.7rem;
+  border-radius: 13px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 13%, transparent);
+  background: color-mix(in srgb, var(--color-ink) 5%, transparent);
+}
+.plan-block__head {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.4rem;
+}
+.plan-block__title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--color-ink);
+}
+.plan-block__note {
+  margin: 0;
+  margin-block-start: 0.1rem;
+  font-size: 0.75rem;
+  color: var(--color-ink-soft);
+}
+.plan-block__rows {
+  margin: 0;
+  margin-block-start: 0.5rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.3rem;
+}
+
+/* THE GLASS PANEL, from the fourth screenshot. It was a solid blue for one
+   round — the third of three colours — and the owner replaced it on 01.09.2026
+   with the reference's ENTERPRISE plate: a translucent grey lifted off the
+   card's own ground rather than a hue of its own.
+
+   It inherits the card's ink instead of pinning its own, which is the point of
+   glass: the panel is the card seen through frosted glass, so the type on it is
+   the card's type. `backdrop-filter` is the frost and the translucent fill is
+   the glass; a browser without the filter still gets a legible lifted plate,
+   because the fill is doing the contrast work on its own. */
+.plan-block--money {
+  border-color: color-mix(in srgb, var(--color-ink) 22%, transparent);
+  background-color: color-mix(in srgb, var(--color-ink) 9%, transparent);
+  background-image: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--color-ink) 13%, transparent) 0%,
+    color-mix(in srgb, var(--color-ink) 5%, transparent) 100%
+  );
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-ink) 16%, transparent);
+}
+/* The grey twin, on the cards that carry none of it. */
+.plan-block--none {
+  border-style: dashed;
+  background: transparent;
+}
+.plan-block--none .plan-block__title { color: var(--color-ink-soft); }
+
+/* ---- one capability row -------------------------------------------------- */
+.plan-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--color-ink) 88%, transparent);
+}
+.plan-row__mark {
+  flex: none;
+  margin-block-start: 0.12rem;
+  inline-size: 0.95rem;
+  block-size: 0.95rem;
+  display: grid;
+  place-content: center;
+  /* WHITE, on every face. Owner, 01.09.2026. */
+  color: var(--color-ink);
+}
+.plan-row--off { color: var(--color-ink-dim); }
+.plan-row--off .plan-row__mark { color: var(--color-ink-dim); }
+/* A capability the free plan holds for thirty days and then loses. Quieter than
+   a tick and louder than a cross, because that is what it is. */
+.plan-row--intro { color: var(--color-ink-soft); }
+.plan-row--intro .plan-row__mark { color: var(--color-ink-dim); }
+.plan-row__label { flex: 1 1 auto; }
+/* The reference's chip at the far edge of a row — `7-day unlimited` there, the
+   free plan's thirty-day introduction here. */
+.plan-row__tag {
+  flex: none;
+  white-space: nowrap;
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+  background: color-mix(in srgb, var(--color-ink) 14%, transparent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-ink-soft);
+}
+
+/* ---- the phone -----------------------------------------------------------
+   Below 768px the tray becomes the reference's stacked list. Four things move,
+   and they all move here rather than in the component, so the markup a crawler
+   reads is the same at every width:
+
+     the select circle appears and the in-card button goes;
+     the price leaves the card's body for a chip at the far edge of its head;
+     the two blocks close into `.plan-card__more`, which opens them again;
+     one action follows the selection, under the list.
+   ========================================================================= */
+
+/* The circle. A real button, `display: none` above 768px rather than an
+   always-present radio hidden by CSS: a `display: none` control is out of the
+   accessibility tree AND out of the tab order, so a desktop reader is never
+   offered a selector for a list that has no single action following it.
+
+   The BOX is 2.75rem and the ring inside it is 1.35rem. G16 holds every target
+   on this page to 44px, and a 21px circle is the size the reference draws, so
+   the two are separated: the ring is what is seen and the box is what is
+   pressed. Negative margins pull the extra box back out of the head's rhythm so
+   the name still sits where it looks like it should. */
+.plan-pick {
+  display: none;
+  flex: none;
+  place-content: center;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  margin-block: -0.7rem;
+  margin-inline: -0.7rem -0.55rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.plan-pick:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: -6px;
+  border-radius: 9999px;
+}
+.plan-pick__dot {
+  display: grid;
+  place-content: center;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  border-radius: 9999px;
+  border: 2px solid color-mix(in srgb, var(--color-ink) 34%, transparent);
+  color: transparent;
+}
+.plan-card[data-picked='true'] .plan-pick__dot {
+  border-color: var(--plan-accent);
+  background: var(--plan-accent);
+  color: var(--plan-accent-ink);
+}
+
+/* The name and its badges, inside the head's middle column. Its own name rather
+   than a second `.plan-card__head`: the head is a three-part row on a phone and
+   this is the stack in the middle of it. */
+.plan-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* The expander says both words and swaps them on `open`, with no script: a
+   `details` already carries its own state and a click handler to relabel a
+   summary would be a second copy of it that can disagree. */
+.plan-card__more-open { display: none; }
+.plan-card__more[open] .plan-card__more-shut { display: none; }
+.plan-card__more[open] .plan-card__more-open { display: inline; }
+
+.plan-card__chip { display: none; }
+
+/* The expander. It is `.plan-card__more` and it is a `details`, and both of
+   those are contracts rather than styling: scripts/check-live-catalogue.mjs
+   opens every one of them on a 390px page and asserts the ladder inside draws
+   real rows, which is how "a plan is unreadable on a phone" gets caught. */
+.plan-card__more { display: none; }
+.plan-card__more > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   min-block-size: 2.75rem;
-  margin-block-start: 0.35rem;
+  padding-inline: 0.9rem;
   border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 650;
   color: inherit;
   cursor: pointer;
   list-style: none;
@@ -3062,40 +3592,200 @@ html[dir='rtl'] { --knob: -1; }
 .plan-card__ladder {
   display: grid;
   gap: 0.1rem;
-  margin-block: 0.6rem 0;
-  margin-inline: 0;
+  margin: 0;
+  margin-block-start: 0.6rem;
   padding: 0;
   list-style: none;
-  font-size: 0.86rem;
+  font-size: 0.82rem;
 }
 .plan-card__ladder li {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding-block: 0.5rem;
+  padding-block: 0.45rem;
   border-block-end: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
 }
 .plan-card__ladder li:last-child { border-block-end: 0; }
-.plan-card__ladder-num { font-weight: 700; }
+.plan-card__ladder-num { font-weight: 700; unicode-bidi: isolate; }
 .plan-card__ladder-yes { color: var(--color-oceanic); }
 /* The absence is drawn quieter than the presence, and the word is in the
    accessibility tree beside it either way. */
 .plan-card__ladder-no { opacity: 0.45; }
 
-@media (max-width: 639px) {
-  .plan-card__more { display: block; }
-  .plans-compare { display: none; }
+/* The one action under the list, following the selection. NOT `position:
+   sticky`: a bar pinned to the bottom of a 390px viewport eats the last row of
+   whatever is under it, and the last row of this chapter is the fine print
+   about VAT. It sits at the end of the list, where a reader arrives having read
+   the four cards. */
+/* IT CARRIES A `data-face` ATTRIBUTE, NOT THE FACE CLASS, and the difference is
+   a bug the owner photographed: a face class declares the card's own
+   `background-color` and `background-image` as well as its accent, so the
+   wrapper was painting פרו's slate behind a cream button and the corners of it
+   showed as a dark block. The attribute maps to the two variables and nothing
+   else. */
+.plans-pinned { display: none; }
+.plans-pinned[data-face='plain'],
+.plans-pinned[data-face='lift'] {
+  --plan-accent: var(--color-oceanic);
+  --plan-accent-ink: var(--color-onyx);
+}
+/* THESE TWO FOLLOW THE VIEW, and the cards they belong to do not.
+   פרו and ביזנס rest at a near-white button because their CARD is dark in both
+   views. This button is not on a card — it is on the PAGE, under the list — and
+   the page turns. In the light view that made it cream on cream: a button the
+   owner had to point an arrow at to show me, 01.09.2026.
+
+   `--color-ink` and `--color-onyx` TRADE PLACES when the view turns, so this
+   pair is a near-white button on the dark page and a near-black one on the
+   light page, and it is legible on both by construction. */
+.plans-pinned[data-face='framed'],
+.plans-pinned[data-face='slate'] {
+  --plan-accent: var(--color-ink);
+  --plan-accent-ink: var(--color-onyx);
+}
+.plans-pinned[data-face='magenta'] {
+  --plan-accent: var(--color-plan-magenta);
+  --plan-accent-ink: #ffffff;
+}
+.plans-pinned .flow {
+  background-color: var(--plan-accent, var(--color-oceanic-deep));
+  border-color: transparent;
+  color: var(--plan-accent-ink, var(--color-ink));
+}
+.plans-pinned[data-face='magenta'] .flow {
+  background-image: linear-gradient(100deg, var(--color-plan-magenta) 0%, var(--color-plan-magenta-2) 100%);
 }
 
+/* The same rule as the cards above: the fill deepens the selected plan's own
+   colour and the label keeps its ink. Written as a mix off the accent rather
+   than as a literal, because two of these accents now turn with the view and a
+   literal would be the wrong end of the ramp in one of them. */
+.plans-pinned .flow .flow__fill {
+  background: color-mix(in srgb, var(--plan-accent) 84%, var(--plan-accent-ink));
+}
+.plans-pinned[data-face='magenta'] .flow .flow__fill { background: #a01d5c; }
+.plans-pinned .flow:hover { color: var(--plan-accent-ink, var(--color-onyx)); }
+
+@media (max-width: 767px) {
+  .plans-head { flex-direction: column; align-items: stretch; }
+  .plans-tabs { justify-content: center; }
+  .plans-switch { align-self: center; }
+
+  .plan-card { padding: 0.95rem 0.9rem; }
+
+  /* The head becomes a row: circle, name and billing line, price chip. */
+  .plan-card__head {
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+  }
+  .plan-pick { display: grid; }
+  .plan-card__headtext { flex: 1 1 auto; min-inline-size: 0; }
+  .plan-card__name { font-size: 1.1rem; }
+
+  /* The price leaves the body and rides the head at the far edge, struck figure
+     over live figure exactly as the reference draws it. */
+  .plan-card__chip {
+    display: grid;
+    justify-items: center;
+    gap: 0.05rem;
+    flex: none;
+    padding: 0.45rem 0.7rem;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--color-ink) 10%, transparent);
+    text-align: center;
+  }
+  .plan-card__chip .plan-card__was { font-size: 0.78rem; }
+  .plan-card__chip .plan-card__price { font-size: 1.25rem; }
+  .plan-card__chip .plan-card__price--words { font-size: 0.95rem; }
+  /* 0.75rem and not 0.66rem: 0.66rem computes to 10.56px and G24 holds every
+     string on a phone to 12px. */
+  .plan-card__chip .plan-card__per { font-size: 0.75rem; }
+
+  .plan-card__pricing,
+  .plan-card__billed,
+  .plan-card__action,
+  .plan-card__save,
+  .plan-quota__chip { display: none; }
+
+  .plan-card__who { margin-block-start: 0.5rem; }
+
+  /* The head is already name + billing line + chip on a 390px screen. */
+  .plan-card__badge--save { display: none; }
+
+  /* The blank strip exists to keep four heads on one line in a row of cards.
+     Stacked there is no row to level, and 1.9rem of nothing between every two
+     cards is the spacing the owner asked to get back. */
+  .plan-slot__strip--blank { min-block-size: 0; }
+
+  /* The two blocks close. Their rows are still in the DOM and still read by
+     anything that does not lay the page out. */
+  .plan-block { display: none; }
+
+  .plan-card__more { display: block; margin-block-start: 0.6rem; }
+  .plans-pinned { display: block; margin-block-start: 1rem; }
+
+  /* THE BUSINESS TAB KEEPS ITS OWN BUTTON. The in-card action is hidden on a
+     phone because one action under the list follows the selection instead —
+     and the business tray has no list and no selection, so hiding it there left
+     the largest customer on the page with a card, a price and no way to answer
+     it. The selector is the tray rather than the plan, so a second business
+     plan would inherit the same rule. */
+  .plans-tray--business .plan-card__action { display: block; }
+  .plans-tray--business .plan-pick { display: none; }
+}
+
+/* --------------------------------------------------------- the comparison */
+/* BEHIND A PRESS SINCE ROUND 20, at the owner's instruction. It used to be open
+   under the cards at every width above 640px, which is fifteen rows and six
+   columns of a catalogue the cards have already answered for most readers. It
+   is the same table, the same `data-ladder-*` contract and the same scroller;
+   the `details` around it is what is new.
+
+   NOTHING WAS REMOVED FROM IT. Every cell a crawler, G14 or
+   check-live-catalogue read before is still in the HTML, because a closed
+   `details` is content the parser has and the reader has not asked for. */
 .plans-compare {
-  margin-block-start: clamp(2rem, 5vh, 3rem);
+  margin-block-start: clamp(1.75rem, 4vh, 2.5rem);
+}
+.plans-compare > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-block-size: 3rem;
+  margin-inline: auto;
+  max-inline-size: 26rem;
+  border: 1px solid color-mix(in srgb, var(--color-onyx-line) 80%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-ink) 4%, transparent);
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: var(--color-ink);
+  cursor: pointer;
+  list-style: none;
+}
+.plans-compare > summary::-webkit-details-marker { display: none; }
+.plans-compare > summary:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+.plans-compare__chevron {
+  opacity: 0.75;
+  transition: rotate 0.3s var(--ease-out-quint);
+}
+.plans-compare[open] .plans-compare__chevron { rotate: 180deg; }
+
+.plans-compare__box {
+  margin-block-start: 1rem;
   border: 1px solid color-mix(in srgb, var(--color-onyx-line) 80%, transparent);
   border-radius: 18px;
   background-color: color-mix(in srgb, var(--color-ink) 3%, var(--color-onyx));
   overflow: hidden;
 }
-/* Thirteen rows by six columns does not fit a phone, and a page that widens is
+/* Fifteen rows by six columns does not fit a phone, and a page that widens is
    worse than a table that scrolls. The scroll is the table's own, not the
    page's. */
 .plans-compare__scroll {
@@ -3103,7 +3793,7 @@ html[dir='rtl'] { --knob: -1; }
   overscroll-behavior-inline: contain;
   /* `contain: paint` and not merely `overflow`. In an RTL container the table
      overflows toward the LEFT, and left overflow inside a scroller still
-     reaches an ancestor’s scrollWidth even through an `overflow: hidden`
+     reaches an ancestor's scrollWidth even through an `overflow: hidden`
      parent: measured at 390px, the document reported 653px of width for a
      table that was visibly clipped. Containment is what actually stops it, and
      G6 and G16 are the two gates that noticed. */
@@ -3113,105 +3803,60 @@ html[dir='rtl'] { --knob: -1; }
   inline-size: 100%;
   min-inline-size: 46rem;
   border-collapse: collapse;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
 }
 .plans-compare__table th,
 .plans-compare__table td {
-  padding-block: 0.85rem;
-  padding-inline: 1rem;
+  padding-block: 0.7rem;
+  padding-inline: 0.9rem;
   text-align: center;
   vertical-align: middle;
   border-block-start: 1px solid color-mix(in srgb, var(--color-onyx-line) 62%, transparent);
 }
 .plans-compare__table thead th {
   border-block-start: 0;
-  padding-block: 1.05rem;
+  padding-block: 0.9rem;
   background: color-mix(in srgb, var(--color-ink) 4%, transparent);
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 750;
   color: var(--color-ink);
 }
 
-/* THE NAME CARRIES THE PLAN'S OWN FACE. Owner, 28.08.2026: the colour was
-   right and the effect was missing, so each name sits in a chip cut from its
-   card. The chip is what is coloured; the type on it is a solid ink on a
-   ground that keeps still, which is what keeps it measurable.
-   The three coloured chips pin their ink for the same reason their cards do:
-   they are the same object in both views. */
-/* `vertical-align: middle`, and inline-FLEX rather than inline-block. An
+/* THE NAME CARRIES THE PLAN'S OWN FACE, kept from round 13: each name sits in a
+   chip cut from its card, so a column is identifiable without reading it. The
+   chip is what is coloured and the type on it is not, so the ink stays a solid,
+   measurable colour on a ground that keeps still.
+
+   `vertical-align: middle`, and inline-FLEX rather than inline-block: an
    inline-block whose overflow is not visible takes its baseline from its bottom
-   margin edge instead of from its last line, so the one chip that clips its own
-   gloss sat four pixels above the other four. Aligning on the middle takes the
-   baseline out of the question for all five. */
+   margin edge instead of from its last line. */
 .plans-compare__chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   vertical-align: middle;
   border-radius: 9999px;
-  padding: 0.3rem 0.85rem;
+  padding: 0.28rem 0.8rem;
 }
 .plans-compare__chip-name { position: relative; z-index: 1; }
 
 .plans-compare__table thead th.is-lift .plans-compare__chip {
   background: color-mix(in srgb, var(--color-oceanic) 8%, var(--color-onyx-lift));
 }
-
-/* Pointed: the ring, exactly as the card wears it. */
-.plans-compare__table thead th.is-pointed .plans-compare__chip {
-  --color-ink: #fbf6ee;
-  color: var(--color-ink);
-  background: #06222b;
-  box-shadow: inset 0 0 0 1.6px color-mix(in srgb, #5d9096 85%, transparent);
+.plans-compare__table thead th.is-framed .plans-compare__chip {
+  background: #fbf6ee;
+  color: #0a171d;
 }
-
-/* Violet: the card's gradient with the card's gloss travelling over it. */
-.plans-compare__table thead th.is-azure .plans-compare__chip {
-  --color-ink: #fbf6ee;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  color: var(--color-ink);
-  background-color: #113a7a;
-  background-image: linear-gradient(120deg, #1d4ed8 0%, #163a92 56%, #0e2456 100%);
+.plans-compare__table thead th.is-magenta .plans-compare__chip {
+  background-color: var(--color-plan-magenta);
+  background-image: linear-gradient(100deg, var(--color-plan-magenta) 0%, var(--color-plan-magenta-2) 100%);
+  color: #ffffff;
 }
-.plans-compare__table thead th.is-azure .plans-compare__chip::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image: linear-gradient(
-    115deg,
-    transparent 38%,
-    color-mix(in srgb, var(--color-ink) 10%, transparent) 44%,
-    color-mix(in srgb, var(--color-ink) 50%, transparent) 50%,
-    color-mix(in srgb, var(--color-ink) 10%, transparent) 56%,
-    transparent 62%
-  );
-  background-size: 300% 100%;
-  background-repeat: no-repeat;
-  background-position: 130% 0;
-  animation: plan-gloss 7s cubic-bezier(0.45, 0, 0.4, 1) infinite;
-}
-
-/* Deep: the field the card runs, drawn here as a slow drift of the same three
-   violets. A second WebGL context for a chip in a table header would be a
-   caricature of the idea; the movement is what belongs to the name. */
-.plans-compare__table thead th.is-deep .plans-compare__chip {
-  --color-ink: #fbf6ee;
-  color: var(--color-ink);
-  background-color: #2e1065;
-  background-image:
-    radial-gradient(80% 140% at 15% 20%, color-mix(in srgb, #8b5cf6 62%, transparent), transparent 70%),
-    radial-gradient(80% 140% at 85% 80%, color-mix(in srgb, #5b2bb0 70%, transparent), transparent 70%),
-    linear-gradient(160deg, #4c1d95 0%, #2e1065 70%);
-  background-size: 220% 220%, 220% 220%, 100% 100%;
-  animation: plan-field 14s ease-in-out infinite alternate;
-}
-@keyframes plan-field {
-  0%   { background-position: 0% 0%, 100% 100%, 0 0; }
-  100% { background-position: 100% 60%, 0% 40%, 0 0; }
+.plans-compare__table thead th.is-slate .plans-compare__chip {
+  background: #0c141a;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #cfe3e6 32%, transparent);
+  color: #fbf6ee;
 }
 
 .plans-compare__table tbody th {
@@ -3219,20 +3864,20 @@ html[dir='rtl'] { --knob: -1; }
   font-weight: 600;
   color: var(--color-ink);
 }
-/* The label and its glyph line up inside the cell, not instead of it. A <th>
+/* The label and its glyph line up inside the cell, not instead of it. A `th`
    set to `display: flex` stops being a table cell, the table grows anonymous
    cells around it, and the row escapes the scroller it is supposed to live in:
    measured at 390px, that put 263px of the table outside the document. */
 .plans-compare__row {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.65rem;
 }
 .plans-compare__glyph {
   display: grid;
   place-content: center;
-  inline-size: 1.85rem;
-  block-size: 1.85rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
   flex: none;
   border-radius: 9px;
   background: color-mix(in srgb, var(--color-ink) 7%, transparent);
@@ -3241,19 +3886,15 @@ html[dir='rtl'] { --knob: -1; }
 .plans-compare__table tbody td { color: var(--color-ink-soft); }
 
 /* The figures in the table are set in the DISPLAY face, not the annotation one.
-   Owner, 28.08.2026: change the font of the numbers. The mono of the day drew
-   a slashed zero, which is right on a technical annotation beside a screenshot
-   and wrong on a price table, where a 0 with a line through it reads as a
-   correction. Heebo has tabular figures of its own, so the columns still line
-   up. The decision stands after the mono changed on 30.08.2026: the table's
-   figures belong to the display face now, which is a choice about the table
-   rather than about the face beside it. The bidi isolation is kept: a run of
+   Owner, 28.08.2026: change the font of the numbers. A mono with a slashed zero
+   is right on a technical annotation and wrong on a price table, where a 0 with
+   a line through it reads as a correction. Heebo has tabular figures of its
+   own, so the columns still line up. The bidi isolation is kept: a run of
    digits inside a Hebrew row has to stay a run of digits.
 
-   ITS OWN NAME, and not `.ip-num`. That class already exists: it is the page's
+   ITS OWN NAME, and not `.ip-num`. That class already exists — it is the page's
    annotation figure, set in the mono on purpose, and G19 measures it by that
-   name. A second declaration under the same name repainted the film's
-   step numbers and the title page's stat as well. */
+   name. */
 .plans-compare__num {
   font-family: var(--font-display);
   font-weight: 700;
@@ -3262,31 +3903,27 @@ html[dir='rtl'] { --knob: -1; }
   unicode-bidi: isolate;
 }
 
+/* NO RINGS. Owner, 01.09.2026: as clean as possible. Fifteen rows by six
+   columns is ninety cells, and ninety outlined pills is a grid of buttons
+   nobody can press. The mark alone carries the answer and the column's colour
+   carries which plan it belongs to. */
 .plans-compare__yes,
 .plans-compare__no {
   display: inline-grid;
   place-content: center;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  border-radius: 9999px;
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  border: 0;
+  background: transparent;
 }
-.plans-compare__yes {
-  border: 1px solid color-mix(in srgb, var(--mark) 55%, transparent);
-  background: color-mix(in srgb, var(--mark) 18%, transparent);
-  color: var(--mark);
-}
-/* The column tint. Declared on the cell so the mark inside it inherits, and
-   the two violet columns keep their violet in both views the way their cards
-   do; the accent columns follow the view, because the accent token does. */
+.plans-compare__yes { color: var(--mark); }
+/* The column tint. Declared on the cell so the mark inside it inherits. Only
+   the magenta column carries a colour of its own now: פרו's emphasis is its
+   frame and a frame does not reach into a table cell, so its column reads in
+   the page's own accent like the rest. */
 .plans-compare__table td { --mark: var(--color-oceanic); }
-.plans-compare__table td.is-azure { --mark: #93c5fd; }
-.plans-compare__table td.is-deep { --mark: #a78bfa; }
-:root[data-theme='light'] .plans-compare__table td.is-azure { --mark: #1d4ed8; }
-:root[data-theme='light'] .plans-compare__table td.is-deep { --mark: #6d28d9; }
-.plans-compare__no {
-  border: 1px solid color-mix(in srgb, var(--color-ink) 16%, transparent);
-  color: var(--color-ink-dim);
-}
+.plans-compare__table td.is-magenta { --mark: var(--color-plan-magenta); }
+.plans-compare__no { color: var(--color-ink-dim); }
 
 /* -------------------------------------------------- the announcement, brighter */
 /* "Make it almost white, and give it an animation so a difference is seen."
@@ -3708,13 +4345,25 @@ html[dir='rtl'] { --knob: -1; }
     block-size: 3rem;
   }
 
-  /* Five tall pricing cards would dominate the phone page. On touch they become
-     a horizontal, snapping card rail with the next card peeking in as its
-     affordance. The document itself still has no overflow. */
-  .plans-switch__side {
-    min-inline-size: 6rem;
-    padding-inline: 0.9rem;
-    font-size: 0.88rem;
+  /* The toggle's two terms, one step down on a phone. `.plans-switch__side` was
+     here until round 20's second pass and is gone with the segmented pill. */
+  .plans-switch__word { font-size: 0.86rem; }
+
+  /* THE TABS HAVE TO FIT THE LINE. Two pills at the desktop measure came to
+     more than 320px and the pair pushed off the edge — the overflow the owner
+     photographed on 01.09.2026. They share the line evenly now and their type
+     steps down with everything else on the phone; the labels themselves also
+     got shorter the same day ("מסלול עסקי", because there is one). */
+  .plans-tabs {
+    display: flex;
+    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+  .plans-tabs__tab {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    padding-inline: 0.6rem;
+    font-size: 0.84rem;
   }
   /* The five tickets, one under the next.
      Until 28.08.2026 they were a rail: 72vw tickets on a mandatory inline snap,
@@ -3785,7 +4434,6 @@ html[dir='rtl'] { --knob: -1; }
      the rebuilt card at 0.72rem — 11.52px — which is the one thing G24 caught
      when the two lines of work met. */
   .plan-card__badge { font-size: 0.75rem; }
-  .plans-switch__save { font-size: 0.75rem; }
 
   /* The four headings the colophon's link groups stand under. At 11.2px they
      were the smallest type on the page, and they are the only thing telling a

@@ -191,8 +191,8 @@ export default function App({ locale: given }: { locale?: LocaleCode } = {}) {
           ctaHref={t.ctaPrimaryHref}
           plansCta={x.plansCta}
           billing={x.billing}
-          recommendedLabel={x.billing.recommendedLabel}
           ladder={x.ladder}
+          ui={x.plansUi}
         />
 
         {/* Round twelve, 27.08.2026, on the owner's decision. The quotes used

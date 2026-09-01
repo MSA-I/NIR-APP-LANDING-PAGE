@@ -90,6 +90,69 @@ const extraEn = {
     contactHref: '#contact',
   },
 
+  // The pricing chapter's own words, round 20. See extra.ts for what each of
+  // these is and why the quota panel is written out rather than composed: the
+  // reason is Hebrew's noun agreement, so this edition could compose it — and
+  // does not, because one shape for two dictionaries is worth more than four
+  // saved lines, and `satisfies typeof extraHe` would not let it diverge.
+  //
+  // NO PERCENTAGE HERE EITHER. The struck figure and the difference in dollars,
+  // both computed from the two catalogues in PlansChapter.
+  plansUi: {
+    tabsLabel: 'Plan type',
+    tabIndividual: 'Individual plans',
+    tabBusiness: 'Business plan',
+
+    popular: 'Most popular',
+    bestValue: 'Best value',
+
+    quota: [
+      {
+        head: '20 documents a month',
+        lines: ['One active user', 'One location'],
+        chip: 'A fixed quota, with no usage billing',
+      },
+      {
+        head: '40 documents a month',
+        lines: ['5 active users', 'One location'],
+        chip: 'A fixed quota, with no usage billing',
+      },
+      {
+        head: '150 documents a month',
+        lines: ['15 active users', 'One location'],
+        chip: 'A fixed quota, with no usage billing',
+      },
+      {
+        head: '375 documents a month',
+        lines: ['30 active users', 'Up to 10 locations'],
+        chip: 'A fixed quota, with no usage billing',
+      },
+      {
+        head: 'A quota set by contract',
+        lines: ['Unlimited active users', 'Unlimited locations'],
+        chip: 'The quota is agreed with your business',
+      },
+    ],
+
+    blockWork: 'Work and automation',
+    blockWorkNote: 'What the system does to your documents',
+    blockMoney: 'Money and connections',
+    blockMoneyNote: 'The full set is included',
+    blockMoneyNone: 'No access to money and connections',
+    blockMoneyFrom: 'Opens on the {name} plan',
+
+    introTag: 'First 30 days only',
+
+    was: 'The price when billed monthly',
+    save: 'Saves {n} against monthly billing',
+    saveNone: 'No difference against monthly billing',
+
+    compareOpen: 'Full comparison',
+    hideLabel: 'Hide',
+
+    selectLabel: 'Choose the {name} plan',
+  },
+
   // The ladder, translated. Its source is NIR-APP's 0213 migration and the two
   // read models a browser may call; see extra.ts for what is published and what
   // deliberately is not. The Hebrew labels there are the migration’s own public

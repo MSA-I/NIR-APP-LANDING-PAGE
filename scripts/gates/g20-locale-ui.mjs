@@ -106,12 +106,19 @@ try {
         c.ok(closed, `${test.name}: the drawer did not close on Escape`)
       }
 
-      const firstTab = page.locator('[role="tab"]').first()
+      // SCOPED TO `#what`, and it has to be. This measures the PRODUCT CHAIN's
+      // tablist — that is what `test.forward` steps through and what the
+      // failure message names. Chapter 04 grew a tablist of its own in round 20
+      // (individual plans / business plans), so an unscoped
+      // `[role="tab"][aria-selected="true"]` now matches two elements on the
+      // page and resolves to a strict-mode error rather than to a reading.
+      const firstTab = page.locator('#what [role="tab"]').first()
       await firstTab.focus()
-      const before = await page.locator('[role="tab"][aria-selected="true"]').getAttribute('id')
+      const selected = page.locator('#what [role="tab"][aria-selected="true"]')
+      const before = await selected.getAttribute('id')
       await page.keyboard.press(test.forward)
       await page.waitForTimeout(80)
-      const after = await page.locator('[role="tab"][aria-selected="true"]').getAttribute('id')
+      const after = await selected.getAttribute('id')
       c.ok(after !== before, `${test.name}: ${test.forward} did not move the product chain`)
 
       /* And open again for the two things below that measure the control
