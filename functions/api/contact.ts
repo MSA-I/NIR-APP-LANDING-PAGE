@@ -9,20 +9,52 @@
 // for its highest-value customer.
 //
 // This is a Cloudflare Pages Function, so it deploys with `wrangler pages
-// deploy dist` and needs no server. It does not send mail itself: it forwards
-// the enquiry as JSON to whatever CONTACT_WEBHOOK names — an email service, a
-// Zapier or Make hook, a Slack incoming webhook, the app's own API. That keeps
-// the choice of delivery outside the repository and adds no dependency.
+// deploy dist` and needs no server. It has two ways to deliver, and it takes
+// the first one that is configured:
 //
-// WITHOUT CONTACT_WEBHOOK SET, THIS ENDPOINT ANSWERS 503 AND THE PAGE SAYS SO.
-// That is deliberate: a silent success would put us back where we started.
+//   1. RESEND_API_KEY — sends the enquiry as an email through Resend. This is
+//      the path the site uses. Resend is NOT a webhook receiver: it is an API
+//      that needs a bearer token and a body of its own shape, which is why it
+//      cannot simply be named as CONTACT_WEBHOOK.
+//   2. CONTACT_WEBHOOK — posts the enquiry as plain JSON to any URL that will
+//      take it: a Zapier or Make hook, a Slack incoming webhook, the app's own
+//      API. Kept so the delivery choice can change without touching this file.
+//
+// WITH NEITHER SET, THIS ENDPOINT ANSWERS 503 AND THE PAGE SAYS SO. That is
+// deliberate: a silent success would put us back where we started.
 
 // Typed here rather than from @cloudflare/workers-types: tsconfig's `include`
 // is ["src"], so this file is never typechecked by `npm run build`, and adding
 // a dependency to name one handler shape would be the wrong trade.
 interface Env {
+  /** Resend API key. Set as a SECRET, never as a plain variable. */
+  RESEND_API_KEY?: string
+  /** Verified sender on the Resend account. Resend rejects unverified domains. */
+  CONTACT_FROM?: string
+  /** Where the enquiry lands. */
+  CONTACT_TO?: string
+  /** The fallback path: any URL that accepts a JSON POST. */
   CONTACT_WEBHOOK?: string
 }
+
+const DEFAULT_TO = 'support@inplace.digital'
+const DEFAULT_FROM = 'InPlace <noreply@inplace.digital>'
+
+/** The enquiry as a person reads it. Plain text: this is a message to a human,
+    not a document, and every mail client renders it the same way. */
+const asText = (f: Record<string, string>) =>
+  [
+    `שם: ${f.name}`,
+    `עסק: ${f.business}`,
+    `אימייל: ${f.email}`,
+    f.phone ? `טלפון: ${f.phone}` : null,
+    '',
+    f.message || '(לא נכתבה הודעה)',
+    '',
+    `— נשלח מטופס מסלול ביזנס, מהדורת ${f.locale}`,
+  ]
+    .filter((l) => l !== null)
+    .join('\n')
 
 type Ctx = { request: Request; env: Env }
 type Body = Record<string, string>
@@ -64,9 +96,41 @@ export const onRequestPost = async ({ request, env }: Ctx): Promise<Response> =>
   // assistive technology, so anything in it did not come from a visitor.
   if (clean(raw.company_website, 200)) return json(200, { ok: true })
 
+  const fields = { name, business, email, phone, message, locale }
+
+  // Path 1: Resend. `reply_to` carries the enquirer's own address, so answering
+  // the notification answers the customer — the mailto: it replaces at least
+  // had that property and it would be a poor trade to lose it.
+  if (env.RESEND_API_KEY) {
+    const sent = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM || DEFAULT_FROM,
+        to: [env.CONTACT_TO || DEFAULT_TO],
+        reply_to: email,
+        subject: `פנייה ממסלול ביזנס: ${business}`,
+        text: asText(fields),
+      }),
+    })
+
+    if (!sent.ok) {
+      // The body names the reason — an unverified sending domain, a revoked
+      // key, a malformed address — and without it the page's "failed" state
+      // says nothing anyone can act on.
+      console.error('Resend rejected the enquiry', sent.status, await sent.text())
+      return json(502, { ok: false, reason: 'upstream' })
+    }
+    return json(200, { ok: true })
+  }
+
+  // Path 2: any URL that takes JSON.
   const hook = env.CONTACT_WEBHOOK
   if (!hook) {
-    console.error('CONTACT_WEBHOOK is not set: enquiry received and NOT delivered', { business })
+    console.error('No delivery configured: enquiry received and NOT delivered', { business })
     return json(503, { ok: false, reason: 'no-endpoint' })
   }
 
@@ -75,12 +139,7 @@ export const onRequestPost = async ({ request, env }: Ctx): Promise<Response> =>
     headers: { 'content-type': 'application/json; charset=utf-8' },
     body: JSON.stringify({
       source: 'inplace.digital contact form',
-      locale,
-      name,
-      business,
-      email,
-      phone,
-      message,
+      ...fields,
       receivedAt: new Date().toISOString(),
       userAgent: request.headers.get('user-agent') || '',
     }),
