@@ -26,7 +26,7 @@ const CHROME = {
   he: {
     dir: 'rtl',
     ogLocale: 'he_IL',
-    ogImage: 'og-cover.jpg',
+    ogImage: 'og-cover-v2.jpg',
     ogSite: 'InPlace',
     navLabel: 'ניווט ראשי',
     toLight: 'מעבר לתצוגה בהירה',
@@ -56,7 +56,7 @@ const CHROME = {
   en: {
     dir: 'ltr',
     ogLocale: 'en',
-    ogImage: 'og-cover-en.jpg',
+    ogImage: 'og-cover-en-v2.jpg',
     ogSite: 'InPlace Procurement',
     navLabel: 'Main navigation',
     toLight: 'Switch to the light view',
