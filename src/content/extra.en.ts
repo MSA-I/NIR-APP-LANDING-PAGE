@@ -114,7 +114,9 @@ const extraEn = {
       },
       {
         head: '40 documents a month',
-        lines: ['5 active users', 'One location'],
+        // 02.09.2026: was '5 active users'. Matches the ladder, which was corrected to `1` the
+        // same day. See extra.ts.
+        lines: ['One active user', 'One location'],
         chip: 'A fixed quota, with no usage billing',
       },
       {
