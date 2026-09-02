@@ -244,7 +244,11 @@ export default {
       },
       {
         head: '40 מסמכים בחודש',
-        lines: ['5 משתמשים פעילים', 'סניף אחד'],
+        // 02.09.2026: was '5 משתמשים פעילים'. The ladder below this card was corrected to `1`
+        // on the same day and this panel was missed, so the page contradicted itself: the card
+        // promised five members on a plan the server gives one. Written out rather than
+        // composed, for the agreement reason stated above `quota`.
+        lines: ['משתמש פעיל אחד', 'סניף אחד'],
         chip: 'מכסה קבועה, בלי חיוב לפי שימוש',
       },
       {
