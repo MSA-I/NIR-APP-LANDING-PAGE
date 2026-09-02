@@ -342,7 +342,12 @@ export default {
     // Free does hold the five Basic capabilities, for thirty days from the first
     // email verification (#276). A cell that said only "not included" would be
     // wrong for a month, and one that said "included" would be wrong afterwards.
-    introNote: 'המסלול החינמי כולל 20 מסמכים בחודש, משתמש אחד וסניף אחד, את השרשרת המלאה מרכש עד תשלום ואת שלושת התפקידים עם הפרדת סמכויות. בנוסף, ב־30 הימים הראשונים מרגע אימות המייל פתוחות בו גם חמש היכולות של מסלול בסיס: קריאה אוטומטית של מסמכים, היסטוריה מלאה, ייצוא Excel ודוחות לרו״ח, לוח ביצועי ספקים והתראות ואוטומציות במייל.',
+    // 02.09.2026: this used to call the five "the Basic capabilities". Two of them --
+    // Excel exports and the supplier board -- are NOT on Basic; production returns
+    // `included: false` for both there. They are still the five the free introduction
+    // opens (`intro_included: true` on all five), so the list is unchanged and only the
+    // description of it is: they are the introduction's five, not a plan's.
+    introNote: 'המסלול החינמי כולל 20 מסמכים בחודש, משתמש אחד וסניף אחד, את השרשרת המלאה מרכש עד תשלום ואת שלושת התפקידים עם הפרדת סמכויות. בנוסף, ב־30 הימים הראשונים מרגע אימות המייל פתוחות בו חמש יכולות נוספות: קריאה אוטומטית של מסמכים, היסטוריה מלאה, ייצוא Excel ודוחות לרו״ח, לוח ביצועי ספקים והתראות ואוטומציות במייל.',
 
     // WHICH ROWS EACH CARD PRINTS, by row key, in the order below.
     //
@@ -370,7 +375,9 @@ export default {
     // English dictionary reads this array rather than restating it.
     cardRows: [
       ['documents', 'users', 'branches', 'chain', 'roles'],
-      ['documents', 'users', 'branches', 'chain', 'roles', 'automation', 'history', 'export'],
+      // 02.09.2026: `export` came off the Basic card. Basic does not carry `exports.custom`,
+      // and the rule above -- NOTHING A PLAN DOES NOT CARRY -- decides it, not a preference.
+      ['documents', 'users', 'branches', 'chain', 'roles', 'automation', 'history'],
       [
         'documents', 'users', 'branches', 'chain', 'roles',
         'automation', 'history', 'export',
@@ -408,7 +415,10 @@ export default {
       {
         icon: 'users',
         label: 'משתמשים פעילים',
-        cells: ['1', '5', '15', '30', 'ללא הגבלה'],
+        // 02.09.2026: was '5' for Basic. `get_public_plan_quotas()` in production answers 1,
+        // and has since the ladder shipped -- the figure was simply unverifiable until the
+        // rollout made the read model readable. The page follows the product (owner ruling).
+        cells: ['1', '1', '15', '30', 'ללא הגבלה'],
       },
       {
         icon: 'branches',
@@ -437,13 +447,17 @@ export default {
       },
       {
         icon: 'export',
+        // 02.09.2026: Basic was `true` here and in the row below. `get_public_plan_features()`
+        // in production returns `included: false` for `exports.custom` and `reports.advanced`
+        // on Basic -- they start at Pro. Free still shows `intro` because the same read model
+        // returns `intro_included: true` for both during the thirty-day window.
         label: 'ייצוא Excel ודוחות לרו״ח',
-        cells: ['intro', true, true, true, true],
+        cells: ['intro', false, true, true, true],
       },
       {
         icon: 'reports',
         label: 'לוח ביצועי ספקים',
-        cells: ['intro', true, true, true, true],
+        cells: ['intro', false, true, true, true],
       },
       {
         icon: 'mail',

@@ -165,7 +165,9 @@ const extraEn = {
     absent: 'Not included',
     contract: 'Per contract',
     unlimited: 'Unlimited',
-    introNote: 'The free plan includes 20 documents a month, one user and one location, the full chain from purchase to payment, and the three roles with separation of duties. For the first 30 days from email verification it also opens the five Basic capabilities: automatic document reading, full history, Excel exports and accountant reports, the supplier performance board, and email alerts and automations.',
+    // 02.09.2026: see extra.ts. Two of the five are not on Basic, so they are described as
+    // the introduction's five rather than a plan's. The list itself is unchanged.
+    introNote: 'The free plan includes 20 documents a month, one user and one location, the full chain from purchase to payment, and the three roles with separation of duties. For the first 30 days from email verification it also opens five further capabilities: automatic document reading, full history, Excel exports and accountant reports, the supplier performance board, and email alerts and automations.',
 
     // Which rows each card prints. Row keys, so the decision is made once; see
     // extra.ts for the two rules that pick them.
@@ -183,7 +185,8 @@ const extraEn = {
       {
         icon: 'users',
         label: 'Active users',
-        cells: ['1', '5', '15', '30', 'Unlimited'],
+        // 02.09.2026: was '5' for Basic; production answers 1. See extra.ts.
+        cells: ['1', '1', '15', '30', 'Unlimited'],
       },
       {
         icon: 'branches',
@@ -212,13 +215,15 @@ const extraEn = {
       },
       {
         icon: 'export',
+        // 02.09.2026: Basic was `true` here and below; production returns false for both.
+        // They start at Pro. See extra.ts.
         label: 'Excel exports and accountant reports',
-        cells: ['intro', true, true, true, true],
+        cells: ['intro', false, true, true, true],
       },
       {
         icon: 'reports',
         label: 'Supplier performance board',
-        cells: ['intro', true, true, true, true],
+        cells: ['intro', false, true, true, true],
       },
       {
         icon: 'mail',
